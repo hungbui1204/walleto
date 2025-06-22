@@ -1,0 +1,66 @@
+{
+  "editor.minimap.maxColumn": 50,
+  "explorer.fileNesting.patterns": {
+    "*.dart": "${capture}.g.dart, ${capture}.freezed.dart"
+  },
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.expand": false,
+  "dart.lineLength": 100,
+  "dart.renameFilesWithClasses": "always",
+  "[dart]": {
+    "editor.formatOnSave": true,
+    "editor.formatOnType": true,
+    "editor.rulers": [
+      100
+    ]
+  },
+  "files.watcherExclude": {
+    "**/.fvm": true
+  },
+  "search.exclude": {
+    "**/.fvm": true
+  },
+  "bloc.newBlocTemplate.type": "freezed",
+  "dart-barrel-file-generator.promptName": false,
+  "dart-barrel-file-generator.excludeFileList": [
+    "**/!(base_page)_state.dart",
+    "**/*_event.dart"
+  ],
+  "dart.flutterSdkPath": ".fvm/versions/3.29.3",
+  "flutter-plus.wraps": [
+    {
+      "name": "GestureDetector",
+      "body": [
+        "GestureDetector(",
+        "  child: ${widget},",
+        ")"
+      ]
+    },
+    {
+      "name": "Expanded",
+      "body": [
+        "Expanded(",
+        "  child: ${widget},",
+        ")"
+      ]
+    },
+    {
+      "name": "Stack",
+      "body": [
+        "Stack(",
+        "  children: [",
+        "    ${widget},",
+        "  ],",
+        ")"
+      ]
+    },
+    {
+      "name": "SingleChildScrollView",
+      "body": [
+        "SingleChildScrollView(",
+        "  child: ${widget},",
+        ")"
+      ]
+    }
+  ]
+}

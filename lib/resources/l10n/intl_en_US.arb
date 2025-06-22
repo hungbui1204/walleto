@@ -1,0 +1,8 @@
+{
+    "@@locale": "en_US",
+    "//": "Bottom tab widget",
+    "home": "Home",
+    "transactions": "Transactions",
+    "budgets": "Budgets",
+    "account": "Account"
+}

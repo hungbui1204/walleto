@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "felixangelov.bloc",
+    "dart-code.flutter",
+    "dart-code.dart-code",
+    "localizely.flutter-intl",
+    "carlos-algms.make-task-provider",
+    "miquelddg.dart-barrel-file-generator"
+  ]
+}

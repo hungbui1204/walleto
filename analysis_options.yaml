@@ -1,0 +1,53 @@
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.gr.dart"
+    - "**/*.freezed.dart"
+    - "**/*.config.dart"
+    - "**/*.gen.dart"
+    - "**/generated/**"
+  errors:
+    unused_import: warning
+    invalid_annotation_target: ignore
+
+# https://dart.dev/tools/linter-rules
+linter:
+  rules:
+    require_trailing_commas: true
+    empty_statements: true
+    no_duplicate_case_values: true
+    no_logic_in_create_state: true
+    use_build_context_synchronously: true
+    always_declare_return_types: true
+    avoid_init_to_null: true
+    avoid_multiple_declarations_per_line: true
+    avoid_redundant_argument_values: true
+    avoid_returning_null_for_void: true
+    avoid_shadowing_type_parameters: true
+    avoid_single_cascade_in_expression_statements: true
+    avoid_types_on_closure_parameters: true
+    directives_ordering: true
+    prefer_conditional_assignment: true
+    prefer_contains: true
+    prefer_if_null_operators: true
+    prefer_interpolation_to_compose_strings: true
+    prefer_is_empty: true
+    prefer_is_not_empty: true
+    prefer_is_not_operator: true
+    prefer_spread_collections: true
+    prefer_null_aware_operators: true
+    sized_box_for_whitespace: true
+    sort_constructors_first: true
+    unnecessary_late: true
+    unnecessary_null_in_if_null_operators: true
+    unnecessary_parenthesis: true
+    unnecessary_string_escapes: true
+    use_is_even_rather_than_modulo: true
+    use_if_null_to_convert_nulls_to_bools: true
+    use_named_constants: true
+    dangling_library_doc_comments: false
+    prefer_const_constructors: true
+    prefer_const_declarations: true
+    prefer_const_literals_to_create_immutables: true

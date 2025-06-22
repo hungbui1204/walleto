@@ -1,0 +1,16 @@
+import 'package:auto_route/auto_route.dart';
+import 'package:injectable/injectable.dart';
+import 'package:walleto/domain/domain.dart';
+import 'package:walleto/ui/ui.dart';
+
+@LazySingleton(as: BaseRouteInfoMapper)
+class AppRouteInfoMapper extends BaseRouteInfoMapper {
+  @override
+  PageRouteInfo map(AppRouteInfo appRouteInfo) {
+    return switch (appRouteInfo) {
+      Login() => const LoginRoute(),
+      Main() => MainRoute(),
+      
+  };
+}
+}
