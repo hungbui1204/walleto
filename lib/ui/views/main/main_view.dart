@@ -32,8 +32,8 @@ class _MainViewState extends BasePageState<MainView, MainBloc> {
             elevation: 0,
             currentIndex: tabsRouter.activeIndex,
             type: BottomNavigationBarType.fixed,
-            showSelectedLabels: true,
-            showUnselectedLabels: true,
+            showSelectedLabels: false,
+            showUnselectedLabels: false,
             backgroundColor: whiteColor,
             onTap: (index) {
               tabsRouter.setActiveIndex(index);

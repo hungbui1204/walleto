@@ -34,7 +34,7 @@ enum BottomTab {
             : Assets.icons.transactionsHistoryInactive.path,
       ),
       BottomTab.budgets => _buildIcon(
-        selected ? Assets.icons.moneyActive.path : Assets.icons.moneyInactive.path,
+        selected ? Assets.icons.currencyActive.path : Assets.icons.currencyInactive.path,
       ),
       BottomTab.account => _buildIcon(
         selected ? Assets.icons.accountActive.path : Assets.icons.accountInactive.path,
@@ -43,10 +43,7 @@ enum BottomTab {
   }
 
   Widget _buildIcon(String iconPath) {
-    return Padding(
-      padding: EdgeInsets.all(Dimens.d8.responsive()),
-      child: Image.asset(iconPath, height: Dimens.d24.responsive()),
-    );
+    return SvgPicture.asset(iconPath, height: Dimens.d28.responsive());
   }
 
   String get title {
@@ -56,9 +53,9 @@ enum BottomTab {
       case BottomTab.transactions:
         return S.current.transactions;
       case BottomTab.account:
-        return S.current.budgets;
-      case BottomTab.budgets:
         return S.current.account;
+      case BottomTab.budgets:
+        return S.current.budgets;
     }
   }
 }
