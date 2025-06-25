@@ -62,7 +62,7 @@ enum RemoteExceptionKind {
 
   forbidden,
 
-  refreshTokenFailed,
+  invalidToken,
   timeout,
   cancellation,
   unknown,

@@ -16,7 +16,7 @@ class AppRouter extends RootStackRouter {
       initial: true,
       page: MainRoute.page,
       transitionsBuilder: TransitionsBuilders.noTransition,
-      // guards: [AuthRouteGuard(getIt.get<IsLoggedInUseCase>())],
+      guards: [AuthRouteGuard(getIt.get<IsLoggedInUseCase>())],
       children: [
         RedirectRoute(path: '', redirectTo: BottomTabHomeRouter.name),
         AutoRoute(

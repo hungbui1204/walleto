@@ -19,7 +19,14 @@ class ExceptionHandler {
         switch (exception.kind) {
           case RemoteExceptionKind.forbidden:
             break;
-          case RemoteExceptionKind.refreshTokenFailed:
+          case RemoteExceptionKind.invalidToken:
+            // When the token is invalid, there is 3 cases we need to handle:
+            // 1. The token is empty in secure storage (user is not logged in or clear data)
+            //      -> show error dialog and navigate to login screen
+            // 2. The token in secure storage is expired
+            //      -> try to refresh the token by using refresh token usecase
+            //      -> if the refresh token is successful, try to retry the request
+            // 3. The refresh token is expired -> show error dialog and navigate to login page
             await _showErrorDialog(
               isRefreshTokenFailed: true,
               message: message,
@@ -68,7 +75,7 @@ class ExceptionHandler {
       AppPopupInfo.confirm(message: message, onPressed: onPressed),
     );
     if (isRefreshTokenFailed) {
-      listener.onRefreshTokenFailed();
+      listener.onInvalidToken();
     }
   }
 
@@ -83,5 +90,5 @@ class ExceptionHandler {
 }
 
 abstract class ExceptionHandlerListener {
-  void onRefreshTokenFailed();
+  void onInvalidToken();
 }

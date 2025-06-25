@@ -6,16 +6,13 @@ import 'package:walleto/shared/shared.dart';
 class DioBuilder {
   const DioBuilder._();
 
-  static Dio createDio({
-    BaseOptions? options,
-    List<Interceptor> interceptors = const [],
-  }) {
+  static Dio createDio({BaseOptions? options, List<Interceptor> interceptors = const []}) {
     final dio = Dio(
       BaseOptions(
         connectTimeout: options?.connectTimeout ?? ServerTimeoutConstants.connectTimeout,
         receiveTimeout: options?.receiveTimeout ?? ServerTimeoutConstants.receiveTimeout,
         sendTimeout: options?.sendTimeout ?? ServerTimeoutConstants.sendTimeout,
-        baseUrl: options?.baseUrl ?? UrlConstants.appApiBaseUrl,
+        baseUrl: options?.baseUrl ?? '',
       ),
     );
 

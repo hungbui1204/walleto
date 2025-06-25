@@ -15,7 +15,7 @@ class LoadInitialResourceUseCase
   @override
   Future<LoadInitialResourceOutput> buildUseCase(LoadInitialResourceInput input) async {
     final initialRoutes = [
-      !(await _repository.isLoggedIn) ? InitialAppRoute.main : InitialAppRoute.login,
+      await _repository.isLoggedIn ? InitialAppRoute.main : InitialAppRoute.login,
     ];
 
     return LoadInitialResourceOutput(initialRoutes: initialRoutes);

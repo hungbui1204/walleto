@@ -28,7 +28,7 @@ class DioExceptionMapper extends ExceptionMapper<RemoteException> {
 
             if (httpErrorCode == HttpStatus.unauthorized) {
               return RemoteException(
-                kind: RemoteExceptionKind.refreshTokenFailed,
+                kind: RemoteExceptionKind.invalidToken,
                 httpErrorCode: httpErrorCode,
                 serverError: serverError,
               );

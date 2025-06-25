@@ -101,5 +101,5 @@ abstract class BasePageStateDelegate<T extends StatefulWidget, B extends BaseBlo
   }
 
   @override
-  void onRefreshTokenFailed() => commonBloc.add(const ForceLogoutButtonPressed());
+  void onInvalidToken() => commonBloc.add(const ForceLogoutButtonPressed());
 }

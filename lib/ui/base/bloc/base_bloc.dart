@@ -9,7 +9,8 @@ part 'base_bloc_event.dart';
 part 'base_bloc_state.dart';
 
 abstract class BaseBloc<E extends BaseBlocEvent, S extends BaseBlocState>
-    extends BaseBlocDelegate<E, S> with EventTransformerMixin, LogMixin {
+    extends BaseBlocDelegate<E, S>
+    with EventTransformerMixin, LogMixin {
   BaseBloc(super.initialState);
 }
 
@@ -46,7 +47,6 @@ abstract class BaseBlocDelegate<E extends BaseBlocEvent, S extends BaseBlocState
   }
 
   void showLoading() {
-    
     commonBloc.add(const LoadingVisibilityEmitted(isLoading: true));
   }
 
@@ -91,25 +91,26 @@ abstract class BaseBlocDelegate<E extends BaseBlocEvent, S extends BaseBlocState
         await addException(
           AppExceptionWrapper(
             appException: e,
-            doOnRetry: doOnRetry ??
+            doOnRetry:
+                doOnRetry ??
                 (handleRetry
                     ? () async {
-                        recursion = Completer();
-                        await runBlocCatching(
-                          action: action,
-                          doOnEventCompleted: doOnEventCompleted,
-                          doOnSubscribe: doOnSubscribe,
-                          doOnSuccessOrError: doOnSuccessOrError,
-                          doOnError: doOnError,
-                          doOnRetry: doOnRetry,
-                          forceHandleError: forceHandleError,
-                          handleError: handleError,
-                          handleLoading: handleLoading,
-                          handleRetry: handleRetry,
-                          overrideErrorMessage: overrideErrorMessage,
-                        );
-                        recursion?.complete();
-                      }
+                      recursion = Completer();
+                      await runBlocCatching(
+                        action: action,
+                        doOnEventCompleted: doOnEventCompleted,
+                        doOnSubscribe: doOnSubscribe,
+                        doOnSuccessOrError: doOnSuccessOrError,
+                        doOnError: doOnError,
+                        doOnRetry: doOnRetry,
+                        forceHandleError: forceHandleError,
+                        handleError: handleError,
+                        handleLoading: handleLoading,
+                        handleRetry: handleRetry,
+                        overrideErrorMessage: overrideErrorMessage,
+                      );
+                      recursion?.complete();
+                    }
                     : null),
             exceptionCompleter: Completer<void>(),
             overrideMessage: overrideErrorMessage,
@@ -123,7 +124,6 @@ abstract class BaseBlocDelegate<E extends BaseBlocEvent, S extends BaseBlocState
   }
 
   bool _forceHandleError(AppException appException) {
-    return appException is RemoteException &&
-        appException.kind == RemoteExceptionKind.refreshTokenFailed;
+    return appException is RemoteException && appException.kind == RemoteExceptionKind.invalidToken;
   }
 }
