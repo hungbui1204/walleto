@@ -3,4 +3,5 @@ class SharedPreferenceKeys {
 
   static const isFirstLaunchApp = 'isFirstLaunchApp';
   static const token = 'token';
+  static const refreshToken = 'refreshToken';
 }

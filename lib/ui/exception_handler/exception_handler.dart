@@ -1,3 +1,4 @@
+import 'package:walleto/di/di.dart';
 import 'package:walleto/domain/domain.dart';
 import 'package:walleto/shared/shared.dart';
 
@@ -20,18 +21,7 @@ class ExceptionHandler {
           case RemoteExceptionKind.forbidden:
             break;
           case RemoteExceptionKind.invalidToken:
-            // When the token is invalid, there is 3 cases we need to handle:
-            // 1. The token is empty in secure storage (user is not logged in or clear data)
-            //      -> show error dialog and navigate to login screen
-            // 2. The token in secure storage is expired
-            //      -> try to refresh the token by using refresh token usecase
-            //      -> if the refresh token is successful, try to retry the request
-            // 3. The refresh token is expired -> show error dialog and navigate to login page
-            await _showErrorDialog(
-              isRefreshTokenFailed: true,
-              message: message,
-              onPressed: Func0(() => navigator.pop(useRootNavigator: true)),
-            );
+            await _invalidTokenHandle(appExceptionWrapper: appExceptionWrapper, message: message);
             break;
           case RemoteExceptionKind.noInternet:
           case RemoteExceptionKind.timeout:
@@ -86,6 +76,44 @@ class ExceptionHandler {
     await navigator.showDialog(
       AppPopupInfo.errorWithRetry(message: message, onRetryPressed: onRetryPressed),
     );
+  }
+
+  Future<void> _invalidTokenHandle({
+    required AppExceptionWrapper appExceptionWrapper,
+    required String message,
+  }) async {
+    // When the token is invalid, there is 3 cases we need to handle:
+    // 1. The token is empty in secure storage (user is not logged in or clear data)
+    //      -> show error dialog and navigate to login screen
+    // 2. The token in secure storage is expired and refresh the token by using refresh token successful
+    //      -> if the refresh token is successful, try to retry the request
+    // 3. The refresh token is expired
+    //      -> show error dialog and navigate to login screen
+    final invalidTokenHandleOutput = await getIt.get<InvalidTokenHandleUseCase>().execute(
+      const InvalidTokenHandleInput(),
+    );
+
+    switch (invalidTokenHandleOutput.status) {
+      case InvalidTokenHandlerStatus.emptyToken:
+        await _showErrorDialog(
+          isRefreshTokenFailed: true,
+          message: message,
+          onPressed: Func0(() => navigator.pop(useRootNavigator: true)),
+        );
+        break;
+
+      case InvalidTokenHandlerStatus.tokenRefreshed:
+        await appExceptionWrapper.doOnRetry?.call();
+        break;
+
+      case InvalidTokenHandlerStatus.refreshTokenExpired:
+        await _showErrorDialog(
+          isRefreshTokenFailed: true,
+          message: message,
+          onPressed: Func0(() => navigator.pop(useRootNavigator: true)),
+        );
+        break;
+    }
   }
 }
 

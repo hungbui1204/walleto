@@ -1,4 +1,3 @@
-import 'package:walleto/resources/resources.dart';
 import 'package:walleto/shared/shared.dart';
 
 class ExceptionMessageMapper {

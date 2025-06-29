@@ -5,13 +5,6 @@ sealed class AppEvent extends BaseBlocEvent {
 }
 
 @freezed
-sealed class SignInButtonPressed extends AppEvent with _$SignInButtonPressed {
-  const SignInButtonPressed._();
-
-  const factory SignInButtonPressed() = _SignInButtonPressed;
-}
-
-@freezed
 sealed class SignOutButtonPressed extends AppEvent with _$SignOutButtonPressed {
   const SignOutButtonPressed._();
 

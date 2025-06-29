@@ -10,9 +10,28 @@ class AppPreferences {
   final SharedPreferencesAsync _sharedPreference;
   final FlutterSecureStorage _secureStorage;
 
-  Future<bool> get isLoggedIn async {
-    final token = await _secureStorage.read(key: SharedPreferenceKeys.token);
+  Future<String?> get token async {
+    return await _secureStorage.read(key: SharedPreferenceKeys.token);
+  }
 
-    return token != null;
+  Future<void> setToken(String token) async {
+    await _secureStorage.write(key: SharedPreferenceKeys.token, value: token);
+  }
+
+  Future<String?> get refreshToken async {
+    final refreshToken = await _secureStorage.read(key: SharedPreferenceKeys.refreshToken);
+
+    return refreshToken;
+  }
+
+  Future<void> setRefreshToken(String refreshToken) async {
+    await _secureStorage.write(key: SharedPreferenceKeys.refreshToken, value: refreshToken);
+  }
+
+  Future<void> clearCurrentUserData() async {
+    await Future.wait([
+      _secureStorage.delete(key: SharedPreferenceKeys.token),
+      _secureStorage.delete(key: SharedPreferenceKeys.refreshToken),
+    ]);
   }
 }

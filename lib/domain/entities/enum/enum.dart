@@ -59,3 +59,5 @@ enum BottomTab {
     }
   }
 }
+
+enum InvalidTokenHandlerStatus { emptyToken, tokenRefreshed, refreshTokenExpired }
