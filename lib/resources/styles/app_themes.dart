@@ -27,5 +27,6 @@ class AppThemes {
       labelColor: primaryColor,
       dividerColor: blackColor,
     ),
+    indicatorColor: primaryColor,
   );
 }

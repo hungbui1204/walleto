@@ -1,5 +1,7 @@
+import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:walleto/data/data.dart';
+import 'package:walleto/shared/shared.dart';
 
 @lazySingleton
 class AppApiServices {
@@ -26,6 +28,14 @@ class AppApiServices {
       queryParameters: {'grant_type': 'refresh_token'},
       body: {'refresh_token': refreshToken},
       decoder: (data) => AuthenticationData.fromJson(data as Map<String, dynamic>),
+    );
+  }
+
+  Future<void> revokeRefreshToken() {
+    return _serverApiClientAuth.request(
+      method: RequestMethod.post,
+      path: 'logout',
+      options: Options(extra: {ServerRequestResponseConstants.revokeRefreshToken: true}),
     );
   }
 }

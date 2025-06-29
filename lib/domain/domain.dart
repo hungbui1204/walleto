@@ -16,4 +16,5 @@ export 'usecases/base/sync/base_sync_use_case.dart';
 export 'usecases/invalid_token_handle_use_case.dart';
 export 'usecases/is_logged_in_use_case.dart';
 export 'usecases/load_initial_resource_use_case.dart';
+export 'usecases/login_by_password_use_case.dart';
 export 'usecases/sign_out_use_case.dart';

@@ -1,4 +1,3 @@
-
 import 'package:freezed_annotation/freezed_annotation.dart';
 part 'app_route_info.freezed.dart';
 
@@ -8,4 +7,11 @@ sealed class AppRouteInfo with _$AppRouteInfo {
 
   const factory AppRouteInfo.main() = Main;
 
+  const factory AppRouteInfo.home() = Home;
+
+  const factory AppRouteInfo.transactions() = Transactions;
+
+  const factory AppRouteInfo.budgets() = Budgets;
+
+  const factory AppRouteInfo.account() = Account;
 }

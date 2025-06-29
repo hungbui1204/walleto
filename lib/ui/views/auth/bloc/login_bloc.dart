@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
+import 'package:walleto/domain/domain.dart';
 import 'package:walleto/resources/resources.dart';
 import 'package:walleto/ui/ui.dart';
 
@@ -10,11 +11,13 @@ part 'login_state.dart';
 
 @injectable
 class LoginBloc extends BaseBloc<LoginEvent, LoginState> {
-  LoginBloc() : super(const LoginState()) {
+  LoginBloc(this._loginByPasswordUseCase) : super(const LoginState()) {
     on<LoginEmailInputChanged>(_onEmailInputChanged, transformer: log());
     on<LoginPasswordInputChanged>(_onPasswordInputChanged, transformer: log());
     on<SignInButtonPressed>(_onSignIn, transformer: log());
   }
+
+  final LoginByPasswordUseCase _loginByPasswordUseCase;
 
   bool _loginButtonEnable({required String email, required String password}) {
     return email.isNotEmpty && password.isNotEmpty;
@@ -53,7 +56,11 @@ class LoginBloc extends BaseBloc<LoginEvent, LoginState> {
   Future<void> _onSignIn(SignInButtonPressed event, Emitter<LoginState> emit) async {
     await runBlocCatching(
       action: () async {
-        // TODO: Implement login logic
+        await _loginByPasswordUseCase.execute(
+          LoginByPasswordInput(email: state.email, password: state.password),
+        );
+
+        navigator.replace(const AppRouteInfo.main());
       },
     );
   }

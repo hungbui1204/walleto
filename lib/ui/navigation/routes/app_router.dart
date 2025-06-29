@@ -25,19 +25,19 @@ class AppRouter extends RootStackRouter {
           children: [AutoRoute(initial: true, page: HomeRoute.page)],
         ),
         AutoRoute(
-          path: 'one-stop',
+          path: 'transactions',
           page: BottomTabTransactionsRouter.page,
           children: [AutoRoute(initial: true, page: TransactionsRoute.page)],
         ),
         AutoRoute(
-          path: 'notice',
+          path: 'budgets',
           page: BottomTabBudgetsRouter.page,
           children: [AutoRoute(initial: true, page: BudgetsRoute.page)],
         ),
         AutoRoute(
           path: 'account',
           page: BottomTabAccountRouter.page,
-          children: [AutoRoute(initial: true, path: 'menu', page: AccountRoute.page)],
+          children: [AutoRoute(initial: true, page: AccountRoute.page)],
         ),
       ],
     ),

@@ -5,4 +5,5 @@ class ServerRequestResponseConstants {
   static const setCookieKey = 'set-cookie';
   static const dToken = 'dToken';
   static const fcmToken = 'fcmToken';
+  static const revokeRefreshToken = 'revokeRefreshToken';
 }

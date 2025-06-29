@@ -9,8 +9,11 @@ class AppRouteInfoMapper extends BaseRouteInfoMapper {
   PageRouteInfo map(AppRouteInfo appRouteInfo) {
     return switch (appRouteInfo) {
       Login() => const LoginRoute(),
-      Main() => MainRoute(),
-      
-  };
-}
+      Main() => const MainRoute(),
+      Home() => const HomeRoute(),
+      Transactions() => const TransactionsRoute(),
+      Budgets() => const BudgetsRoute(),
+      Account() => const AccountRoute(),
+    };
+  }
 }

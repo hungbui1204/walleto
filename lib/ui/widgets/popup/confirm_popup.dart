@@ -13,9 +13,7 @@ class ConfirmPopup extends PopUpWidget {
     this.confirmAction,
     this.onPressed,
     this.showCancel = false,
-  }) : super(
-          action: confirmAction ?? _ConfirmButton(onPressed: onPressed, showCancel: showCancel),
-        );
+  }) : super(action: confirmAction ?? _ConfirmButton(onPressed: onPressed, showCancel: showCancel));
 
   final Widget? confirmAction;
   final Func0<void>? onPressed;
@@ -32,10 +30,10 @@ class _ConfirmButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // ButtonWidget(
-        //   text: S.current.ok,
-        //   onPressed: onPressed?.call ?? () => getIt.get<AppNavigator>().pop(useRootNavigator: true),
-        // ),
+        CommonButton(
+          text: S.current.ok,
+          onTap: onPressed?.call ?? () => getIt.get<AppNavigator>().pop(useRootNavigator: true),
+        ),
         if (showCancel) ...[
           SizedBox(height: Dimens.d18.responsive()),
           // LinkWidget(

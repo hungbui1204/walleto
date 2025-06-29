@@ -18,6 +18,7 @@ export 'navigation/observer/app_navigator_observer.dart';
 export 'navigation/routes/app_router.dart';
 export 'navigation/routes/app_router.gr.dart';
 export 'views/account/account_view.dart';
+export 'views/account/bloc/account_bloc.dart';
 export 'views/auth/bloc/login_bloc.dart';
 export 'views/auth/login_view.dart';
 export 'views/auth/widgets/half_circle_painter.dart';

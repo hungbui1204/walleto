@@ -17,6 +17,10 @@ class RepositoryImpl implements Repository {
   Future<Authentication> loginByPassword({required String email, required String password}) async {
     final response = await _appApiServices.loginByPassword(email: email, password: password);
 
+    // Save the authentication data to secure storage
+    await _appPreferences.setToken(response?.accessToken ?? '');
+    await _appPreferences.setRefreshToken(response?.refreshToken ?? '');
+
     return _authenticationDataMapper.mapToEntity(response);
   }
 
@@ -29,7 +33,10 @@ class RepositoryImpl implements Repository {
 
   @override
   Future<void> signOut() async {
-    // TODO: sign out from the server
+    // Revoke the current refresh token
+    // Not using at the moment, because the refresh token is not a jwt token
+    // Consider using it in the future if needed
+    // await _appApiServices.revokeRefreshToken();
 
     // Clear the current user data from secure storage
     await _appPreferences.clearCurrentUserData();

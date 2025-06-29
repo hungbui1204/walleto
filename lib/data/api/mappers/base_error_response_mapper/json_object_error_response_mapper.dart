@@ -4,20 +4,21 @@ import 'package:walleto/shared/shared.dart';
 class JsonObjectErrorResponseMapper extends BaseErrorResponseMapper<Map<String, dynamic>> {
   @override
   ServerError mapToServerError(Map<String, dynamic>? errorResponse) {
-    if (errorResponse?['message'] is List) {
+    if (errorResponse?['msg'] is List) {
       return ServerError(
-        generalServerStatusCode: errorResponse?['status_code'] as int?,
+        generalServerStatusCode: errorResponse?['code'] as int?,
         generalServerErrorId: errorResponse?['error_code'] as String?,
-        generalMessage: (errorResponse?['message'] as List?)?.isNotEmpty ?? false
-            ? (errorResponse?['message'] as List?)?.join('\n')
-            : null,
+        generalMessage:
+            (errorResponse?['msg'] as List?)?.isNotEmpty ?? false
+                ? (errorResponse?['msg'] as List?)?.join('\n')
+                : null,
       );
     }
 
     return ServerError(
-      generalServerStatusCode: errorResponse?['status_code'] as int?,
+      generalServerStatusCode: errorResponse?['code'] as int?,
       generalServerErrorId: errorResponse?['error_code'] as String?,
-      generalMessage: errorResponse?['message'] as String?,
+      generalMessage: errorResponse?['msg'] as String?,
     );
   }
 }

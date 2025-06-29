@@ -1,3 +1,4 @@
+import 'package:walleto/resources/resources.dart';
 import 'package:walleto/shared/shared.dart';
 
 class ExceptionMessageMapper {
@@ -6,28 +7,32 @@ class ExceptionMessageMapper {
   String map(AppException appException) {
     return switch (appException.appExceptionType) {
       AppExceptionType.remote => switch ((appException as RemoteException).kind) {
-        RemoteExceptionKind.badCertificate => '',
-        RemoteExceptionKind.noInternet => '',
-        RemoteExceptionKind.network => '',
-        RemoteExceptionKind.serverDefined => appException.generalServerMessage ?? '',
-        RemoteExceptionKind.serverUndefined => appException.generalServerMessage ?? '',
-        RemoteExceptionKind.timeout => '',
-        RemoteExceptionKind.cancellation => '',
-        RemoteExceptionKind.unknown => '',
-        RemoteExceptionKind.invalidToken => '',
-        RemoteExceptionKind.decodeError => '',
-        RemoteExceptionKind.forbidden => '403 Forbidden error',
+        RemoteExceptionKind.badCertificate => S.current.badCertificate,
+        RemoteExceptionKind.noInternet => S.current.noInternet,
+        RemoteExceptionKind.network => S.current.networkError,
+        RemoteExceptionKind.serverDefined =>
+          appException.generalServerMessage ?? S.current.serverDefined,
+        RemoteExceptionKind.serverUndefined =>
+          appException.generalServerMessage ?? S.current.serverUndefined,
+        RemoteExceptionKind.timeout => S.current.timeout,
+        RemoteExceptionKind.cancellation => S.current.cancelled,
+        RemoteExceptionKind.unknown => S.current.unknownError,
+        RemoteExceptionKind.invalidToken => S.current.invalidToken,
+        RemoteExceptionKind.decodeError => S.current.decodeError,
+        RemoteExceptionKind.forbidden => S.current.forbidden,
       },
       AppExceptionType.camera => switch ((appException as AppCameraException).kind) {
-        AppCameraExceptionKind.cameraAccessDenied => '',
-        AppCameraExceptionKind.cameraAccessDeniedWithoutPrompt => '',
-        AppCameraExceptionKind.cameraAccessRestricted => '',
-        AppCameraExceptionKind.audioAccessDenied => '',
-        AppCameraExceptionKind.audioAccessDeniedWithoutPrompt => '',
-        AppCameraExceptionKind.audioAccessRestricted => '',
+        AppCameraExceptionKind.cameraAccessDenied => S.current.cameraAccessDenied,
+        AppCameraExceptionKind.cameraAccessDeniedWithoutPrompt =>
+          S.current.cameraAccessDeniedWithoutPrompt,
+        AppCameraExceptionKind.cameraAccessRestricted => S.current.cameraAccessRestricted,
+        AppCameraExceptionKind.audioAccessDenied => S.current.audioAccessDenied,
+        AppCameraExceptionKind.audioAccessDeniedWithoutPrompt =>
+          S.current.audioAccessDeniedWithoutPrompt,
+        AppCameraExceptionKind.audioAccessRestricted => S.current.audioAccessRestricted,
       },
-      AppExceptionType.parse => '',
-      AppExceptionType.uncaught => '',
+      AppExceptionType.parse => S.current.parseError,
+      AppExceptionType.uncaught => S.current.uncaughtError,
     };
   }
 }
