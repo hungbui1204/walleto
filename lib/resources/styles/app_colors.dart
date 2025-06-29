@@ -1,6 +1,16 @@
-import 'package:flutter/services.dart';
+import 'package:flutter/material.dart';
 
 // Base color
+const primaryColor = Color(0xff82d1f1);
+const primaryShadeColor = Color.fromARGB(255, 162, 230, 255);
+const primaryShade1Color = Color.fromARGB(255, 220, 245, 255);
+const secondaryColor = Color(0xfff7e34f);
+const disableColor = Colors.grey;
+const backgroundIconColor = Color.fromARGB(255, 244, 242, 242);
+const whiteColor = Colors.white;
+const blackColor = Colors.black;
+const transParentColor = Colors.transparent;
+
 const backgroundSecondaryBeige = Color(0xFFEBE9DA);
 const backgroundSecondaryBeigeLight = Color(0xFFF5F5F1);
 const backgroundPrimaryBeige = Color(0xFFE4DEBE);
@@ -30,8 +40,6 @@ const activeRed = Color(0x23FF0400);
 const backgroundOverlayColor = Color(0xCCFFFFFF);
 
 // Text color
-const whiteColor = Color(0xFFFFFFFF);
-const blackColor = Color(0xFF2B2C2E);
 const greyColor = Color(0xFFCCCCCC);
 const darkGreyColor = Color(0xFF666666);
 
@@ -41,3 +49,7 @@ const slightlyWeakPasswordColor = Color(0xFFffA500);
 const normalPasswordColor = Color(0xFFFFD700);
 const strongPasswordColor = Color(0xFF9ACD32);
 const veryStrongPasswordColor = Color(0xFF008000);
+
+// Text field
+const fieldFillColor = Color.fromRGBO(244, 243, 243, 1);
+const fieldErrorColor = Colors.red;

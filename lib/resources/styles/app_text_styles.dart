@@ -102,6 +102,17 @@ class AppTextStyles {
     );
   }
 
+  static TextStyle s12wNormalBlackUnderline({double? tablet, double? ultraTablet}) {
+    return _baseTextStyle.merge(
+      TextStyle(
+        color: blackColor,
+        fontWeight: FontWeight.normal,
+        fontSize: Dimens.d12.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        decoration: TextDecoration.underline,
+      ),
+    );
+  }
+
   static TextStyle s13wNormalBlack({double? tablet, double? ultraTablet}) {
     return _baseTextStyle.merge(
       TextStyle(
@@ -208,6 +219,17 @@ class AppTextStyles {
         color: navyColor,
         fontWeight: FontWeight.normal,
         fontSize: Dimens.d14.responsive(tablet: tablet, ultraTablet: ultraTablet),
+      ),
+    );
+  }
+
+  static TextStyle s14wNormalBlackUnderline({double? tablet, double? ultraTablet}) {
+    return _baseTextStyle.merge(
+      TextStyle(
+        color: blackColor,
+        fontWeight: FontWeight.normal,
+        fontSize: Dimens.d14.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        decoration: TextDecoration.underline,
       ),
     );
   }
@@ -326,6 +348,16 @@ class AppTextStyles {
     return _baseTextStyle.merge(
       TextStyle(
         color: blackColor,
+        fontWeight: FontWeight.bold,
+        fontSize: Dimens.d16.responsive(tablet: tablet, ultraTablet: ultraTablet),
+      ),
+    );
+  }
+
+  static TextStyle s16wBoldPrimary({double? tablet, double? ultraTablet}) {
+    return _baseTextStyle.merge(
+      TextStyle(
+        color: primaryColor,
         fontWeight: FontWeight.bold,
         fontSize: Dimens.d16.responsive(tablet: tablet, ultraTablet: ultraTablet),
       ),

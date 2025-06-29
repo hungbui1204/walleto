@@ -1,8 +1,26 @@
 {
     "@@locale": "en_US",
+    "//": "Common",
+    "dot" : ".",
+    "space": " ",
     "//": "Bottom tab widget",
     "home": "Home",
     "transactions": "Transactions",
     "budgets": "Budgets",
-    "account": "Account"
+    "account": "Account",
+    "//" : "Login view",
+    "welcomeToApp": "Welcome to\nWalleto",
+    "loginOrSignUp":"Sign up or login bellow to manage your wallets and transactions easily",
+    "login" : "Login",
+    "signUp" : "Sign Up",
+    "hintEmail": "Enter your email here",
+    "hintPassword":"Enter your password here",
+    "continueWithGoogle": "Continue with Google",
+    "continueWithFacebook": "Continue with Facebook",
+    "youWillAcceptOur" : "By Continuing, you will accept our",
+    "termsAndConditions" : "Terms and Conditions, Privacy Policy",
+    "or": "or",
+    "//":"Validation",
+    "emailRequired": "Email field is required",
+    "passwordRequired":"Password field is required"
 }

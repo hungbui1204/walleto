@@ -110,10 +110,10 @@ flutter_native_splash:
   android: true
   fullscreen: true
   image: assets/images/walleto_splash_screen.png
-  color: "#ffffff"
+  color: "#3e215e"
   # background_image: assets/images/.png
   android_12:
-    color: "#ffffff"
+    color: "#3e215e"
 
 # dart run intl_utils:generate
 flutter_intl:
@@ -129,10 +129,9 @@ flutter:
     - assets/images/
     - assets/icons/
 
-  # fonts:
-  #   - family: BIZUDPGothic
-  #     fonts:
-  #       - asset: assets/fonts/BIZUDPGothic-Regular.ttf
-  #         weight: 400
-  #       - asset: assets/fonts/BIZUDPGothic-Bold.ttf
-  #         weight: 800
+  fonts:
+    - family: Nunito
+      fonts:
+        - asset: assets/fonts/Nunito-Medium.ttf
+          weight: 400
+        

@@ -5,9 +5,9 @@ class AppThemes {
   const AppThemes._();
 
   static final appTheme = ThemeData(
-    primaryColor: backgroundPrimaryBlueGrey,
+    primaryColor: primaryColor,
     brightness: Brightness.light,
-    // fontFamily: FontFamily.bIZUDPGothic,
+    fontFamily: FontFamily.nunito,
     scaffoldBackgroundColor: whiteColor,
     visualDensity: VisualDensity.adaptivePlatformDensity,
     iconTheme: const IconThemeData(color: blackColor),
@@ -21,6 +21,11 @@ class AppThemes {
         TargetPlatform.android: FadeForwardsPageTransitionsBuilder(backgroundColor: whiteColor),
         TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
       },
+    ),
+    tabBarTheme: const TabBarTheme(
+      indicatorColor: primaryColor,
+      labelColor: primaryColor,
+      dividerColor: blackColor,
     ),
   );
 }
