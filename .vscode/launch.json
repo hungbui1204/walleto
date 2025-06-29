@@ -14,18 +14,6 @@
             ]
         },
         {
-            "name": "Debug Staging",
-            "request": "launch",
-            "type": "dart",
-            "program": "lib/main.dart",
-            "toolArgs": [
-                "--flavor",
-                "staging",
-                "--dart-define-from-file",
-                "env/staging.json"
-            ]
-        },
-        {
             "name": "Debug Production",
             "request": "launch",
             "type": "dart",
@@ -48,19 +36,6 @@
                 "development",
                 "--dart-define-from-file",
                 "env/development.json"
-            ]
-        },
-        {
-            "name": "Profile Staging",
-            "request": "launch",
-            "type": "dart",
-            "program": "lib/main.dart",
-            "flutterMode": "profile",
-            "toolArgs": [
-                "--flavor",
-                "staging",
-                "--dart-define-from-file",
-                "env/staging.json"
             ]
         },
         {
@@ -87,19 +62,6 @@
                 "--release",
                 "--dart-define-from-file",
                 "env/development.json"
-            ]
-        },
-        {
-            "name": "Release Staging",
-            "request": "launch",
-            "type": "dart",
-            "program": "lib/main.dart",
-            "toolArgs": [
-                "--flavor",
-                "staging",
-                "--release",
-                "--dart-define-from-file",
-                "env/staging.json"
             ]
         },
         {
