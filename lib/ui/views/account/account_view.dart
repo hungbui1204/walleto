@@ -14,10 +14,13 @@ class AccountView extends StatefulWidget {
 class _AccountViewState extends BasePageState<AccountView, AccountBloc> {
   @override
   Widget buildPage(BuildContext context) {
-    return Center(
-      child: CommonButton(
-        text: 'logout',
-        onTap: () => context.read<AppBloc>().add(const SignOutButtonPressed()),
+    return Scaffold(
+      appBar: const CommonAppBar(),
+      body: Center(
+        child: CommonButton(
+          text: 'logout',
+          onTap: () => context.read<AppBloc>().add(const SignOutButtonPressed()),
+        ),
       ),
     );
   }

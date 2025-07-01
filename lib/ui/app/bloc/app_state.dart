@@ -1,8 +1,8 @@
 part of 'app_bloc.dart';
 
 @freezed
-class AppState extends BaseBlocState with _$AppState {
+sealed class AppState extends BaseBlocState with _$AppState {
   const AppState._();
-  
-  const factory AppState() = _AppState;
+
+  const factory AppState({@Default(0) int totalBalance}) = _AppState;
 }

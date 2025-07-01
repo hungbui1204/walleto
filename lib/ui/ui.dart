@@ -27,6 +27,7 @@ export 'views/home/home_view.dart';
 export 'views/main/bloc/main_bloc.dart';
 export 'views/main/main_view.dart';
 export 'views/transactions/transactions_view.dart';
+export 'widgets/common_app_bar.dart';
 export 'widgets/common_button.dart';
 export 'widgets/common_container.dart';
 export 'widgets/common_text_field.dart';

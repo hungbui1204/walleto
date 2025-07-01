@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:walleto/ui/ui.dart';
 
 @RoutePage()
 class HomeView extends StatefulWidget {
@@ -12,9 +13,6 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Home')),
-      body: Center(child: Text('Welcome to the Home View!')),
-    );
+    return Scaffold(appBar: CommonAppBar(), body: Center(child: Text('Welcome to the Home View!')));
   }
 }

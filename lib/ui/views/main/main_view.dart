@@ -40,6 +40,10 @@ class _MainViewState extends BasePageState<MainView, MainBloc> {
             },
             items:
                 BottomTab.values.map((tab) {
+                  if (tab.index == 2) {
+                    // TODO: Add the plus icon to add a new transaction
+                  }
+
                   return BottomNavigationBarItem(
                     label: tab.title,
                     icon: tab.icon(),

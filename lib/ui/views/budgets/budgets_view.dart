@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:walleto/ui/ui.dart';
 
 @RoutePage()
 class BudgetsView extends StatefulWidget {
@@ -12,6 +13,6 @@ class BudgetsView extends StatefulWidget {
 class _BudgetsViewState extends State<BudgetsView> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(appBar: CommonAppBar(), body: Center(child: Text('Budgets!')));
   }
 }
