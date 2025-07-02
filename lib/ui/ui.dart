@@ -26,6 +26,8 @@ export 'views/budgets/budgets_view.dart';
 export 'views/home/home_view.dart';
 export 'views/main/bloc/main_bloc.dart';
 export 'views/main/main_view.dart';
+export 'views/main/widget/bottom_bar_icon_button.dart';
+export 'views/main/widget/custom_bottom_navigation_bar.dart';
 export 'views/transactions/transactions_view.dart';
 export 'widgets/common_app_bar.dart';
 export 'widgets/common_button.dart';

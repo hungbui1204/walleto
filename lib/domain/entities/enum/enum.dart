@@ -20,30 +20,34 @@ enum LanguageCode {
 enum BottomTab {
   home,
   transactions,
+  createTrans,
   budgets,
   account;
 
   Widget icon({bool selected = false}) {
     return switch (this) {
       BottomTab.home => _buildIcon(
-        selected ? Assets.icons.homeActive.path : Assets.icons.homeInactive.path,
+        iconPath: selected ? Assets.icons.homeActive.path : Assets.icons.homeInactive.path,
       ),
       BottomTab.transactions => _buildIcon(
-        selected
-            ? Assets.icons.transactionsHistoryActive.path
-            : Assets.icons.transactionsHistoryInactive.path,
+        iconPath:
+            selected
+                ? Assets.icons.transactionsHistoryActive.path
+                : Assets.icons.transactionsHistoryInactive.path,
       ),
+      BottomTab.createTrans => _buildIcon(iconPath: Assets.icons.plus.path),
       BottomTab.budgets => _buildIcon(
-        selected ? Assets.icons.currencyActive.path : Assets.icons.currencyInactive.path,
+        iconPath: selected ? Assets.icons.currencyActive.path : Assets.icons.currencyInactive.path,
+        height: Dimens.d30.responsive(),
       ),
       BottomTab.account => _buildIcon(
-        selected ? Assets.icons.accountActive.path : Assets.icons.accountInactive.path,
+        iconPath: selected ? Assets.icons.accountActive.path : Assets.icons.accountInactive.path,
       ),
     };
   }
 
-  Widget _buildIcon(String iconPath) {
-    return SvgPicture.asset(iconPath, height: Dimens.d28.responsive());
+  Widget _buildIcon({required String iconPath, double? height}) {
+    return SvgPicture.asset(iconPath, height: height ?? Dimens.d28.responsive());
   }
 
   String get title {
@@ -56,6 +60,8 @@ enum BottomTab {
         return S.current.account;
       case BottomTab.budgets:
         return S.current.budgets;
+      case BottomTab.createTrans:
+        return '';
     }
   }
 }

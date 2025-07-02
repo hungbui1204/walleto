@@ -1,6 +1,5 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:walleto/domain/domain.dart';
 import 'package:walleto/resources/resources.dart';
 import 'package:walleto/ui/ui.dart';
 
@@ -13,12 +12,24 @@ class MainView extends StatefulWidget {
 }
 
 class _MainViewState extends BasePageState<MainView, MainBloc> {
-  final _bottomBarKey = GlobalKey();
-
   @override
   Widget buildPage(BuildContext context) {
     return AutoTabsScaffold(
       routes: (navigator as AppNavigatorImpl).tabRoutes,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: FloatingActionButton(
+        shape: const CircleBorder(),
+        elevation: 0,
+        onPressed: () {
+          // TODO: Navigate to add trans screen
+        },
+        backgroundColor: primaryColor,
+        splashColor: primaryShadeColor,
+        child: Assets.icons.plus.svg(
+          width: Dimens.d28.responsive(),
+          height: Dimens.d28.responsive(),
+        ),
+      ),
       bottomNavigationBuilder: (_, tabsRouter) {
         (navigator as AppNavigatorImpl).tabsRouter = tabsRouter;
 
@@ -26,32 +37,7 @@ class _MainViewState extends BasePageState<MainView, MainBloc> {
 
         if (hideBottomNav) return const SizedBox.shrink();
 
-        return SafeArea(
-          child: BottomNavigationBar(
-            key: _bottomBarKey,
-            elevation: 0,
-            currentIndex: tabsRouter.activeIndex,
-            type: BottomNavigationBarType.fixed,
-            showSelectedLabels: false,
-            showUnselectedLabels: false,
-            backgroundColor: whiteColor,
-            onTap: (index) {
-              tabsRouter.setActiveIndex(index);
-            },
-            items:
-                BottomTab.values.map((tab) {
-                  if (tab.index == 2) {
-                    // TODO: Add the plus icon to add a new transaction
-                  }
-
-                  return BottomNavigationBarItem(
-                    label: tab.title,
-                    icon: tab.icon(),
-                    activeIcon: tab.icon(selected: !tabsRouter.canPop(ignoreChildRoutes: true)),
-                  );
-                }).toList(),
-          ),
-        );
+        return CustomBottomNavigationBar(tabsRouter: tabsRouter);
       },
     );
   }

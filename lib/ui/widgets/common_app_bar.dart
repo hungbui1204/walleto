@@ -15,7 +15,7 @@ class _CommonAppBarState extends State<CommonAppBar> {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: primaryShade1Color,
+      backgroundColor: primaryShadeColor,
       actions: [
         Assets.icons.search.svg(width: Dimens.d28.responsive(), height: Dimens.d28.responsive()),
         const SizedBox(width: Dimens.d20),
