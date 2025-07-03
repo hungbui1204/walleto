@@ -16,6 +16,7 @@ export 'api/mappers/base_success_response_mapper/json_array_response_mapper.dart
 export 'api/mappers/base_success_response_mapper/json_object_response_mapper.dart';
 export 'api/mappers/base_success_response_mapper/json_object_status_code_response_mapper.dart';
 export 'api/mappers/base_success_response_mapper/list_json_array_response_mapper.dart';
+export 'api/mappers/category_data_mapper.dart';
 export 'api/mappers/user_data_mapper.dart';
 export 'api/middleware/base_interceptor.dart';
 export 'api/middleware/connectivity_interceptor.dart';
@@ -26,6 +27,7 @@ export 'api/middleware/retry_on_error_interceptor.dart';
 export 'api/models/authentication_data.dart';
 export 'api/models/base/list_response.dart';
 export 'api/models/base/status_code_response.dart';
+export 'api/models/category_data.dart';
 export 'api/models/user_data.dart';
 export 'helper/cookie_helper.dart';
 export 'preferences/app_preferences.dart';

@@ -4,11 +4,17 @@ import 'package:walleto/domain/domain.dart';
 
 @LazySingleton(as: Repository)
 class RepositoryImpl implements Repository {
-  const RepositoryImpl(this._appApiServices, this._appPreferences, this._authenticationDataMapper);
+  const RepositoryImpl(
+    this._appApiServices,
+    this._appPreferences,
+    this._authenticationDataMapper,
+    this._categoryDataMapper,
+  );
 
   final AppApiServices _appApiServices;
   final AppPreferences _appPreferences;
   final AuthenticationDataMapper _authenticationDataMapper;
+  final CategoryDataMapper _categoryDataMapper;
 
   @override
   Future<bool> get isLoggedIn async => await _appPreferences.token != null;
@@ -57,4 +63,11 @@ class RepositoryImpl implements Repository {
 
   @override
   Future<String> get token async => await _appPreferences.token ?? '';
+
+  @override
+  Future<List<Category>> getCategories() async {
+    final response = await _appApiServices.getCategories();
+
+    return _categoryDataMapper.mapToListEntity(response);
+  }
 }

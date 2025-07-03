@@ -16,4 +16,6 @@ abstract class Repository {
   Future<Authentication> refreshAuthToken({required String refreshToken});
 
   Future<void> signOut();
+
+  Future<List<Category>> getCategories();
 }

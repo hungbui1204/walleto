@@ -38,4 +38,13 @@ class AppApiServices {
       options: Options(extra: {ServerRequestResponseConstants.revokeRefreshToken: true}),
     );
   }
+
+  Future<List<CategoryData>?> getCategories() {
+    return _serverApiClientRest.request(
+      method: RequestMethod.get,
+      path: 'categories',
+      decoder: (data) => CategoryData.fromJson(data as Map<String, dynamic>),
+      successResponseMapperType: SuccessResponseMapperType.jsonArray,
+    );
+  }
 }
