@@ -18,4 +18,8 @@ abstract class Repository {
   Future<void> signOut();
 
   Future<List<Category>> getCategories();
+
+  Future<List<Wallet>> getWallets();
+
+  Future<List<Transaction>> getTransactions();
 }

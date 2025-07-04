@@ -9,12 +9,16 @@ class RepositoryImpl implements Repository {
     this._appPreferences,
     this._authenticationDataMapper,
     this._categoryDataMapper,
+    this._walletDataMapper,
+    this._transactionDataMapper,
   );
 
   final AppApiServices _appApiServices;
   final AppPreferences _appPreferences;
   final AuthenticationDataMapper _authenticationDataMapper;
   final CategoryDataMapper _categoryDataMapper;
+  final WalletDataMapper _walletDataMapper;
+  final TransactionDataMapper _transactionDataMapper;
 
   @override
   Future<bool> get isLoggedIn async => await _appPreferences.token != null;
@@ -69,5 +73,19 @@ class RepositoryImpl implements Repository {
     final response = await _appApiServices.getCategories();
 
     return _categoryDataMapper.mapToListEntity(response);
+  }
+
+  @override
+  Future<List<Transaction>> getTransactions() async {
+    final response = await _appApiServices.getTransactions();
+
+    return _transactionDataMapper.mapToListEntity(response);
+  }
+
+  @override
+  Future<List<Wallet>> getWallets() async {
+    final response = await _appApiServices.getWallets();
+
+    return _walletDataMapper.mapToListEntity(response);
   }
 }
