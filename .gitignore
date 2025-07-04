@@ -57,3 +57,6 @@ app.*.map.json
 **/resource/gen
 pubspec_overrides.yaml
 devtools_options.yaml
+
+# supabase
+supabase/.temp/
