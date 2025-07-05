@@ -9,5 +9,6 @@ sealed class Wallet with _$Wallet {
     @Default('') String name,
     @Default(0) double amount,
     String? userId,
+    @Default('') String iconUrl,
   }) = _Wallet;
 }

@@ -13,7 +13,7 @@ class RemoteException extends AppException {
   final ServerError? serverError;
   final Object? rootException;
 
-  int get generalServerStatusCode {
+  dynamic get generalServerStatusCode {
     return serverError?.generalServerStatusCode ??
         serverError?.errors.firstOrNull?.serverStatusCode ??
         -1;

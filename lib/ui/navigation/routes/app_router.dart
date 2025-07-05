@@ -41,6 +41,11 @@ class AppRouter extends RootStackRouter {
         ),
       ],
     ),
+    AutoRoute(
+      page: CreateTransactionRoute.page,
+      path: '/create-transaction',
+      guards: [AuthRouteGuard(getIt.get<IsLoggedInUseCase>())],
+    ),
     AutoRoute(path: '/login', page: LoginRoute.page),
     RedirectRoute(path: '*', redirectTo: '/'),
   ];

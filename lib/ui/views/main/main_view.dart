@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:walleto/domain/navigation/app_route_info.dart';
 import 'package:walleto/resources/resources.dart';
 import 'package:walleto/ui/ui.dart';
 
@@ -13,6 +14,13 @@ class MainView extends StatefulWidget {
 
 class _MainViewState extends BasePageState<MainView, MainBloc> {
   @override
+  void initState() {
+    appBloc.add(const DataFetched());
+
+    super.initState();
+  }
+
+  @override
   Widget buildPage(BuildContext context) {
     return AutoTabsScaffold(
       routes: (navigator as AppNavigatorImpl).tabRoutes,
@@ -20,9 +28,7 @@ class _MainViewState extends BasePageState<MainView, MainBloc> {
       floatingActionButton: FloatingActionButton(
         shape: const CircleBorder(),
         elevation: 0,
-        onPressed: () {
-          // TODO: Navigate to add trans screen
-        },
+        onPressed: () => navigator.push(const AppRouteInfo.createTransaction()),
         backgroundColor: primaryColor,
         splashColor: primaryShadeColor,
         child: Assets.icons.plus.svg(

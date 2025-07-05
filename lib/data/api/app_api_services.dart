@@ -60,7 +60,7 @@ class AppApiServices {
   Future<List<TransactionData>?> getTransactions() {
     return _serverApiClientRest.request(
       method: RequestMethod.get,
-      path: 'transactions',
+      path: 'rpc/get_user_transactions',
       decoder: (data) => TransactionData.fromJson(data as Map<String, dynamic>),
       successResponseMapperType: SuccessResponseMapperType.jsonArray,
     );

@@ -13,6 +13,9 @@ class TransactionsView extends StatefulWidget {
 class _TransactionsViewState extends State<TransactionsView> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: CommonAppBar(), body: Center(child: Text('Transactions!')));
+    return Scaffold(
+      appBar: CommonAppBar(title: 'Transactions'),
+      body: Center(child: Text('Transactions!')),
+    );
   }
 }

@@ -13,6 +13,9 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: CommonAppBar(), body: Center(child: Text('Welcome to the Home View!')));
+    return Scaffold(
+      appBar: CommonAppBar(title: 'Home'),
+      body: Center(child: Text('Welcome to the Home View!')),
+    );
   }
 }

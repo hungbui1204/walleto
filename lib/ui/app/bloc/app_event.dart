@@ -10,3 +10,10 @@ sealed class SignOutButtonPressed extends AppEvent with _$SignOutButtonPressed {
 
   const factory SignOutButtonPressed() = _SignOutButtonPressed;
 }
+
+@freezed
+sealed class DataFetched extends AppEvent with _$DataFetched {
+  const DataFetched._();
+
+  const factory DataFetched() = _DataFetched;
+}

@@ -53,7 +53,11 @@ abstract class BasePageStateDelegate<T extends StatefulWidget, B extends BaseBlo
     return RepositoryProvider(
       create: (context) => navigator,
       child: MultiBlocProvider(
-        providers: [BlocProvider(create: (_) => bloc), BlocProvider(create: (_) => commonBloc)],
+        providers: [
+          BlocProvider.value(value: appBloc),
+          BlocProvider(create: (_) => bloc),
+          BlocProvider(create: (_) => commonBloc),
+        ],
         child: BlocListener<CommonBloc, CommonState>(
           listenWhen: (previous, current) {
             return previous.appExceptionWrapper != current.appExceptionWrapper &&

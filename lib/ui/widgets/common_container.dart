@@ -5,6 +5,8 @@ class CommonContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Container(
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(12), border: Border()),
+    );
   }
 }

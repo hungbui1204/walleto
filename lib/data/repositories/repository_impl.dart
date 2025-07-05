@@ -38,6 +38,9 @@ class RepositoryImpl implements Repository {
   Future<Authentication> refreshAuthToken({required String refreshToken}) async {
     final response = await _appApiServices.refreshToken(refreshToken: refreshToken);
 
+    // Save the new access token to secure storage
+    await _appPreferences.setToken(response?.accessToken ?? '');
+
     return _authenticationDataMapper.mapToEntity(response);
   }
 

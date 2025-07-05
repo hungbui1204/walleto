@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:walleto/data/data.dart';
 
 part 'transaction_data.freezed.dart';
 part 'transaction_data.g.dart';
@@ -11,6 +12,8 @@ sealed class TransactionData with _$TransactionData {
     @JsonKey(name: 'date') String? date,
     @JsonKey(name: 'category_id') int? categoryId,
     @JsonKey(name: 'wallet_id') int? walletId,
+    @JsonKey(name: 'category') CategoryData? category,
+    @JsonKey(name: 'wallet') WalletData? wallet,
     @JsonKey(name: 'user_id') String? userId,
     @JsonKey(name: 'note') String? note,
   }) = _TransactionData;

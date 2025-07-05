@@ -13,6 +13,6 @@ class BudgetsView extends StatefulWidget {
 class _BudgetsViewState extends State<BudgetsView> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: CommonAppBar(), body: Center(child: Text('Budgets!')));
+    return Scaffold(appBar: CommonAppBar(title: 'Budgets'), body: Center(child: Text('Budgets!')));
   }
 }

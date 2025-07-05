@@ -15,7 +15,7 @@ class _AccountViewState extends BasePageState<AccountView, AccountBloc> {
   @override
   Widget buildPage(BuildContext context) {
     return Scaffold(
-      appBar: const CommonAppBar(),
+      appBar: CommonAppBar(title: 'Account'),
       body: Center(
         child: CommonButton(
           text: 'logout',

@@ -16,7 +16,7 @@ class JsonObjectErrorResponseMapper extends BaseErrorResponseMapper<Map<String, 
     }
 
     return ServerError(
-      generalServerStatusCode: errorResponse?['code'] as int?,
+      generalServerStatusCode: errorResponse?['code'] as dynamic,
       generalServerErrorId: errorResponse?['error_code'] as String?,
       generalMessage: errorResponse?['msg'] as String?,
     );
