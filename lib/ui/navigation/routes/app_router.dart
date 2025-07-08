@@ -22,29 +22,52 @@ class AppRouter extends RootStackRouter {
         AutoRoute(
           path: 'home',
           page: BottomTabHomeRouter.page,
-          children: [AutoRoute(initial: true, page: HomeRoute.page)],
+          children: [
+            AutoRoute(initial: true, page: HomeRoute.page),
+            AutoRoute(
+              page: CreateTransactionRoute.page,
+              path: 'create-transaction',
+              meta: const {'hideBottomNav': true},
+            ),
+          ],
         ),
         AutoRoute(
           path: 'transactions',
           page: BottomTabTransactionsRouter.page,
-          children: [AutoRoute(initial: true, page: TransactionsRoute.page)],
+          children: [
+            AutoRoute(initial: true, page: TransactionsRoute.page),
+            AutoRoute(
+              page: CreateTransactionRoute.page,
+              path: 'create-transaction',
+              meta: const {'hideBottomNav': true},
+            ),
+          ],
         ),
         AutoRoute(
           path: 'budgets',
           page: BottomTabBudgetsRouter.page,
-          children: [AutoRoute(initial: true, page: BudgetsRoute.page)],
+          children: [
+            AutoRoute(initial: true, page: BudgetsRoute.page),
+            AutoRoute(
+              page: CreateTransactionRoute.page,
+              path: 'create-transaction',
+              meta: const {'hideBottomNav': true},
+            ),
+          ],
         ),
         AutoRoute(
           path: 'account',
           page: BottomTabAccountRouter.page,
-          children: [AutoRoute(initial: true, page: AccountRoute.page)],
+          children: [
+            AutoRoute(initial: true, page: AccountRoute.page),
+            AutoRoute(
+              page: CreateTransactionRoute.page,
+              path: 'create-transaction',
+              meta: const {'hideBottomNav': true},
+            ),
+          ],
         ),
       ],
-    ),
-    AutoRoute(
-      page: CreateTransactionRoute.page,
-      path: '/create-transaction',
-      guards: [AuthRouteGuard(getIt.get<IsLoggedInUseCase>())],
     ),
     AutoRoute(path: '/login', page: LoginRoute.page),
     RedirectRoute(path: '*', redirectTo: '/'),

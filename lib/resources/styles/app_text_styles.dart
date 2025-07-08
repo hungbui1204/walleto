@@ -203,6 +203,16 @@ class AppTextStyles {
     );
   }
 
+  static TextStyle s14wNormalGrey({double? tablet, double? ultraTablet}) {
+    return _baseTextStyle.merge(
+      TextStyle(
+        color: greyColor,
+        fontWeight: FontWeight.normal,
+        fontSize: Dimens.d14.responsive(tablet: tablet, ultraTablet: ultraTablet),
+      ),
+    );
+  }
+
   static TextStyle s14wNormalAlert({double? tablet, double? ultraTablet}) {
     return _baseTextStyle.merge(
       TextStyle(

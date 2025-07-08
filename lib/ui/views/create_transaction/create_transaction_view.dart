@@ -1,0 +1,208 @@
+import 'package:auto_route/auto_route.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:walleto/domain/domain.dart';
+import 'package:walleto/resources/resources.dart';
+import 'package:walleto/shared/shared.dart';
+import 'package:walleto/ui/ui.dart';
+
+@RoutePage()
+class CreateTransactionView extends StatefulWidget {
+  const CreateTransactionView({super.key});
+
+  @override
+  State<CreateTransactionView> createState() => _CreateTransactionViewState();
+}
+
+class _CreateTransactionViewState
+    extends BasePageState<CreateTransactionView, CreateTransactionBloc> {
+  final TextEditingController controller = TextEditingController();
+  final FocusNode focusNode = FocusNode();
+
+  @override
+  void initState() {
+    controller.text = bloc.state.amountInput;
+    super.initState();
+  }
+
+  @override
+  Widget buildPage(BuildContext context) {
+    return Scaffold(
+      appBar: CommonAppBar(title: S.current.addTransaction),
+      body: Stack(
+        children: [
+          Column(
+            children: [
+              SizedBox(height: Dimens.d20.responsive()),
+              _NewTransactionInfo(controller: controller, focusNode: focusNode),
+            ],
+          ),
+          BlocBuilder<CreateTransactionBloc, CreateTransactionState>(
+            buildWhen:
+                (previous, current) =>
+                    previous.showKeyboard != current.showKeyboard ||
+                    previous.currentOperation != current.currentOperation,
+            builder: (context, state) {
+              return AnimatedPositioned(
+                duration: DurationConstants.defaultAnimationDuration,
+                curve: Curves.easeOut,
+                bottom: state.showKeyboard ? 0 : -Dimens.d400.responsive(),
+                child: NumericKeyboard(
+                  onNumberKeyTap: (value) {
+                    bloc.add(CreateTransactionAmountChanged(number: value));
+                  },
+                  onOperatorKeyTap: (operation) {
+                    bloc.add(CreateTransactionOperationChanged(operation: operation));
+                  },
+                  onBackspace: () => bloc.add(const CreateTransactionBackspacePressed()),
+                  onClear: () => bloc.add(const CreateTransactionClearPressed()),
+                  onDone: () => bloc.add(const CreateTransactionKeyboardToggled(show: false)),
+                  onEqual: () => bloc.add(const CreateTransactionEqualButtonPressed()),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _NewTransactionInfo extends StatelessWidget {
+  const _NewTransactionInfo({required this.controller, required this.focusNode});
+  final TextEditingController controller;
+  final FocusNode focusNode;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(Dimens.d12.responsive()),
+        border: Border.all(),
+      ),
+      margin: EdgeInsets.symmetric(horizontal: Dimens.d16.responsive()),
+      padding: EdgeInsets.all(Dimens.d10.responsive()),
+      child: Column(
+        children: [
+          BlocBuilder<AppBloc, AppState>(
+            buildWhen: (previous, current) => previous.wallets != current.wallets,
+            builder: (context, state) {
+              if (state.wallets.isEmpty) return const SizedBox.shrink();
+
+              return GestureDetector(
+                onTap: () {
+                  // TODO: Choose wallet by dialog or navigate to wallet selection page
+                },
+                child: Row(
+                  children: [
+                    CommonCircleNetworkImage(
+                      imageUrl: state.wallets.first.iconUrl,
+                      size: Dimens.d30.responsive(),
+                      placeHolderType: ImagePlaceHolderType.wallet,
+                    ),
+                    SizedBox(width: Dimens.d16.responsive()),
+                    Text(state.wallets.first.name, style: AppTextStyles.s14wNormalBlack()),
+                    const Spacer(),
+                    Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      color: blackColor,
+                      size: Dimens.d18.responsive(),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+          const CommonLine(),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(S.current.amount, style: AppTextStyles.s12wNormalBlack()),
+              Row(
+                children: [
+                  Expanded(child: _AmountInput(controller: controller, focusNode: focusNode)),
+                  const CommonCurrencyContainer(),
+                ],
+              ),
+            ],
+          ),
+          const CommonLine(),
+          BlocBuilder<CreateTransactionBloc, CreateTransactionState>(
+            buildWhen: (previous, current) => previous.selectedCategory != current.selectedCategory,
+            builder: (context, state) {
+              return GestureDetector(
+                onTap: () {
+                  // TODO: Choose category by dialog or navigate to category selection page
+                },
+                child: Row(
+                  children: [
+                    CommonCircleNetworkImage(
+                      imageUrl: state.selectedCategory?.iconUrl,
+                      size: Dimens.d30.responsive(),
+                    ),
+                    SizedBox(width: Dimens.d16.responsive()),
+                    if (state.selectedCategory != null) ...[
+                      Text(state.selectedCategory!.name, style: AppTextStyles.s14wNormalBlack()),
+                    ] else ...[
+                      Text(S.current.selectCategory, style: AppTextStyles.s14wNormalGrey()),
+                    ],
+                    const Spacer(),
+                    Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      color: blackColor,
+                      size: Dimens.d18.responsive(),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+          const CommonLine(),
+        ],
+      ),
+    );
+  }
+}
+
+class _AmountInput extends StatelessWidget {
+  const _AmountInput({required this.controller, required this.focusNode});
+
+  final TextEditingController controller;
+  final FocusNode focusNode;
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<CreateTransactionBloc, CreateTransactionState>(
+      buildWhen: (previous, current) {
+        return previous.amountInput != current.amountInput ||
+            previous.amountError != current.amountError;
+      },
+      builder: (context, state) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextField(
+              cursorHeight: Dimens.d28.responsive(),
+              readOnly: true,
+              showCursor: true,
+              style: AppTextStyles.s28wNormalBlack(),
+              decoration: const InputDecoration(
+                contentPadding: EdgeInsets.zero,
+                border: InputBorder.none,
+                counter: SizedBox.shrink(),
+              ),
+              onTap: () {
+                context.read<CreateTransactionBloc>().add(
+                  const CreateTransactionKeyboardToggled(show: true),
+                );
+              },
+              controller: controller..text = state.amountInput,
+            ),
+            if (state.amountError.isNotEmpty)
+              Text(state.amountError, style: AppTextStyles.s14wNormalAlert()),
+          ],
+        );
+      },
+    );
+  }
+}

@@ -67,3 +67,35 @@ enum BottomTab {
 }
 
 enum InvalidTokenHandlerStatus { emptyToken, tokenRefreshed, refreshTokenExpired }
+
+enum ImagePlaceHolderType { category, wallet }
+
+enum OperationType {
+  addition,
+  subtraction,
+  multiplication,
+  division;
+
+  static OperationType fromString(String operation) {
+    if (operation == S.current.addition) {
+      return OperationType.addition;
+    } else if (operation == S.current.subtraction) {
+      return OperationType.subtraction;
+    } else if (operation == S.current.multiplication) {
+      return OperationType.multiplication;
+    } else if (operation == S.current.division) {
+      return OperationType.division;
+    } else {
+      throw ArgumentError('Invalid operation type: $operation');
+    }
+  }
+
+  String get symbol {
+    return switch (this) {
+      OperationType.addition => S.current.addition,
+      OperationType.subtraction => S.current.subtraction,
+      OperationType.multiplication => S.current.multiplication,
+      OperationType.division => S.current.division,
+    };
+  }
+}

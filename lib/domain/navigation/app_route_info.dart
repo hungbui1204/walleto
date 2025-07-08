@@ -14,4 +14,6 @@ sealed class AppRouteInfo with _$AppRouteInfo {
   const factory AppRouteInfo.budgets() = Budgets;
 
   const factory AppRouteInfo.account() = Account;
+
+  const factory AppRouteInfo.createTransaction() = CreateTransaction;
 }

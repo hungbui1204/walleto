@@ -8,4 +8,5 @@ class DurationConstants {
   static const defaultErrorVisibleDuration = Duration(seconds: 3);
   static const durationUntilShowUpgraderPopupAgain = Duration(days: 3);
   static const defaultAnimationScrollDuration = Duration(milliseconds: 400);
+  static const defaultAnimationDuration = Duration(milliseconds: 300);
 }

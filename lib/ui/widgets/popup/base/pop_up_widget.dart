@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:walleto/di/di.dart';
-import 'package:walleto/domain/domain.dart';
 import 'package:walleto/resources/resources.dart';
 import 'package:walleto/shared/shared.dart';
-import 'package:walleto/ui/ui.dart';
 
 class PopUpWidget extends StatelessWidget {
   const PopUpWidget({
@@ -60,12 +57,11 @@ class PopUpWidget extends StatelessWidget {
                 : content,
       ),
       actions: [
-        action ??
-        SizedBox.shrink()
-            // ButtonWidget(
-            //   text: S.current.ok,
-            //   onPressed: () => getIt.get<AppNavigator>().pop(useRootNavigator: true),
-            // ),
+        action ?? SizedBox.shrink(),
+        // ButtonWidget(
+        //   text: S.current.ok,
+        //   onPressed: () => getIt.get<AppNavigator>().pop(useRootNavigator: true),
+        // ),
       ],
     );
   }

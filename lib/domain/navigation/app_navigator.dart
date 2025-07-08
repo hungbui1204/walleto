@@ -81,6 +81,4 @@ abstract class AppNavigator {
   void showErrorSnackBar(String message, {Duration? duration});
 
   void showSuccessSnackBar(String message, {Duration? duration});
-
-
 }

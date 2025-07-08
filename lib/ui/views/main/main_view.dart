@@ -22,24 +22,27 @@ class _MainViewState extends BasePageState<MainView, MainBloc> {
 
   @override
   Widget buildPage(BuildContext context) {
+    final hideBottomNav = context.topRouteMatch.meta['hideBottomNav'] == true;
+
     return AutoTabsScaffold(
       routes: (navigator as AppNavigatorImpl).tabRoutes,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: FloatingActionButton(
-        shape: const CircleBorder(),
-        elevation: 0,
-        onPressed: () => navigator.push(const AppRouteInfo.createTransaction()),
-        backgroundColor: primaryColor,
-        splashColor: primaryShadeColor,
-        child: Assets.icons.plus.svg(
-          width: Dimens.d28.responsive(),
-          height: Dimens.d28.responsive(),
-        ),
-      ),
+      floatingActionButton:
+          hideBottomNav
+              ? null
+              : FloatingActionButton(
+                shape: const CircleBorder(),
+                elevation: 0,
+                onPressed: () async => await navigator.push(const AppRouteInfo.createTransaction()),
+                backgroundColor: primaryColor,
+                splashColor: primaryShadeColor,
+                child: Assets.icons.plus.svg(
+                  width: Dimens.d28.responsive(),
+                  height: Dimens.d28.responsive(),
+                ),
+              ),
       bottomNavigationBuilder: (_, tabsRouter) {
         (navigator as AppNavigatorImpl).tabsRouter = tabsRouter;
-
-        final hideBottomNav = context.topRouteMatch.meta['hideBottomNav'] == true;
 
         if (hideBottomNav) return const SizedBox.shrink();
 
