@@ -6,6 +6,7 @@ export 'constants/duration_constants.dart';
 export 'constants/env_constants.dart';
 export 'constants/error_code_constants.dart';
 export 'constants/format/date_time_format_constants.dart';
+export 'constants/format/number_format_constants.dart';
 export 'constants/image_constants.dart';
 export 'constants/locale_constants.dart';
 export 'constants/regex_constants.dart';

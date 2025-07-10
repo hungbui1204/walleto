@@ -12,5 +12,6 @@ sealed class CreateTransactionState extends BaseBlocState with _$CreateTransacti
     @Default('') String amountError,
     Category? selectedCategory,
     DateTime? selectedDate,
+    @Default('') String note,
   }) = _CreateTransactionState;
 }

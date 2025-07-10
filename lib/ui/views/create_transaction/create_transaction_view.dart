@@ -21,6 +21,7 @@ class _CreateTransactionViewState
 
   @override
   void initState() {
+    bloc.add(const CreateTransactionViewInitiated());
     controller.text = bloc.state.amountInput;
     super.initState();
   }
@@ -139,6 +140,7 @@ class _NewTransactionInfo extends StatelessWidget {
                     CommonCircleNetworkImage(
                       imageUrl: state.selectedCategory?.iconUrl,
                       size: Dimens.d30.responsive(),
+                      backgroundColor: secondaryColor,
                     ),
                     SizedBox(width: Dimens.d16.responsive()),
                     if (state.selectedCategory != null) ...[
@@ -158,6 +160,69 @@ class _NewTransactionInfo extends StatelessWidget {
             },
           ),
           const CommonLine(),
+          BlocBuilder<CreateTransactionBloc, CreateTransactionState>(
+            buildWhen: (previous, current) => previous.note != current.note,
+            builder: (context, state) {
+              return GestureDetector(
+                onTap: () {
+                  // TODO: Navigate to note input page or dialog
+                },
+                child: Row(
+                  children: [
+                    Assets.icons.note.svg(
+                      width: Dimens.d30.responsive(),
+                      height: Dimens.d30.responsive(),
+                    ),
+                    SizedBox(width: Dimens.d16.responsive()),
+                    if (state.note.isNotEmpty) ...[
+                      Text(state.note, style: AppTextStyles.s14wNormalBlack()),
+                    ] else ...[
+                      Text(S.current.note, style: AppTextStyles.s14wNormalGrey()),
+                    ],
+                    const Spacer(),
+                    Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      color: blackColor,
+                      size: Dimens.d18.responsive(),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+          const CommonLine(),
+          BlocBuilder<CreateTransactionBloc, CreateTransactionState>(
+            buildWhen: (previous, current) => previous.selectedDate != current.selectedDate,
+            builder: (context, state) {
+              return GestureDetector(
+                onTap: () {
+                  // TODO: Navigate to datetime picker or dialog
+                },
+                child: Row(
+                  children: [
+                    Assets.icons.calendar.svg(
+                      width: Dimens.d30.responsive(),
+                      height: Dimens.d30.responsive(),
+                    ),
+                    SizedBox(width: Dimens.d16.responsive()),
+                    if (state.selectedDate != null)
+                      Text(
+                        state.selectedDate!.toStringWithFormat(
+                          DateTimeFormatConstants.commonDateFormat,
+                        ),
+                        style: AppTextStyles.s14wNormalBlack(),
+                      ),
+                    const Spacer(),
+                    Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      color: blackColor,
+                      size: Dimens.d18.responsive(),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
         ],
       ),
     );

@@ -1,3 +1,5 @@
+import 'package:walleto/shared/shared.dart';
+
 extension NumberExtensions on int {
   DateTime? toDateTime() {
     if (this <= 0) return null;
@@ -8,5 +10,9 @@ extension NumberExtensions on int {
     }
 
     return dateTime;
+  }
+
+  String toFormattedString() {
+    return NumberFormatConstants.amountFormat.format(this);
   }
 }

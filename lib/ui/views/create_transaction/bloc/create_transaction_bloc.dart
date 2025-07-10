@@ -54,10 +54,17 @@ class CreateTransactionBloc extends BaseBloc<CreateTransactionEvent, CreateTrans
       if (event.number.contains('0')) return;
     }
 
-    // Block input if the length is greater than max length
-    if ((newAmount + event.number).length > AppConstants.maxTransactionAmountLength) return;
+    newAmount += event.number;
 
-    emit(state.copyWith(amountInput: newAmount + event.number, amountError: ''));
+    // Block input if the length is greater than max length
+    if (newAmount.countAllNumbersLength() > AppConstants.maxTransactionAmountLength) return;
+
+    emit(
+      state.copyWith(
+        amountInput: newAmount.toFormattedNumberString(NumberFormatConstants.amountFormat),
+        amountError: '',
+      ),
+    );
   }
 
   void _onCreateTransactionEqualButtonPressed(
@@ -90,37 +97,37 @@ class CreateTransactionBloc extends BaseBloc<CreateTransactionEvent, CreateTrans
         case OperationType.addition:
           amount = state.amountInput
               .split(OperationType.addition.symbol)
-              .map(int.parse)
+              .map((e) => e.toInt())
               .reduce((a, b) => a + b);
           break;
         case OperationType.subtraction:
           amount = state.amountInput
               .split(OperationType.subtraction.symbol)
-              .map(int.parse)
+              .map((e) => e.toInt())
               .reduce((a, b) => a - b);
           break;
         case OperationType.multiplication:
           amount = state.amountInput
               .split(OperationType.multiplication.symbol)
-              .map(int.parse)
+              .map((e) => e.toInt())
               .reduce((a, b) => a * b);
           break;
         case OperationType.division:
           amount = state.amountInput
               .split(OperationType.division.symbol)
-              .map(int.parse)
+              .map((e) => e.toInt())
               .reduce((a, b) => a ~/ b);
           break;
       }
 
       // 4. Check the amount's length
-      if (amount.toString().length > AppConstants.maxTransactionAmountLength) {
+      if (amount.toString().countAllNumbersLength() > AppConstants.maxTransactionAmountLength) {
         emit(state.copyWith(amountError: S.current.amountTooLarge));
 
         return;
       }
 
-      emit(state.copyWith(amountInput: amount.toString(), currentOperation: null));
+      emit(state.copyWith(amountInput: amount.toFormattedString(), currentOperation: null));
     }
   }
 
@@ -153,7 +160,12 @@ class CreateTransactionBloc extends BaseBloc<CreateTransactionEvent, CreateTrans
         emit(state.copyWith(currentOperation: null));
       }
 
-      emit(state.copyWith(amountInput: newAmount, amountError: ''));
+      emit(
+        state.copyWith(
+          amountInput: newAmount.toFormattedNumberString(NumberFormatConstants.amountFormat),
+          amountError: '',
+        ),
+      );
     }
   }
 

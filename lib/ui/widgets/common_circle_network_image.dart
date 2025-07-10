@@ -11,12 +11,14 @@ class CommonCircleNetworkImage extends StatelessWidget {
     this.size,
     this.fit = BoxFit.cover,
     this.placeHolderType = ImagePlaceHolderType.category,
+    this.backgroundColor = primaryColor,
   });
 
   final String? imageUrl;
   final double? size;
   final BoxFit fit;
   final ImagePlaceHolderType placeHolderType;
+  final Color backgroundColor;
 
   bool _isValidUrl(String? url) {
     if (url == null || url.isEmpty) return false;
@@ -86,7 +88,7 @@ class CommonCircleNetworkImage extends StatelessWidget {
           height: size == null ? Dimens.d36.responsive() : size! + Dimens.d6.responsive(),
           width: size == null ? Dimens.d36.responsive() : size! + Dimens.d6.responsive(),
           decoration: BoxDecoration(
-            color: primaryColor,
+            color: backgroundColor,
             shape: BoxShape.circle,
             border: Border.all(),
           ),
