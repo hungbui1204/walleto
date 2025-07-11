@@ -20,13 +20,32 @@ class CreateTransactionBloc extends BaseBloc<CreateTransactionEvent, CreateTrans
     on<CreateTransactionBackspacePressed>(_onCreateTransactionBackspacePressed);
     on<CreateTransactionClearPressed>(_onCreateTransactionClearPressed);
     on<CreateTransactionEqualButtonPressed>(_onCreateTransactionEqualButtonPressed);
+    on<CreateTransactionConfirmButtonPressed>(_onCreateTransactionConfirmButtonPressed);
+    on<CreateTransactionCategorySelected>(_onCreateTransactionCategorySelected);
+  }
+
+  bool _confirmButtonEnableCheck({
+    required String amountInput,
+    required Category? selectedCategory,
+    required DateTime? selectedDate,
+    required String amountError,
+  }) {
+    // Check if the amount input is not empty
+    // Check if a category is selected
+    // Check if a date is selected
+    // Check if there are no errors in the amount input
+    // Check if the amount input does not contain any operators
+    return amountInput.isNotEmpty &&
+        selectedCategory != null &&
+        selectedDate != null &&
+        amountError.isEmpty &&
+        !AppUtils.isContainOperator(amountInput);
   }
 
   void _onCreateTransactionViewInitiated(
     CreateTransactionViewInitiated event,
     Emitter<CreateTransactionState> emit,
   ) {
-    // Initialize categories or any other necessary data here
     final now = DateTime.now();
 
     emit(state.copyWith(selectedDate: now));
@@ -63,6 +82,12 @@ class CreateTransactionBloc extends BaseBloc<CreateTransactionEvent, CreateTrans
       state.copyWith(
         amountInput: newAmount.toFormattedNumberString(NumberFormatConstants.amountFormat),
         amountError: '',
+        confirmButtonEnable: _confirmButtonEnableCheck(
+          amountInput: newAmount,
+          selectedCategory: state.selectedCategory,
+          selectedDate: state.selectedDate,
+          amountError: '',
+        ),
       ),
     );
   }
@@ -164,6 +189,12 @@ class CreateTransactionBloc extends BaseBloc<CreateTransactionEvent, CreateTrans
         state.copyWith(
           amountInput: newAmount.toFormattedNumberString(NumberFormatConstants.amountFormat),
           amountError: '',
+          confirmButtonEnable: _confirmButtonEnableCheck(
+            amountInput: newAmount,
+            selectedCategory: state.selectedCategory,
+            selectedDate: state.selectedDate,
+            amountError: '',
+          ),
         ),
       );
     }
@@ -173,6 +204,41 @@ class CreateTransactionBloc extends BaseBloc<CreateTransactionEvent, CreateTrans
     CreateTransactionClearPressed event,
     Emitter<CreateTransactionState> emit,
   ) {
-    emit(state.copyWith(amountInput: '', currentOperation: null, amountError: ''));
+    emit(
+      state.copyWith(
+        amountInput: '',
+        currentOperation: null,
+        amountError: '',
+        confirmButtonEnable: false,
+      ),
+    );
+  }
+
+  void _onCreateTransactionCategorySelected(
+    CreateTransactionCategorySelected event,
+    Emitter<CreateTransactionState> emit,
+  ) {
+    emit(
+      state.copyWith(
+        selectedCategory: event.category,
+        confirmButtonEnable: _confirmButtonEnableCheck(
+          amountInput: state.amountInput,
+          selectedCategory: event.category,
+          selectedDate: state.selectedDate,
+          amountError: state.amountError,
+        ),
+      ),
+    );
+  }
+
+  Future<void> _onCreateTransactionConfirmButtonPressed(
+    CreateTransactionConfirmButtonPressed event,
+    Emitter<CreateTransactionState> emit,
+  ) async {
+    await runBlocCatching(
+      action: () async {
+        // TODO: Implement the logic to confirm the transaction
+      },
+    );
   }
 }

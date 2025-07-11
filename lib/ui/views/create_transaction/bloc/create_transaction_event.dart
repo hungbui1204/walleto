@@ -62,3 +62,20 @@ sealed class CreateTransactionClearPressed extends CreateTransactionEvent
 
   const factory CreateTransactionClearPressed() = _CreateTransactionClearPressed;
 }
+
+@freezed
+sealed class CreateTransactionCategorySelected extends CreateTransactionEvent
+    with _$CreateTransactionCategorySelected {
+  const CreateTransactionCategorySelected._();
+
+  const factory CreateTransactionCategorySelected({required Category category}) =
+      _CreateTransactionCategorySelected;
+}
+
+@freezed
+sealed class CreateTransactionConfirmButtonPressed extends CreateTransactionEvent
+    with _$CreateTransactionConfirmButtonPressed {
+  const CreateTransactionConfirmButtonPressed._();
+
+  const factory CreateTransactionConfirmButtonPressed() = _CreateTransactionConfirmButtonPressed;
+}

@@ -11,5 +11,6 @@ sealed class Category with _$Category {
     @Default('') String iconUrl,
     @Default(false) bool isParent,
     int? parentId,
+    @Default(<Category>[]) List<Category> children,
   }) = _Category;
 }

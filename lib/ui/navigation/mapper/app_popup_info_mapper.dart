@@ -24,6 +24,9 @@ class AppPopupInfoMapper extends BasePopupInfoMapper {
       ),
       Error(:final message, :final actions) => ErrorPopup(message: message, errorAction: actions),
       Warning(:final content) => WarningPopup(content: content),
+      SelectCategory(:final onCategorySelected) => SelectCategoryPopup(
+        onCategorySelected: onCategorySelected,
+      ),
     };
   }
 }

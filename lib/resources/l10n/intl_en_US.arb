@@ -64,5 +64,9 @@
     "selectCategory" : "Select Category",
     "save" : "Save",
     "//": "currency type",
-    "vnd": "VND"
+    "vnd": "VND",
+    "//":"Select category bottom sheet",
+    "newCategory" : "New Category",
+    "expense" : "Expense",
+    "income" : "Income"
 }

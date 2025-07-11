@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:walleto/domain/domain.dart';
 import 'package:walleto/shared/shared.dart';
 
 part 'app_popup_info.freezed.dart';
@@ -29,4 +30,7 @@ sealed class AppPopupInfo with _$AppPopupInfo {
       Error;
 
   const factory AppPopupInfo.warning({Widget? icon, required Widget content}) = Warning;
+
+  const factory AppPopupInfo.selectCategory({required void Function(Category) onCategorySelected}) =
+      SelectCategory;
 }

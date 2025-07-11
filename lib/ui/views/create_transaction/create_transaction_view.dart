@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:walleto/di/di.dart';
 import 'package:walleto/domain/domain.dart';
 import 'package:walleto/resources/resources.dart';
 import 'package:walleto/shared/shared.dart';
@@ -32,11 +33,29 @@ class _CreateTransactionViewState
       appBar: CommonAppBar(title: S.current.addTransaction),
       body: Stack(
         children: [
-          Column(
-            children: [
-              SizedBox(height: Dimens.d20.responsive()),
-              _NewTransactionInfo(controller: controller, focusNode: focusNode),
-            ],
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: Dimens.d16.responsive()),
+            child: Column(
+              children: [
+                SizedBox(height: Dimens.d20.responsive()),
+                _NewTransactionInfo(controller: controller, focusNode: focusNode),
+                SizedBox(height: Dimens.d20.responsive()),
+                BlocBuilder<CreateTransactionBloc, CreateTransactionState>(
+                  buildWhen:
+                      (previous, current) =>
+                          previous.confirmButtonEnable != current.confirmButtonEnable,
+                  builder: (context, state) {
+                    return CommonButton(
+                      text: S.current.save,
+                      onTap:
+                          state.confirmButtonEnable
+                              ? () => bloc.add(const CreateTransactionConfirmButtonPressed())
+                              : null,
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
           BlocBuilder<CreateTransactionBloc, CreateTransactionState>(
             buildWhen:
@@ -81,7 +100,6 @@ class _NewTransactionInfo extends StatelessWidget {
         borderRadius: BorderRadius.circular(Dimens.d12.responsive()),
         border: Border.all(),
       ),
-      margin: EdgeInsets.symmetric(horizontal: Dimens.d16.responsive()),
       padding: EdgeInsets.all(Dimens.d10.responsive()),
       child: Column(
         children: [
@@ -133,7 +151,15 @@ class _NewTransactionInfo extends StatelessWidget {
             builder: (context, state) {
               return GestureDetector(
                 onTap: () {
-                  // TODO: Choose category by dialog or navigate to category selection page
+                  getIt.get<AppNavigator>().showDialog(
+                    AppPopupInfo.selectCategory(
+                      onCategorySelected: (category) {
+                        context.read<CreateTransactionBloc>().add(
+                          CreateTransactionCategorySelected(category: category),
+                        );
+                      },
+                    ),
+                  );
                 },
                 child: Row(
                   children: [

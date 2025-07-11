@@ -4,7 +4,6 @@ part of 'create_transaction_bloc.dart';
 sealed class CreateTransactionState extends BaseBlocState with _$CreateTransactionState {
   const CreateTransactionState._();
   const factory CreateTransactionState({
-    @Default(<Category>[]) List<Category> categories,
     @Default(false) bool showKeyboard,
     @Default('0') String amountInput,
     @Default(0) int amount,
@@ -13,5 +12,6 @@ sealed class CreateTransactionState extends BaseBlocState with _$CreateTransacti
     Category? selectedCategory,
     DateTime? selectedDate,
     @Default('') String note,
+    @Default(false) bool confirmButtonEnable,
   }) = _CreateTransactionState;
 }

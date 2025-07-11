@@ -10,14 +10,12 @@ part 'app_bloc.freezed.dart';
 
 @lazySingleton
 class AppBloc extends BaseBloc<AppEvent, AppState> {
-  AppBloc(this._signOutUseCase, this._getCategoriesUseCase, this._getWalletsUseCase)
-    : super(const AppState()) {
+  AppBloc(this._signOutUseCase, this._getWalletsUseCase) : super(const AppState()) {
     on<SignOutButtonPressed>(_onSignOutButtonPressed);
     on<DataFetched>(_onDataFetched);
   }
 
   final SignOutUseCase _signOutUseCase;
-  final GetCategoriesUseCase _getCategoriesUseCase;
   final GetWalletsUseCase _getWalletsUseCase;
 
   Future<void> _onSignOutButtonPressed(SignOutButtonPressed event, Emitter<AppState> emit) async {
@@ -31,10 +29,9 @@ class AppBloc extends BaseBloc<AppEvent, AppState> {
   Future<void> _onDataFetched(DataFetched event, Emitter<AppState> emit) async {
     await runBlocCatching(
       action: () async {
-        final categories = await _getCategoriesUseCase.execute(const GetCategoriesInput());
         final wallets = await _getWalletsUseCase.execute(const GetWalletsInput());
 
-        emit(state.copyWith(wallets: wallets.wallets, categories: categories.categories));
+        emit(state.copyWith(wallets: wallets.wallets));
       },
     );
   }
