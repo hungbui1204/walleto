@@ -23,8 +23,21 @@ class SelectCategoryBloc extends BaseBloc<SelectCategoryEvent, SelectCategorySta
     await runBlocCatching(
       action: () async {
         final categoriesOutput = await _getCategoriesUseCase.execute(const GetCategoriesInput());
+        final expenseCategories =
+            categoriesOutput.categories.where((element) {
+              return element.type == CategoryType.expense;
+            }).toList();
+        final incomeCategories =
+            categoriesOutput.categories.where((element) {
+              return element.type == CategoryType.income;
+            }).toList();
 
-        emit(state.copyWith(parentCategories: _buildCategoryTree(categoriesOutput.categories)));
+        emit(
+          state.copyWith(
+            parentExpenseCategories: _buildCategoryTree(expenseCategories),
+            parentIncomeCategories: _buildCategoryTree(incomeCategories),
+          ),
+        );
       },
     );
   }

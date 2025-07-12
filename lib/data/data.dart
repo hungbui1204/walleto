@@ -17,6 +17,7 @@ export 'api/mappers/base_success_response_mapper/json_object_response_mapper.dar
 export 'api/mappers/base_success_response_mapper/json_object_status_code_response_mapper.dart';
 export 'api/mappers/base_success_response_mapper/list_json_array_response_mapper.dart';
 export 'api/mappers/category_data_mapper.dart';
+export 'api/mappers/enum/category_type_data_mapper.dart';
 export 'api/mappers/transaction_data_mapper.dart';
 export 'api/mappers/user_data_mapper.dart';
 export 'api/mappers/wallet_data_mapper.dart';

@@ -1,17 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:walleto/resources/resources.dart';
-import 'package:walleto/resources/styles/app_colors.dart';
 
 class CommonLine extends StatelessWidget {
-  const CommonLine({super.key, this.thickness = 1, this.color = blackColor, this.margin});
+  const CommonLine({
+    super.key,
+    this.thickness = 1,
+    this.color = blackColor,
+    this.margin,
+    this.padding,
+  });
 
   final double thickness;
   final Color color;
   final EdgeInsetsGeometry? margin;
+  final EdgeInsetsGeometry? padding;
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: padding,
       margin: margin ?? EdgeInsets.symmetric(vertical: Dimens.d12.responsive()),
       height: thickness,
       width: double.infinity,

@@ -71,7 +71,7 @@ class _LoginViewState extends BasePageState<LoginView, LoginBloc>
                   controller: _tabController,
                   indicatorAnimation: TabIndicatorAnimation.elastic,
                   tabs: [
-                    Container(
+                    Padding(
                       padding: EdgeInsets.all(Dimens.d12.responsive()),
                       child: Text(
                         S.current.login,

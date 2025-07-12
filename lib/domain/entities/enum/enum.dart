@@ -99,3 +99,15 @@ enum OperationType {
     };
   }
 }
+
+enum CategoryType {
+  expense,
+  income;
+
+  String get name {
+    return switch (this) {
+      CategoryType.expense => 'expense',
+      CategoryType.income => 'income',
+    };
+  }
+}

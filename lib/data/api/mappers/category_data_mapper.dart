@@ -4,7 +4,9 @@ import 'package:walleto/domain/domain.dart';
 
 @injectable
 class CategoryDataMapper extends BaseDataMapper<CategoryData, Category> with DataMapperMixin {
-  const CategoryDataMapper();
+  const CategoryDataMapper(this._categoryTypeDataMapper);
+
+  final CategoryTypeDataMapper _categoryTypeDataMapper;
 
   @override
   Category mapToEntity(CategoryData? data) {
@@ -15,6 +17,7 @@ class CategoryDataMapper extends BaseDataMapper<CategoryData, Category> with Dat
       isParent: data?.isParent ?? false,
       parentId: data?.parentId,
       userId: data?.userId,
+      type: _categoryTypeDataMapper.mapToEntity(data?.type),
     );
   }
 
@@ -27,6 +30,7 @@ class CategoryDataMapper extends BaseDataMapper<CategoryData, Category> with Dat
       isParent: entity.isParent,
       parentId: entity.parentId,
       userId: entity.userId,
+      type: _categoryTypeDataMapper.mapToData(entity.type),
     );
   }
 }
