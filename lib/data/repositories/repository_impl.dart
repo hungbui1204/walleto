@@ -30,6 +30,7 @@ class RepositoryImpl implements Repository {
     // Save the authentication data to secure storage
     await _appPreferences.setToken(response?.accessToken ?? '');
     await _appPreferences.setRefreshToken(response?.refreshToken ?? '');
+    await _appPreferences.setUserId(response?.user?.id ?? '');
 
     return _authenticationDataMapper.mapToEntity(response);
   }
@@ -90,5 +91,13 @@ class RepositoryImpl implements Repository {
     final response = await _appApiServices.getWallets();
 
     return _walletDataMapper.mapToListEntity(response);
+  }
+
+  @override
+  Future<void> createTransaction(Transaction transaction) async {
+    final userId = await _appPreferences.userId ?? '';
+    final transactionData = _transactionDataMapper.mapToData(transaction.copyWith(userId: userId));
+
+    await _appApiServices.createTransaction(transactionData);
   }
 }

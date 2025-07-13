@@ -13,5 +13,6 @@ sealed class CreateTransactionState extends BaseBlocState with _$CreateTransacti
     DateTime? selectedDate,
     @Default('') String note,
     @Default(false) bool confirmButtonEnable,
+    Wallet? selectedWallet,
   }) = _CreateTransactionState;
 }

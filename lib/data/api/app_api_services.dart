@@ -65,4 +65,19 @@ class AppApiServices {
       successResponseMapperType: SuccessResponseMapperType.jsonArray,
     );
   }
+
+  Future<void> createTransaction(TransactionData transaction) {
+    return _serverApiClientRest.request(
+      method: RequestMethod.post,
+      path: 'transactions',
+      body: {
+        'amount': transaction.amount,
+        'category_id': transaction.categoryId,
+        'created_at': transaction.date,
+        'note': transaction.note,
+        'user_id': transaction.userId,
+        'wallet_id': transaction.walletId,
+      },
+    );
+  }
 }

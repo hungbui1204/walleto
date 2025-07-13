@@ -16,6 +16,7 @@ export 'usecases/base/io/base_input.dart';
 export 'usecases/base/io/base_output.dart';
 export 'usecases/base/io/load_more_output.dart';
 export 'usecases/base/sync/base_sync_use_case.dart';
+export 'usecases/create_transaction_use_case.dart';
 export 'usecases/get_categories_use_case.dart';
 export 'usecases/get_transactions_use_case.dart';
 export 'usecases/get_wallets_use_case.dart';

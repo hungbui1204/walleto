@@ -12,7 +12,7 @@ part 'create_transaction_bloc.freezed.dart';
 
 @injectable
 class CreateTransactionBloc extends BaseBloc<CreateTransactionEvent, CreateTransactionState> {
-  CreateTransactionBloc() : super(const CreateTransactionState()) {
+  CreateTransactionBloc(this._createTransactionUseCase) : super(const CreateTransactionState()) {
     on<CreateTransactionViewInitiated>(_onCreateTransactionViewInitiated);
     on<CreateTransactionKeyboardToggled>(_onCreateTransactionKeyboardToggled);
     on<CreateTransactionAmountChanged>(_onCreateTransactionAmountChanged);
@@ -23,6 +23,8 @@ class CreateTransactionBloc extends BaseBloc<CreateTransactionEvent, CreateTrans
     on<CreateTransactionConfirmButtonPressed>(_onCreateTransactionConfirmButtonPressed);
     on<CreateTransactionCategorySelected>(_onCreateTransactionCategorySelected);
   }
+
+  final CreateTransactionUseCase _createTransactionUseCase;
 
   bool _confirmButtonEnableCheck({
     required String amountInput,
@@ -47,8 +49,9 @@ class CreateTransactionBloc extends BaseBloc<CreateTransactionEvent, CreateTrans
     Emitter<CreateTransactionState> emit,
   ) {
     final now = DateTime.now();
+    final defaultWallet = appBloc.state.wallets.first;
 
-    emit(state.copyWith(selectedDate: now));
+    emit(state.copyWith(selectedDate: now, selectedWallet: defaultWallet));
   }
 
   void _onCreateTransactionKeyboardToggled(
@@ -152,7 +155,18 @@ class CreateTransactionBloc extends BaseBloc<CreateTransactionEvent, CreateTrans
         return;
       }
 
-      emit(state.copyWith(amountInput: amount.toFormattedString(), currentOperation: null));
+      emit(
+        state.copyWith(
+          amountInput: amount.toFormattedString(),
+          currentOperation: null,
+          confirmButtonEnable: _confirmButtonEnableCheck(
+            amountInput: amount.toFormattedString(),
+            selectedCategory: state.selectedCategory,
+            selectedDate: state.selectedDate,
+            amountError: state.amountError,
+          ),
+        ),
+      );
     }
   }
 
@@ -170,7 +184,18 @@ class CreateTransactionBloc extends BaseBloc<CreateTransactionEvent, CreateTrans
     String newAmount = state.amountInput + event.operation;
 
     final operation = OperationType.fromString(event.operation);
-    emit(state.copyWith(currentOperation: operation, amountInput: newAmount));
+    emit(
+      state.copyWith(
+        currentOperation: operation,
+        amountInput: newAmount,
+        confirmButtonEnable: _confirmButtonEnableCheck(
+          amountInput: newAmount,
+          selectedCategory: state.selectedCategory,
+          selectedDate: state.selectedDate,
+          amountError: state.amountError,
+        ),
+      ),
+    );
   }
 
   void _onCreateTransactionBackspacePressed(
@@ -237,7 +262,19 @@ class CreateTransactionBloc extends BaseBloc<CreateTransactionEvent, CreateTrans
   ) async {
     await runBlocCatching(
       action: () async {
-        // TODO: Implement the logic to confirm the transaction
+        final newTransaction = Transaction(
+          amount: state.amountInput.toInt().toDouble(),
+          categoryId: state.selectedCategory?.id ?? 0,
+          date: state.selectedDate!.toIso8601String(),
+          note: state.note,
+          walletId: state.selectedWallet?.id ?? 0,
+        );
+
+        await _createTransactionUseCase.execute(
+          CreateTransactionInput(transaction: newTransaction),
+        );
+
+        navigator.pop();
       },
     );
   }

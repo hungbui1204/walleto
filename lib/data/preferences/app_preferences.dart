@@ -33,4 +33,12 @@ class AppPreferences {
       _secureStorage.delete(key: SharedPreferenceKeys.refreshToken),
     ]);
   }
+
+  Future<void> setUserId(String userId) async {
+    await _secureStorage.write(key: SharedPreferenceKeys.userId, value: userId);
+  }
+
+  Future<String?> get userId async {
+    return await _secureStorage.read(key: SharedPreferenceKeys.userId);
+  }
 }

@@ -22,4 +22,6 @@ abstract class Repository {
   Future<List<Wallet>> getWallets();
 
   Future<List<Transaction>> getTransactions();
+
+  Future<void> createTransaction(Transaction transaction);
 }

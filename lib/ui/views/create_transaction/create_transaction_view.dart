@@ -103,10 +103,10 @@ class _NewTransactionInfo extends StatelessWidget {
       padding: EdgeInsets.all(Dimens.d10.responsive()),
       child: Column(
         children: [
-          BlocBuilder<AppBloc, AppState>(
-            buildWhen: (previous, current) => previous.wallets != current.wallets,
+          BlocBuilder<CreateTransactionBloc, CreateTransactionState>(
+            buildWhen: (previous, current) => previous.selectedWallet != current.selectedWallet,
             builder: (context, state) {
-              if (state.wallets.isEmpty) return const SizedBox.shrink();
+              if (state.selectedWallet == null) return const SizedBox.shrink();
 
               return GestureDetector(
                 onTap: () {
@@ -115,12 +115,12 @@ class _NewTransactionInfo extends StatelessWidget {
                 child: Row(
                   children: [
                     CommonCircleNetworkImage(
-                      imageUrl: state.wallets.first.iconUrl,
+                      imageUrl: state.selectedWallet!.iconUrl,
                       size: Dimens.d30.responsive(),
                       placeHolderType: ImagePlaceHolderType.wallet,
                     ),
                     SizedBox(width: Dimens.d16.responsive()),
-                    Text(state.wallets.first.name, style: AppTextStyles.s14wNormalBlack()),
+                    Text(state.selectedWallet!.name, style: AppTextStyles.s14wNormalBlack()),
                     const Spacer(),
                     Icon(
                       Icons.arrow_forward_ios_rounded,
