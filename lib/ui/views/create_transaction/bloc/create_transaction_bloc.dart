@@ -32,12 +32,13 @@ class CreateTransactionBloc extends BaseBloc<CreateTransactionEvent, CreateTrans
     required DateTime? selectedDate,
     required String amountError,
   }) {
-    // Check if the amount input is not empty
+    // Check if the amount input is not empty and equals '0'
     // Check if a category is selected
     // Check if a date is selected
     // Check if there are no errors in the amount input
     // Check if the amount input does not contain any operators
     return amountInput.isNotEmpty &&
+        amountInput != '0' &&
         selectedCategory != null &&
         selectedDate != null &&
         amountError.isEmpty &&
@@ -265,7 +266,7 @@ class CreateTransactionBloc extends BaseBloc<CreateTransactionEvent, CreateTrans
         final newTransaction = Transaction(
           amount: state.amountInput.toInt().toDouble(),
           categoryId: state.selectedCategory?.id ?? 0,
-          date: state.selectedDate!.toIso8601String(),
+          createdAt: state.selectedDate,
           note: state.note,
           walletId: state.selectedWallet?.id ?? 0,
         );
