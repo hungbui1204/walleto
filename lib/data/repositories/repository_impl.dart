@@ -80,8 +80,18 @@ class RepositoryImpl implements Repository {
   }
 
   @override
-  Future<List<Transaction>> getTransactions() async {
-    final response = await _appApiServices.getTransactions();
+  Future<List<Transaction>> getTransactions({
+    int? targetMonth,
+    int? targetYear,
+    DateTime? fromDate,
+    DateTime? toDate,
+  }) async {
+    final response = await _appApiServices.getTransactions(
+      targetMonth: targetMonth,
+      targetYear: targetYear,
+      fromDate: fromDate,
+      toDate: toDate,
+    );
 
     return _transactionDataMapper.mapToListEntity(response);
   }

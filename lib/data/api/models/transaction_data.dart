@@ -9,7 +9,7 @@ sealed class TransactionData with _$TransactionData {
   const factory TransactionData({
     @JsonKey(name: 'id') int? id,
     @JsonKey(name: 'amount') double? amount,
-    @JsonKey(name: 'date') String? date,
+    @JsonKey(name: 'created_at') String? createdAt,
     @JsonKey(name: 'category_id') int? categoryId,
     @JsonKey(name: 'wallet_id') int? walletId,
     @JsonKey(name: 'category') CategoryData? category,

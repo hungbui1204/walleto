@@ -1,6 +1,7 @@
 export 'entities/authentication.dart';
 export 'entities/base/paged_list.dart';
 export 'entities/category.dart';
+export 'entities/day_transactions.dart';
 export 'entities/enum/enum.dart';
 export 'entities/transaction.dart';
 export 'entities/user.dart';

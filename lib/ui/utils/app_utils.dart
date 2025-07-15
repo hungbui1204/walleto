@@ -1,4 +1,5 @@
 import 'package:walleto/domain/domain.dart';
+import 'package:walleto/resources/resources.dart';
 import 'package:walleto/shared/shared.dart';
 
 class AppUtils {
@@ -14,5 +15,36 @@ class AppUtils {
     return OperationType.values.map((e) => e.symbol).toList().any((element) {
       return input.contains(element);
     });
+  }
+
+  static String mapWeekDayToString(int weekDay) {
+    return switch (weekDay) {
+      DateTime.monday => S.current.monday,
+      DateTime.tuesday => S.current.tuesday,
+      DateTime.wednesday => S.current.wednesday,
+      DateTime.thursday => S.current.thursday,
+      DateTime.friday => S.current.friday,
+      DateTime.saturday => S.current.saturday,
+      DateTime.sunday => S.current.sunday,
+      _ => '',
+    };
+  }
+
+  static String mapMonthToString(int month) {
+    return switch (month) {
+      DateTime.january => S.current.january,
+      DateTime.february => S.current.february,
+      DateTime.march => S.current.march,
+      DateTime.april => S.current.april,
+      DateTime.may => S.current.may,
+      DateTime.june => S.current.june,
+      DateTime.july => S.current.july,
+      DateTime.august => S.current.august,
+      DateTime.september => S.current.september,
+      DateTime.october => S.current.october,
+      DateTime.november => S.current.november,
+      DateTime.december => S.current.december,
+      _ => '',
+    };
   }
 }

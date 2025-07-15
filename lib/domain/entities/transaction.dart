@@ -8,7 +8,7 @@ sealed class Transaction with _$Transaction {
   const factory Transaction({
     @Default(0) int id,
     @Default(0) double amount,
-    @Default('') String date,
+    DateTime? createdAt,
     @Default(0) int categoryId,
     @Default(0) int walletId,
     @Default(Category()) Category category,

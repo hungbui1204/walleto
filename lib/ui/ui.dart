@@ -33,6 +33,7 @@ export 'views/main/widget/bottom_bar_icon_button.dart';
 export 'views/main/widget/custom_bottom_navigation_bar.dart';
 export 'views/select_category/bloc/select_category_bloc.dart';
 export 'views/select_category/select_category_popup.dart';
+export 'views/transactions/bloc/transactions_bloc.dart';
 export 'views/transactions/transactions_view.dart';
 export 'widgets/common_app_bar.dart';
 export 'widgets/common_button.dart';

@@ -57,10 +57,21 @@ class AppApiServices {
     );
   }
 
-  Future<List<TransactionData>?> getTransactions() {
+  Future<List<TransactionData>?> getTransactions({
+    int? targetMonth,
+    int? targetYear,
+    DateTime? fromDate,
+    DateTime? toDate,
+  }) {
     return _serverApiClientRest.request(
-      method: RequestMethod.get,
+      method: RequestMethod.post,
       path: 'rpc/get_user_transactions',
+      body: {
+        if (targetMonth != null) 'target_month': targetMonth,
+        if (targetYear != null) 'target_year': targetYear,
+        if (fromDate != null) 'from_date': fromDate.toIso8601String(),
+        if (toDate != null) 'to_date': toDate.toIso8601String(),
+      },
       decoder: (data) => TransactionData.fromJson(data as Map<String, dynamic>),
       successResponseMapperType: SuccessResponseMapperType.jsonArray,
     );
@@ -73,7 +84,7 @@ class AppApiServices {
       body: {
         'amount': transaction.amount,
         'category_id': transaction.categoryId,
-        'created_at': transaction.date,
+        'created_at': transaction.createdAt,
         'note': transaction.note,
         'user_id': transaction.userId,
         'wallet_id': transaction.walletId,

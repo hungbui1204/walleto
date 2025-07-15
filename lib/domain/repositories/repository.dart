@@ -21,7 +21,12 @@ abstract class Repository {
 
   Future<List<Wallet>> getWallets();
 
-  Future<List<Transaction>> getTransactions();
+  Future<List<Transaction>> getTransactions({
+    int? targetMonth,
+    int? targetYear,
+    DateTime? fromDate,
+    DateTime? toDate,
+  });
 
   Future<void> createTransaction(Transaction transaction);
 }

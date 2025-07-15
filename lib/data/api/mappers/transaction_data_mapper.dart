@@ -1,6 +1,7 @@
 import 'package:injectable/injectable.dart';
 import 'package:walleto/data/data.dart';
 import 'package:walleto/domain/domain.dart';
+import 'package:walleto/shared/shared.dart';
 
 @injectable
 class TransactionDataMapper extends BaseDataMapper<TransactionData, Transaction>
@@ -15,7 +16,7 @@ class TransactionDataMapper extends BaseDataMapper<TransactionData, Transaction>
     return Transaction(
       id: data?.id ?? 0,
       amount: data?.amount ?? 0.0,
-      date: data?.date ?? '',
+      createdAt: data?.createdAt?.toDateTime(),
       category: _categoryDataMapper.mapToEntity(data?.category),
       wallet: _walletDataMapper.mapToEntity(data?.wallet),
       categoryId: data?.categoryId ?? 0,
@@ -30,7 +31,7 @@ class TransactionDataMapper extends BaseDataMapper<TransactionData, Transaction>
     return TransactionData(
       id: entity.id,
       amount: entity.amount,
-      date: entity.date,
+      createdAt: entity.createdAt?.toIso8601String(),
       categoryId: entity.categoryId,
       walletId: entity.walletId,
       userId: entity.userId,

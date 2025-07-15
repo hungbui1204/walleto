@@ -14,7 +14,12 @@ class GetTransactionsUseCase
   @protected
   @override
   Future<GetTransactionsOutput> buildUseCase(GetTransactionsInput input) async {
-    final response = await _repository.getTransactions();
+    final response = await _repository.getTransactions(
+      targetMonth: input.targetMonth,
+      targetYear: input.targetYear,
+      fromDate: input.fromDate,
+      toDate: input.toDate,
+    );
 
     return GetTransactionsOutput(transactions: response);
   }
@@ -24,7 +29,12 @@ class GetTransactionsUseCase
 sealed class GetTransactionsInput extends BaseInput with _$GetTransactionsInput {
   const GetTransactionsInput._();
 
-  const factory GetTransactionsInput() = _GetTransactionsInput;
+  const factory GetTransactionsInput({
+    int? targetMonth,
+    int? targetYear,
+    DateTime? fromDate,
+    DateTime? toDate,
+  }) = _GetTransactionsInput;
 }
 
 @freezed
