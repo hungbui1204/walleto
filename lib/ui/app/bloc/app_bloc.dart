@@ -13,6 +13,7 @@ class AppBloc extends BaseBloc<AppEvent, AppState> {
   AppBloc(this._signOutUseCase, this._getWalletsUseCase) : super(const AppState()) {
     on<SignOutButtonPressed>(_onSignOutButtonPressed);
     on<DataFetched>(_onDataFetched);
+    on<TransactionsReloaded>(_onTransactionsReloaded);
   }
 
   final SignOutUseCase _signOutUseCase;
@@ -34,5 +35,9 @@ class AppBloc extends BaseBloc<AppEvent, AppState> {
         emit(state.copyWith(wallets: wallets.wallets));
       },
     );
+  }
+
+  void _onTransactionsReloaded(TransactionsReloaded event, Emitter<AppState> emit) {
+    emit(state.copyWith(needReloadTransactions: event.needReloadTransactions));
   }
 }

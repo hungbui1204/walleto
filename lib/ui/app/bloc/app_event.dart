@@ -17,3 +17,11 @@ sealed class DataFetched extends AppEvent with _$DataFetched {
 
   const factory DataFetched() = _DataFetched;
 }
+
+@freezed
+sealed class TransactionsReloaded extends AppEvent with _$TransactionsReloaded {
+  const TransactionsReloaded._();
+
+  const factory TransactionsReloaded({required bool needReloadTransactions}) =
+      _TransactionsReloaded;
+}

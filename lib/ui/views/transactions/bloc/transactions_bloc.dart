@@ -27,7 +27,8 @@ class TransactionsBloc extends BaseBloc<TransactionsEvent, TransactionsState> {
           const GetTransactionsInput(),
         );
 
-        final allDayTransactions = _getDayTransFromTrans(transactionsOutput.transactions);
+        final allDayTransactions =
+            _getDayTransFromTrans(transactionsOutput.transactions).reversed.toList();
 
         emit(state.copyWith(allDayTransactions: allDayTransactions));
       },
@@ -59,7 +60,7 @@ class TransactionsBloc extends BaseBloc<TransactionsEvent, TransactionsState> {
       });
 
       return DayTransactions(
-        date: e.key.toDateTime(),
+        date: e.key.toDateTime(format: DateTimeFormatConstants.commonDateFormat),
         transactions: e.value,
         totalAmount: totalAmount,
       );

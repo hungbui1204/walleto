@@ -275,6 +275,8 @@ class CreateTransactionBloc extends BaseBloc<CreateTransactionEvent, CreateTrans
           CreateTransactionInput(transaction: newTransaction),
         );
 
+        // Refresh transactions after creating a new transaction
+        appBloc.add(const TransactionsReloaded(needReloadTransactions: true));
         navigator.pop();
       },
     );

@@ -6,15 +6,16 @@ extension StringExtensions on String {
 
   String toHex() => toUtf8().map((e) => e.toRadixString(16)).toList().join();
 
-  DateTime? toDateTime() {
+  DateTime? toDateTime({String? format}) {
     if (isEmpty) return null;
 
-    final dateTime = DateTime.tryParse(this);
-    if (dateTime == null) {
-      throw FormatException('Invalid date time format: $this');
+    if (format != null && format.isNotEmpty) {
+      final dateFormat = DateFormat(format);
+
+      return dateFormat.tryParse(this);
     }
 
-    return dateTime;
+    return DateTime.tryParse(this);
   }
 
   int toInt() {
