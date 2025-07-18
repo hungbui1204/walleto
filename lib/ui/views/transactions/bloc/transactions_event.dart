@@ -11,3 +11,11 @@ sealed class TransactionsViewInitialized extends TransactionsEvent
 
   const factory TransactionsViewInitialized() = _TransactionsViewInitialized;
 }
+
+@freezed
+sealed class TransactionsMonthSelected extends TransactionsEvent with _$TransactionsMonthSelected {
+  const TransactionsMonthSelected._();
+
+  const factory TransactionsMonthSelected({required DateTime selectedDate}) =
+      _TransactionsMonthSelected;
+}

@@ -88,5 +88,10 @@
     "september": "September",
     "october": "October",
     "november": "November",
-    "december": "December"
+    "december": "December",
+    "//": "Transactions view",
+    "selectMonth" : "Select month:",
+    "selectDateRange" : "Select date range",
+    "//" : "Select Month Popup",
+    "selectMonthTitle" : "Select Month"
 }

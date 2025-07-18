@@ -1,8 +1,10 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:walleto/di/di.dart';
 import 'package:walleto/domain/domain.dart';
 import 'package:walleto/resources/resources.dart';
+import 'package:walleto/shared/shared.dart';
 import 'package:walleto/ui/ui.dart';
 
 @RoutePage()
@@ -42,10 +44,15 @@ class _TransactionsViewState extends BasePageState<TransactionsView, Transaction
     return Scaffold(
       appBar: CommonAppBar(title: S.current.transactions),
       body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: Dimens.d16.responsive()),
+        padding: EdgeInsets.symmetric(
+          horizontal: Dimens.d16.responsive(),
+          vertical: Dimens.d10.responsive(),
+        ),
         child: SingleChildScrollView(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const _MonthYearPickerWidget(),
               SizedBox(height: Dimens.d20.responsive()),
               BlocBuilder<TransactionsBloc, TransactionsState>(
                 buildWhen: (previous, current) {
@@ -149,6 +156,71 @@ class _TransactionInfoWidget extends StatelessWidget {
         Text(transaction.category.name),
         const Spacer(),
         Text('${transaction.amount.toInt()}'),
+      ],
+    );
+  }
+}
+
+class _MonthYearPickerWidget extends StatelessWidget {
+  const _MonthYearPickerWidget();
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Text(S.current.selectMonth, style: AppTextStyles.s16wBoldBlack()),
+        SizedBox(width: Dimens.d10.responsive()),
+        BlocBuilder<TransactionsBloc, TransactionsState>(
+          buildWhen: (previous, current) {
+            return previous.selectedDate != current.selectedDate;
+          },
+          builder: (context, state) {
+            if (state.selectedDate == null) return const SizedBox.shrink();
+
+            return InkWell(
+              borderRadius: BorderRadius.circular(Dimens.d8.responsive()),
+              onTap: () async {
+                await getIt.get<AppNavigator>().showDialog(
+                  AppPopupInfo.selectMonth(
+                    firstYear: AppConstants.firstYear,
+                    lastYear: AppConstants.lastYear,
+                    onMonthSelected: (selectedDate) {
+                      context.read<TransactionsBloc>().add(
+                        TransactionsMonthSelected(selectedDate: selectedDate),
+                      );
+                    },
+                    initialDate: state.selectedDate,
+                  ),
+                );
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: Dimens.d10.responsive(),
+                  vertical: Dimens.d4.responsive(),
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(Dimens.d8.responsive()),
+                  border: Border.all(),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Assets.icons.calendar.svg(
+                      width: Dimens.d30.responsive(),
+                      height: Dimens.d30.responsive(),
+                    ),
+                    SizedBox(width: Dimens.d10.responsive()),
+                    Text(
+                      state.selectedDate!.toStringWithFormat(
+                        DateTimeFormatConstants.monthYearFormat,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
       ],
     );
   }

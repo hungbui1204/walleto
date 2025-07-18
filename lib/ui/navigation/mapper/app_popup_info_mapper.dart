@@ -27,6 +27,14 @@ class AppPopupInfoMapper extends BasePopupInfoMapper {
       SelectCategory(:final onCategorySelected) => SelectCategoryPopup(
         onCategorySelected: onCategorySelected,
       ),
+
+      SelectMonth(:final firstYear, :final lastYear, :final onMonthSelected, :final initialDate) =>
+        SelectMonthPopup(
+          firstYear: firstYear,
+          lastYear: lastYear,
+          onMonthSelected: onMonthSelected,
+          initialDate: initialDate,
+        ),
     };
   }
 }

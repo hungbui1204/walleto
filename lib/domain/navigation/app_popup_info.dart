@@ -33,4 +33,11 @@ sealed class AppPopupInfo with _$AppPopupInfo {
 
   const factory AppPopupInfo.selectCategory({required void Function(Category) onCategorySelected}) =
       SelectCategory;
+
+  const factory AppPopupInfo.selectMonth({
+    required int firstYear,
+    required int lastYear,
+    required void Function(DateTime) onMonthSelected,
+    required DateTime? initialDate,
+  }) = SelectMonth;
 }

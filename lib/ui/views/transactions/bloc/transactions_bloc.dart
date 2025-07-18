@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
@@ -13,6 +14,7 @@ part 'transactions_bloc.freezed.dart';
 class TransactionsBloc extends BaseBloc<TransactionsEvent, TransactionsState> {
   TransactionsBloc(this._getTransactionsUseCase) : super(const TransactionsState()) {
     on<TransactionsViewInitialized>(_onTransactionsViewInitialized);
+    on<TransactionsMonthSelected>(_onTransactionsMonthSelected);
   }
 
   final GetTransactionsUseCase _getTransactionsUseCase;
@@ -23,8 +25,13 @@ class TransactionsBloc extends BaseBloc<TransactionsEvent, TransactionsState> {
   ) async {
     await runBlocCatching(
       action: () async {
+        final now = DateTime.now();
+
+        emit(state.copyWith(selectedDate: now));
+
+        // Fetch transactions for the current month and year
         final transactionsOutput = await _getTransactionsUseCase.execute(
-          const GetTransactionsInput(),
+          GetTransactionsInput(targetMonth: now.month, targetYear: now.year),
         );
 
         final allDayTransactions =
@@ -65,5 +72,28 @@ class TransactionsBloc extends BaseBloc<TransactionsEvent, TransactionsState> {
         totalAmount: totalAmount,
       );
     }).toList();
+  }
+
+  Future<void> _onTransactionsMonthSelected(
+    TransactionsMonthSelected event,
+    Emitter<TransactionsState> emit,
+  ) async {
+    await runBlocCatching(
+      action: () async {
+        final transactionsOutput = await _getTransactionsUseCase.execute(
+          GetTransactionsInput(
+            targetMonth: event.selectedDate.month,
+            targetYear: event.selectedDate.year,
+          ),
+        );
+
+        final allDayTransactions =
+            _getDayTransFromTrans(transactionsOutput.transactions).reversed.toList();
+
+        emit(
+          state.copyWith(allDayTransactions: allDayTransactions, selectedDate: event.selectedDate),
+        );
+      },
+    );
   }
 }

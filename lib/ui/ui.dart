@@ -48,4 +48,5 @@ export 'widgets/popup/complete_popup.dart';
 export 'widgets/popup/confirm_popup.dart';
 export 'widgets/popup/error_popup.dart';
 export 'widgets/popup/error_with_retry_popup.dart';
+export 'widgets/popup/select_month_popup.dart';
 export 'widgets/popup/warning_popup.dart';
