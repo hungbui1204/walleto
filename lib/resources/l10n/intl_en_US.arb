@@ -93,5 +93,9 @@
     "filterByMonth" : "Filter by month",
     "filterByDateRange" : "Filter by date range",
     "//" : "Select Month Popup",
-    "selectMonthTitle" : "Select Month"
+    "selectMonthTitle" : "Select Month",
+    "//": "Home view",
+    "allWallets": "All Wallets",
+    "totalBalance": "Total Balance",
+    "seeAll": "See all"
 }

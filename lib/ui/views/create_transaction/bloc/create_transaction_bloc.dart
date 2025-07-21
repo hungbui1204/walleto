@@ -158,10 +158,10 @@ class CreateTransactionBloc extends BaseBloc<CreateTransactionEvent, CreateTrans
 
       emit(
         state.copyWith(
-          amountInput: amount.toFormattedString(),
+          amountInput: amount.toStringWithFormat(NumberFormatConstants.amountFormat),
           currentOperation: null,
           confirmButtonEnable: _confirmButtonEnableCheck(
-            amountInput: amount.toFormattedString(),
+            amountInput: amount.toStringWithFormat(NumberFormatConstants.amountFormat),
             selectedCategory: state.selectedCategory,
             selectedDate: state.selectedDate,
             amountError: state.amountError,
@@ -276,7 +276,9 @@ class CreateTransactionBloc extends BaseBloc<CreateTransactionEvent, CreateTrans
         );
 
         // Refresh transactions after creating a new transaction
+        // Refresh the wallets to update the balance
         appBloc.add(const TransactionsReloaded(needReloadTransactions: true));
+        appBloc.add(const DataFetched());
         navigator.pop();
       },
     );
