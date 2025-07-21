@@ -1,4 +1,4 @@
-import 'package:walleto/shared/shared.dart';
+import 'package:intl/intl.dart';
 
 extension NumberExtensions on int {
   DateTime? toDateTime() {
@@ -12,7 +12,7 @@ extension NumberExtensions on int {
     return dateTime;
   }
 
-  String toFormattedString() {
-    return NumberFormatConstants.amountFormat.format(this);
+  String toStringWithFormat(NumberFormat format) {
+    return format.format(this);
   }
 }

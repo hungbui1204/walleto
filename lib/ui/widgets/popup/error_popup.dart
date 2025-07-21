@@ -1,18 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:walleto/di/di.dart';
-import 'package:walleto/domain/domain.dart';
 import 'package:walleto/resources/resources.dart';
 import 'package:walleto/ui/ui.dart';
 
 class ErrorPopup extends PopUpWidget {
-  const ErrorPopup({
-    super.key,
-    required super.message,
-    this.errorAction,
-  }) : super(
-          icon: const _ErrorIcon(),
-          action: errorAction ?? const _ErrorButton(),
-        );
+  const ErrorPopup({super.key, required super.message, this.errorAction})
+    : super(icon: const _ErrorIcon(), action: errorAction ?? const _ErrorButton());
 
   final Widget? errorAction;
 }
@@ -48,7 +40,7 @@ class _ErrorButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox.shrink();
+    return const SizedBox.shrink();
     // ButtonWidget(
     //   width: Dimens.d160.responsive(),
     //   text: S.current.dismiss,

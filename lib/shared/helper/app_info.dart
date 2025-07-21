@@ -1,6 +1,6 @@
 import 'package:injectable/injectable.dart';
-import 'package:walleto/shared/shared.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:walleto/shared/shared.dart';
 
 @LazySingleton()
 class AppInfo {

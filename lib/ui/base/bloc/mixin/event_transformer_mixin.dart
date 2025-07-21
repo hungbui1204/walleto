@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:walleto/shared/shared.dart';
 import 'package:walleto/ui/ui.dart';
-import 'package:rxdart/rxdart.dart';
 
 mixin EventTransformerMixin<E extends BaseBlocEvent, S extends BaseBlocState>
     on BaseBlocDelegate<E, S> {

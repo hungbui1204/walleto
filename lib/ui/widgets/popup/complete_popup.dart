@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:walleto/di/di.dart';
-import 'package:walleto/domain/domain.dart';
 import 'package:walleto/resources/resources.dart';
 import 'package:walleto/ui/ui.dart';
 
@@ -39,7 +37,7 @@ class _DismissButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox.shrink();
+    return const SizedBox.shrink();
     // ButtonWidget(
     //   text: S.current.dismiss,
     //   isShowEndIcon: false,

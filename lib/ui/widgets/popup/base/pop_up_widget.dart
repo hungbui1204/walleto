@@ -57,7 +57,7 @@ class PopUpWidget extends StatelessWidget {
                 : content,
       ),
       actions: [
-        action ?? SizedBox.shrink(),
+        action ?? const SizedBox.shrink(),
         // ButtonWidget(
         //   text: S.current.ok,
         //   onPressed: () => getIt.get<AppNavigator>().pop(useRootNavigator: true),

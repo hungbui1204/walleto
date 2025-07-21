@@ -1,20 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:walleto/di/di.dart';
-import 'package:walleto/domain/domain.dart';
 import 'package:walleto/resources/resources.dart';
 import 'package:walleto/shared/shared.dart';
 import 'package:walleto/ui/ui.dart';
 
 class ErrorWithRetryPopup extends PopUpWidget {
-  ErrorWithRetryPopup({
-    super.key,
-    required super.message,
-    this.errorAction,
-    this.onRetryPressed,
-  }) : super(
-          icon: const _ErrorIcon(),
-          action: errorAction ?? _ErrorButton(onRetryPressed: onRetryPressed),
-        );
+  ErrorWithRetryPopup({super.key, required super.message, this.errorAction, this.onRetryPressed})
+    : super(
+        icon: const _ErrorIcon(),
+        action: errorAction ?? _ErrorButton(onRetryPressed: onRetryPressed),
+      );
 
   final Widget? errorAction;
   final Func0<void>? onRetryPressed;
