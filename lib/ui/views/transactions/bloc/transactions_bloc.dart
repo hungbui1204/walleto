@@ -29,7 +29,7 @@ class TransactionsBloc extends BaseBloc<TransactionsEvent, TransactionsState> {
       action: () async {
         final now = DateTime.now();
 
-        emit(state.copyWith(selectedDate: now));
+        emit(state.copyWith(selectedDate: now, selectedDateRange: null));
 
         // Fetch transactions for the current month and year
         final transactionsOutput = await _getTransactionsUseCase.execute(
@@ -139,7 +139,10 @@ class TransactionsBloc extends BaseBloc<TransactionsEvent, TransactionsState> {
         }
 
         final transactionsOutput = await _getTransactionsUseCase.execute(
-          GetTransactionsInput(fromDate: dateRangePicked.start, toDate: dateRangePicked.end),
+          GetTransactionsInput(
+            fromDate: dateRangePicked.start,
+            toDate: dateRangePicked.end.add(const Duration(days: 1)),
+          ),
         );
 
         final allDayTransactions =
