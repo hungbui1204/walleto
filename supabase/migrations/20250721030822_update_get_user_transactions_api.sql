@@ -13,6 +13,7 @@ as $$
     'amount', t.amount,
     'note', t.note,
     'created_at', t.created_at,
+    -- Adding type field to the JSON object
     'type', t.type,
     'wallet', json_build_object(
       'id', w.id,
