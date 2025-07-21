@@ -6,10 +6,15 @@ import 'package:walleto/shared/shared.dart';
 @injectable
 class TransactionDataMapper extends BaseDataMapper<TransactionData, Transaction>
     with DataMapperMixin {
-  const TransactionDataMapper(this._categoryDataMapper, this._walletDataMapper);
+  const TransactionDataMapper(
+    this._categoryDataMapper,
+    this._walletDataMapper,
+    this._categoryTypeDataMapper,
+  );
 
   final CategoryDataMapper _categoryDataMapper;
   final WalletDataMapper _walletDataMapper;
+  final CategoryTypeDataMapper _categoryTypeDataMapper;
 
   @override
   Transaction mapToEntity(TransactionData? data) {
@@ -23,6 +28,7 @@ class TransactionDataMapper extends BaseDataMapper<TransactionData, Transaction>
       walletId: data?.walletId ?? 0,
       userId: data?.userId,
       note: data?.note ?? '',
+      type: _categoryTypeDataMapper.mapToEntity(data?.type),
     );
   }
 
