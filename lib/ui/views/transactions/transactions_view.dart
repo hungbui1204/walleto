@@ -44,15 +44,13 @@ class _TransactionsViewState extends BasePageState<TransactionsView, Transaction
     return Scaffold(
       appBar: CommonAppBar(title: S.current.transactions),
       body: Padding(
-        padding: EdgeInsets.symmetric(
-          horizontal: Dimens.d16.responsive(),
-          vertical: Dimens.d10.responsive(),
-        ),
+        padding: EdgeInsets.symmetric(horizontal: Dimens.d16.responsive()),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const _MonthYearPickerWidget(),
+              SizedBox(height: Dimens.d10.responsive()),
+              const _DatePickerDropDownWidget(),
               SizedBox(height: Dimens.d20.responsive()),
               BlocBuilder<TransactionsBloc, TransactionsState>(
                 buildWhen: (previous, current) {
@@ -91,53 +89,50 @@ class _DayTransactionsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(Dimens.d12.responsive()),
-        border: Border.all(),
-      ),
-      padding: EdgeInsets.all(Dimens.d10.responsive()),
-      child: Column(
-        children: [
-          if (dayTransactions.date != null)
-            Row(
-              children: [
-                Text('${dayTransactions.date!.day}', style: AppTextStyles.s28wBoldBlack()),
-                SizedBox(width: Dimens.d10.responsive()),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(AppUtils.mapWeekDayToString(dayTransactions.date!.weekday)),
-                    Row(
-                      children: [
-                        Text(AppUtils.mapMonthToString(dayTransactions.date!.month)),
-                        SizedBox(width: Dimens.d4.responsive()),
-                        Text('${dayTransactions.date!.year}'),
-                      ],
-                    ),
-                  ],
-                ),
-                const Spacer(),
-                Text('${dayTransactions.totalAmount.toInt()}'),
-              ],
-            ),
-          SizedBox(height: Dimens.d10.responsive()),
-          if (dayTransactions.transactions.isNotEmpty)
-            ListView.separated(
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              itemCount: dayTransactions.transactions.length,
-              itemBuilder: (context, index) {
-                final transaction = dayTransactions.transactions[index];
+    return CommonContainer(
+      titleWidget:
+          dayTransactions.date == null
+              ? null
+              : Row(
+                children: [
+                  Text('${dayTransactions.date!.day}', style: AppTextStyles.s28wBoldBlack()),
+                  SizedBox(width: Dimens.d10.responsive()),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(AppUtils.mapWeekDayToString(dayTransactions.date!.weekday)),
+                      Row(
+                        children: [
+                          Text(AppUtils.mapMonthToString(dayTransactions.date!.month)),
+                          SizedBox(width: Dimens.d4.responsive()),
+                          Text('${dayTransactions.date!.year}'),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const Spacer(),
+                  Text(
+                    dayTransactions.totalAmount.toInt().toFormattedString(),
+                    style: AppTextStyles.s16wNormalBlack(),
+                  ),
+                ],
+              ),
+      contentWidget:
+          dayTransactions.transactions.isEmpty
+              ? null
+              : ListView.separated(
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: dayTransactions.transactions.length,
+                itemBuilder: (context, index) {
+                  final transaction = dayTransactions.transactions[index];
 
-                return _TransactionInfoWidget(transaction);
-              },
-              separatorBuilder: (context, index) {
-                return const CommonLine();
-              },
-            ),
-        ],
-      ),
+                  return _TransactionInfoWidget(transaction);
+                },
+                separatorBuilder: (context, index) {
+                  return const CommonLine(color: greyColor);
+                },
+              ),
     );
   }
 }
@@ -155,73 +150,160 @@ class _TransactionInfoWidget extends StatelessWidget {
         SizedBox(width: Dimens.d10.responsive()),
         Text(transaction.category.name),
         const Spacer(),
-        Text('${transaction.amount.toInt()}'),
+        Text(
+          transaction.amount.toInt().toFormattedString(),
+          style:
+              transaction.type == CategoryType.expense
+                  ? AppTextStyles.s14wNormalAlert()
+                  : AppTextStyles.s14wNormalBlack(),
+        ),
       ],
     );
   }
 }
 
-class _MonthYearPickerWidget extends StatelessWidget {
-  const _MonthYearPickerWidget();
+class _DatePickerDropDownWidget extends StatelessWidget {
+  const _DatePickerDropDownWidget();
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Text(S.current.selectMonth, style: AppTextStyles.s16wBoldBlack()),
-        SizedBox(width: Dimens.d10.responsive()),
-        BlocBuilder<TransactionsBloc, TransactionsState>(
-          buildWhen: (previous, current) {
-            return previous.selectedDate != current.selectedDate;
-          },
-          builder: (context, state) {
-            if (state.selectedDate == null) return const SizedBox.shrink();
-
-            return InkWell(
-              borderRadius: BorderRadius.circular(Dimens.d8.responsive()),
-              onTap: () async {
-                await getIt.get<AppNavigator>().showDialog(
-                  AppPopupInfo.selectMonth(
-                    firstYear: AppConstants.firstYear,
-                    lastYear: AppConstants.lastYear,
-                    onMonthSelected: (selectedDate) {
-                      context.read<TransactionsBloc>().add(
-                        TransactionsMonthSelected(selectedDate: selectedDate),
-                      );
-                    },
-                    initialDate: state.selectedDate,
+    return BlocBuilder<TransactionsBloc, TransactionsState>(
+      buildWhen: (previous, current) {
+        return previous.selectedDate != current.selectedDate ||
+            previous.selectedDateRange != current.selectedDateRange ||
+            previous.isDatePickerMethodExpanded != current.isDatePickerMethodExpanded;
+      },
+      builder: (context, state) {
+        return Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(Dimens.d8.responsive()),
+            border: Border.all(),
+          ),
+          child: Column(
+            children: [
+              GestureDetector(
+                onTap: () {
+                  context.read<TransactionsBloc>().add(
+                    const TransactionsDatePickerMethodExpandTriggered(),
+                  );
+                },
+                child: Container(
+                  padding: EdgeInsets.all(Dimens.d6.responsive()),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(Dimens.d8.responsive()),
+                    color: secondaryShadeColor,
                   ),
-                );
-              },
-              child: Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: Dimens.d10.responsive(),
-                  vertical: Dimens.d4.responsive(),
-                ),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(Dimens.d8.responsive()),
-                  border: Border.all(),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Assets.icons.calendar.svg(
-                      width: Dimens.d30.responsive(),
-                      height: Dimens.d30.responsive(),
-                    ),
-                    SizedBox(width: Dimens.d10.responsive()),
-                    Text(
-                      state.selectedDate!.toStringWithFormat(
-                        DateTimeFormatConstants.monthYearFormat,
+                  child: Row(
+                    children: [
+                      Icon(
+                        state.isDatePickerMethodExpanded
+                            ? Icons.arrow_drop_up_rounded
+                            : Icons.arrow_drop_down_rounded,
+                        size: Dimens.d26.responsive(),
                       ),
-                    ),
-                  ],
+                      Assets.icons.calendar.svg(
+                        width: Dimens.d30.responsive(),
+                        height: Dimens.d30.responsive(),
+                      ),
+                      SizedBox(width: Dimens.d10.responsive()),
+                      if (state.selectedDate != null)
+                        Text(
+                          state.selectedDate!.toStringWithFormat(
+                            DateTimeFormatConstants.monthYearFormat,
+                          ),
+                        ),
+                      if (state.selectedDateRange != null)
+                        Text(
+                          '${state.selectedDateRange!.start.toStringWithFormat(DateTimeFormatConstants.dayMonthYearFormat)} - ${state.selectedDateRange!.end.toStringWithFormat(DateTimeFormatConstants.dayMonthYearFormat)}',
+                          style: AppTextStyles.s14wNormalBlack(),
+                        ),
+                    ],
+                  ),
                 ),
               ),
-            );
-          },
+              AnimatedSize(
+                curve: Curves.easeInOut,
+                duration: const Duration(milliseconds: 300),
+                child:
+                    state.isDatePickerMethodExpanded
+                        ? Column(
+                          children: [
+                            const CommonLine(margin: EdgeInsets.zero),
+                            _FilterButtonWidget(
+                              onTap: () {
+                                getIt.get<AppNavigator>().showDialog(
+                                  AppPopupInfo.selectMonth(
+                                    firstYear: AppConstants.firstYear,
+                                    lastYear: AppConstants.lastYear,
+                                    onMonthSelected: (date) {
+                                      context.read<TransactionsBloc>().add(
+                                        TransactionsMonthSelected(selectedDate: date),
+                                      );
+                                    },
+                                    initialDate: state.selectedDate,
+                                  ),
+                                );
+                              },
+                              text: S.current.filterByMonth,
+                            ),
+                            CommonLine(
+                              margin: EdgeInsets.zero,
+                              padding: EdgeInsets.symmetric(horizontal: Dimens.d16.responsive()),
+                              color: greyColor,
+                            ),
+                            _FilterButtonWidget(
+                              onTap: () {
+                                context.read<TransactionsBloc>().add(
+                                  const TransactionsDateRangePicked(),
+                                );
+                              },
+                              text: S.current.filterByDateRange,
+                              hasBorderRadius: true,
+                            ),
+                          ],
+                        )
+                        : const SizedBox.shrink(),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _FilterButtonWidget extends StatelessWidget {
+  const _FilterButtonWidget({
+    required this.onTap,
+    required this.text,
+    this.hasBorderRadius = false,
+  });
+
+  final void Function() onTap;
+  final String text;
+  final bool hasBorderRadius;
+
+  @override
+  Widget build(context) {
+    return InkWell(
+      borderRadius:
+          hasBorderRadius
+              ? BorderRadius.only(
+                bottomLeft: Radius.circular(Dimens.d8.responsive()),
+                bottomRight: Radius.circular(Dimens.d8.responsive()),
+              )
+              : null,
+      onTap: onTap,
+      child: Padding(
+        padding: EdgeInsets.all(Dimens.d10.responsive()),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(text, style: AppTextStyles.s14wNormalBlack()),
+            Icon(Icons.arrow_forward_ios, size: Dimens.d14.responsive()),
+          ],
         ),
-      ],
+      ),
     );
   }
 }

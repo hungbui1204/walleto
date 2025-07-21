@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart' as m;
+import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
 import 'package:walleto/domain/domain.dart';
 import 'package:walleto/shared/shared.dart';
@@ -338,5 +339,51 @@ class AppNavigatorImpl extends AppNavigator with LogMixin {
   @override
   void showSuccessSnackBar(String message, {Duration? duration}) {
     ViewUtils.showAppSnackBar(_rootRouterContext, message, duration: duration);
+  }
+
+  @override
+  Future<DateTime?> showDatePicker({
+    DateTime? initialDate,
+    required DateTime firstDate,
+    required DateTime lastDate,
+    DateTime? currentDate,
+    bool useRootNavigator = false,
+    m.Color barrierColor = Colors.black54,
+    m.Color? backgroundColor,
+  }) async {
+    if (LogConfig.enableNavigatorObserverLog) {
+      logD('showDatePicker, useRootNav = $useRootNavigator');
+    }
+
+    return await m.showDatePicker(
+      context: useRootNavigator ? _rootRouterContext : _currentTabContextOrRootContext,
+      firstDate: firstDate,
+      lastDate: lastDate,
+      currentDate: currentDate,
+      initialDate: initialDate,
+      barrierColor: barrierColor,
+      useRootNavigator: useRootNavigator,
+      initialEntryMode: m.DatePickerEntryMode.calendarOnly,
+    );
+  }
+
+  @override
+  Future<m.DateTimeRange?> showDateRangePicker({
+    required DateTime firstDate,
+    required DateTime lastDate,
+    DateTimeRange? initialDateRange,
+    bool useRootNavigator = false,
+  }) async {
+    return await m.showDateRangePicker(
+      context: useRootNavigator ? _rootRouterContext : _currentTabContextOrRootContext,
+      firstDate: firstDate,
+      lastDate: lastDate,
+      initialDateRange: initialDateRange,
+      initialEntryMode: m.DatePickerEntryMode.calendarOnly,
+      useRootNavigator: useRootNavigator,
+      builder: (context, child) {
+        return CommonDateRangePicker(child: child!);
+      },
+    );
   }
 }

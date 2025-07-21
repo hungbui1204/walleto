@@ -90,8 +90,8 @@
     "november": "November",
     "december": "December",
     "//": "Transactions view",
-    "selectMonth" : "Select month:",
-    "selectDateRange" : "Select date range",
+    "filterByMonth" : "Filter by month",
+    "filterByDateRange" : "Filter by date range",
     "//" : "Select Month Popup",
     "selectMonthTitle" : "Select Month"
 }

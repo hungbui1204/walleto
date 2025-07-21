@@ -7,5 +7,6 @@ sealed class TransactionsState extends BaseBlocState with _$TransactionsState {
     @Default(<DayTransactions>[]) List<DayTransactions> allDayTransactions,
     DateTime? selectedDate,
     DateTimeRange? selectedDateRange,
+    @Default(false) bool isDatePickerMethodExpanded,
   }) = _TransactionsState;
 }

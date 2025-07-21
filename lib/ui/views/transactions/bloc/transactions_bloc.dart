@@ -15,6 +15,8 @@ class TransactionsBloc extends BaseBloc<TransactionsEvent, TransactionsState> {
   TransactionsBloc(this._getTransactionsUseCase) : super(const TransactionsState()) {
     on<TransactionsViewInitialized>(_onTransactionsViewInitialized);
     on<TransactionsMonthSelected>(_onTransactionsMonthSelected);
+    on<TransactionsDatePickerMethodExpandTriggered>(_onTransactionsDatePickerMethodExpandTriggered);
+    on<TransactionsDateRangePicked>(_onTransactionsDateRangePicked);
   }
 
   final GetTransactionsUseCase _getTransactionsUseCase;
@@ -63,7 +65,12 @@ class TransactionsBloc extends BaseBloc<TransactionsEvent, TransactionsState> {
 
     return groupedTransactions.entries.map((e) {
       final totalAmount = e.value.fold<double>(0, (sum, transaction) {
-        return sum + transaction.amount;
+        switch (transaction.type) {
+          case CategoryType.income:
+            return sum + transaction.amount;
+          case CategoryType.expense:
+            return sum - transaction.amount;
+        }
       });
 
       return DayTransactions(
@@ -80,6 +87,11 @@ class TransactionsBloc extends BaseBloc<TransactionsEvent, TransactionsState> {
   ) async {
     await runBlocCatching(
       action: () async {
+        if (event.selectedDate.month == state.selectedDate?.month &&
+            event.selectedDate.year == state.selectedDate?.year) {
+          return;
+        }
+
         final transactionsOutput = await _getTransactionsUseCase.execute(
           GetTransactionsInput(
             targetMonth: event.selectedDate.month,
@@ -91,7 +103,54 @@ class TransactionsBloc extends BaseBloc<TransactionsEvent, TransactionsState> {
             _getDayTransFromTrans(transactionsOutput.transactions).reversed.toList();
 
         emit(
-          state.copyWith(allDayTransactions: allDayTransactions, selectedDate: event.selectedDate),
+          state.copyWith(
+            allDayTransactions: allDayTransactions,
+            selectedDate: event.selectedDate,
+            selectedDateRange: null,
+          ),
+        );
+      },
+    );
+  }
+
+  void _onTransactionsDatePickerMethodExpandTriggered(
+    TransactionsDatePickerMethodExpandTriggered event,
+    Emitter<TransactionsState> emit,
+  ) {
+    emit(state.copyWith(isDatePickerMethodExpanded: !state.isDatePickerMethodExpanded));
+  }
+
+  Future<void> _onTransactionsDateRangePicked(
+    TransactionsDateRangePicked event,
+    Emitter<TransactionsState> emit,
+  ) async {
+    await runBlocCatching(
+      action: () async {
+        final dateRangePicked = await navigator.showDateRangePicker(
+          useRootNavigator: true,
+          firstDate: DateTime(AppConstants.firstYear),
+          lastDate: DateTime(AppConstants.lastYear, 12, 31),
+          initialDateRange: state.selectedDateRange,
+        );
+
+        if (dateRangePicked == null ||
+            dateRangePicked.duration == state.selectedDateRange?.duration) {
+          return;
+        }
+
+        final transactionsOutput = await _getTransactionsUseCase.execute(
+          GetTransactionsInput(fromDate: dateRangePicked.start, toDate: dateRangePicked.end),
+        );
+
+        final allDayTransactions =
+            _getDayTransFromTrans(transactionsOutput.transactions).reversed.toList();
+
+        emit(
+          state.copyWith(
+            allDayTransactions: allDayTransactions,
+            selectedDateRange: dateRangePicked,
+            selectedDate: null,
+          ),
         );
       },
     );

@@ -81,4 +81,21 @@ abstract class AppNavigator {
   void showErrorSnackBar(String message, {Duration? duration});
 
   void showSuccessSnackBar(String message, {Duration? duration});
+
+  Future<DateTime?> showDatePicker({
+    DateTime? initialDate,
+    required DateTime firstDate,
+    required DateTime lastDate,
+    DateTime? currentDate,
+    bool useRootNavigator = false,
+    Color barrierColor = Colors.black54,
+    Color? backgroundColor,
+  });
+
+  Future<DateTimeRange?> showDateRangePicker({
+    required DateTime firstDate,
+    required DateTime lastDate,
+    DateTimeRange? initialDateRange,
+    bool useRootNavigator = false,
+  });
 }
