@@ -120,32 +120,36 @@ class CreateTransactionBloc extends BaseBloc<CreateTransactionEvent, CreateTrans
 
     // 3. Calculate the final amount
     if (state.currentOperation != null) {
-      late final int amount;
+      late final double amount;
 
       switch (state.currentOperation!) {
         case OperationType.addition:
           amount = state.amountInput
               .split(OperationType.addition.symbol)
-              .map((e) => e.toInt())
+              .map((e) => e.toDouble())
               .reduce((a, b) => a + b);
           break;
         case OperationType.subtraction:
           amount = state.amountInput
               .split(OperationType.subtraction.symbol)
-              .map((e) => e.toInt())
+              .map((e) => e.toDouble())
               .reduce((a, b) => a - b);
           break;
         case OperationType.multiplication:
-          amount = state.amountInput
-              .split(OperationType.multiplication.symbol)
-              .map((e) => e.toInt())
-              .reduce((a, b) => a * b);
+          amount =
+              state.amountInput
+                  .split(OperationType.multiplication.symbol)
+                  .map((e) => e.toDouble())
+                  .reduce((a, b) => a * b)
+                  .roundTo2Digits();
           break;
         case OperationType.division:
-          amount = state.amountInput
-              .split(OperationType.division.symbol)
-              .map((e) => e.toInt())
-              .reduce((a, b) => a ~/ b);
+          amount =
+              state.amountInput
+                  .split(OperationType.division.symbol)
+                  .map((e) => e.toDouble())
+                  .reduce((a, b) => a / b)
+                  .roundTo2Digits();
           break;
       }
 
@@ -264,7 +268,7 @@ class CreateTransactionBloc extends BaseBloc<CreateTransactionEvent, CreateTrans
     await runBlocCatching(
       action: () async {
         final newTransaction = Transaction(
-          amount: state.amountInput.toInt().toDouble(),
+          amount: state.amountInput.toDouble(),
           categoryId: state.selectedCategory?.id ?? 0,
           createdAt: state.selectedDate,
           note: state.note,
@@ -278,6 +282,7 @@ class CreateTransactionBloc extends BaseBloc<CreateTransactionEvent, CreateTrans
         // Refresh transactions after creating a new transaction
         // Refresh the wallets to update the balance
         appBloc.add(const TransactionsReloaded(needReloadTransactions: true));
+        appBloc.add(const StatisticalChartsReloaded(needReloadStatisticalCharts: true));
         appBloc.add(const DataFetched());
         navigator.pop();
       },

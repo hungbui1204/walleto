@@ -32,6 +32,20 @@ extension StringExtensions on String {
     return intValue;
   }
 
+  double toDouble() {
+    if (isEmpty) return 0.0;
+
+    // Remove commas if present, as they are not valid in double parsing
+    final cleanedString = replaceAll(',', '');
+
+    final doubleValue = double.tryParse(cleanedString);
+    if (doubleValue == null) {
+      throw FormatException('Invalid double format: $this');
+    }
+
+    return doubleValue;
+  }
+
   int countAllNumbersLength() {
     // Match all numbers (digits with optional commas)
     final matches = RegExp(r'[\d,]+').allMatches(this);

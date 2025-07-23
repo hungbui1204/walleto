@@ -1,6 +1,6 @@
 import 'package:intl/intl.dart';
 
-extension NumberExtensions on int {
+extension IntExtensions on int {
   DateTime? toDateTime() {
     if (this <= 0) return null;
 
@@ -11,8 +11,14 @@ extension NumberExtensions on int {
 
     return dateTime;
   }
+}
 
+extension NumberExtensions on num {
   String toStringWithFormat(NumberFormat format) {
     return format.format(this);
+  }
+
+  double roundTo2Digits() {
+    return double.parse(toStringAsFixed(2));
   }
 }

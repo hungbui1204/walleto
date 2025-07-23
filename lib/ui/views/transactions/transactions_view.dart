@@ -112,7 +112,7 @@ class _DayTransactionsWidget extends StatelessWidget {
                   ),
                   const Spacer(),
                   Text(
-                    dayTransactions.totalAmount.toInt().toStringWithFormat(
+                    dayTransactions.totalAmount.toStringWithFormat(
                       NumberFormatConstants.amountFormat,
                     ),
                     style: AppTextStyles.s16wNormalBlack(),
@@ -153,7 +153,7 @@ class _TransactionInfoWidget extends StatelessWidget {
         Text(transaction.category.name),
         const Spacer(),
         Text(
-          transaction.amount.toInt().toStringWithFormat(NumberFormatConstants.amountFormat),
+          transaction.amount.toStringWithFormat(NumberFormatConstants.amountFormat),
           style:
               transaction.type == CategoryType.expense
                   ? AppTextStyles.s14wNormalAlert()
