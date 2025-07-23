@@ -213,20 +213,20 @@ class AppTextStyles {
     );
   }
 
-  static TextStyle s14wNormalAlert({double? tablet, double? ultraTablet}) {
+  static TextStyle s14wNormalRed({double? tablet, double? ultraTablet}) {
     return _baseTextStyle.merge(
       TextStyle(
-        color: alertColor,
+        color: redColor,
         fontWeight: FontWeight.normal,
         fontSize: Dimens.d14.responsive(tablet: tablet, ultraTablet: ultraTablet),
       ),
     );
   }
 
-  static TextStyle s14wNormalNavy({double? tablet, double? ultraTablet}) {
+  static TextStyle s14wNormalGreen({double? tablet, double? ultraTablet}) {
     return _baseTextStyle.merge(
       TextStyle(
-        color: navyColor,
+        color: greenColor,
         fontWeight: FontWeight.normal,
         fontSize: Dimens.d14.responsive(tablet: tablet, ultraTablet: ultraTablet),
       ),

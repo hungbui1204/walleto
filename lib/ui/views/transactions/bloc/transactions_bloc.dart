@@ -1,3 +1,4 @@
+import 'package:dartx/dartx.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -36,8 +37,7 @@ class TransactionsBloc extends BaseBloc<TransactionsEvent, TransactionsState> {
           GetTransactionsInput(targetMonth: now.month, targetYear: now.year),
         );
 
-        final allDayTransactions =
-            _getDayTransFromTrans(transactionsOutput.transactions).reversed.toList();
+        final allDayTransactions = _getDayTransFromTrans(transactionsOutput.transactions);
 
         emit(state.copyWith(allDayTransactions: allDayTransactions));
       },
@@ -63,22 +63,24 @@ class TransactionsBloc extends BaseBloc<TransactionsEvent, TransactionsState> {
       return acc;
     });
 
-    return groupedTransactions.entries.map((e) {
-      final totalAmount = e.value.fold<double>(0, (sum, transaction) {
-        switch (transaction.type) {
-          case CategoryType.income:
-            return sum + transaction.amount;
-          case CategoryType.expense:
-            return sum - transaction.amount;
-        }
-      });
+    return groupedTransactions.entries
+        .map((e) {
+          final totalAmount = e.value.fold<double>(0, (sum, transaction) {
+            switch (transaction.type) {
+              case CategoryType.income:
+                return sum + transaction.amount;
+              case CategoryType.expense:
+                return sum - transaction.amount;
+            }
+          });
 
-      return DayTransactions(
-        date: e.key.toDateTime(format: DateTimeFormatConstants.commonDateFormat),
-        transactions: e.value,
-        totalAmount: totalAmount,
-      );
-    }).toList();
+          return DayTransactions(
+            date: e.key.toDateTime(format: DateTimeFormatConstants.commonDateFormat),
+            transactions: e.value.sortedWith((a, b) => b.createdAt!.compareTo(a.createdAt!)),
+            totalAmount: totalAmount,
+          );
+        })
+        .sortedWith((a, b) => b.date!.compareTo(a.date!));
   }
 
   Future<void> _onTransactionsMonthSelected(

@@ -25,3 +25,11 @@ sealed class TransactionsReloaded extends AppEvent with _$TransactionsReloaded {
   const factory TransactionsReloaded({required bool needReloadTransactions}) =
       _TransactionsReloaded;
 }
+
+@freezed
+sealed class StatisticalChartsReloaded extends AppEvent with _$StatisticalChartsReloaded {
+  const StatisticalChartsReloaded._();
+
+  const factory StatisticalChartsReloaded({required bool needReloadStatisticalCharts}) =
+      _StatisticalChartsReloaded;
+}

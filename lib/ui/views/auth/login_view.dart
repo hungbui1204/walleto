@@ -251,7 +251,7 @@ class _EmailForm extends StatelessWidget {
                 if (state.emailError.isNotEmpty)
                   Padding(
                     padding: EdgeInsets.only(top: Dimens.d8.responsive()),
-                    child: Text(state.emailError, style: AppTextStyles.s14wNormalAlert()),
+                    child: Text(state.emailError, style: AppTextStyles.s14wNormalRed()),
                   ),
               ],
             );
@@ -296,7 +296,7 @@ class _PasswordForm extends StatelessWidget {
                 if (state.passwordError.isNotEmpty)
                   Padding(
                     padding: EdgeInsets.only(top: Dimens.d8.responsive()),
-                    child: Text(state.passwordError, style: AppTextStyles.s14wNormalAlert()),
+                    child: Text(state.passwordError, style: AppTextStyles.s14wNormalRed()),
                   ),
               ],
             );

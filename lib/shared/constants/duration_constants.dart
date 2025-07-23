@@ -9,4 +9,5 @@ class DurationConstants {
   static const durationUntilShowUpgraderPopupAgain = Duration(days: 3);
   static const defaultAnimationScrollDuration = Duration(milliseconds: 400);
   static const defaultAnimationDuration = Duration(milliseconds: 300);
+  static const defaultChartAnimationDuration = Duration(milliseconds: 500);
 }

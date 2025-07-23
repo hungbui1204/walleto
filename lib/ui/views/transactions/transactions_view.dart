@@ -156,8 +156,8 @@ class _TransactionInfoWidget extends StatelessWidget {
           transaction.amount.toStringWithFormat(NumberFormatConstants.amountFormat),
           style:
               transaction.type == CategoryType.expense
-                  ? AppTextStyles.s14wNormalAlert()
-                  : AppTextStyles.s14wNormalBlack(),
+                  ? AppTextStyles.s14wNormalRed()
+                  : AppTextStyles.s14wNormalGreen(),
         ),
       ],
     );

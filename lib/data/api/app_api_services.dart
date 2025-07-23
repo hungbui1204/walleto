@@ -91,4 +91,14 @@ class AppApiServices {
       },
     );
   }
+
+  Future<List<DailyStatData>?> getDailyStats({required int targetMonth, required int targetYear}) {
+    return _serverApiClientRest.request(
+      method: RequestMethod.post,
+      path: 'rpc/get_daily_stats',
+      body: {'month': targetMonth, 'year': targetYear},
+      decoder: (data) => DailyStatData.fromJson(data as Map<String, dynamic>),
+      successResponseMapperType: SuccessResponseMapperType.jsonArray,
+    );
+  }
 }

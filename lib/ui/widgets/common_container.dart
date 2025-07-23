@@ -7,13 +7,15 @@ class CommonContainer extends StatelessWidget {
     super.key,
     required this.titleWidget,
     required this.contentWidget,
-    this.padding,
+    this.titlePadding,
     this.titleBackgroundColor,
+    this.contentPadding,
   });
 
   final Widget? titleWidget;
   final Widget? contentWidget;
-  final EdgeInsetsGeometry? padding;
+  final EdgeInsetsGeometry? titlePadding;
+  final EdgeInsetsGeometry? contentPadding;
   final Color? titleBackgroundColor;
 
   @override
@@ -26,7 +28,7 @@ class CommonContainer extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            padding: padding ?? EdgeInsets.all(Dimens.d10.responsive()),
+            padding: titlePadding ?? EdgeInsets.all(Dimens.d10.responsive()),
             decoration: BoxDecoration(
               color: titleBackgroundColor ?? primaryShade1Color,
               borderRadius: BorderRadius.only(
@@ -38,7 +40,7 @@ class CommonContainer extends StatelessWidget {
           ),
           const CommonLine(margin: EdgeInsets.zero),
           Padding(
-            padding: padding ?? EdgeInsets.all(Dimens.d10.responsive()),
+            padding: contentPadding ?? EdgeInsets.all(Dimens.d10.responsive()),
             child: contentWidget,
           ),
         ],

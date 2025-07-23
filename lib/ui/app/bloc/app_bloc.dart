@@ -14,6 +14,7 @@ class AppBloc extends BaseBloc<AppEvent, AppState> {
     on<SignOutButtonPressed>(_onSignOutButtonPressed);
     on<DataFetched>(_onDataFetched);
     on<TransactionsReloaded>(_onTransactionsReloaded);
+    on<StatisticalChartsReloaded>(_onStatisticalChartsReloaded);
   }
 
   final SignOutUseCase _signOutUseCase;
@@ -39,5 +40,9 @@ class AppBloc extends BaseBloc<AppEvent, AppState> {
 
   void _onTransactionsReloaded(TransactionsReloaded event, Emitter<AppState> emit) {
     emit(state.copyWith(needReloadTransactions: event.needReloadTransactions));
+  }
+
+  void _onStatisticalChartsReloaded(StatisticalChartsReloaded event, Emitter<AppState> emit) {
+    emit(state.copyWith(needReloadStatisticalCharts: event.needReloadStatisticalCharts));
   }
 }

@@ -290,7 +290,7 @@ class _AmountInput extends StatelessWidget {
               controller: controller..text = state.amountInput,
             ),
             if (state.amountError.isNotEmpty)
-              Text(state.amountError, style: AppTextStyles.s14wNormalAlert()),
+              Text(state.amountError, style: AppTextStyles.s14wNormalRed()),
           ],
         );
       },

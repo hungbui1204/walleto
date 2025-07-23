@@ -29,4 +29,6 @@ abstract class Repository {
   });
 
   Future<void> createTransaction(Transaction transaction);
+
+  Future<List<DailyStat>> getMonthStat({required int targetMonth, required int targetYear});
 }

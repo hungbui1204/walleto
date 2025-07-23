@@ -97,5 +97,7 @@
     "//": "Home view",
     "allWallets": "All Wallets",
     "totalBalance": "Total Balance",
-    "seeAll": "See all"
+    "seeAll": "See all",
+    "statisticalCharts": "Statistical Charts",
+    "recentTransactions": "Recent Transactions"
 }
