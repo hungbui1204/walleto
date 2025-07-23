@@ -10,15 +10,15 @@ part 'invalid_token_handle_use_case.freezed.dart';
 @injectable
 class InvalidTokenHandleUseCase
     extends BaseFutureUseCase<InvalidTokenHandleInput, InvalidTokenHandleOutput> {
-  const InvalidTokenHandleUseCase(this._repository);
+  const InvalidTokenHandleUseCase(this._repository, this._refreshTokenManager);
 
   final Repository _repository;
+  final RefreshTokenManager _refreshTokenManager;
 
   @protected
   @override
   Future<InvalidTokenHandleOutput> buildUseCase(InvalidTokenHandleInput input) async {
     final isLoggedIn = await _repository.isLoggedIn;
-    late final String refreshToken;
 
     // 1. The token is empty in secure storage (user is not logged in or clear data)
     //    -> return [InvalidTokenHandlerStatus.emptyToken]
@@ -27,12 +27,11 @@ class InvalidTokenHandleUseCase
     }
 
     // 2. The token in secure storage is expired
-    //      -> try to refresh the token by using refresh token usecase
+    //      -> try to refresh the token by refresh token manager
     //      -> return [InvalidTokenHandlerStatus.tokenRefreshed] if the refresh token is successful
     //      -> return [InvalidTokenHandlerStatus.refreshTokenExpired] if the refresh token is expired
-    refreshToken = await _repository.refreshToken;
     try {
-      await _repository.refreshAuthToken(refreshToken: refreshToken);
+      await _refreshTokenManager.refreshToken();
 
       return const InvalidTokenHandleOutput(status: InvalidTokenHandlerStatus.tokenRefreshed);
     } on RemoteException catch (e) {
