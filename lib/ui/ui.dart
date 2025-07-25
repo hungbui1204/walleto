@@ -29,6 +29,7 @@ export 'views/create_transaction/create_transaction_view.dart';
 export 'views/home/bloc/home_bloc.dart';
 export 'views/home/home_view.dart';
 export 'views/home/widgets/daily_stats_chart.dart';
+export 'views/home/widgets/month_category_stats_chart.dart';
 export 'views/home/widgets/month_summary_chart.dart';
 export 'views/main/bloc/main_bloc.dart';
 export 'views/main/main_view.dart';

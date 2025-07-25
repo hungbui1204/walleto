@@ -103,6 +103,7 @@
     "day" : "day",
     "monthSummary" : "Month Summary",
     "dailyStatistics" : "Daily Statistics",
+    "spentStats" : "Spent Stats",
     "thisMonth" : "This Month",
     "lastMonth" : "Last Month"
 }

@@ -164,7 +164,7 @@ class _StatisticWidget extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.all(Dimens.d12.responsive()),
                 child: Text(
-                  S.current.dailyStatistics,
+                  S.current.spentStats,
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),
@@ -230,12 +230,14 @@ class _StatisticWidget extends StatelessWidget {
                         );
                       },
                     ),
-                    SizedBox(height: Dimens.d10.responsive()),
+                    SizedBox(height: Dimens.d20.responsive()),
                     Expanded(
                       child: BlocBuilder<HomeBloc, HomeState>(
-                        buildWhen: (previous, current) => previous.monthStat != current.monthStat,
+                        buildWhen: (previous, current) {
+                          return previous.categoryStats != current.categoryStats;
+                        },
                         builder: (context, state) {
-                          return DailyStatsChart(stats: state.monthStat);
+                          return MonthCategoryStatsChart(stats: state.categoryStats);
                         },
                       ),
                     ),

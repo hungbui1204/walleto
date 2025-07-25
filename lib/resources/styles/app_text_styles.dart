@@ -122,6 +122,26 @@ class AppTextStyles {
     );
   }
 
+  static TextStyle s12wNormalWhite({double? tablet, double? ultraTablet}) {
+    return _baseTextStyle.merge(
+      TextStyle(
+        color: whiteColor,
+        fontWeight: FontWeight.normal,
+        fontSize: Dimens.d12.responsive(tablet: tablet, ultraTablet: ultraTablet),
+      ),
+    );
+  }
+
+  static TextStyle s12wBoldWhite({double? tablet, double? ultraTablet}) {
+    return _baseTextStyle.merge(
+      TextStyle(
+        color: whiteColor,
+        fontWeight: FontWeight.bold,
+        fontSize: Dimens.d12.responsive(tablet: tablet, ultraTablet: ultraTablet),
+      ),
+    );
+  }
+
   static TextStyle s12wNormalBlackUnderline({double? tablet, double? ultraTablet}) {
     return _baseTextStyle.merge(
       TextStyle(

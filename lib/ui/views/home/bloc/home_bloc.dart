@@ -10,13 +10,17 @@ part 'home_bloc.freezed.dart';
 
 @injectable
 class HomeBloc extends BaseBloc<HomeEvent, HomeState> {
-  HomeBloc(this._getDailyStatsUseCase, this._getMonthSummaryStatsUseCase)
-    : super(const HomeState()) {
+  HomeBloc(
+    this._getDailyStatsUseCase,
+    this._getMonthSummaryStatsUseCase,
+    this._getCategoryStatsUseCase,
+  ) : super(const HomeState()) {
     on<HomeViewInitialized>(_onHomeViewInitialized);
   }
 
   final GetMonthStatUseCase _getDailyStatsUseCase;
   final GetMonthSummaryStatsUseCase _getMonthSummaryStatsUseCase;
+  final GetCategoryStatsUseCase _getCategoryStatsUseCase;
 
   Future<void> _onHomeViewInitialized(HomeViewInitialized event, Emitter<HomeState> emit) async {
     await runBlocCatching(
@@ -25,18 +29,28 @@ class HomeBloc extends BaseBloc<HomeEvent, HomeState> {
 
         emit(state.copyWith(selectedDateTime: now));
 
-        final dailyStatsOutput = await _getDailyStatsUseCase.execute(
-          GetMonthStatInput(targetMonth: now.month, targetYear: now.year),
-        );
+        // TODO: Uncomment when daily stats are needed
+        // final dailyStatsOutput = await _getDailyStatsUseCase.execute(
+        //   GetMonthStatInput(targetMonth: now.month, targetYear: now.year),
+        // );
 
         final monthSummaryStatsOutput = await _getMonthSummaryStatsUseCase.execute(
           const GetMonthSummaryStatsInput(),
         );
 
+        final categoryStatsOutput = await _getCategoryStatsUseCase.execute(
+          GetCategoryStatsInput(
+            targetMonth: now.month,
+            targetYear: now.year,
+            categoryType: CategoryType.expense,
+          ),
+        );
+
         emit(
           state.copyWith(
-            monthStat: dailyStatsOutput.monthStat,
+            // monthStat: dailyStatsOutput.monthStat,
             monthSummaryStats: monthSummaryStatsOutput.monthSummaryStats.reversed.toList(),
+            categoryStats: categoryStatsOutput.stats,
           ),
         );
       },

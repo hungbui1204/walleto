@@ -6,6 +6,7 @@ sealed class HomeState extends BaseBlocState with _$HomeState {
   const factory HomeState({
     @Default(<DailyStat>[]) List<DailyStat> monthStat,
     @Default(<MonthSummaryStat>[]) List<MonthSummaryStat> monthSummaryStats,
+    @Default(<CategoryStat>[]) List<CategoryStat> categoryStats,
     @Default(<Transaction>[]) List<Transaction> recentTransactions,
     DateTime? selectedDateTime,
   }) = _HomeState;
