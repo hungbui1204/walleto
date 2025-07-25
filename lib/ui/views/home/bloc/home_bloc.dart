@@ -10,22 +10,35 @@ part 'home_bloc.freezed.dart';
 
 @injectable
 class HomeBloc extends BaseBloc<HomeEvent, HomeState> {
-  HomeBloc(this._getDailyStatsUseCase) : super(const HomeState()) {
+  HomeBloc(this._getDailyStatsUseCase, this._getMonthSummaryStatsUseCase)
+    : super(const HomeState()) {
     on<HomeViewInitialized>(_onHomeViewInitialized);
   }
 
   final GetMonthStatUseCase _getDailyStatsUseCase;
+  final GetMonthSummaryStatsUseCase _getMonthSummaryStatsUseCase;
 
   Future<void> _onHomeViewInitialized(HomeViewInitialized event, Emitter<HomeState> emit) async {
     await runBlocCatching(
       action: () async {
         final now = DateTime.now();
 
+        emit(state.copyWith(selectedDateTime: now));
+
         final dailyStatsOutput = await _getDailyStatsUseCase.execute(
           GetMonthStatInput(targetMonth: now.month, targetYear: now.year),
         );
 
-        emit(state.copyWith(monthStat: dailyStatsOutput.monthStat));
+        final monthSummaryStatsOutput = await _getMonthSummaryStatsUseCase.execute(
+          const GetMonthSummaryStatsInput(),
+        );
+
+        emit(
+          state.copyWith(
+            monthStat: dailyStatsOutput.monthStat,
+            monthSummaryStats: monthSummaryStatsOutput.monthSummaryStats.reversed.toList(),
+          ),
+        );
       },
     );
   }

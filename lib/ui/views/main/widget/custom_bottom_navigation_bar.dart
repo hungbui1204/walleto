@@ -15,7 +15,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
       bottom: false,
       child: BottomAppBar(
         padding: EdgeInsets.zero,
-        height: Dimens.d60.responsive(),
+        height: Dimens.d56.responsive(),
         color: primaryShadeColor,
         key: key,
         shape: const CircularNotchedRectangle(),

@@ -26,6 +26,7 @@ class AppThemes {
       indicatorColor: primaryColor,
       labelColor: primaryColor,
       dividerColor: blackColor,
+      overlayColor: WidgetStatePropertyAll(primaryShade1Color),
     ),
     indicatorColor: primaryColor,
   );

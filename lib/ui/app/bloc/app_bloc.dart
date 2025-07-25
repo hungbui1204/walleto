@@ -33,7 +33,11 @@ class AppBloc extends BaseBloc<AppEvent, AppState> {
       action: () async {
         final wallets = await _getWalletsUseCase.execute(const GetWalletsInput());
 
-        emit(state.copyWith(wallets: wallets.wallets));
+        final sortedByNameWallets =
+            wallets.wallets.where((wallet) => wallet.name.isNotEmpty).toList()
+              ..sort((a, b) => a.name.compareTo(b.name));
+
+        emit(state.copyWith(wallets: sortedByNameWallets));
       },
     );
   }

@@ -1,3 +1,4 @@
+import 'package:dartx/dartx.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
@@ -23,14 +24,18 @@ class SelectCategoryBloc extends BaseBloc<SelectCategoryEvent, SelectCategorySta
     await runBlocCatching(
       action: () async {
         final categoriesOutput = await _getCategoriesUseCase.execute(const GetCategoriesInput());
-        final expenseCategories =
-            categoriesOutput.categories.where((element) {
+        final expenseCategories = categoriesOutput.categories
+            .where((element) {
               return element.type == CategoryType.expense;
-            }).toList();
-        final incomeCategories =
-            categoriesOutput.categories.where((element) {
+            })
+            .toList()
+            .sortedWith((a, b) => a.name.compareTo(b.name));
+        final incomeCategories = categoriesOutput.categories
+            .where((element) {
               return element.type == CategoryType.income;
-            }).toList();
+            })
+            .toList()
+            .sortedWith((a, b) => a.name.compareTo(b.name));
 
         emit(
           state.copyWith(

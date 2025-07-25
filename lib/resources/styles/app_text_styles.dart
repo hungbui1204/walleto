@@ -52,6 +52,26 @@ class AppTextStyles {
     );
   }
 
+  static TextStyle s10wNormalRed({double? tablet, double? ultraTablet}) {
+    return _baseTextStyle.merge(
+      TextStyle(
+        color: redColor,
+        fontWeight: FontWeight.normal,
+        fontSize: Dimens.d10.responsive(tablet: tablet, ultraTablet: ultraTablet),
+      ),
+    );
+  }
+
+  static TextStyle s10wNormalGreen({double? tablet, double? ultraTablet}) {
+    return _baseTextStyle.merge(
+      TextStyle(
+        color: greenColor,
+        fontWeight: FontWeight.normal,
+        fontSize: Dimens.d10.responsive(tablet: tablet, ultraTablet: ultraTablet),
+      ),
+    );
+  }
+
   static TextStyle s10wNormalGrey({double? tablet, double? ultraTablet}) {
     return _baseTextStyle.merge(
       TextStyle(

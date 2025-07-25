@@ -14,9 +14,12 @@ class HomeView extends StatefulWidget {
   State<HomeView> createState() => _HomeViewState();
 }
 
-class _HomeViewState extends BasePageState<HomeView, HomeBloc> {
+class _HomeViewState extends BasePageState<HomeView, HomeBloc> with SingleTickerProviderStateMixin {
+  late final TabController _tabController;
+
   @override
   void initState() {
+    _tabController = TabController(length: 2, vsync: this);
     bloc.add(const HomeViewInitialized());
     super.initState();
   }
@@ -43,19 +46,18 @@ class _HomeViewState extends BasePageState<HomeView, HomeBloc> {
     return Scaffold(
       appBar: CommonAppBar(title: S.current.home),
       body: Padding(
-        padding: EdgeInsets.all(Dimens.d16.responsive()),
-        child: Column(
-          children: [
-            const _AllWalletsWidget(),
-            SizedBox(height: Dimens.d20.responsive()),
-            BlocBuilder<HomeBloc, HomeState>(
-              buildWhen: (previous, current) => previous.monthStat != current.monthStat,
-              builder: (context, state) {
-                return StatisticalCharts(stats: state.monthStat);
-              },
-            ),
-            // TODO: Implement the recent transactions widget
-          ],
+        padding: EdgeInsets.symmetric(horizontal: Dimens.d16.responsive()),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              SizedBox(height: Dimens.d16.responsive()),
+              const _AllWalletsWidget(),
+              SizedBox(height: Dimens.d20.responsive()),
+              _StatisticWidget(_tabController),
+              SizedBox(height: Dimens.d20.responsive()),
+              const _RecentTransactionsWidget(),
+            ],
+          ),
         ),
       ),
     );
@@ -131,6 +133,134 @@ class _WalletInfoWidget extends StatelessWidget {
           style: AppTextStyles.s16wNormalBlack(),
         ),
       ],
+    );
+  }
+}
+
+class _StatisticWidget extends StatelessWidget {
+  const _StatisticWidget(this._tabController);
+
+  final TabController _tabController;
+
+  @override
+  Widget build(BuildContext context) {
+    return CommonContainer(
+      titleWidget: Align(
+        alignment: Alignment.centerLeft,
+        child: Text(S.current.statisticalCharts, style: AppTextStyles.s16wBoldBlack()),
+      ),
+      contentWidget: Column(
+        children: [
+          TabBar(
+            controller: _tabController,
+            tabs: [
+              Padding(
+                padding: EdgeInsets.all(Dimens.d12.responsive()),
+                child: Text(
+                  S.current.monthSummary,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.all(Dimens.d12.responsive()),
+                child: Text(
+                  S.current.dailyStatistics,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: Dimens.d16.responsive()),
+          SizedBox(
+            height: Dimens.d300.responsive(),
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                Column(
+                  children: [
+                    Expanded(
+                      child: BlocBuilder<HomeBloc, HomeState>(
+                        buildWhen: (previous, current) {
+                          return previous.monthSummaryStats != current.monthSummaryStats;
+                        },
+                        builder: (context, state) {
+                          return MonthSummaryChart(stats: state.monthSummaryStats);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    BlocBuilder<HomeBloc, HomeState>(
+                      buildWhen: (previous, current) {
+                        return previous.selectedDateTime != current.selectedDateTime;
+                      },
+                      builder: (context, state) {
+                        if (state.selectedDateTime == null) return const SizedBox.shrink();
+
+                        return InkWell(
+                          borderRadius: BorderRadius.circular(Dimens.d8.responsive()),
+                          onTap: () {},
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: Dimens.d6.responsive()),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(Dimens.d8.responsive()),
+                              border: Border.all(),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.arrow_outward_rounded, size: Dimens.d16.responsive()),
+                                Assets.icons.calendar.svg(
+                                  width: Dimens.d30.responsive(),
+                                  height: Dimens.d30.responsive(),
+                                ),
+                                SizedBox(width: Dimens.d10.responsive()),
+                                Text(
+                                  state.selectedDateTime!.toStringWithFormat(
+                                    DateTimeFormatConstants.monthYearFormat,
+                                  ),
+                                  style: AppTextStyles.s14wNormalBlack(),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    SizedBox(height: Dimens.d10.responsive()),
+                    Expanded(
+                      child: BlocBuilder<HomeBloc, HomeState>(
+                        buildWhen: (previous, current) => previous.monthStat != current.monthStat,
+                        builder: (context, state) {
+                          return DailyStatsChart(stats: state.monthStat);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _RecentTransactionsWidget extends StatelessWidget {
+  const _RecentTransactionsWidget();
+
+  @override
+  Widget build(BuildContext context) {
+    return CommonContainer(
+      titleWidget: Align(
+        alignment: Alignment.centerLeft,
+        child: Text(S.current.recentTransactions, style: AppTextStyles.s16wBoldBlack()),
+      ),
+      contentWidget: Column(children: []),
     );
   }
 }
