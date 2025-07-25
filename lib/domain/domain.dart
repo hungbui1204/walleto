@@ -1,6 +1,7 @@
 export 'entities/authentication.dart';
 export 'entities/base/paged_list.dart';
 export 'entities/category.dart';
+export 'entities/category_stat.dart';
 export 'entities/daily_stat.dart';
 export 'entities/day_transactions.dart';
 export 'entities/enum/enum.dart';
@@ -22,6 +23,7 @@ export 'usecases/base/io/load_more_output.dart';
 export 'usecases/base/sync/base_sync_use_case.dart';
 export 'usecases/create_transaction_use_case.dart';
 export 'usecases/get_categories_use_case.dart';
+export 'usecases/get_category_stats_use_case.dart';
 export 'usecases/get_month_stat_use_case.dart';
 export 'usecases/get_month_summary_stats_use_case.dart';
 export 'usecases/get_transactions_use_case.dart';

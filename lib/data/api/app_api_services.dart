@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:walleto/data/data.dart';
+import 'package:walleto/domain/domain.dart';
 import 'package:walleto/shared/shared.dart';
 
 @lazySingleton
@@ -107,6 +108,24 @@ class AppApiServices {
       method: RequestMethod.post,
       path: 'rpc/get_monthly_summary',
       decoder: (data) => MonthSummaryStatData.fromJson(data as Map<String, dynamic>),
+      successResponseMapperType: SuccessResponseMapperType.jsonArray,
+    );
+  }
+
+  Future<List<CategoryStatData>?> getCategoryStats({
+    required int targetMonth,
+    required int targetYear,
+    required CategoryType categoryType,
+  }) {
+    return _serverApiClientRest.request(
+      method: RequestMethod.post,
+      path: 'rpc/get_parent_category_stats',
+      body: {
+        'target_month': targetMonth,
+        'target_year': targetYear,
+        'target_type': categoryType.name,
+      },
+      decoder: (data) => CategoryStatData.fromJson(data as Map<String, dynamic>),
       successResponseMapperType: SuccessResponseMapperType.jsonArray,
     );
   }

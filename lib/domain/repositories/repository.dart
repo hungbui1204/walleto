@@ -33,4 +33,10 @@ abstract class Repository {
   Future<List<DailyStat>> getMonthStat({required int targetMonth, required int targetYear});
 
   Future<List<MonthSummaryStat>> getMonthSummaryStats();
+
+  Future<List<CategoryStat>> getCategoryStats({
+    required int targetMonth,
+    required int targetYear,
+    required CategoryType categoryType,
+  });
 }

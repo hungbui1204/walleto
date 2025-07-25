@@ -13,6 +13,7 @@ class RepositoryImpl implements Repository {
     this._transactionDataMapper,
     this._dailyStatDataMapper,
     this._monthSummaryStatDataMapper,
+    this._categoryStatDataMapper,
   );
 
   final AppApiServices _appApiServices;
@@ -23,6 +24,7 @@ class RepositoryImpl implements Repository {
   final TransactionDataMapper _transactionDataMapper;
   final DailyStatDataMapper _dailyStatDataMapper;
   final MonthSummaryStatDataMapper _monthSummaryStatDataMapper;
+  final CategoryStatDataMapper _categoryStatDataMapper;
 
   @override
   Future<bool> get isLoggedIn async => await _appPreferences.token != null;
@@ -130,5 +132,20 @@ class RepositoryImpl implements Repository {
     final response = await _appApiServices.getMonthSummaryStats();
 
     return _monthSummaryStatDataMapper.mapToListEntity(response);
+  }
+
+  @override
+  Future<List<CategoryStat>> getCategoryStats({
+    required int targetMonth,
+    required int targetYear,
+    required CategoryType categoryType,
+  }) async {
+    final response = await _appApiServices.getCategoryStats(
+      targetMonth: targetMonth,
+      targetYear: targetYear,
+      categoryType: categoryType,
+    );
+
+    return _categoryStatDataMapper.mapToListEntity(response);
   }
 }

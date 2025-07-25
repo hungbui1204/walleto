@@ -17,6 +17,7 @@ export 'api/mappers/base_success_response_mapper/json_object_response_mapper.dar
 export 'api/mappers/base_success_response_mapper/json_object_status_code_response_mapper.dart';
 export 'api/mappers/base_success_response_mapper/list_json_array_response_mapper.dart';
 export 'api/mappers/category_data_mapper.dart';
+export 'api/mappers/category_stat_data_mapper.dart';
 export 'api/mappers/daily_stat_data_mapper.dart';
 export 'api/mappers/enum/category_type_data_mapper.dart';
 export 'api/mappers/enum/target_month_data_mapper.dart';
@@ -39,6 +40,7 @@ export 'api/models/month_summary_stat_data.dart';
 export 'api/models/transaction_data.dart';
 export 'api/models/user_data.dart';
 export 'api/models/wallet_data.dart';
+export 'category_stat_data.dart';
 export 'helper/cookie_helper.dart';
 export 'preferences/app_preferences.dart';
 export 'repositories/repository_impl.dart';
