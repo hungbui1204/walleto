@@ -99,5 +99,10 @@
     "totalBalance": "Total Balance",
     "seeAll": "See all",
     "statisticalCharts": "Statistical Charts",
-    "recentTransactions": "Recent Transactions"
+    "recentTransactions": "Recent Transactions",
+    "day" : "day",
+    "monthSummary" : "Month Summary",
+    "dailyStatistics" : "Daily Statistics",
+    "thisMonth" : "This Month",
+    "lastMonth" : "Last Month"
 }

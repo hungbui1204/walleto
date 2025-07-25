@@ -28,6 +28,7 @@ enum BottomTab {
     return switch (this) {
       BottomTab.home => _buildIcon(
         iconPath: selected ? Assets.icons.homeActive.path : Assets.icons.homeInactive.path,
+        height: Dimens.d30.responsive(),
       ),
       BottomTab.transactions => _buildIcon(
         iconPath:
@@ -38,7 +39,7 @@ enum BottomTab {
       BottomTab.createTrans => _buildIcon(iconPath: Assets.icons.plus.path),
       BottomTab.budgets => _buildIcon(
         iconPath: selected ? Assets.icons.currencyActive.path : Assets.icons.currencyInactive.path,
-        height: Dimens.d30.responsive(),
+        height: Dimens.d38.responsive(),
       ),
       BottomTab.account => _buildIcon(
         iconPath: selected ? Assets.icons.accountActive.path : Assets.icons.accountInactive.path,
@@ -108,6 +109,25 @@ enum CategoryType {
     return switch (this) {
       CategoryType.expense => 'expense',
       CategoryType.income => 'income',
+    };
+  }
+}
+
+enum TargetMonth {
+  current,
+  previous;
+
+  String get name {
+    return switch (this) {
+      TargetMonth.current => 'this_month',
+      TargetMonth.previous => 'last_month',
+    };
+  }
+
+  String get displayName {
+    return switch (this) {
+      TargetMonth.current => S.current.thisMonth,
+      TargetMonth.previous => S.current.lastMonth,
     };
   }
 }

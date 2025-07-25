@@ -101,4 +101,13 @@ class AppApiServices {
       successResponseMapperType: SuccessResponseMapperType.jsonArray,
     );
   }
+
+  Future<List<MonthSummaryStatData>?> getMonthSummaryStats() {
+    return _serverApiClientRest.request(
+      method: RequestMethod.post,
+      path: 'rpc/get_monthly_summary',
+      decoder: (data) => MonthSummaryStatData.fromJson(data as Map<String, dynamic>),
+      successResponseMapperType: SuccessResponseMapperType.jsonArray,
+    );
+  }
 }

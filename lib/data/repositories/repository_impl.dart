@@ -12,6 +12,7 @@ class RepositoryImpl implements Repository {
     this._walletDataMapper,
     this._transactionDataMapper,
     this._dailyStatDataMapper,
+    this._monthSummaryStatDataMapper,
   );
 
   final AppApiServices _appApiServices;
@@ -21,6 +22,7 @@ class RepositoryImpl implements Repository {
   final WalletDataMapper _walletDataMapper;
   final TransactionDataMapper _transactionDataMapper;
   final DailyStatDataMapper _dailyStatDataMapper;
+  final MonthSummaryStatDataMapper _monthSummaryStatDataMapper;
 
   @override
   Future<bool> get isLoggedIn async => await _appPreferences.token != null;
@@ -121,5 +123,12 @@ class RepositoryImpl implements Repository {
     );
 
     return _dailyStatDataMapper.mapToListEntity(response);
+  }
+
+  @override
+  Future<List<MonthSummaryStat>> getMonthSummaryStats() async {
+    final response = await _appApiServices.getMonthSummaryStats();
+
+    return _monthSummaryStatDataMapper.mapToListEntity(response);
   }
 }
