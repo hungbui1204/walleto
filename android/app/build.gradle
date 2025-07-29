@@ -2,6 +2,7 @@ plugins {
     id "com.android.application"
     id "kotlin-android"
     id "dev.flutter.flutter-gradle-plugin"
+    id 'com.google.gms.google-services'
 }
 
 def dartEnvironmentVariables = []
@@ -21,7 +22,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace = "com.example.walleto"
+    namespace = "com.hungbui.walleto.app"
     compileSdk = 35
     ndkVersion = flutter.ndkVersion
 
@@ -36,7 +37,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.walleto"
+        applicationId = "com.hungbui.walleto.app"
         minSdk = 24
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
@@ -66,19 +67,19 @@ android {
     productFlavors {
         development {
             dimension = 'flavor-type'
-            applicationId = 'com.example.walleto'
+            applicationId = 'com.hungbui.walleto.app'
             manifestPlaceholders['applicationName'] = 'Walleto-Dev'
         }
 
         staging {
             dimension = 'flavor-type'
-            applicationId = 'com.example.walleto'
+            applicationId = 'com.hungbui.walleto.app'
             manifestPlaceholders['applicationName'] = 'Walleto-Stg'
         }
 
         production {
             dimension = 'flavor-type'
-            applicationId = 'com.example.walleto'
+            applicationId = 'com.hungbui.walleto.app'
             manifestPlaceholders['applicationName'] = 'Walleto'
         }
     }
@@ -91,4 +92,6 @@ flutter {
 dependencies {
     implementation 'com.android.support:multidex:2.0.1'
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
+    implementation platform('com.google.firebase:firebase-bom:34.0.0')
+    implementation("com.google.firebase:firebase-analytics")
 }
