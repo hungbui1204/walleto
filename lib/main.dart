@@ -1,9 +1,12 @@
 import 'dart:async';
 
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:walleto/domain/domain.dart';
+import 'package:walleto/firebase_options.dart';
 import 'package:walleto/ui/ui.dart';
 
 import 'config/app_config.dart';
@@ -11,12 +14,20 @@ import 'di/di.dart';
 import 'initializer/application_initializer.dart';
 import 'shared/shared.dart';
 
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+}
+
 void main() => runZonedGuarded(_runMyApp, _reportError);
 
 Future<void> _runMyApp() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await AppInitializer(AppConfig.getInstance()).init();
+
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   final initialResource = await _loadInitialResource();
 

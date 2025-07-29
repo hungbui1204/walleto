@@ -18,7 +18,7 @@ class AppConfig extends ApplicationConfig {
     await di.getIt.get<CookieHelper>().init();
     await di.getIt.get<AppInfo>().init();
     Bloc.observer = AppBlocObserver();
-    // await LocalNotificationService.init();
+    await LocalNotificationService.init();
     await ViewUtils.setPreferredOrientations(
       DeviceUtils.deviceType == DeviceType.mobile
           ? UiConstants.mobileOrientation

@@ -1,6 +1,9 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 import 'package:walleto/domain/domain.dart';
 import 'package:walleto/resources/resources.dart';
 import 'package:walleto/ui/ui.dart';
@@ -56,8 +59,19 @@ class LoginBloc extends BaseBloc<LoginEvent, LoginState> {
   Future<void> _onSignIn(SignInButtonPressed event, Emitter<LoginState> emit) async {
     await runBlocCatching(
       action: () async {
+        final fcmToken = await FirebaseMessaging.instance.getToken();
+
+        tz.initializeTimeZones();
+        final location = tz.local;
+        final timeZoneName = location.name;
+
         await _loginByPasswordUseCase.execute(
-          LoginByPasswordInput(email: state.email, password: state.password),
+          LoginByPasswordInput(
+            email: state.email,
+            password: state.password,
+            fcmToken: fcmToken ?? '',
+            timezone: timeZoneName,
+          ),
         );
 
         navigator.replace(const AppRouteInfo.main());

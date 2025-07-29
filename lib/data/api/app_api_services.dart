@@ -22,6 +22,19 @@ class AppApiServices {
     );
   }
 
+  Future<void> updateUserFcmTokenAndTimeZone({
+    required String fcmToken,
+    required String timezone,
+    required String userId,
+  }) {
+    return _serverApiClientRest.request(
+      method: RequestMethod.patch,
+      path: 'profiles',
+      queryParameters: {'id': 'eq.$userId'},
+      body: {'fcm_token': fcmToken, 'timezone': timezone},
+    );
+  }
+
   Future<AuthenticationData?> refreshToken({required String refreshToken}) {
     return _serverApiClientAuth.request(
       method: RequestMethod.post,

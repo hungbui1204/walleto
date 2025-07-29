@@ -11,7 +11,12 @@ abstract class Repository {
 
   Future<void> setRefreshToken(String refreshToken);
 
-  Future<Authentication> loginByPassword({required String email, required String password});
+  Future<Authentication> loginByPassword({
+    required String email,
+    required String password,
+    required String fcmToken,
+    required String timezone,
+  });
 
   Future<Authentication> refreshAuthToken({required String refreshToken});
 

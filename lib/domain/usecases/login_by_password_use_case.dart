@@ -14,7 +14,12 @@ class LoginByPasswordUseCase
   @protected
   @override
   Future<LoginByPasswordOutput> buildUseCase(LoginByPasswordInput input) async {
-    await _repository.loginByPassword(email: input.email, password: input.password);
+    await _repository.loginByPassword(
+      email: input.email,
+      password: input.password,
+      fcmToken: input.fcmToken,
+      timezone: input.timezone,
+    );
 
     return const LoginByPasswordOutput();
   }
@@ -24,8 +29,12 @@ class LoginByPasswordUseCase
 sealed class LoginByPasswordInput extends BaseInput with _$LoginByPasswordInput {
   const LoginByPasswordInput._();
 
-  const factory LoginByPasswordInput({required String email, required String password}) =
-      _LoginByPasswordInput;
+  const factory LoginByPasswordInput({
+    required String email,
+    required String password,
+    required String fcmToken,
+    required String timezone,
+  }) = _LoginByPasswordInput;
 }
 
 @freezed

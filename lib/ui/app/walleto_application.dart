@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -20,6 +21,12 @@ class WalletoApplication extends StatefulWidget {
 
 class _WalletoApplicationState extends BasePageState<WalletoApplication, AppBloc> {
   final _appRouter = getIt.get<AppRouter>();
+
+  @override
+  void initState() {
+    FirebaseMessaging.instance.requestPermission();
+    super.initState();
+  }
 
   @override
   bool get isAppWidget => true;

@@ -30,15 +30,28 @@ class RepositoryImpl implements Repository {
   Future<bool> get isLoggedIn async => await _appPreferences.token != null;
 
   @override
-  Future<Authentication> loginByPassword({required String email, required String password}) async {
+  Future<Authentication> loginByPassword({
+    required String email,
+    required String password,
+    required String fcmToken,
+    required String timezone,
+  }) async {
     final response = await _appApiServices.loginByPassword(email: email, password: password);
+    final authInfo = _authenticationDataMapper.mapToEntity(response);
 
     // Save the authentication data to secure storage
     await _appPreferences.setToken(response?.accessToken ?? '');
     await _appPreferences.setRefreshToken(response?.refreshToken ?? '');
     await _appPreferences.setUserId(response?.user?.id ?? '');
 
-    return _authenticationDataMapper.mapToEntity(response);
+    // Update the user's FCM token and timezone
+    await _appApiServices.updateUserFcmTokenAndTimeZone(
+      fcmToken: fcmToken,
+      timezone: timezone,
+      userId: authInfo.user.id,
+    );
+
+    return authInfo;
   }
 
   @override
