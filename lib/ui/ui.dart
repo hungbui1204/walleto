@@ -44,6 +44,7 @@ export 'widgets/common_button.dart';
 export 'widgets/common_circle_network_image.dart';
 export 'widgets/common_container.dart';
 export 'widgets/common_currency_container.dart';
+export 'widgets/common_date_picker.dart';
 export 'widgets/common_date_range_picker.dart';
 export 'widgets/common_line.dart';
 export 'widgets/common_text_field.dart';

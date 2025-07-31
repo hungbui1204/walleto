@@ -79,3 +79,12 @@ sealed class CreateTransactionConfirmButtonPressed extends CreateTransactionEven
 
   const factory CreateTransactionConfirmButtonPressed() = _CreateTransactionConfirmButtonPressed;
 }
+
+@freezed
+sealed class CreateTransactionDateSelected extends CreateTransactionEvent
+    with _$CreateTransactionDateSelected {
+  const CreateTransactionDateSelected._();
+
+  const factory CreateTransactionDateSelected({required DateTime date}) =
+      _CreateTransactionDateSelected;
+}

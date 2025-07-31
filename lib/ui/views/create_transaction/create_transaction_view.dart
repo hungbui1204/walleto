@@ -221,8 +221,18 @@ class _NewTransactionInfo extends StatelessWidget {
             buildWhen: (previous, current) => previous.selectedDate != current.selectedDate,
             builder: (context, state) {
               return GestureDetector(
-                onTap: () {
-                  // TODO: Navigate to datetime picker or dialog
+                onTap: () async {
+                  final selectedDate = await getIt.get<AppNavigator>().showDatePicker(
+                    firstDate: DateTime(AppConstants.firstYear),
+                    lastDate: DateTime(AppConstants.lastYear),
+                  );
+
+                  if (selectedDate != null) {
+                    // ignore: use_build_context_synchronously
+                    context.read<CreateTransactionBloc>().add(
+                      CreateTransactionDateSelected(date: selectedDate),
+                    );
+                  }
                 },
                 child: Row(
                   children: [

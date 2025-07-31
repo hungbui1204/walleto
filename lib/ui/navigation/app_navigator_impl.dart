@@ -364,6 +364,9 @@ class AppNavigatorImpl extends AppNavigator with LogMixin {
       barrierColor: barrierColor,
       useRootNavigator: useRootNavigator,
       initialEntryMode: m.DatePickerEntryMode.calendarOnly,
+      builder: (context, child) {
+        return CommonDatePicker(initialDate: initialDate, currentDate: currentDate, child: child!);
+      },
     );
   }
 
