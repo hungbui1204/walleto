@@ -88,3 +88,12 @@ sealed class CreateTransactionDateSelected extends CreateTransactionEvent
   const factory CreateTransactionDateSelected({required DateTime date}) =
       _CreateTransactionDateSelected;
 }
+
+@freezed
+sealed class CreateTransactionNoteChanged extends CreateTransactionEvent
+    with _$CreateTransactionNoteChanged {
+  const CreateTransactionNoteChanged._();
+
+  const factory CreateTransactionNoteChanged({required String note}) =
+      _CreateTransactionNoteChanged;
+}

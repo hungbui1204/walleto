@@ -40,4 +40,9 @@ sealed class AppPopupInfo with _$AppPopupInfo {
     required void Function(DateTime) onMonthSelected,
     required DateTime? initialDate,
   }) = SelectMonth;
+
+  const factory AppPopupInfo.noteInput({
+    required String currentNote,
+    required void Function(String) onNoteChanged,
+  }) = NoteInput;
 }

@@ -150,6 +150,7 @@ class _NewTransactionInfo extends StatelessWidget {
             buildWhen: (previous, current) => previous.selectedCategory != current.selectedCategory,
             builder: (context, state) {
               return GestureDetector(
+                behavior: HitTestBehavior.translucent,
                 onTap: () {
                   getIt.get<AppNavigator>().showDialog(
                     AppPopupInfo.selectCategory(
@@ -190,8 +191,18 @@ class _NewTransactionInfo extends StatelessWidget {
             buildWhen: (previous, current) => previous.note != current.note,
             builder: (context, state) {
               return GestureDetector(
+                behavior: HitTestBehavior.translucent,
                 onTap: () {
-                  // TODO: Navigate to note input page or dialog
+                  getIt.get<AppNavigator>().showModalBottomSheet(
+                    AppPopupInfo.noteInput(
+                      currentNote: state.note,
+                      onNoteChanged: (note) {
+                        context.read<CreateTransactionBloc>().add(
+                          CreateTransactionNoteChanged(note: note),
+                        );
+                      },
+                    ),
+                  );
                 },
                 child: Row(
                   children: [
@@ -221,6 +232,7 @@ class _NewTransactionInfo extends StatelessWidget {
             buildWhen: (previous, current) => previous.selectedDate != current.selectedDate,
             builder: (context, state) {
               return GestureDetector(
+                behavior: HitTestBehavior.translucent,
                 onTap: () async {
                   final selectedDate = await getIt.get<AppNavigator>().showDatePicker(
                     firstDate: DateTime(AppConstants.firstYear),

@@ -35,6 +35,10 @@ class AppPopupInfoMapper extends BasePopupInfoMapper {
           onMonthSelected: onMonthSelected,
           initialDate: initialDate,
         ),
+      NoteInput(:final currentNote, :final onNoteChanged) => NoteInputBottomSheet(
+        currentNote: currentNote,
+        onNoteChanged: onNoteChanged,
+      ),
     };
   }
 }

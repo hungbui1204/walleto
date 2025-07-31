@@ -39,6 +39,7 @@ export 'views/select_category/bloc/select_category_bloc.dart';
 export 'views/select_category/select_category_popup.dart';
 export 'views/transactions/bloc/transactions_bloc.dart';
 export 'views/transactions/transactions_view.dart';
+export 'widgets/bottom_sheet/note_input_bottom_sheet.dart';
 export 'widgets/common_app_bar.dart';
 export 'widgets/common_button.dart';
 export 'widgets/common_circle_network_image.dart';
