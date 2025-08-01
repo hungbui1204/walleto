@@ -11,6 +11,7 @@ class CommonTextField extends StatefulWidget {
     this.isPasswordField = false,
     this.prefixIcon,
     this.hintText,
+    this.maxLines,
   });
 
   final void Function(String)? onChanged;
@@ -19,6 +20,7 @@ class CommonTextField extends StatefulWidget {
   final bool isPasswordField;
   final SvgPicture? prefixIcon;
   final String? hintText;
+  final int? maxLines;
 
   @override
   State<CommonTextField> createState() => _CommonTextFieldState();
@@ -34,6 +36,7 @@ class _CommonTextFieldState extends State<CommonTextField> {
       controller: widget.controller,
       style: AppTextStyles.s14wNormalBlack(),
       obscureText: widget.isPasswordField ? isVisible : false,
+      maxLines: widget.maxLines,
       decoration: InputDecoration(
         hintText: widget.hintText,
         contentPadding: widget.contentPadding,

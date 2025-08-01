@@ -97,3 +97,12 @@ sealed class CreateTransactionNoteChanged extends CreateTransactionEvent
   const factory CreateTransactionNoteChanged({required String note}) =
       _CreateTransactionNoteChanged;
 }
+
+@freezed
+sealed class CreateTransactionWalletSelected extends CreateTransactionEvent
+    with _$CreateTransactionWalletSelected {
+  const CreateTransactionWalletSelected._();
+
+  const factory CreateTransactionWalletSelected({required Wallet wallet}) =
+      _CreateTransactionWalletSelected;
+}

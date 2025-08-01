@@ -45,4 +45,9 @@ sealed class AppPopupInfo with _$AppPopupInfo {
     required String currentNote,
     required void Function(String) onNoteChanged,
   }) = NoteInput;
+
+  const factory AppPopupInfo.chooseWallet({
+    required void Function(Wallet) onWalletSelected,
+    required Wallet? currentWallet,
+  }) = ChooseWallet;
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:walleto/domain/domain.dart';
+import 'package:walleto/resources/styles/app_colors.dart';
 import 'package:walleto/shared/shared.dart';
 
 abstract class AppNavigator {
@@ -75,7 +76,7 @@ abstract class AppNavigator {
     bool isDismissible = true,
     bool enableDrag = true,
     Color barrierColor = Colors.black54,
-    Color? backgroundColor,
+    Color backgroundColor = whiteColor,
   });
 
   void showErrorSnackBar(String message, {Duration? duration});

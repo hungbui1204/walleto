@@ -5,6 +5,7 @@ import 'package:flutter/material.dart' as m;
 import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
 import 'package:walleto/domain/domain.dart';
+import 'package:walleto/resources/resources.dart';
 import 'package:walleto/shared/shared.dart';
 import 'package:walleto/ui/ui.dart';
 
@@ -313,7 +314,7 @@ class AppNavigatorImpl extends AppNavigator with LogMixin {
     bool isDismissible = true,
     bool enableDrag = true,
     m.Color barrierColor = const m.Color(0xB3000000),
-    m.Color? backgroundColor,
+    m.Color backgroundColor = whiteColor,
   }) {
     if (LogConfig.enableNavigatorObserverLog) {
       logD('showModalBottomSheet $appPopupInfo, useRootNav = $useRootNavigator');

@@ -109,8 +109,18 @@ class _NewTransactionInfo extends StatelessWidget {
               if (state.selectedWallet == null) return const SizedBox.shrink();
 
               return GestureDetector(
+                behavior: HitTestBehavior.translucent,
                 onTap: () {
-                  // TODO: Choose wallet by dialog or navigate to wallet selection page
+                  getIt.get<AppNavigator>().showModalBottomSheet(
+                    AppPopupInfo.chooseWallet(
+                      onWalletSelected: (wallet) {
+                        context.read<CreateTransactionBloc>().add(
+                          CreateTransactionWalletSelected(wallet: wallet),
+                        );
+                      },
+                      currentWallet: state.selectedWallet,
+                    ),
+                  );
                 },
                 child: Row(
                   children: [
@@ -234,9 +244,13 @@ class _NewTransactionInfo extends StatelessWidget {
               return GestureDetector(
                 behavior: HitTestBehavior.translucent,
                 onTap: () async {
+                  final now = DateTime.now();
+
                   final selectedDate = await getIt.get<AppNavigator>().showDatePicker(
                     firstDate: DateTime(AppConstants.firstYear),
                     lastDate: DateTime(AppConstants.lastYear),
+                    currentDate: now,
+                    initialDate: state.selectedDate,
                   );
 
                   if (selectedDate != null) {

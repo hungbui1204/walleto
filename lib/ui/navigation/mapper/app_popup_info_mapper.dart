@@ -39,6 +39,10 @@ class AppPopupInfoMapper extends BasePopupInfoMapper {
         currentNote: currentNote,
         onNoteChanged: onNoteChanged,
       ),
+      ChooseWallet(:final onWalletSelected, :final currentWallet) => ChooseWalletBottomSheet(
+        onWalletSelected: onWalletSelected,
+        currentWallet: currentWallet,
+      ),
     };
   }
 }

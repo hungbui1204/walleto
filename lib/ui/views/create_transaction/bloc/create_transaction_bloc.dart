@@ -22,8 +22,9 @@ class CreateTransactionBloc extends BaseBloc<CreateTransactionEvent, CreateTrans
     on<CreateTransactionEqualButtonPressed>(_onCreateTransactionEqualButtonPressed);
     on<CreateTransactionConfirmButtonPressed>(_onCreateTransactionConfirmButtonPressed);
     on<CreateTransactionCategorySelected>(_onCreateTransactionCategorySelected);
-    on<CreateTransactionDateSelected>(onCreateTransactionDateSelected);
-    on<CreateTransactionNoteChanged>(onCreateTransactionNoteChanged);
+    on<CreateTransactionDateSelected>(_onCreateTransactionDateSelected);
+    on<CreateTransactionNoteChanged>(_onCreateTransactionNoteChanged);
+    on<CreateTransactionWalletSelected>(_onCreateTransactionWalletSelected);
   }
 
   final CreateTransactionUseCase _createTransactionUseCase;
@@ -291,17 +292,24 @@ class CreateTransactionBloc extends BaseBloc<CreateTransactionEvent, CreateTrans
     );
   }
 
-  void onCreateTransactionDateSelected(
+  void _onCreateTransactionDateSelected(
     CreateTransactionDateSelected event,
     Emitter<CreateTransactionState> emit,
   ) {
     emit(state.copyWith(selectedDate: event.date));
   }
 
-  void onCreateTransactionNoteChanged(
+  void _onCreateTransactionNoteChanged(
     CreateTransactionNoteChanged event,
     Emitter<CreateTransactionState> emit,
   ) {
     emit(state.copyWith(note: event.note));
+  }
+
+  void _onCreateTransactionWalletSelected(
+    CreateTransactionWalletSelected event,
+    Emitter<CreateTransactionState> emit,
+  ) {
+    emit(state.copyWith(selectedWallet: event.wallet));
   }
 }
