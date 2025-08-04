@@ -6,6 +6,7 @@ import 'package:walleto/domain/domain.dart';
 import 'package:walleto/resources/resources.dart';
 import 'package:walleto/shared/shared.dart';
 import 'package:walleto/ui/ui.dart';
+import 'package:walleto/ui/widgets/common_button_2.dart';
 
 @RoutePage()
 class TransactionsView extends StatefulWidget {
@@ -49,7 +50,9 @@ class _TransactionsViewState extends BasePageState<TransactionsView, Transaction
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: Dimens.d10.responsive()),
+              SizedBox(height: Dimens.d20.responsive()),
+              const _SelectedWalletWidget(),
+              SizedBox(height: Dimens.d20.responsive()),
               const _DatePickerDropDownWidget(),
               SizedBox(height: Dimens.d20.responsive()),
               BlocBuilder<TransactionsBloc, TransactionsState>(
@@ -306,6 +309,41 @@ class _FilterButtonWidget extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _SelectedWalletWidget extends StatelessWidget {
+  const _SelectedWalletWidget();
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<TransactionsBloc, TransactionsState>(
+      buildWhen: (previous, current) {
+        return previous.selectedWallet != current.selectedWallet ||
+            previous.wallets != current.wallets;
+      },
+      builder: (context, state) {
+        return CommonButton2(
+          text: state.selectedWallet.name,
+          icon: CommonCircleNetworkImage(
+            imageUrl: state.selectedWallet.iconUrl,
+            placeHolderType: ImagePlaceHolderType.wallet,
+          ),
+          onTap: () {
+            getIt.get<AppNavigator>().showDialog(
+              AppPopupInfo.selectWallet(
+                wallets: state.wallets,
+                onWalletSelected: (wallet) {
+                  context.read<TransactionsBloc>().add(
+                    TransactionsWalletSelected(selectedWallet: wallet),
+                  );
+                },
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }

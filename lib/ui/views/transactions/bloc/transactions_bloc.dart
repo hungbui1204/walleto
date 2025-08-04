@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:walleto/domain/domain.dart';
+import 'package:walleto/resources/resources.dart';
 import 'package:walleto/shared/shared.dart';
 import 'package:walleto/ui/ui.dart';
 
@@ -18,6 +19,7 @@ class TransactionsBloc extends BaseBloc<TransactionsEvent, TransactionsState> {
     on<TransactionsMonthSelected>(_onTransactionsMonthSelected);
     on<TransactionsDatePickerMethodExpandTriggered>(_onTransactionsDatePickerMethodExpandTriggered);
     on<TransactionsDateRangePicked>(_onTransactionsDateRangePicked);
+    on<TransactionsWalletSelected>(_onWalletSelected);
   }
 
   final GetTransactionsUseCase _getTransactionsUseCase;
@@ -30,7 +32,13 @@ class TransactionsBloc extends BaseBloc<TransactionsEvent, TransactionsState> {
       action: () async {
         final now = DateTime.now();
 
-        emit(state.copyWith(selectedDate: now, selectedDateRange: null));
+        emit(
+          state.copyWith(
+            selectedDate: now,
+            selectedDateRange: null,
+            selectedWallet: _getWallets().first,
+          ),
+        );
 
         // Fetch transactions for the current month and year
         final transactionsOutput = await _getTransactionsUseCase.execute(
@@ -159,5 +167,25 @@ class TransactionsBloc extends BaseBloc<TransactionsEvent, TransactionsState> {
         );
       },
     );
+  }
+
+  void _onWalletSelected(TransactionsWalletSelected event, Emitter<TransactionsState> emit) {
+    if (state.selectedWallet == event.selectedWallet) return;
+
+    emit(state.copyWith(selectedWallet: event.selectedWallet));
+  }
+
+  // Include the 'Total Wallet' in the list of wallets (first item)
+  // 'Total Wallet' is a wallet that having total amount of all wallets
+  List<Wallet> _getWallets() {
+    final totalAmount = appBloc.state.wallets.fold<double>(0, (sum, wallet) => sum + wallet.amount);
+
+    final totalWallet = Wallet(
+      name: S.current.total,
+      amount: totalAmount,
+      id: AppConstants.totalWalletId,
+    );
+
+    return [totalWallet, ...appBloc.state.wallets];
   }
 }

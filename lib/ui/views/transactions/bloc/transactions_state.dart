@@ -8,5 +8,7 @@ sealed class TransactionsState extends BaseBlocState with _$TransactionsState {
     DateTime? selectedDate,
     DateTimeRange? selectedDateRange,
     @Default(false) bool isDatePickerMethodExpanded,
+    @Default(Wallet()) Wallet selectedWallet,
+    @Default(<Wallet>[]) List<Wallet> wallets,
   }) = _TransactionsState;
 }

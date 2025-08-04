@@ -36,3 +36,11 @@ sealed class TransactionsDateRangePicked extends TransactionsEvent
 
   const factory TransactionsDateRangePicked() = _TransactionsDateRangePicked;
 }
+
+@freezed
+sealed class TransactionsWalletSelected extends TransactionsEvent
+    with _$TransactionsWalletSelected {
+  const TransactionsWalletSelected._();
+  const factory TransactionsWalletSelected({required Wallet selectedWallet}) =
+      _TransactionsWalletSelected;
+}

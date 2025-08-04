@@ -18,4 +18,6 @@ class AppConstants {
     accentGreen,
     disableColor,
   ];
+
+  static const totalWalletId = -1;
 }

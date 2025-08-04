@@ -50,4 +50,9 @@ sealed class AppPopupInfo with _$AppPopupInfo {
     required void Function(Wallet) onWalletSelected,
     required Wallet? currentWallet,
   }) = ChooseWallet;
+
+  const factory AppPopupInfo.selectWallet({
+    required List<Wallet> wallets,
+    required void Function(Wallet) onWalletSelected,
+  }) = SelectWallet;
 }

@@ -93,6 +93,8 @@
     "november": "November",
     "december": "December",
     "//": "Transactions view",
+    "total" : "Total",
+    "selectWallet": "Select Wallet",
     "filterByMonth" : "Filter by month",
     "filterByDateRange" : "Filter by date range",
     "//" : "Select Month Popup",
