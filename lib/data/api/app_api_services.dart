@@ -142,4 +142,14 @@ class AppApiServices {
       successResponseMapperType: SuccessResponseMapperType.jsonArray,
     );
   }
+
+  Future<List<UserData>?> getUserInfo({required String userId}) {
+    return _serverApiClientRest.request(
+      method: RequestMethod.get,
+      path: 'profiles',
+      queryParameters: {'id': 'eq.$userId'},
+      decoder: (data) => UserData.fromJson(data as Map<String, dynamic>),
+      successResponseMapperType: SuccessResponseMapperType.jsonArray,
+    );
+  }
 }

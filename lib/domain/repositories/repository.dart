@@ -44,4 +44,6 @@ abstract class Repository {
     required int targetYear,
     required CategoryType categoryType,
   });
+
+  Future<User> getUserInfo();
 }

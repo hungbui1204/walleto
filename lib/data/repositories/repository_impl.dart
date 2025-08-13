@@ -14,6 +14,7 @@ class RepositoryImpl implements Repository {
     this._dailyStatDataMapper,
     this._monthSummaryStatDataMapper,
     this._categoryStatDataMapper,
+    this._userDataMapper,
   );
 
   final AppApiServices _appApiServices;
@@ -25,6 +26,7 @@ class RepositoryImpl implements Repository {
   final DailyStatDataMapper _dailyStatDataMapper;
   final MonthSummaryStatDataMapper _monthSummaryStatDataMapper;
   final CategoryStatDataMapper _categoryStatDataMapper;
+  final UserDataMapper _userDataMapper;
 
   @override
   Future<bool> get isLoggedIn async => await _appPreferences.token != null;
@@ -160,5 +162,13 @@ class RepositoryImpl implements Repository {
     );
 
     return _categoryStatDataMapper.mapToListEntity(response);
+  }
+
+  @override
+  Future<User> getUserInfo() async {
+    final userId = await _appPreferences.userId ?? '';
+    final response = await _appApiServices.getUserInfo(userId: userId);
+
+    return _userDataMapper.mapToEntity(response?.first);
   }
 }
