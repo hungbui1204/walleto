@@ -110,5 +110,7 @@
     "dailyStatistics" : "Daily Statistics",
     "spentStats" : "Spent Stats",
     "thisMonth" : "This Month",
-    "lastMonth" : "Last Month"
+    "lastMonth" : "Last Month",
+    "//": "Account view",
+    "changePassword": "Change Password"
 }

@@ -12,6 +12,7 @@ class CommonCircleNetworkImage extends StatelessWidget {
     this.fit = BoxFit.cover,
     this.placeHolderType = ImagePlaceHolderType.category,
     this.backgroundColor = primaryColor,
+    this.enablePadding = true,
   });
 
   final String? imageUrl;
@@ -19,6 +20,7 @@ class CommonCircleNetworkImage extends StatelessWidget {
   final BoxFit fit;
   final ImagePlaceHolderType placeHolderType;
   final Color backgroundColor;
+  final bool enablePadding;
 
   bool _isValidUrl(String? url) {
     if (url == null || url.isEmpty) return false;
@@ -28,15 +30,23 @@ class CommonCircleNetworkImage extends StatelessWidget {
   }
 
   Widget get _placeholder {
-    return placeHolderType == ImagePlaceHolderType.category
-        ? Assets.icons.categoryImagePlaceHolder.svg(
+    return switch (placeHolderType) {
+      ImagePlaceHolderType.user => ClipOval(
+        child: Assets.images.chooseAvt.image(
           width: size ?? Dimens.d30.responsive(),
           height: size ?? Dimens.d30.responsive(),
-        )
-        : Assets.icons.walletImagePlaceHolder.svg(
-          width: size ?? Dimens.d30.responsive(),
-          height: size ?? Dimens.d30.responsive(),
-        );
+          fit: BoxFit.cover,
+        ),
+      ),
+      ImagePlaceHolderType.category => Assets.icons.categoryImagePlaceHolder.svg(
+        width: size ?? Dimens.d30.responsive(),
+        height: size ?? Dimens.d30.responsive(),
+      ),
+      ImagePlaceHolderType.wallet => Assets.icons.walletImagePlaceHolder.svg(
+        width: size ?? Dimens.d30.responsive(),
+        height: size ?? Dimens.d30.responsive(),
+      ),
+    };
   }
 
   Future<bool> _imageUrlCheck() async {
@@ -64,6 +74,11 @@ class CommonCircleNetworkImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final widgetSize =
+        size == null
+            ? Dimens.d36.responsive()
+            : size! + (enablePadding ? Dimens.d6.responsive() : Dimens.d2.responsive());
+
     return FutureBuilder<bool>(
       future: _imageUrlCheck(),
       builder: (context, snapshot) {
@@ -85,8 +100,8 @@ class CommonCircleNetworkImage extends StatelessWidget {
         }
 
         return Container(
-          height: size == null ? Dimens.d36.responsive() : size! + Dimens.d6.responsive(),
-          width: size == null ? Dimens.d36.responsive() : size! + Dimens.d6.responsive(),
+          height: widgetSize,
+          width: widgetSize,
           decoration: BoxDecoration(
             color: backgroundColor,
             shape: BoxShape.circle,
