@@ -8,6 +8,7 @@ const secondaryColor = Color(0xfff7e34f);
 const secondaryShadeColor = Color.fromARGB(255, 255, 255, 204);
 const secondaryShade1Color = Color.fromARGB(255, 255, 255, 229);
 const greenColor = Color(0xff00FA9A);
+const checkColor = Color.fromARGB(255, 8, 192, 122);
 const redColor = Color(0xfffd5c63);
 const disableColor = Colors.grey;
 const backgroundIconColor = Color.fromARGB(255, 244, 242, 242);

@@ -31,12 +31,14 @@ class TransactionsBloc extends BaseBloc<TransactionsEvent, TransactionsState> {
     await runBlocCatching(
       action: () async {
         final now = DateTime.now();
+        final wallets = _getWallets();
 
         emit(
           state.copyWith(
             selectedDate: now,
             selectedDateRange: null,
-            selectedWallet: _getWallets().first,
+            selectedWallet: wallets.first,
+            wallets: wallets,
           ),
         );
 
@@ -106,6 +108,7 @@ class TransactionsBloc extends BaseBloc<TransactionsEvent, TransactionsState> {
           GetTransactionsInput(
             targetMonth: event.selectedDate.month,
             targetYear: event.selectedDate.year,
+            walletId: _getWalletId(state.selectedWallet.id),
           ),
         );
 
@@ -152,6 +155,7 @@ class TransactionsBloc extends BaseBloc<TransactionsEvent, TransactionsState> {
           GetTransactionsInput(
             fromDate: dateRangePicked.start,
             toDate: dateRangePicked.end.add(const Duration(days: 1)),
+            walletId: _getWalletId(state.selectedWallet.id),
           ),
         );
 
@@ -169,10 +173,33 @@ class TransactionsBloc extends BaseBloc<TransactionsEvent, TransactionsState> {
     );
   }
 
-  void _onWalletSelected(TransactionsWalletSelected event, Emitter<TransactionsState> emit) {
-    if (state.selectedWallet == event.selectedWallet) return;
+  Future<void> _onWalletSelected(
+    TransactionsWalletSelected event,
+    Emitter<TransactionsState> emit,
+  ) async {
+    await runBlocCatching(
+      action: () async {
+        if (state.selectedWallet == event.selectedWallet) return;
 
-    emit(state.copyWith(selectedWallet: event.selectedWallet));
+        // Filter transactions by selected wallet
+        final transactionsOutput = await _getTransactionsUseCase.execute(
+          GetTransactionsInput(
+            walletId: _getWalletId(event.selectedWallet.id),
+            fromDate: state.selectedDateRange?.start,
+            toDate: state.selectedDateRange?.end,
+            targetMonth: state.selectedDate?.month,
+            targetYear: state.selectedDate?.year,
+          ),
+        );
+
+        final transactions =
+            _getDayTransFromTrans(transactionsOutput.transactions).reversed.toList();
+
+        emit(
+          state.copyWith(selectedWallet: event.selectedWallet, allDayTransactions: transactions),
+        );
+      },
+    );
   }
 
   // Include the 'Total Wallet' in the list of wallets (first item)
@@ -187,5 +214,11 @@ class TransactionsBloc extends BaseBloc<TransactionsEvent, TransactionsState> {
     );
 
     return [totalWallet, ...appBloc.state.wallets];
+  }
+
+  /// Get the wallet ID for the selected wallet.
+  /// If the selected wallet is the 'Total', return null to indicate no filtering.
+  int? _getWalletId(int id) {
+    return id == AppConstants.totalWalletId ? null : id;
   }
 }

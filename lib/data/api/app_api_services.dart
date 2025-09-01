@@ -76,6 +76,7 @@ class AppApiServices {
     int? targetYear,
     DateTime? fromDate,
     DateTime? toDate,
+    int? walletId,
   }) {
     return _serverApiClientRest.request(
       method: RequestMethod.post,
@@ -85,6 +86,7 @@ class AppApiServices {
         if (targetYear != null) 'target_year': targetYear,
         if (fromDate != null) 'from_date': fromDate.toIso8601String(),
         if (toDate != null) 'to_date': toDate.toIso8601String(),
+        if (walletId != null) 'wallet_id': walletId,
       },
       decoder: (data) => TransactionData.fromJson(data as Map<String, dynamic>),
       successResponseMapperType: SuccessResponseMapperType.jsonArray,

@@ -25,18 +25,17 @@ class CommonButton2 extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      borderRadius: borderRadius ?? BorderRadius.circular(Dimens.d8.responsive()),
+      borderRadius: borderRadius ?? BorderRadius.circular(Dimens.d20.responsive()),
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: Dimens.d6.responsive()),
+        padding: padding ?? EdgeInsets.only(right: Dimens.d12.responsive()),
         decoration: BoxDecoration(
-          borderRadius: borderRadius ?? BorderRadius.circular(Dimens.d8.responsive()),
-          border: Border.all(),
+          borderRadius: borderRadius ?? BorderRadius.circular(Dimens.d20.responsive()),
+          border: const Border(bottom: BorderSide(), top: BorderSide(), right: BorderSide()),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             if (icon != null) ...[icon!, SizedBox(width: Dimens.d8.responsive())],
-            SizedBox(width: Dimens.d10.responsive()),
             Text(text, style: textStyle ?? AppTextStyles.s14wNormalBlack()),
           ],
         ),

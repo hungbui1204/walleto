@@ -50,8 +50,8 @@ class _TransactionsViewState extends BasePageState<TransactionsView, Transaction
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: Dimens.d20.responsive()),
-              const _SelectedWalletWidget(),
+              SizedBox(height: Dimens.d12.responsive()),
+              const Center(child: _SelectedWalletWidget()),
               SizedBox(height: Dimens.d20.responsive()),
               const _DatePickerDropDownWidget(),
               SizedBox(height: Dimens.d20.responsive()),
@@ -326,14 +326,28 @@ class _SelectedWalletWidget extends StatelessWidget {
       builder: (context, state) {
         return CommonButton2(
           text: state.selectedWallet.name,
-          icon: CommonCircleNetworkImage(
-            imageUrl: state.selectedWallet.iconUrl,
-            placeHolderType: ImagePlaceHolderType.wallet,
-          ),
+          icon:
+              state.selectedWallet.id == AppConstants.totalWalletId
+                  ? ClipOval(
+                    child: Container(
+                      decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all()),
+                      child: Assets.icons.summation.svg(
+                        width: Dimens.d32.responsive(),
+                        height: Dimens.d32.responsive(),
+                      ),
+                    ),
+                  )
+                  : CommonCircleNetworkImage(
+                    imageUrl: state.selectedWallet.iconUrl,
+                    placeHolderType: ImagePlaceHolderType.wallet,
+                    size: Dimens.d32.responsive(),
+                  ),
+
           onTap: () {
             getIt.get<AppNavigator>().showDialog(
               AppPopupInfo.selectWallet(
                 wallets: state.wallets,
+                selectedWallet: state.selectedWallet,
                 onWalletSelected: (wallet) {
                   context.read<TransactionsBloc>().add(
                     TransactionsWalletSelected(selectedWallet: wallet),

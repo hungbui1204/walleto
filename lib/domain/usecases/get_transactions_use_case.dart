@@ -19,6 +19,7 @@ class GetTransactionsUseCase
       targetYear: input.targetYear,
       fromDate: input.fromDate,
       toDate: input.toDate,
+      walletId: input.walletId,
     );
 
     return GetTransactionsOutput(transactions: response);
@@ -34,6 +35,7 @@ sealed class GetTransactionsInput extends BaseInput with _$GetTransactionsInput 
     int? targetYear,
     DateTime? fromDate,
     DateTime? toDate,
+    int? walletId,
   }) = _GetTransactionsInput;
 }
 

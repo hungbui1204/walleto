@@ -31,6 +31,7 @@ abstract class Repository {
     int? targetYear,
     DateTime? fromDate,
     DateTime? toDate,
+    int? walletId,
   });
 
   Future<void> createTransaction(Transaction transaction);

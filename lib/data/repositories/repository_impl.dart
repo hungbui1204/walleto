@@ -106,12 +106,14 @@ class RepositoryImpl implements Repository {
     int? targetYear,
     DateTime? fromDate,
     DateTime? toDate,
+    int? walletId,
   }) async {
     final response = await _appApiServices.getTransactions(
       targetMonth: targetMonth,
       targetYear: targetYear,
       fromDate: fromDate,
       toDate: toDate,
+      walletId: walletId,
     );
 
     return _transactionDataMapper.mapToListEntity(response);
