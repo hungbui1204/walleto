@@ -44,3 +44,12 @@ sealed class TransactionsWalletSelected extends TransactionsEvent
   const factory TransactionsWalletSelected({required Wallet selectedWallet}) =
       _TransactionsWalletSelected;
 }
+
+@freezed
+sealed class TransactionsWalletsUpdated extends TransactionsEvent
+    with _$TransactionsWalletsUpdated {
+  const TransactionsWalletsUpdated._();
+
+  const factory TransactionsWalletsUpdated({required List<Wallet> wallets}) =
+      _TransactionsWalletsUpdated;
+}

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dartx/dartx.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,9 +22,25 @@ class TransactionsBloc extends BaseBloc<TransactionsEvent, TransactionsState> {
     on<TransactionsDatePickerMethodExpandTriggered>(_onTransactionsDatePickerMethodExpandTriggered);
     on<TransactionsDateRangePicked>(_onTransactionsDateRangePicked);
     on<TransactionsWalletSelected>(_onWalletSelected);
+    on<TransactionsWalletsUpdated>(_onTransactionsWalletsUpdated);
   }
 
   final GetTransactionsUseCase _getTransactionsUseCase;
+  StreamSubscription<AppState>? _appBlocSubscription;
+
+  @override
+  Future<void> close() {
+    _appBlocSubscription?.cancel();
+
+    return super.close();
+  }
+
+  void _onTransactionsWalletsUpdated(
+    TransactionsWalletsUpdated event,
+    Emitter<TransactionsState> emit,
+  ) {
+    emit(state.copyWith(wallets: event.wallets));
+  }
 
   Future<void> _onTransactionsViewInitialized(
     TransactionsViewInitialized event,
@@ -32,6 +50,20 @@ class TransactionsBloc extends BaseBloc<TransactionsEvent, TransactionsState> {
       action: () async {
         final now = DateTime.now();
         final wallets = _getWallets();
+
+        // Handle refresh wallets from AppBloc
+        // Depend on the wallets amount
+        _appBlocSubscription = appBloc.stream.listen((appState) {
+          final currentWalletsAmount = wallets.first.amount;
+
+          final appBlocWalletsAmount = appState.wallets.fold<double>(0, (sum, wallet) {
+            return sum + wallet.amount;
+          });
+
+          if (appBlocWalletsAmount != currentWalletsAmount) {
+            add(TransactionsWalletsUpdated(wallets: _getWallets()));
+          }
+        });
 
         emit(
           state.copyWith(
