@@ -99,16 +99,18 @@ class CommonCircleNetworkImage extends StatelessWidget {
           imageWidget = _placeholder;
         }
 
-        return Container(
-          height: widgetSize,
-          width: widgetSize,
-          decoration: BoxDecoration(
-            color: backgroundColor,
-            shape: BoxShape.circle,
-            border: Border.all(),
+        return ClipOval(
+          child: Container(
+            height: widgetSize,
+            width: widgetSize,
+            decoration: BoxDecoration(
+              color: backgroundColor,
+              shape: BoxShape.circle,
+              border: Border.all(),
+            ),
+            alignment: Alignment.center,
+            child: imageWidget,
           ),
-          alignment: Alignment.center,
-          child: imageWidget,
         );
       },
     );

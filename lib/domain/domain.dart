@@ -26,6 +26,7 @@ export 'usecases/get_categories_use_case.dart';
 export 'usecases/get_category_stats_use_case.dart';
 export 'usecases/get_month_stat_use_case.dart';
 export 'usecases/get_month_summary_stats_use_case.dart';
+export 'usecases/get_recent_transactions_use_case.dart';
 export 'usecases/get_transactions_use_case.dart';
 export 'usecases/get_user_info_use_case.dart';
 export 'usecases/get_wallets_use_case.dart';

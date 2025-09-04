@@ -47,4 +47,6 @@ abstract class Repository {
   });
 
   Future<User> getUserInfo();
+
+  Future<List<Transaction>> getRecentTransactions({int? walletId});
 }

@@ -154,4 +154,14 @@ class AppApiServices {
       successResponseMapperType: SuccessResponseMapperType.jsonArray,
     );
   }
+
+  Future<List<TransactionData>?> getRecentTransactions({int? walletId}) {
+    return _serverApiClientRest.request(
+      method: RequestMethod.post,
+      path: 'rpc/get_recent_transactions',
+      body: {if (walletId != null) 'wallet_id': walletId},
+      decoder: (data) => TransactionData.fromJson(data as Map<String, dynamic>),
+      successResponseMapperType: SuccessResponseMapperType.jsonArray,
+    );
+  }
 }

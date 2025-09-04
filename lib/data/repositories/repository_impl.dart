@@ -173,4 +173,11 @@ class RepositoryImpl implements Repository {
 
     return _userDataMapper.mapToEntity(response?.first);
   }
+
+  @override
+  Future<List<Transaction>> getRecentTransactions({int? walletId}) async {
+    final response = await _appApiServices.getRecentTransactions(walletId: walletId);
+
+    return _transactionDataMapper.mapToListEntity(response);
+  }
 }

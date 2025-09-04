@@ -53,9 +53,10 @@ class _HomeViewState extends BasePageState<HomeView, HomeBloc> with SingleTicker
               SizedBox(height: Dimens.d16.responsive()),
               const _AllWalletsWidget(),
               SizedBox(height: Dimens.d20.responsive()),
-              _StatisticWidget(_tabController),
+              StatisticWidget(tabController: _tabController),
               SizedBox(height: Dimens.d20.responsive()),
               const _RecentTransactionsWidget(),
+              SizedBox(height: Dimens.d20.responsive()),
             ],
           ),
         ),
@@ -77,30 +78,27 @@ class _AllWalletsWidget extends StatelessWidget {
           Text(S.current.seeAll, style: AppTextStyles.s13wNormalBlack()),
         ],
       ),
-      contentWidget: Column(
-        children: [
-          BlocBuilder<AppBloc, AppState>(
-            buildWhen: (previous, current) => previous.wallets != current.wallets,
-            builder: (context, state) {
-              if (state.wallets.isEmpty) return const SizedBox.shrink();
-              return ListView.separated(
-                itemCount: state.wallets.length,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemBuilder: (context, index) {
-                  return _WalletInfoWidget(
-                    walletName: state.wallets[index].name,
-                    walletBalance: state.wallets[index].amount,
-                    walletIconUrl: state.wallets[index].iconUrl,
-                  );
-                },
-                separatorBuilder: (context, index) {
-                  return const CommonLine(color: greyColor);
-                },
+      contentWidget: BlocBuilder<AppBloc, AppState>(
+        buildWhen: (previous, current) => previous.wallets != current.wallets,
+        builder: (context, state) {
+          if (state.wallets.isEmpty) return const SizedBox.shrink();
+
+          return ListView.separated(
+            itemCount: state.wallets.length,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemBuilder: (context, index) {
+              return _WalletInfoWidget(
+                walletName: state.wallets[index].name,
+                walletBalance: state.wallets[index].amount,
+                walletIconUrl: state.wallets[index].iconUrl,
               );
             },
-          ),
-        ],
+            separatorBuilder: (context, index) {
+              return const CommonLine(color: greyColor);
+            },
+          );
+        },
       ),
     );
   }
@@ -137,121 +135,6 @@ class _WalletInfoWidget extends StatelessWidget {
   }
 }
 
-class _StatisticWidget extends StatelessWidget {
-  const _StatisticWidget(this._tabController);
-
-  final TabController _tabController;
-
-  @override
-  Widget build(BuildContext context) {
-    return CommonContainer(
-      titleWidget: Align(
-        alignment: Alignment.centerLeft,
-        child: Text(S.current.statisticalCharts, style: AppTextStyles.s16wBoldBlack()),
-      ),
-      contentWidget: Column(
-        children: [
-          TabBar(
-            controller: _tabController,
-            tabs: [
-              Padding(
-                padding: EdgeInsets.all(Dimens.d12.responsive()),
-                child: Text(
-                  S.current.monthSummary,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.all(Dimens.d12.responsive()),
-                child: Text(
-                  S.current.spentStats,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: Dimens.d16.responsive()),
-          SizedBox(
-            height: Dimens.d300.responsive(),
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                Column(
-                  children: [
-                    Expanded(
-                      child: BlocBuilder<HomeBloc, HomeState>(
-                        buildWhen: (previous, current) {
-                          return previous.monthSummaryStats != current.monthSummaryStats;
-                        },
-                        builder: (context, state) {
-                          return MonthSummaryChart(stats: state.monthSummaryStats);
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    BlocBuilder<HomeBloc, HomeState>(
-                      buildWhen: (previous, current) {
-                        return previous.selectedDateTime != current.selectedDateTime;
-                      },
-                      builder: (context, state) {
-                        if (state.selectedDateTime == null) return const SizedBox.shrink();
-
-                        return InkWell(
-                          borderRadius: BorderRadius.circular(Dimens.d8.responsive()),
-                          onTap: () {},
-                          child: Container(
-                            padding: EdgeInsets.symmetric(horizontal: Dimens.d6.responsive()),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(Dimens.d8.responsive()),
-                              border: Border.all(),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(Icons.arrow_outward_rounded, size: Dimens.d16.responsive()),
-                                Assets.icons.calendar.svg(
-                                  width: Dimens.d30.responsive(),
-                                  height: Dimens.d30.responsive(),
-                                ),
-                                SizedBox(width: Dimens.d10.responsive()),
-                                Text(
-                                  state.selectedDateTime!.toStringWithFormat(
-                                    DateTimeFormatConstants.monthYearFormat,
-                                  ),
-                                  style: AppTextStyles.s14wNormalBlack(),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                    SizedBox(height: Dimens.d20.responsive()),
-                    Expanded(
-                      child: BlocBuilder<HomeBloc, HomeState>(
-                        buildWhen: (previous, current) {
-                          return previous.categoryStats != current.categoryStats;
-                        },
-                        builder: (context, state) {
-                          return MonthCategoryStatsChart(stats: state.categoryStats);
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class _RecentTransactionsWidget extends StatelessWidget {
   const _RecentTransactionsWidget();
 
@@ -262,7 +145,74 @@ class _RecentTransactionsWidget extends StatelessWidget {
         alignment: Alignment.centerLeft,
         child: Text(S.current.recentTransactions, style: AppTextStyles.s16wBoldBlack()),
       ),
-      contentWidget: Column(children: []),
+      contentWidget: BlocBuilder<HomeBloc, HomeState>(
+        buildWhen: (previous, current) {
+          return previous.recentTransactions != current.recentTransactions;
+        },
+        builder: (context, state) {
+          if (state.recentTransactions.isEmpty) return const SizedBox.shrink();
+
+          return ListView.separated(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: state.recentTransactions.length,
+            itemBuilder: (context, index) {
+              return _RecentTransactionWidget(state.recentTransactions[index]);
+            },
+            separatorBuilder: (context, index) {
+              return const CommonLine(color: greyColor);
+            },
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _RecentTransactionWidget extends StatelessWidget {
+  const _RecentTransactionWidget(this.transaction);
+
+  final Transaction transaction;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Stack(
+          clipBehavior: Clip.none,
+          children: [
+            CommonCircleNetworkImage(imageUrl: transaction.category.iconUrl),
+            Positioned(
+              bottom: 0,
+              right: -6,
+              child: CommonCircleNetworkImage(
+                imageUrl: transaction.wallet.iconUrl,
+                placeHolderType: ImagePlaceHolderType.wallet,
+                backgroundColor: secondaryColor,
+                size: Dimens.d16.responsive(),
+              ),
+            ),
+          ],
+        ),
+        SizedBox(width: Dimens.d16.responsive()),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(transaction.category.name),
+            Text(
+              transaction.createdAt!.toStringWithFormat(DateTimeFormatConstants.dayMonthYearFormat),
+            ),
+          ],
+        ),
+        const Spacer(),
+        Text(
+          transaction.amount.toStringWithFormat(NumberFormatConstants.amountFormat),
+          style:
+              transaction.type == CategoryType.expense
+                  ? AppTextStyles.s14wNormalRed()
+                  : AppTextStyles.s14wNormalGreen(),
+        ),
+      ],
     );
   }
 }
