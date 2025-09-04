@@ -112,5 +112,12 @@
     "thisMonth" : "This Month",
     "lastMonth" : "Last Month",
     "//": "Account view",
-    "changePassword": "Change Password"
+    "changePassword": "Change Password",
+    "settings" : "Settings",
+    "signOut" : "Sign Out",
+    "help" : "Help",
+    "about" : "About",
+    "areYouSureYouWantToSignOut" : "Are you sure you want to sign out?",
+    "myWallets" : "My Wallets",
+    "categories" : "Categories"
 }

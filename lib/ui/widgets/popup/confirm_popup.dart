@@ -36,12 +36,11 @@ class _ConfirmButton extends StatelessWidget {
         ),
         if (showCancel) ...[
           SizedBox(height: Dimens.d18.responsive()),
-          // LinkWidget(
-          //   text: S.current.cancel,
-          //   textStyle: AppTextStyles.s16wBoldBlack().copyWith(height: 1),
-          //   padding: EdgeInsets.all(Dimens.d8.responsive()),
-          //   onTap: () => getIt.get<AppNavigator>().pop(useRootNavigator: true),
-          // ),
+          CommonButton(
+            text: S.current.cancel,
+            backgroundColor: secondaryColor,
+            onTap: () => getIt.get<AppNavigator>().pop(),
+          ),
         ],
       ],
     );

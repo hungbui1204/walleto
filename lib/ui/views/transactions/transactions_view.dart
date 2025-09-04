@@ -6,7 +6,6 @@ import 'package:walleto/domain/domain.dart';
 import 'package:walleto/resources/resources.dart';
 import 'package:walleto/shared/shared.dart';
 import 'package:walleto/ui/ui.dart';
-import 'package:walleto/ui/widgets/common_button_2.dart';
 
 @RoutePage()
 class TransactionsView extends StatefulWidget {
@@ -234,7 +233,9 @@ class _DatePickerDropDownWidget extends StatelessWidget {
                         ? Column(
                           children: [
                             const CommonLine(margin: EdgeInsets.zero),
-                            _FilterButtonWidget(
+                            CommonForwardButton(
+                              title: S.current.filterByMonth,
+                              color: whiteColor,
                               onTap: () {
                                 getIt.get<AppNavigator>().showDialog(
                                   AppPopupInfo.selectMonth(
@@ -249,21 +250,24 @@ class _DatePickerDropDownWidget extends StatelessWidget {
                                   ),
                                 );
                               },
-                              text: S.current.filterByMonth,
                             ),
                             CommonLine(
                               margin: EdgeInsets.zero,
                               padding: EdgeInsets.symmetric(horizontal: Dimens.d16.responsive()),
                               color: greyColor,
                             ),
-                            _FilterButtonWidget(
+                            CommonForwardButton(
+                              title: S.current.filterByDateRange,
+                              color: whiteColor,
+                              borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(Dimens.d8.responsive()),
+                                bottomRight: Radius.circular(Dimens.d8.responsive()),
+                              ),
                               onTap: () {
                                 context.read<TransactionsBloc>().add(
                                   const TransactionsDateRangePicked(),
                                 );
                               },
-                              text: S.current.filterByDateRange,
-                              hasBorderRadius: true,
                             ),
                           ],
                         )
@@ -273,42 +277,6 @@ class _DatePickerDropDownWidget extends StatelessWidget {
           ),
         );
       },
-    );
-  }
-}
-
-class _FilterButtonWidget extends StatelessWidget {
-  const _FilterButtonWidget({
-    required this.onTap,
-    required this.text,
-    this.hasBorderRadius = false,
-  });
-
-  final void Function() onTap;
-  final String text;
-  final bool hasBorderRadius;
-
-  @override
-  Widget build(context) {
-    return InkWell(
-      borderRadius:
-          hasBorderRadius
-              ? BorderRadius.only(
-                bottomLeft: Radius.circular(Dimens.d8.responsive()),
-                bottomRight: Radius.circular(Dimens.d8.responsive()),
-              )
-              : null,
-      onTap: onTap,
-      child: Padding(
-        padding: EdgeInsets.all(Dimens.d10.responsive()),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(text, style: AppTextStyles.s14wNormalBlack()),
-            Icon(Icons.arrow_forward_ios, size: Dimens.d14.responsive()),
-          ],
-        ),
-      ),
     );
   }
 }
