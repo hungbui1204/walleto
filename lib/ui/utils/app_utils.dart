@@ -47,4 +47,23 @@ class AppUtils {
       _ => '',
     };
   }
+
+  /// Builds a tree structure of categories from a flat list of categories.
+  static List<Category> buildCategoryTree(List<Category> allCategories) {
+    final Map<String, Category> categoryMap = {
+      for (var category in allCategories) '${category.id}': category,
+    };
+
+    for (var category in allCategories) {
+      if (category.isParent) {
+      } else if (category.parentId != null && categoryMap.containsKey('${category.parentId}')) {
+        final parent = categoryMap['${category.parentId}']!;
+        categoryMap['${category.parentId}'] = parent.copyWith(
+          children: [...parent.children, category],
+        );
+      }
+    }
+
+    return categoryMap.values.where((category) => category.isParent).toList();
+  }
 }

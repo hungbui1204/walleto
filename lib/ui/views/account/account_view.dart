@@ -183,7 +183,7 @@ class _UtilitiesWidget extends StatelessWidget {
               bottomRight: Radius.circular(Dimens.d10.responsive()),
             ),
             onTap: () {
-              // TODO: Implement categories functionality
+              getIt.get<AppNavigator>().push(const AppRouteInfo.categories());
             },
           ),
         ],

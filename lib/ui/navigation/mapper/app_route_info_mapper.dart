@@ -15,6 +15,7 @@ class AppRouteInfoMapper extends BaseRouteInfoMapper {
       Budgets() => const BudgetsRoute(),
       Account() => const AccountRoute(),
       CreateTransaction() => const CreateTransactionRoute(),
+      Categories() => const CategoriesRoute(),
     };
   }
 }

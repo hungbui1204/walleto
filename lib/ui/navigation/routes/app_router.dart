@@ -65,6 +65,11 @@ class AppRouter extends RootStackRouter {
               path: 'create-transaction',
               meta: const {'hideBottomNav': true},
             ),
+            AutoRoute(
+              page: CategoriesRoute.page,
+              path: 'categories',
+              meta: const {'hideBottomNav': true},
+            ),
           ],
         ),
       ],

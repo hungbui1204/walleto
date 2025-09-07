@@ -24,6 +24,8 @@ export 'views/auth/bloc/login_bloc.dart';
 export 'views/auth/login_view.dart';
 export 'views/auth/widgets/half_circle_painter.dart';
 export 'views/budgets/budgets_view.dart';
+export 'views/categories/bloc/categories_bloc.dart';
+export 'views/categories/categories_view.dart';
 export 'views/create_transaction/bloc/create_transaction_bloc.dart';
 export 'views/create_transaction/create_transaction_view.dart';
 export 'views/home/bloc/home_bloc.dart';
