@@ -23,7 +23,7 @@ serve(async (req) => {
 
     if (exists === true) {
       return new Response(
-        JSON.stringify({ error: "User already exists" }),
+        JSON.stringify({ message: "User already exists" }),
         { status: 400 }
       );
     }
@@ -39,6 +39,6 @@ serve(async (req) => {
 
     return new Response(JSON.stringify({ message: "User created successfully", user: newUser }), { status: 200 });
   } catch (err) {
-    return new Response(JSON.stringify({ error: err.message }), { status: 500 });
+    return new Response(JSON.stringify({ message: err.message }), { status: 500 });
   }
 });

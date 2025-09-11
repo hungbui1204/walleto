@@ -46,7 +46,7 @@ serve(async (req) => {
     if (sqlError) throw sqlError;
 
     if (exists === true) {
-      return new Response(JSON.stringify({ error: "Email already exists" }), { status: 400 });
+      return new Response(JSON.stringify({ message: "Email already exists" }), { status: 400 });
     }
 
     // Create OTP
@@ -65,6 +65,6 @@ serve(async (req) => {
 
     return new Response(JSON.stringify({ message: "OTP sent" }), { status: 200 });
   } catch (err) {
-    return new Response(JSON.stringify({ error: err.message }), { status: 500 });
+    return new Response(JSON.stringify({ message: err.message }), { status: 500 });
   }
 });
