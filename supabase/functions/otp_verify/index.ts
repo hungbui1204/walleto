@@ -27,7 +27,16 @@ serve(async (req) => {
       console.log("Verifying OTP for:", email, code);
 
 
-    if (!otpRow) return new Response(JSON.stringify({ message: "Invalid or expired OTP" }), { status: 400 });
+    if (!otpRow) return new Response(JSON.stringify({ 
+      msg: "Invalid or expired OTP",
+      code: 400,
+      error_code: "invalid_or_expired_otp",
+    }), { 
+      status: 400,
+      headers: {
+          "Content-Type": "application/json"
+        }
+    });
 
     // Mark OTP as used
     await supabaseAdmin
@@ -35,9 +44,24 @@ serve(async (req) => {
       .update({ used: true })
       .eq("id", otpRow.id);
 
-    return new Response(JSON.stringify({ message: "Email confirmed successfully" }), { status: 200 });
+    return new Response(JSON.stringify({ 
+      msg: "Email confirmed successfully"
+    }), {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
 
   } catch (err) {
-    return new Response(JSON.stringify({ message: err.message }), { status: 500 });
+    return new Response(JSON.stringify({ 
+      msg: err.message,
+      code: 500,
+    }), { 
+      status: 500,
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
   }
 });
