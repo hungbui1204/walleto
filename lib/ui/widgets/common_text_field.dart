@@ -12,6 +12,9 @@ class CommonTextField extends StatefulWidget {
     this.prefixIcon,
     this.hintText,
     this.maxLines = 1,
+    this.prefixBackgroundColor,
+    this.maxLength = 100,
+    this.keyboardType = TextInputType.text,
   });
 
   final void Function(String)? onChanged;
@@ -19,8 +22,11 @@ class CommonTextField extends StatefulWidget {
   final EdgeInsetsGeometry contentPadding;
   final bool isPasswordField;
   final SvgPicture? prefixIcon;
+  final Color? prefixBackgroundColor;
   final String? hintText;
   final int maxLines;
+  final int maxLength;
+  final TextInputType keyboardType;
 
   @override
   State<CommonTextField> createState() => _CommonTextFieldState();
@@ -37,11 +43,15 @@ class _CommonTextFieldState extends State<CommonTextField> {
       style: AppTextStyles.s14wNormalBlack(),
       obscureText: widget.isPasswordField ? isVisible : false,
       maxLines: widget.maxLines,
+      maxLength: widget.maxLength,
+      keyboardType: widget.keyboardType,
       decoration: InputDecoration(
+        counterText: '',
         hintText: widget.hintText,
         contentPadding: widget.contentPadding,
         filled: true,
         fillColor: fieldFillColor,
+
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(Dimens.d12.responsive())),
         ),
@@ -54,7 +64,7 @@ class _CommonTextFieldState extends State<CommonTextField> {
                   margin: EdgeInsets.only(right: Dimens.d8.responsive()),
                   padding: EdgeInsets.all(Dimens.d16.responsive()),
                   decoration: BoxDecoration(
-                    color: primaryShadeColor,
+                    color: widget.prefixBackgroundColor ?? primaryShadeColor,
                     border: Border.all(),
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(Dimens.d12.responsive()),
