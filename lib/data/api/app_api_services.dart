@@ -6,10 +6,15 @@ import 'package:walleto/shared/shared.dart';
 
 @lazySingleton
 class AppApiServices {
-  const AppApiServices(this._serverApiClientAuth, this._serverApiClientRest);
+  const AppApiServices(
+    this._serverApiClientAuth,
+    this._serverApiClientRest,
+    this._serverApiFunctionsClient,
+  );
 
   final ServerApiClientAuth _serverApiClientAuth;
   final ServerApiClientRest _serverApiClientRest;
+  final ServerApiFunctionsClient _serverApiFunctionsClient;
 
   Future<AuthenticationData?> loginByPassword({required String email, required String password}) {
     return _serverApiClientAuth.request(
@@ -162,6 +167,30 @@ class AppApiServices {
       body: {if (walletId != null) 'wallet_id': walletId},
       decoder: (data) => TransactionData.fromJson(data as Map<String, dynamic>),
       successResponseMapperType: SuccessResponseMapperType.jsonArray,
+    );
+  }
+
+  Future<void> sendOtpForEmailChecking({required String email}) {
+    return _serverApiFunctionsClient.request(
+      method: RequestMethod.post,
+      path: '/send_otp',
+      body: {'email': email},
+    );
+  }
+
+  Future<void> verifyOtpForEmail({required String email, required String code}) {
+    return _serverApiFunctionsClient.request(
+      method: RequestMethod.post,
+      path: '/otp_verify',
+      body: {'email': email, 'code': code},
+    );
+  }
+
+  Future<void> createUserByEmail({required String email, required String password}) {
+    return _serverApiFunctionsClient.request(
+      method: RequestMethod.post,
+      path: '/create_user',
+      body: {'email': email, 'password': password},
     );
   }
 }

@@ -49,4 +49,10 @@ abstract class Repository {
   Future<User> getUserInfo();
 
   Future<List<Transaction>> getRecentTransactions({int? walletId});
+
+  Future<void> sendOtpForEmailChecking({required String email});
+
+  Future<void> verifyOtpForEmail({required String email, required String otp});
+
+  Future<void> createUserByEmail({required String email, required String password});
 }

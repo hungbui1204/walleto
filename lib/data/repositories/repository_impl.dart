@@ -180,4 +180,19 @@ class RepositoryImpl implements Repository {
 
     return _transactionDataMapper.mapToListEntity(response);
   }
+
+  @override
+  Future<void> sendOtpForEmailChecking({required String email}) async {
+    await _appApiServices.sendOtpForEmailChecking(email: email);
+  }
+
+  @override
+  Future<void> createUserByEmail({required String email, required String password}) async {
+    await _appApiServices.createUserByEmail(email: email, password: password);
+  }
+
+  @override
+  Future<void> verifyOtpForEmail({required String email, required String otp}) async {
+    await _appApiServices.verifyOtpForEmail(email: email, code: otp);
+  }
 }

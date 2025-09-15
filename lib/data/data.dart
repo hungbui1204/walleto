@@ -4,6 +4,7 @@ export 'api/client/base/api_client_default_settings.dart';
 export 'api/client/base/dio_builder.dart';
 export 'api/client/server_api_client_auth.dart';
 export 'api/client/server_api_client_rest.dart';
+export 'api/client/server_api_functions_client.dart';
 export 'api/exception_mapper/dio_exception_mapper.dart';
 export 'api/mappers/authentication_data_mapper.dart';
 export 'api/mappers/base/base_data_mapper.dart';
