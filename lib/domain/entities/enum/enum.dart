@@ -136,7 +136,8 @@ enum TargetMonth {
 enum SignUpStep {
   emailConfirm(1),
   otpConfirm(2),
-  signingUp(3);
+  signingUp(3),
+  signUpComplete(4);
 
   const SignUpStep(this.step);
 
