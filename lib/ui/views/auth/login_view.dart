@@ -91,7 +91,10 @@ class _LoginViewState extends BasePageState<LoginView, LoginBloc>
                       padding: EdgeInsets.all(Dimens.d12.responsive()),
                       child: Text(
                         S.current.signUp,
-                        style: const TextStyle(fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: Dimens.d16.responsive(),
+                        ),
                       ),
                     ),
                   ],
@@ -111,6 +114,7 @@ class _LoginViewState extends BasePageState<LoginView, LoginBloc>
                           passwordSignUpController: _passwordSignUpController,
                           confirmPasswordSignUpController: _confirmPasswordSignUpController,
                           otpSignUpController: _otpController,
+                          tabController: _tabController,
                         ),
                       ],
                     ),

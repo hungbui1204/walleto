@@ -65,6 +65,8 @@
     "hintConfirmPassword": "Enter your password again",
     "confirmPasswordDoesNotMatch": "Confirm password does not match",
     "acceptOurTerms": "Accept our Terms and Conditions, Privacy Policy",
+    "newAccountWithEmailIsCreatedSuccessfully" : "New account with email {email} is created successfully!",
+    "loginNow" : "Login Now!",
     "//":"Validation",
     "emailRequired": "Email field is required",
     "passwordRequired":"Password field is required",
