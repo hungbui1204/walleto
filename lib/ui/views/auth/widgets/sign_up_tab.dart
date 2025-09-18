@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:walleto/domain/domain.dart';
 import 'package:walleto/resources/resources.dart';
+import 'package:walleto/shared/shared.dart';
 import 'package:walleto/ui/ui.dart';
 
 class SignUpTab extends StatelessWidget {
@@ -74,19 +75,35 @@ class SignUpTab extends StatelessWidget {
           BlocBuilder<LoginBloc, LoginState>(
             buildWhen: (previous, current) => previous.signUpStep != current.signUpStep,
             builder: (context, state) {
-              return switch (state.signUpStep) {
-                SignUpStep.emailConfirm => SignUpConfirmEmailStepWidget(
-                  emailSignUpController: emailSignUpController,
+              return AnimatedSwitcher(
+                duration: DurationConstants.defaultAnimationDuration,
+                transitionBuilder: (child, animation) {
+                  const begin = Offset(1.0, 0.0); // Slide from right
+                  const end = Offset.zero;
+                  final tween = Tween<Offset>(begin: begin, end: end);
+                  final offsetAnimation = animation.drive(tween);
+
+                  return SlideTransition(position: offsetAnimation, child: child);
+                },
+                child: KeyedSubtree(
+                  key: ValueKey(state.signUpStep),
+                  child: switch (state.signUpStep) {
+                    SignUpStep.emailConfirm => SignUpConfirmEmailStepWidget(
+                      emailSignUpController: emailSignUpController,
+                    ),
+                    SignUpStep.otpConfirm => SignUpConfirmOtpStepWidget(
+                      otpSignUpController: otpSignUpController,
+                    ),
+                    SignUpStep.signingUp => SignUpSigningUpStepWidget(
+                      passwordSignUpController: passwordSignUpController,
+                      confirmPasswordSignUpController: confirmPasswordSignUpController,
+                    ),
+                    SignUpStep.signUpComplete => SignUpCompleteStepWidget(
+                      tabController: tabController,
+                    ),
+                  },
                 ),
-                SignUpStep.otpConfirm => SignUpConfirmOtpStepWidget(
-                  otpSignUpController: otpSignUpController,
-                ),
-                SignUpStep.signingUp => SignUpSigningUpStepWidget(
-                  passwordSignUpController: passwordSignUpController,
-                  confirmPasswordSignUpController: confirmPasswordSignUpController,
-                ),
-                SignUpStep.signUpComplete => SignUpCompleteStepWidget(tabController: tabController),
-              };
+              );
             },
           ),
         ],
