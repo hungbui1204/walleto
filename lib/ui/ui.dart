@@ -49,6 +49,7 @@ export 'views/select_category/bloc/select_category_bloc.dart';
 export 'views/select_category/select_category_popup.dart';
 export 'views/transactions/bloc/transactions_bloc.dart';
 export 'views/transactions/transactions_view.dart';
+export 'widgets/app_loading_widget.dart';
 export 'widgets/bottom_sheet/choose_wallet_bottom_sheet.dart';
 export 'widgets/bottom_sheet/note_input_bottom_sheet.dart';
 export 'widgets/common_app_bar.dart';
