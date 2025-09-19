@@ -46,6 +46,21 @@ serve(async (req) => {
 
     if (error) throw error;
 
+     // Create profile record in public.profiles table
+    const { error: profileError } = await supabaseAdmin
+      .from('profiles')
+      .insert({
+        id: newUser.user.id,
+        email: email,
+        created_at: new Date().toISOString()
+      });
+    
+    if (profileError) {
+      console.error("Error creating profile:", profileError);
+      await supabaseAdmin.auth.admin.deleteUser(newUser.user.id);
+      throw profileError;
+    }
+
     return new Response(JSON.stringify({ msg: "User created successfully", user: newUser }), { 
       status: 200,
       headers: {
