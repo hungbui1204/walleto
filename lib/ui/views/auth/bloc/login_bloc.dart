@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -22,6 +23,7 @@ class LoginBloc extends BaseBloc<LoginEvent, LoginState> {
     this._createUserByEmailUseCase,
     this._verifyOtpForEmailUseCase,
     this._sendOtpForEmailCheckingUseCase,
+    this._getWalletsUseCase,
   ) : super(const LoginState()) {
     on<LoginEmailInputChanged>(_onEmailInputChanged, transformer: log());
     on<LoginPasswordInputChanged>(_onPasswordInputChanged, transformer: log());
@@ -49,6 +51,7 @@ class LoginBloc extends BaseBloc<LoginEvent, LoginState> {
   final CreateUserByEmailUseCase _createUserByEmailUseCase;
   final VerifyOtpForEmailUseCase _verifyOtpForEmailUseCase;
   final SendOtpForEmailCheckingUseCase _sendOtpForEmailCheckingUseCase;
+  final GetWalletsUseCase _getWalletsUseCase;
   Timer? _reSendOtpTimer;
 
   @override
@@ -144,7 +147,14 @@ class LoginBloc extends BaseBloc<LoginEvent, LoginState> {
           return;
         }
 
-        final fcmToken = await FirebaseMessaging.instance.getToken();
+        late final String? fcmToken;
+
+        if (Platform.isIOS) {
+          // TODO: implement push noti for iOS
+          fcmToken = null;
+        } else {
+          fcmToken = await FirebaseMessaging.instance.getToken();
+        }
 
         tz.initializeTimeZones();
         final location = tz.local;
@@ -158,6 +168,16 @@ class LoginBloc extends BaseBloc<LoginEvent, LoginState> {
             timezone: timeZoneName,
           ),
         );
+
+        // Handle if wallets is empty, it means user just signed up and has no wallets
+        // Navigate to create wallet view
+        final walletsOutput = await _getWalletsUseCase.execute(const GetWalletsInput());
+
+        if (walletsOutput.wallets.isEmpty) {
+          navigator.replace(const AppRouteInfo.createWallet(isFromSignUp: true));
+
+          return;
+        }
 
         navigator.replace(const AppRouteInfo.main());
       },

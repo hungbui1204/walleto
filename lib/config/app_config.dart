@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:walleto/data/data.dart';
 import 'package:walleto/di/di.dart' as di;
@@ -18,7 +20,10 @@ class AppConfig extends ApplicationConfig {
     await di.getIt.get<CookieHelper>().init();
     await di.getIt.get<AppInfo>().init();
     Bloc.observer = AppBlocObserver();
-    await LocalNotificationService.init();
+    if (Platform.isAndroid) {
+      // TODO: implement push noti for iOS
+      await LocalNotificationService.init();
+    }
     await ViewUtils.setPreferredOrientations(
       DeviceUtils.deviceType == DeviceType.mobile
           ? UiConstants.mobileOrientation
