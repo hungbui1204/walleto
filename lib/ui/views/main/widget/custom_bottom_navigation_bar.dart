@@ -18,8 +18,8 @@ class CustomBottomNavigationBar extends StatelessWidget {
         height: Dimens.d56.responsive(),
         color: primaryShadeColor,
         key: key,
-        shape: const CircularNotchedRectangle(),
-        notchMargin: Dimens.d10.responsive(),
+        // shape: const CircularNotchedRectangle(),
+        // notchMargin: Dimens.d10.responsive(),
         child: Row(
           children: List.generate(BottomTab.values.length, (index) {
             // Create [indexWithout3rdIcon] that not include the createTrans tab

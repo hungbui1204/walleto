@@ -51,7 +51,6 @@ class _CommonTextFieldState extends State<CommonTextField> {
         contentPadding: widget.contentPadding,
         filled: true,
         fillColor: fieldFillColor,
-
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(Dimens.d12.responsive())),
         ),

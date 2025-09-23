@@ -195,4 +195,11 @@ class RepositoryImpl implements Repository {
   Future<void> verifyOtpForEmail({required String email, required String otp}) async {
     await _appApiServices.verifyOtpForEmail(email: email, code: otp);
   }
+
+  @override
+  Future<void> createWallet(Wallet wallet) async {
+    final userId = await _appPreferences.userId ?? '';
+    final walletData = _walletDataMapper.mapToData(wallet.copyWith(userId: userId));
+    await _appApiServices.createWallet(walletData);
+  }
 }

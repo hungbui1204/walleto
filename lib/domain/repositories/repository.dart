@@ -55,4 +55,6 @@ abstract class Repository {
   Future<void> verifyOtpForEmail({required String email, required String otp});
 
   Future<void> createUserByEmail({required String email, required String password});
+
+  Future<void> createWallet(Wallet wallet);
 }

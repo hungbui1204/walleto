@@ -31,10 +31,10 @@ class AppBloc extends BaseBloc<AppEvent, AppState> {
   Future<void> _onDataFetched(DataFetched event, Emitter<AppState> emit) async {
     await runBlocCatching(
       action: () async {
-        final wallets = await _getWalletsUseCase.execute(const GetWalletsInput());
+        final walletsOutput = await _getWalletsUseCase.execute(const GetWalletsInput());
 
         final sortedByNameWallets =
-            wallets.wallets.where((wallet) => wallet.name.isNotEmpty).toList()
+            walletsOutput.wallets.where((wallet) => wallet.name.isNotEmpty).toList()
               ..sort((a, b) => a.name.compareTo(b.name));
 
         emit(state.copyWith(wallets: sortedByNameWallets));

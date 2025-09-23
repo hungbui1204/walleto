@@ -74,6 +74,7 @@ class AppRouter extends RootStackRouter {
         ),
       ],
     ),
+    AutoRoute(page: CreateWalletRoute.page, path: '/create-wallet'),
     AutoRoute(path: '/login', page: LoginRoute.page),
     RedirectRoute(path: '*', redirectTo: '/'),
   ];

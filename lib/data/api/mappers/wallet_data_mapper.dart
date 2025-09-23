@@ -14,6 +14,7 @@ class WalletDataMapper extends BaseDataMapper<WalletData, Wallet> with DataMappe
       amount: data?.amount ?? 0.0,
       userId: data?.userId,
       iconUrl: data?.iconUrl ?? '',
+      currencyCode: data?.currencyCode ?? '',
     );
   }
 
@@ -25,6 +26,7 @@ class WalletDataMapper extends BaseDataMapper<WalletData, Wallet> with DataMappe
       amount: entity.amount,
       userId: entity.userId,
       iconUrl: entity.iconUrl,
+      currencyCode: entity.currencyCode,
     );
   }
 }

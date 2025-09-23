@@ -7,10 +7,15 @@ class AppLoadingWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
+    return ColoredBox(
       color: blackColor.withValues(alpha: 0.3),
       child: Center(
-        child: Lottie.asset('assets/animations/app_loading.json', width: 260, height: 260),
+        child: Lottie.asset(
+          'assets/animations/app_loading.json',
+          width: 260,
+          height: 260,
+          repeat: true,
+        ),
       ),
     );
   }

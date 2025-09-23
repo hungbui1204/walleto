@@ -11,6 +11,7 @@ sealed class WalletData with _$WalletData {
     @JsonKey(name: 'amount') double? amount,
     @JsonKey(name: 'user_id') String? userId,
     @JsonKey(name: 'icon_url') String? iconUrl,
+    @JsonKey(name: 'currency_code') String? currencyCode,
   }) = _WalletData;
 
   factory WalletData.fromJson(Map<String, dynamic> json) => _$WalletDataFromJson(json);

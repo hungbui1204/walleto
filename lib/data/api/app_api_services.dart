@@ -193,4 +193,18 @@ class AppApiServices {
       body: {'email': email, 'password': password},
     );
   }
+
+  Future<void> createWallet(WalletData wallet) {
+    return _serverApiClientRest.request(
+      method: RequestMethod.post,
+      path: 'wallets',
+      body: {
+        'user_id': wallet.userId,
+        'name': wallet.name,
+        'amount': wallet.amount,
+        'currency_code': wallet.currencyCode,
+        'icon_url': wallet.iconUrl,
+      },
+    );
+  }
 }
