@@ -217,9 +217,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -272,9 +276,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -449,6 +457,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 44918138D7791B4E259E60A9 /* Pods-Runner.debug - development.xcconfig */;
 			buildSettings = {
+				APP_DISPLAY_NAME = "Walleto-DebugDev";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CLANG_ENABLE_MODULES = YES;
@@ -502,7 +511,7 @@
 					"$(SRCROOT)/Flutter",
 				);
 				INFOPLIST_FILE = Runner/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Walleto-debugDev";
+				INFOPLIST_KEY_CFBundleDisplayName = "Walleto-DebugDev";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -528,6 +537,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 3392C796F71235070693D4C9 /* Pods-Runner.release - development.xcconfig */;
 			buildSettings = {
+				APP_DISPLAY_NAME = "Walleto-Dev";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CLANG_ENABLE_MODULES = YES;
@@ -581,7 +591,7 @@
 					"$(SRCROOT)/Flutter",
 				);
 				INFOPLIST_FILE = Runner/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Walleto-releaseDev";
+				INFOPLIST_KEY_CFBundleDisplayName = "Walleto-Dev";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -665,6 +675,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 03AA0F57F62D2A63357865EE /* Pods-Runner.debug - production.xcconfig */;
 			buildSettings = {
+				APP_DISPLAY_NAME = "Walleto-DebugProd";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CLANG_ENABLE_MODULES = YES;
@@ -718,7 +729,7 @@
 					"$(SRCROOT)/Flutter",
 				);
 				INFOPLIST_FILE = Runner/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Walleto-debugProd";
+				INFOPLIST_KEY_CFBundleDisplayName = "Walleto-DebugProd";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -800,6 +811,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 26896FB3B4FAAB8693087EF9 /* Pods-Runner.release - production.xcconfig */;
 			buildSettings = {
+				APP_DISPLAY_NAME = Walleto;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CLANG_ENABLE_MODULES = YES;
