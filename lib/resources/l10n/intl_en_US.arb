@@ -141,5 +141,6 @@
     "createYourFirstWallet" : "Create your first wallet",
     "nameYourWalletHere" : "Name your wallet here",
     "currency" : "Currency",
-    "initialBalance" : "Initial Balance"
+    "initialBalance" : "Initial Balance",
+    "//" : "Wallets view"
 }

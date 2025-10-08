@@ -165,7 +165,7 @@ class _UtilitiesWidget extends StatelessWidget {
               topRight: Radius.circular(Dimens.d10.responsive()),
             ),
             onTap: () {
-              // TODO: Implement myWallets functionality
+              getIt.get<AppNavigator>().push(const AppRouteInfo.wallets());
             },
           ),
           CommonLine(

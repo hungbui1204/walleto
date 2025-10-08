@@ -20,4 +20,6 @@ sealed class AppRouteInfo with _$AppRouteInfo {
   const factory AppRouteInfo.categories() = Categories;
 
   const factory AppRouteInfo.createWallet({@Default(false) bool isFromSignUp}) = CreateWallet;
+
+  const factory AppRouteInfo.wallets() = Wallets;
 }
