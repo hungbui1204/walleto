@@ -1,6 +1,6 @@
 #!/bin/bash
 parent_path=$( cd "$(dirname "$0")" ; pwd -P )
-root_project_path=$(dirname $parent_path)
+root_project_path="$(dirname "$parent_path")"
 env_path="$root_project_path/env/$1.json"
 
 dart_define=""
@@ -15,13 +15,13 @@ while IFS=":" read -r key value; do
     if [[ ! -z "$key" && ! -z "$value" ]]; then
         dart_define+="--dart-define=$key=$value "
     fi
-done < $env_path
+done < "$env_path"
 
 debug=""
 
-if [ "$1" == "development" ]; then
-    debug="--debug"
-fi
+# if [ "$1" == "development" ]; then
+#     debug="--debug"
+# fi
 
 cd ..
 
