@@ -6,7 +6,6 @@ import 'package:walleto/domain/domain.dart';
 import 'package:walleto/resources/resources.dart';
 import 'package:walleto/shared/shared.dart';
 import 'package:walleto/ui/ui.dart';
-import 'package:walleto/ui/widgets/common_app_bar.dart';
 
 @RoutePage()
 class WalletsView extends StatefulWidget {

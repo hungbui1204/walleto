@@ -38,6 +38,14 @@ class CreateWalletBloc extends BaseBloc<CreateWalletEvent, CreateWalletState> {
 
         await _createWalletUseCase.execute(CreateWalletInput(wallet: wallet));
 
+        // Replace to main view if current route is from login
+        // Otherwise, just pop current view and fetch wallets again
+        if (navigator.getCurrentRouteNames().contains(WalletsRoute.name)) {
+          appBloc.add(const DataFetched());
+          navigator.pop();
+
+          return;
+        }
         navigator.replace(const AppRouteInfo.main());
       },
     );

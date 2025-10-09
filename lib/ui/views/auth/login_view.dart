@@ -100,24 +100,21 @@ class _LoginViewState extends BasePageState<LoginView, LoginBloc>
                   ],
                 ),
                 Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: Dimens.d16.responsive()),
-                    child: TabBarView(
-                      controller: _tabController,
-                      children: [
-                        LoginTab(
-                          emailController: _emailController,
-                          passwordController: _passwordController,
-                        ),
-                        SignUpTab(
-                          emailSignUpController: _emailSignUpController,
-                          passwordSignUpController: _passwordSignUpController,
-                          confirmPasswordSignUpController: _confirmPasswordSignUpController,
-                          otpSignUpController: _otpController,
-                          tabController: _tabController,
-                        ),
-                      ],
-                    ),
+                  child: TabBarView(
+                    controller: _tabController,
+                    children: [
+                      LoginTab(
+                        emailController: _emailController,
+                        passwordController: _passwordController,
+                      ),
+                      SignUpTab(
+                        emailSignUpController: _emailSignUpController,
+                        passwordSignUpController: _passwordSignUpController,
+                        confirmPasswordSignUpController: _confirmPasswordSignUpController,
+                        otpSignUpController: _otpController,
+                        tabController: _tabController,
+                      ),
+                    ],
                   ),
                 ),
               ],

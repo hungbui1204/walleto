@@ -14,87 +14,90 @@ class LoginTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: Column(
-        children: [
-          SizedBox(height: Dimens.d30.responsive()),
-          _EmailForm(emailController: emailController),
-          SizedBox(height: Dimens.d20.responsive()),
-          _PasswordForm(passwordController: passwordController),
-          SizedBox(height: Dimens.d40.responsive()),
-          BlocBuilder<LoginBloc, LoginState>(
-            buildWhen: (previous, current) {
-              return previous.isEnableLoginButton != current.isEnableLoginButton;
-            },
-            builder: (context, state) {
-              return SizedBox(
-                width: double.infinity,
-                child: CommonButton(
-                  text: S.current.login,
-                  onTap:
-                      state.isEnableLoginButton
-                          ? () {
-                            ViewUtils.hideKeyboard(context);
-                            context.read<LoginBloc>().add(const SignInButtonPressed());
-                          }
-                          : null,
-                ),
-              );
-            },
-          ),
-          SizedBox(height: Dimens.d20.responsive()),
-          Text(S.current.or, style: AppTextStyles.s14wNormalBlack()),
-          SizedBox(height: Dimens.d20.responsive()),
-          SizedBox(
-            width: double.infinity,
-            child: CommonButton(
-              text: S.current.continueWithGoogle,
-              backgroundColor: secondaryColor,
-              icon: Assets.icons.google.svg(
-                height: Dimens.d30.responsive(),
-                width: Dimens.d30.responsive(),
-              ),
-              onTap: () {
-                ViewUtils.hideKeyboard(context);
-                //TODO: Implement Google Sign-In
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: Dimens.d16.responsive()),
+        child: Column(
+          children: [
+            SizedBox(height: Dimens.d30.responsive()),
+            _EmailForm(emailController: emailController),
+            SizedBox(height: Dimens.d20.responsive()),
+            _PasswordForm(passwordController: passwordController),
+            SizedBox(height: Dimens.d40.responsive()),
+            BlocBuilder<LoginBloc, LoginState>(
+              buildWhen: (previous, current) {
+                return previous.isEnableLoginButton != current.isEnableLoginButton;
+              },
+              builder: (context, state) {
+                return SizedBox(
+                  width: double.infinity,
+                  child: CommonButton(
+                    text: S.current.login,
+                    onTap:
+                        state.isEnableLoginButton
+                            ? () {
+                              ViewUtils.hideKeyboard(context);
+                              context.read<LoginBloc>().add(const SignInButtonPressed());
+                            }
+                            : null,
+                  ),
+                );
               },
             ),
-          ),
-          SizedBox(height: Dimens.d10.responsive()),
-          SizedBox(
-            width: double.infinity,
-            child: CommonButton(
-              text: S.current.continueWithFacebook,
-              icon: Assets.icons.facebook.svg(
-                height: Dimens.d30.responsive(),
-                width: Dimens.d30.responsive(),
-              ),
-              onTap: () {
-                ViewUtils.hideKeyboard(context);
-                //TODO: Implement Facebook Sign-In
-              },
-            ),
-          ),
-          SizedBox(height: Dimens.d30.responsive()),
-          Text.rich(
-            TextSpan(
-              text: S.current.youWillAcceptOur,
-              style: AppTextStyles.s12wNormalBlack(),
-              children: [
-                TextSpan(text: S.current.space, style: AppTextStyles.s12wNormalBlack()),
-                TextSpan(
-                  text: S.current.termsAndConditions,
-                  style: AppTextStyles.s12wNormalBlackUnderline(),
-                  recognizer:
-                      TapGestureRecognizer()
-                        ..onTap = () {
-                          // TODO: Navigate to Terms and Conditions page
-                        },
+            SizedBox(height: Dimens.d20.responsive()),
+            Text(S.current.or, style: AppTextStyles.s14wNormalBlack()),
+            SizedBox(height: Dimens.d20.responsive()),
+            SizedBox(
+              width: double.infinity,
+              child: CommonButton(
+                text: S.current.continueWithGoogle,
+                backgroundColor: secondaryColor,
+                icon: Assets.icons.google.svg(
+                  height: Dimens.d30.responsive(),
+                  width: Dimens.d30.responsive(),
                 ),
-                TextSpan(text: S.current.dot, style: AppTextStyles.s12wNormalBlack()),
-              ],
+                onTap: () {
+                  ViewUtils.hideKeyboard(context);
+                  //TODO: Implement Google Sign-In
+                },
+              ),
             ),
-          ),
-        ],
+            SizedBox(height: Dimens.d10.responsive()),
+            SizedBox(
+              width: double.infinity,
+              child: CommonButton(
+                text: S.current.continueWithFacebook,
+                icon: Assets.icons.facebook.svg(
+                  height: Dimens.d30.responsive(),
+                  width: Dimens.d30.responsive(),
+                ),
+                onTap: () {
+                  ViewUtils.hideKeyboard(context);
+                  //TODO: Implement Facebook Sign-In
+                },
+              ),
+            ),
+            SizedBox(height: Dimens.d30.responsive()),
+            Text.rich(
+              TextSpan(
+                text: S.current.youWillAcceptOur,
+                style: AppTextStyles.s12wNormalBlack(),
+                children: [
+                  TextSpan(text: S.current.space, style: AppTextStyles.s12wNormalBlack()),
+                  TextSpan(
+                    text: S.current.termsAndConditions,
+                    style: AppTextStyles.s12wNormalBlackUnderline(),
+                    recognizer:
+                        TapGestureRecognizer()
+                          ..onTap = () {
+                            // TODO: Navigate to Terms and Conditions page
+                          },
+                  ),
+                  TextSpan(text: S.current.dot, style: AppTextStyles.s12wNormalBlack()),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

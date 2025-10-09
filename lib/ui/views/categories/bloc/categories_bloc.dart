@@ -1,6 +1,7 @@
 import 'package:dartx/dartx.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:injectable/injectable.dart';
 import 'package:walleto/domain/domain.dart';
 import 'package:walleto/ui/ui.dart';
 
@@ -8,6 +9,7 @@ part 'categories_event.dart';
 part 'categories_state.dart';
 part 'categories_bloc.freezed.dart';
 
+@injectable
 class CategoriesBloc extends BaseBloc<CategoriesEvent, CategoriesState> {
   CategoriesBloc(this._getCategoriesUseCase) : super(const CategoriesState()) {
     on<CategoriesViewInitiated>(_onCategoriesViewInitiated);

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:walleto/di/di.dart';
 import 'package:walleto/domain/domain.dart';
 import 'package:walleto/resources/resources.dart';
 import 'package:walleto/shared/shared.dart';
@@ -94,7 +93,7 @@ class _SelectCategoryPopupState extends BasePageState<SelectCategoryPopup, Selec
                           itemCount: state.parentExpenseCategories.length,
                           shrinkWrap: true,
                           itemBuilder: (context, index) {
-                            return _CategoryTreeWidget(
+                            return CategoryTreeWidget(
                               parentCategory: state.parentExpenseCategories[index],
                               onCategorySelected: widget.onCategorySelected,
                               onParentCategorySelected: widget.onCategorySelected,
@@ -115,7 +114,7 @@ class _SelectCategoryPopupState extends BasePageState<SelectCategoryPopup, Selec
                           itemCount: state.parentIncomeCategories.length,
                           shrinkWrap: true,
                           itemBuilder: (context, index) {
-                            return _CategoryTreeWidget(
+                            return CategoryTreeWidget(
                               parentCategory: state.parentIncomeCategories[index],
                               onCategorySelected: widget.onCategorySelected,
                               onParentCategorySelected: widget.onCategorySelected,
@@ -132,118 +131,6 @@ class _SelectCategoryPopupState extends BasePageState<SelectCategoryPopup, Selec
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class _CategoryTreeWidget extends StatelessWidget {
-  const _CategoryTreeWidget({
-    required this.parentCategory,
-    required this.onCategorySelected,
-    required this.onParentCategorySelected,
-  });
-
-  final Category parentCategory;
-  final void Function(Category) onCategorySelected;
-  final void Function(Category) onParentCategorySelected;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(Dimens.d10.responsive()),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(Dimens.d16.responsive()),
-        border: Border.all(),
-      ),
-      child: Column(
-        children: [
-          _ParentCategoryWidget(
-            category: parentCategory,
-            onCategorySelected: onParentCategorySelected,
-          ),
-          if (parentCategory.children.isNotEmpty) ...[
-            SizedBox(height: Dimens.d20.responsive()),
-            ListView.separated(
-              padding: EdgeInsets.zero,
-              itemCount: parentCategory.children.length,
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              itemBuilder: (context, index) {
-                return _CategoryWidget(
-                  category: parentCategory.children[index],
-                  onCategorySelected: onCategorySelected,
-                );
-              },
-              separatorBuilder: (context, index) {
-                return CommonLine(
-                  padding: EdgeInsets.symmetric(horizontal: Dimens.d16.responsive()),
-                );
-              },
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-}
-
-class _ParentCategoryWidget extends StatelessWidget {
-  const _ParentCategoryWidget({required this.category, required this.onCategorySelected});
-
-  final Category category;
-  final void Function(Category) onCategorySelected;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: transParentColor,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(Dimens.d16.responsive()),
-        onTap: () {
-          onCategorySelected.call(category);
-          getIt.get<AppNavigator>().pop(useRootNavigator: true);
-        },
-        child: Row(
-          children: [
-            CommonCircleNetworkImage(
-              imageUrl: category.iconUrl,
-              size: Dimens.d38.responsive(),
-              backgroundColor: secondaryColor,
-            ),
-            SizedBox(width: Dimens.d20.responsive()),
-            Text(category.name, style: AppTextStyles.s18wNormalBlack()),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _CategoryWidget extends StatelessWidget {
-  const _CategoryWidget({required this.category, required this.onCategorySelected});
-
-  final Category category;
-  final void Function(Category) onCategorySelected;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: transParentColor,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(Dimens.d16.responsive()),
-        onTap: () {
-          onCategorySelected.call(category);
-          getIt.get<AppNavigator>().pop(useRootNavigator: true);
-        },
-        child: Row(
-          children: [
-            SizedBox(width: Dimens.d20.responsive()),
-            CommonCircleNetworkImage(imageUrl: category.iconUrl),
-            SizedBox(width: Dimens.d20.responsive()),
-            Text(category.name, style: AppTextStyles.s14wNormalBlack()),
-          ],
         ),
       ),
     );
