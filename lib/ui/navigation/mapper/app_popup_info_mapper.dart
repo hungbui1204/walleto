@@ -24,9 +24,12 @@ class AppPopupInfoMapper extends BasePopupInfoMapper {
       ),
       Error(:final message, :final actions) => ErrorPopup(message: message, errorAction: actions),
       Warning(:final content) => WarningPopup(content: content),
-      SelectCategory(:final onCategorySelected) => SelectCategoryPopup(
-        onCategorySelected: onCategorySelected,
-      ),
+      SelectCategory(:final onCategorySelected, :final isSelectingParent, :final categoryType) =>
+        SelectCategoryPopup(
+          onCategorySelected: onCategorySelected,
+          isSelectingParent: isSelectingParent,
+          categoryType: categoryType,
+        ),
 
       SelectMonth(:final firstYear, :final lastYear, :final onMonthSelected, :final initialDate) =>
         SelectMonthPopup(

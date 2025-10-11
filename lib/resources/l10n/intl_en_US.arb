@@ -142,5 +142,9 @@
     "nameYourWalletHere" : "Name your wallet here",
     "currency" : "Currency",
     "initialBalance" : "Initial Balance",
-    "//" : "Wallets view"
+    "//" : "Wallets view",
+    "//" : "Create category view",
+    "nameYourCategoryHere" : "Name your category here",
+    "parentCategory" : "Parent Category",
+    "selectParentCategory" : "Select Parent Category"
 }

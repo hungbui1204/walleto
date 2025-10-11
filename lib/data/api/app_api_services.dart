@@ -207,4 +207,19 @@ class AppApiServices {
       },
     );
   }
+
+  Future<void> createCategory(CategoryData category) {
+    return _serverApiClientRest.request(
+      method: RequestMethod.post,
+      path: 'categories',
+      body: {
+        'user_id': category.userId,
+        'name': category.name,
+        'icon_url': category.iconUrl,
+        'type': category.type,
+        'parent_id': category.parentId,
+        'is_parent': category.isParent,
+      },
+    );
+  }
 }

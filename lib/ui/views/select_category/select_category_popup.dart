@@ -6,9 +6,20 @@ import 'package:walleto/shared/shared.dart';
 import 'package:walleto/ui/ui.dart';
 
 class SelectCategoryPopup extends StatefulWidget {
-  const SelectCategoryPopup({super.key, required this.onCategorySelected});
+  const SelectCategoryPopup({
+    super.key,
+    required this.onCategorySelected,
+    this.isSelectingParent = false,
+    this.categoryType,
+  });
 
   final void Function(Category) onCategorySelected;
+
+  // If true, it means we are selecting a parent category
+  final bool isSelectingParent;
+
+  // If not null, just only show categories of this type
+  final CategoryType? categoryType;
 
   @override
   State<SelectCategoryPopup> createState() => _SelectCategoryPopupState();
@@ -20,9 +31,78 @@ class _SelectCategoryPopupState extends BasePageState<SelectCategoryPopup, Selec
 
   @override
   void initState() {
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController =
+        widget.categoryType == null
+            ? TabController(length: 2, vsync: this)
+            : TabController(length: 1, vsync: this);
     bloc.add(const SelectCategoryViewInitiated());
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  List<Widget> buildTabBar() {
+    switch (widget.categoryType) {
+      case CategoryType.expense:
+        return [
+          Padding(
+            padding: EdgeInsets.all(Dimens.d12.responsive()),
+            child: Text(S.current.expense, style: const TextStyle(fontWeight: FontWeight.bold)),
+          ),
+        ];
+      case CategoryType.income:
+        return [
+          Padding(
+            padding: EdgeInsets.all(Dimens.d12.responsive()),
+            child: Text(S.current.income, style: const TextStyle(fontWeight: FontWeight.bold)),
+          ),
+        ];
+      case null:
+        return [
+          Padding(
+            padding: EdgeInsets.all(Dimens.d12.responsive()),
+            child: Text(S.current.expense, style: const TextStyle(fontWeight: FontWeight.bold)),
+          ),
+          Padding(
+            padding: EdgeInsets.all(Dimens.d12.responsive()),
+            child: Text(S.current.income, style: const TextStyle(fontWeight: FontWeight.bold)),
+          ),
+        ];
+    }
+  }
+
+  List<Widget> buildTabBarView() {
+    switch (widget.categoryType) {
+      case CategoryType.expense:
+        return [
+          _ExpenseCategoryTab(
+            onCategorySelected: widget.onCategorySelected,
+            isSelectingParent: widget.isSelectingParent,
+          ),
+        ];
+      case CategoryType.income:
+        return [
+          _IncomeCategoryTab(
+            onCategorySelected: widget.onCategorySelected,
+            isSelectingParent: widget.isSelectingParent,
+          ),
+        ];
+      case null:
+        return [
+          _ExpenseCategoryTab(
+            onCategorySelected: widget.onCategorySelected,
+            isSelectingParent: widget.isSelectingParent,
+          ),
+          _IncomeCategoryTab(
+            onCategorySelected: widget.onCategorySelected,
+            isSelectingParent: widget.isSelectingParent,
+          ),
+        ];
+    }
   }
 
   @override
@@ -45,94 +125,96 @@ class _SelectCategoryPopupState extends BasePageState<SelectCategoryPopup, Selec
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(S.current.selectCategory, style: AppTextStyles.s20wNormalBlack()),
-              TabBar(
-                controller: _tabController,
-                tabs: [
-                  Padding(
-                    padding: EdgeInsets.all(Dimens.d12.responsive()),
-                    child: Text(
-                      S.current.expense,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(Dimens.d12.responsive()),
-                    child: Text(
-                      S.current.income,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ],
-              ),
+              TabBar(controller: _tabController, tabs: buildTabBar()),
               SizedBox(height: Dimens.d20.responsive()),
-              CommonButton(
-                text: S.current.newCategory,
-                backgroundColor: secondaryColor,
-                onTap: () {
-                  // TODO: Add create category logic here
-                },
-                icon: Icon(
-                  Icons.add_circle_outline,
-                  size: Dimens.d20.responsive(),
-                  color: blackColor,
+              if (!widget.isSelectingParent) ...[
+                CommonButton(
+                  text: S.current.newCategory,
+                  backgroundColor: secondaryColor,
+                  onTap: () {
+                    // TODO: Add create category logic here
+                  },
+                  icon: Icon(
+                    Icons.add_circle_outline,
+                    size: Dimens.d20.responsive(),
+                    color: blackColor,
+                  ),
+                  borderRadius: BorderRadius.all(Radius.circular(Dimens.d16.responsive())),
                 ),
-                borderRadius: BorderRadius.all(Radius.circular(Dimens.d16.responsive())),
-              ),
-              SizedBox(height: Dimens.d20.responsive()),
-              Expanded(
-                child: TabBarView(
-                  controller: _tabController,
-                  children: [
-                    BlocBuilder<SelectCategoryBloc, SelectCategoryState>(
-                      buildWhen: (previous, current) {
-                        return previous.parentExpenseCategories != current.parentExpenseCategories;
-                      },
-                      builder: (context, state) {
-                        return ListView.separated(
-                          padding: EdgeInsets.zero,
-                          itemCount: state.parentExpenseCategories.length,
-                          shrinkWrap: true,
-                          itemBuilder: (context, index) {
-                            return CategoryTreeWidget(
-                              parentCategory: state.parentExpenseCategories[index],
-                              onCategorySelected: widget.onCategorySelected,
-                              onParentCategorySelected: widget.onCategorySelected,
-                            );
-                          },
-                          separatorBuilder: (context, index) {
-                            return SizedBox(height: Dimens.d20.responsive());
-                          },
-                        );
-                      },
-                    ),
-                    BlocBuilder<SelectCategoryBloc, SelectCategoryState>(
-                      buildWhen: (previous, current) {
-                        return previous.parentIncomeCategories != current.parentIncomeCategories;
-                      },
-                      builder: (context, state) {
-                        return ListView.separated(
-                          itemCount: state.parentIncomeCategories.length,
-                          shrinkWrap: true,
-                          itemBuilder: (context, index) {
-                            return CategoryTreeWidget(
-                              parentCategory: state.parentIncomeCategories[index],
-                              onCategorySelected: widget.onCategorySelected,
-                              onParentCategorySelected: widget.onCategorySelected,
-                            );
-                          },
-                          separatorBuilder: (context, index) {
-                            return SizedBox(height: Dimens.d20.responsive());
-                          },
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ),
+                SizedBox(height: Dimens.d20.responsive()),
+              ],
+              Expanded(child: TabBarView(controller: _tabController, children: buildTabBarView())),
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+class _ExpenseCategoryTab extends StatelessWidget {
+  const _ExpenseCategoryTab({required this.onCategorySelected, this.isSelectingParent = false});
+
+  final void Function(Category) onCategorySelected;
+  final bool isSelectingParent;
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<SelectCategoryBloc, SelectCategoryState>(
+      buildWhen: (previous, current) {
+        return previous.parentExpenseCategories != current.parentExpenseCategories;
+      },
+      builder: (context, state) {
+        return ListView.separated(
+          padding: EdgeInsets.zero,
+          itemCount: state.parentExpenseCategories.length,
+          shrinkWrap: true,
+          itemBuilder: (context, index) {
+            return CategoryTreeWidget(
+              isSelectingParent: isSelectingParent,
+              parentCategory: state.parentExpenseCategories[index],
+              onCategorySelected: onCategorySelected,
+              onParentCategorySelected: onCategorySelected,
+            );
+          },
+          separatorBuilder: (context, index) {
+            return SizedBox(height: Dimens.d20.responsive());
+          },
+        );
+      },
+    );
+  }
+}
+
+class _IncomeCategoryTab extends StatelessWidget {
+  const _IncomeCategoryTab({required this.onCategorySelected, this.isSelectingParent = false});
+
+  final void Function(Category) onCategorySelected;
+  final bool isSelectingParent;
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<SelectCategoryBloc, SelectCategoryState>(
+      buildWhen: (previous, current) {
+        return previous.parentIncomeCategories != current.parentIncomeCategories;
+      },
+      builder: (context, state) {
+        return ListView.separated(
+          itemCount: state.parentIncomeCategories.length,
+          shrinkWrap: true,
+          itemBuilder: (context, index) {
+            return CategoryTreeWidget(
+              parentCategory: state.parentIncomeCategories[index],
+              onCategorySelected: onCategorySelected,
+              onParentCategorySelected: onCategorySelected,
+              isSelectingParent: isSelectingParent,
+            );
+          },
+          separatorBuilder: (context, index) {
+            return SizedBox(height: Dimens.d20.responsive());
+          },
+        );
+      },
     );
   }
 }

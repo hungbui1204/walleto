@@ -18,6 +18,9 @@ class AppRouteInfoMapper extends BaseRouteInfoMapper {
       Categories() => const CategoriesRoute(),
       CreateWallet(:final isFromSignUp) => CreateWalletRoute(isFromSignUp: isFromSignUp),
       Wallets() => const WalletsRoute(),
+      CreateCategory(:final onFetchNewCategories) => CreateCategoryRoute(
+        onFetchNewCategories: onFetchNewCategories,
+      ),
     };
   }
 }

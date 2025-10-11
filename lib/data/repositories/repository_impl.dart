@@ -202,4 +202,11 @@ class RepositoryImpl implements Repository {
     final walletData = _walletDataMapper.mapToData(wallet.copyWith(userId: userId));
     await _appApiServices.createWallet(walletData);
   }
+
+  @override
+  Future<void> createCategory(Category category) async {
+    final userId = await _appPreferences.userId ?? '';
+    final categoryData = _categoryDataMapper.mapToData(category.copyWith(userId: userId));
+    await _appApiServices.createCategory(categoryData);
+  }
 }

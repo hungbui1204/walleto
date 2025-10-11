@@ -21,6 +21,7 @@ export 'usecases/base/io/base_input.dart';
 export 'usecases/base/io/base_output.dart';
 export 'usecases/base/io/load_more_output.dart';
 export 'usecases/base/sync/base_sync_use_case.dart';
+export 'usecases/create_category_use_case.dart';
 export 'usecases/create_transaction_use_case.dart';
 export 'usecases/create_user_by_email_use_case.dart';
 export 'usecases/create_wallet_use_case.dart';

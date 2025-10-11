@@ -9,11 +9,13 @@ class CategoryTreeWidget extends StatelessWidget {
     required this.parentCategory,
     required this.onCategorySelected,
     required this.onParentCategorySelected,
+    this.isSelectingParent = false,
   });
 
   final Category parentCategory;
   final void Function(Category) onCategorySelected;
   final void Function(Category) onParentCategorySelected;
+  final bool isSelectingParent;
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +31,7 @@ class CategoryTreeWidget extends StatelessWidget {
             category: parentCategory,
             onCategorySelected: onParentCategorySelected,
           ),
-          if (parentCategory.children.isNotEmpty) ...[
+          if (parentCategory.children.isNotEmpty && !isSelectingParent) ...[
             SizedBox(height: Dimens.d20.responsive()),
             ListView.separated(
               padding: EdgeInsets.zero,

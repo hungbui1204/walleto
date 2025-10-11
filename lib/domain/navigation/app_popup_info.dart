@@ -31,8 +31,11 @@ sealed class AppPopupInfo with _$AppPopupInfo {
 
   const factory AppPopupInfo.warning({Widget? icon, required Widget content}) = Warning;
 
-  const factory AppPopupInfo.selectCategory({required void Function(Category) onCategorySelected}) =
-      SelectCategory;
+  const factory AppPopupInfo.selectCategory({
+    required void Function(Category) onCategorySelected,
+    @Default(false) isSelectingParent,
+    CategoryType? categoryType,
+  }) = SelectCategory;
 
   const factory AppPopupInfo.selectMonth({
     required int firstYear,

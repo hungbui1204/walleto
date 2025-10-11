@@ -57,4 +57,6 @@ abstract class Repository {
   Future<void> createUserByEmail({required String email, required String password});
 
   Future<void> createWallet(Wallet wallet);
+
+  Future<void> createCategory(Category category);
 }

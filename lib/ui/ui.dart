@@ -33,6 +33,8 @@ export 'views/auth/widgets/sign_up_tab.dart';
 export 'views/budgets/budgets_view.dart';
 export 'views/categories/bloc/categories_bloc.dart';
 export 'views/categories/categories_view.dart';
+export 'views/create_category/bloc/create_category_bloc.dart';
+export 'views/create_category/create_category_view.dart';
 export 'views/create_transaction/bloc/create_transaction_bloc.dart';
 export 'views/create_transaction/create_transaction_view.dart';
 export 'views/create_wallet/bloc/create_wallet_bloc.dart';

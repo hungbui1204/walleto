@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:walleto/domain/domain.dart';
 import 'package:walleto/resources/resources.dart';
 import 'package:walleto/ui/ui.dart';
 
@@ -54,18 +55,30 @@ class _CategoriesViewState extends BasePageState<CategoriesView, CategoriesBloc>
               ],
             ),
             SizedBox(height: Dimens.d20.responsive()),
-            CommonButton(
-              text: S.current.newCategory,
-              backgroundColor: secondaryColor,
-              onTap: () {
-                // TODO: Add create category logic here
+            BlocBuilder<CategoriesBloc, CategoriesState>(
+              buildWhen: (previous, current) {
+                return previous.parentIncomeCategories != current.parentIncomeCategories ||
+                    previous.parentExpenseCategories != current.parentExpenseCategories;
               },
-              icon: Icon(
-                Icons.add_circle_outline,
-                size: Dimens.d20.responsive(),
-                color: blackColor,
-              ),
-              borderRadius: BorderRadius.all(Radius.circular(Dimens.d16.responsive())),
+              builder: (context, state) {
+                return CommonButton(
+                  text: S.current.newCategory,
+                  backgroundColor: secondaryColor,
+                  onTap: () {
+                    navigator.push(
+                      AppRouteInfo.createCategory(() {
+                        bloc.add(const CategoriesViewInitiated());
+                      }),
+                    );
+                  },
+                  icon: Icon(
+                    Icons.add_circle_outline,
+                    size: Dimens.d20.responsive(),
+                    color: blackColor,
+                  ),
+                  borderRadius: BorderRadius.all(Radius.circular(Dimens.d16.responsive())),
+                );
+              },
             ),
             SizedBox(height: Dimens.d20.responsive()),
             Expanded(
