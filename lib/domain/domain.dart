@@ -6,6 +6,7 @@ export 'entities/daily_stat.dart';
 export 'entities/day_transactions.dart';
 export 'entities/enum/enum.dart';
 export 'entities/month_summary_stat.dart';
+export 'entities/supabase_image.dart';
 export 'entities/transaction.dart';
 export 'entities/user.dart';
 export 'entities/wallet.dart';

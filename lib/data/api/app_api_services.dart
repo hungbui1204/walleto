@@ -10,11 +10,13 @@ class AppApiServices {
     this._serverApiClientAuth,
     this._serverApiClientRest,
     this._serverApiFunctionsClient,
+    this._serverApiClientStorage,
   );
 
   final ServerApiClientAuth _serverApiClientAuth;
   final ServerApiClientRest _serverApiClientRest;
   final ServerApiFunctionsClient _serverApiFunctionsClient;
+  final ServerApiClientStorage _serverApiClientStorage;
 
   Future<AuthenticationData?> loginByPassword({required String email, required String password}) {
     return _serverApiClientAuth.request(
@@ -220,6 +222,15 @@ class AppApiServices {
         'parent_id': category.parentId,
         'is_parent': category.isParent,
       },
+    );
+  }
+
+  Future<List<SupabaseImageData>?> getCategoryImages() {
+    return _serverApiClientStorage.request(
+      method: RequestMethod.post,
+      path: 'category-images',
+      decoder: (data) => SupabaseImageData.fromJson(data as Map<String, dynamic>),
+      successResponseMapperType: SuccessResponseMapperType.jsonArray,
     );
   }
 }
