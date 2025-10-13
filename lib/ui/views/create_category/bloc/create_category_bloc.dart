@@ -17,6 +17,7 @@ class CreateCategoryBloc extends BaseBloc<CreateCategoryEvent, CreateCategorySta
     on<CreateCategoryTypeChanged>(_onCreateCategoryTypeChanged);
     on<CreateCategoryParentChanged>(_onCreateCategoryParentChanged);
     on<CreateCategoryParentRemoved>(_onCreateCategoryParentRemoved);
+    on<CreateCategoryIconChanged>(_onCreateCategoryIconChanged);
   }
 
   final CreateCategoryUseCase _createCategoryUseCase;
@@ -87,5 +88,12 @@ class CreateCategoryBloc extends BaseBloc<CreateCategoryEvent, CreateCategorySta
         navigator.pop();
       },
     );
+  }
+
+  void _onCreateCategoryIconChanged(
+    CreateCategoryIconChanged event,
+    Emitter<CreateCategoryState> emit,
+  ) {
+    emit(state.copyWith(icon: event.icon));
   }
 }

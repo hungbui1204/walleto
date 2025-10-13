@@ -143,3 +143,5 @@ enum SignUpStep {
 
   final int step;
 }
+
+enum IconType { category, wallet }

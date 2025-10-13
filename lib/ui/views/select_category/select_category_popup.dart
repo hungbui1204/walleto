@@ -132,7 +132,11 @@ class _SelectCategoryPopupState extends BasePageState<SelectCategoryPopup, Selec
                   text: S.current.newCategory,
                   backgroundColor: secondaryColor,
                   onTap: () {
-                    // TODO: Add create category logic here
+                    navigator.push(
+                      AppRouteInfo.createCategory(() {
+                        bloc.add(const SelectCategoryViewInitiated());
+                      }),
+                    );
                   },
                   icon: Icon(
                     Icons.add_circle_outline,

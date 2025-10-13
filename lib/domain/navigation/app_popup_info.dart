@@ -59,4 +59,9 @@ sealed class AppPopupInfo with _$AppPopupInfo {
     required void Function(Wallet) onWalletSelected,
     Wallet? selectedWallet,
   }) = SelectWallet;
+
+  const factory AppPopupInfo.selectIcon({
+    required IconType iconType,
+    required void Function(String) onIconSelected,
+  }) = SelectIcon;
 }

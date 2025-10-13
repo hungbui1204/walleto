@@ -54,6 +54,8 @@ export 'views/select_category/select_category_popup.dart';
 export 'views/select_category/widgets/category_tree_widget.dart';
 export 'views/select_category/widgets/category_widget.dart';
 export 'views/select_category/widgets/parent_category_widget.dart';
+export 'views/select_icon/bloc/select_icon_bloc.dart';
+export 'views/select_icon/select_icon_popup.dart';
 export 'views/transactions/bloc/transactions_bloc.dart';
 export 'views/transactions/transactions_view.dart';
 export 'views/wallets/bloc/wallets_bloc.dart';

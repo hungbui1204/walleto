@@ -52,6 +52,10 @@ class AppPopupInfoMapper extends BasePopupInfoMapper {
           onWalletSelected: onWalletSelected,
           selectedWallet: selectedWallet,
         ),
+      SelectIcon(:final iconType, :final onIconSelected) => SelectIconPopup(
+        iconType: iconType,
+        onIconSelected: onIconSelected,
+      ),
     };
   }
 }

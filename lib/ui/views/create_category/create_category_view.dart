@@ -58,11 +58,23 @@ class _CreateCategoryViewState extends BasePageState<CreateCategoryView, CreateC
                           GestureDetector(
                             behavior: HitTestBehavior.translucent,
                             onTap: () {
-                              // TODO: implement choosing category icon
+                              navigator.showDialog(
+                                AppPopupInfo.selectIcon(
+                                  iconType: IconType.category,
+                                  onIconSelected: (iconUrl) {
+                                    bloc.add(CreateCategoryIconChanged(icon: iconUrl));
+                                  },
+                                ),
+                              );
                             },
-                            child: CommonCircleNetworkImage(
-                              imageUrl: '',
-                              size: Dimens.d36.responsive(),
+                            child: BlocBuilder<CreateCategoryBloc, CreateCategoryState>(
+                              buildWhen: (previous, current) => previous.icon != current.icon,
+                              builder: (context, state) {
+                                return CommonCircleNetworkImage(
+                                  imageUrl: state.icon,
+                                  size: Dimens.d36.responsive(),
+                                );
+                              },
                             ),
                           ),
                           SizedBox(width: Dimens.d10.responsive()),

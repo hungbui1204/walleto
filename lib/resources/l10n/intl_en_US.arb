@@ -146,5 +146,6 @@
     "//" : "Create category view",
     "nameYourCategoryHere" : "Name your category here",
     "parentCategory" : "Parent Category",
-    "selectParentCategory" : "Select Parent Category"
+    "selectParentCategory" : "Select Parent Category",
+    "selectIcon" : "Select Icon"
 }

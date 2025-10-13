@@ -15,6 +15,7 @@ class RepositoryImpl implements Repository {
     this._monthSummaryStatDataMapper,
     this._categoryStatDataMapper,
     this._userDataMapper,
+    this._supabaseImageDataMapper,
   );
 
   final AppApiServices _appApiServices;
@@ -27,6 +28,7 @@ class RepositoryImpl implements Repository {
   final MonthSummaryStatDataMapper _monthSummaryStatDataMapper;
   final CategoryStatDataMapper _categoryStatDataMapper;
   final UserDataMapper _userDataMapper;
+  final SupabaseImageDataMapper _supabaseImageDataMapper;
 
   @override
   Future<bool> get isLoggedIn async => await _appPreferences.token != null;
@@ -208,5 +210,12 @@ class RepositoryImpl implements Repository {
     final userId = await _appPreferences.userId ?? '';
     final categoryData = _categoryDataMapper.mapToData(category.copyWith(userId: userId));
     await _appApiServices.createCategory(categoryData);
+  }
+
+  @override
+  Future<List<SupabaseImage>> getCategoryImages() async {
+    final response = await _appApiServices.getCategoryImages();
+
+    return _supabaseImageDataMapper.mapToListEntity(response);
   }
 }
