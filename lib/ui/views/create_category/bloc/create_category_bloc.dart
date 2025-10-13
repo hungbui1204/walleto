@@ -85,7 +85,7 @@ class CreateCategoryBloc extends BaseBloc<CreateCategoryEvent, CreateCategorySta
         await _createCategoryUseCase.execute(CreateCategoryInput(category: newCategory));
         event.onFetchNewCategories?.call();
 
-        navigator.pop();
+        navigator.pop(useRootNavigator: true);
       },
     );
   }

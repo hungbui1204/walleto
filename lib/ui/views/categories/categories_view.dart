@@ -65,8 +65,8 @@ class _CategoriesViewState extends BasePageState<CategoriesView, CategoriesBloc>
                   text: S.current.newCategory,
                   backgroundColor: secondaryColor,
                   onTap: () {
-                    navigator.push(
-                      AppRouteInfo.createCategory(() {
+                    navigator.showDialog(
+                      AppPopupInfo.createCategory(() {
                         bloc.add(const CategoriesViewInitiated());
                       }),
                     );

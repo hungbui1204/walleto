@@ -80,11 +80,6 @@ class AppRouter extends RootStackRouter {
               path: 'create-wallet-from-account',
               meta: const {'hideBottomNav': true},
             ),
-            AutoRoute(
-              page: CreateCategoryRoute.page,
-              path: 'create-category',
-              meta: const {'hideBottomNav': true},
-            ),
           ],
         ),
       ],

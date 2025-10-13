@@ -56,6 +56,9 @@ class AppPopupInfoMapper extends BasePopupInfoMapper {
         iconType: iconType,
         onIconSelected: onIconSelected,
       ),
+      CreateCategory(:final onFetchNewCategories) => CreateCategoryPopup(
+        onFetchNewCategories: onFetchNewCategories,
+      ),
     };
   }
 }

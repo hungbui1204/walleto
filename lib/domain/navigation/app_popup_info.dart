@@ -64,4 +64,6 @@ sealed class AppPopupInfo with _$AppPopupInfo {
     required IconType iconType,
     required void Function(String) onIconSelected,
   }) = SelectIcon;
+
+  const factory AppPopupInfo.createCategory(void Function()? onFetchNewCategories) = CreateCategory;
 }
