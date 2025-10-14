@@ -34,6 +34,7 @@ export 'usecases/get_month_summary_stats_use_case.dart';
 export 'usecases/get_recent_transactions_use_case.dart';
 export 'usecases/get_transactions_use_case.dart';
 export 'usecases/get_user_info_use_case.dart';
+export 'usecases/get_wallet_images_use_case.dart';
 export 'usecases/get_wallets_use_case.dart';
 export 'usecases/invalid_token_handle_use_case.dart';
 export 'usecases/is_logged_in_use_case.dart';

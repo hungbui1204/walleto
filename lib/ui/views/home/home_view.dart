@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:walleto/di/di.dart';
 import 'package:walleto/domain/domain.dart';
 import 'package:walleto/resources/resources.dart';
 import 'package:walleto/shared/shared.dart';
@@ -75,7 +76,12 @@ class _AllWalletsWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(S.current.allWallets, style: AppTextStyles.s16wBoldBlack()),
-          Text(S.current.seeAll, style: AppTextStyles.s13wNormalBlack()),
+          GestureDetector(
+            onTap: () {
+              getIt.get<AppNavigator>().push(const AppRouteInfo.wallets());
+            },
+            child: Text(S.current.seeAll, style: AppTextStyles.s13wNormalBlack()),
+          ),
         ],
       ),
       contentWidget: BlocBuilder<AppBloc, AppState>(

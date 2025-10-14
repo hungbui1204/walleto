@@ -61,4 +61,6 @@ abstract class Repository {
   Future<void> createCategory(Category category);
 
   Future<List<SupabaseImage>> getCategoryImages();
+
+  Future<List<SupabaseImage>> getWalletImages();
 }

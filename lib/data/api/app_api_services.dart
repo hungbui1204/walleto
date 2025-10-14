@@ -234,4 +234,14 @@ class AppApiServices {
       successResponseMapperType: SuccessResponseMapperType.jsonArray,
     );
   }
+
+  Future<List<SupabaseImageData>?> getWalletImages() {
+    return _serverApiClientStorage.request(
+      method: RequestMethod.post,
+      path: 'wallet-images',
+      body: {"limit": "100", "offset": "0", "prefix": null},
+      decoder: (data) => SupabaseImageData.fromJson(data as Map<String, dynamic>),
+      successResponseMapperType: SuccessResponseMapperType.jsonArray,
+    );
+  }
 }

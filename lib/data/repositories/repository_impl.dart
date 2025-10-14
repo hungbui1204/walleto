@@ -218,4 +218,11 @@ class RepositoryImpl implements Repository {
 
     return _supabaseImageDataMapper.mapToListEntity(response);
   }
+
+  @override
+  Future<List<SupabaseImage>> getWalletImages() async {
+    final response = await _appApiServices.getWalletImages();
+
+    return _supabaseImageDataMapper.mapToListEntity(response);
+  }
 }

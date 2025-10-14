@@ -62,12 +62,26 @@ class _CreateWalletViewState extends BasePageState<CreateWalletView, CreateWalle
                         GestureDetector(
                           behavior: HitTestBehavior.translucent,
                           onTap: () {
-                            // TODO: implement choosing wallet icon
+                            navigator.showDialog(
+                              AppPopupInfo.selectIcon(
+                                iconType: IconType.wallet,
+                                onIconSelected: (url) {
+                                  bloc.add(CreateWalletIconChanged(iconUrl: url));
+                                },
+                              ),
+                            );
                           },
-                          child: CommonCircleNetworkImage(
-                            imageUrl: '',
-                            size: Dimens.d36.responsive(),
-                            placeHolderType: ImagePlaceHolderType.wallet,
+                          child: BlocBuilder<CreateWalletBloc, CreateWalletState>(
+                            buildWhen: (previous, current) {
+                              return previous.iconUrl != current.iconUrl;
+                            },
+                            builder: (context, state) {
+                              return CommonCircleNetworkImage(
+                                imageUrl: state.iconUrl,
+                                size: Dimens.d36.responsive(),
+                                placeHolderType: ImagePlaceHolderType.wallet,
+                              );
+                            },
                           ),
                         ),
                         SizedBox(width: Dimens.d10.responsive()),

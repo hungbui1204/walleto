@@ -14,6 +14,7 @@ class CreateWalletBloc extends BaseBloc<CreateWalletEvent, CreateWalletState> {
     on<CreateWalletConfirmButtonPressed>(_onCreateWalletConfirmButtonPressed);
     on<CreateWalletNameInputChanged>(_onCreateWalletNameInputChanged);
     on<CreateWalletInitialBalanceInputChanged>(_onCreateWalletInitialBalanceInputChanged);
+    on<CreateWalletIconChanged>(_onCreateWalletIconChanged);
   }
 
   final CreateWalletUseCase _createWalletUseCase;
@@ -31,8 +32,8 @@ class CreateWalletBloc extends BaseBloc<CreateWalletEvent, CreateWalletState> {
         final wallet = Wallet(
           name: state.walletName,
           amount: double.tryParse(state.initialBalance) ?? 0,
+          iconUrl: state.iconUrl,
           // TODO: implement choosing currency
-          // TODO: implement choosing wallet icon
           currencyCode: 'VND',
         );
 
@@ -70,5 +71,9 @@ class CreateWalletBloc extends BaseBloc<CreateWalletEvent, CreateWalletState> {
         isConfirmButtonEnabled: isConfirmButtonEnabled,
       ),
     );
+  }
+
+  void _onCreateWalletIconChanged(CreateWalletIconChanged event, Emitter<CreateWalletState> emit) {
+    emit(state.copyWith(iconUrl: event.iconUrl));
   }
 }

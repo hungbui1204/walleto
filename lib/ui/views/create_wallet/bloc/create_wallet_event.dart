@@ -29,3 +29,10 @@ sealed class CreateWalletInitialBalanceInputChanged extends CreateWalletEvent
   const factory CreateWalletInitialBalanceInputChanged({required String initialBalance}) =
       _CreateWalletInitialBalanceInputChanged;
 }
+
+@freezed
+sealed class CreateWalletIconChanged extends CreateWalletEvent with _$CreateWalletIconChanged {
+  const CreateWalletIconChanged._();
+
+  const factory CreateWalletIconChanged({required String iconUrl}) = _CreateWalletIconChanged;
+}
