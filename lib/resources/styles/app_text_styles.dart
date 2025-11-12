@@ -555,6 +555,26 @@ class AppTextStyles {
     );
   }
 
+  static TextStyle s28wNormalGreen({double? tablet, double? ultraTablet}) {
+    return _baseTextStyle.merge(
+      TextStyle(
+        color: greenColor,
+        fontWeight: FontWeight.normal,
+        fontSize: Dimens.d28.responsive(tablet: tablet, ultraTablet: ultraTablet),
+      ),
+    );
+  }
+
+  static TextStyle s28wNormalRed({double? tablet, double? ultraTablet}) {
+    return _baseTextStyle.merge(
+      TextStyle(
+        color: redColor,
+        fontWeight: FontWeight.normal,
+        fontSize: Dimens.d28.responsive(tablet: tablet, ultraTablet: ultraTablet),
+      ),
+    );
+  }
+
   static TextStyle s28wBoldGrey({double? tablet, double? ultraTablet}) {
     return _baseTextStyle.merge(
       TextStyle(

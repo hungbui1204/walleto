@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:walleto/domain/domain.dart';
 part 'app_route_info.freezed.dart';
 
 @freezed
@@ -22,4 +23,7 @@ sealed class AppRouteInfo with _$AppRouteInfo {
   const factory AppRouteInfo.createWallet({@Default(false) bool isFromSignUp}) = CreateWallet;
 
   const factory AppRouteInfo.wallets() = Wallets;
+
+  const factory AppRouteInfo.transactionDetail({required Transaction transaction}) =
+      TransactionDetail;
 }

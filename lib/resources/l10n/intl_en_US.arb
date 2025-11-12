@@ -147,5 +147,10 @@
     "nameYourCategoryHere" : "Name your category here",
     "parentCategory" : "Parent Category",
     "selectParentCategory" : "Select Parent Category",
-    "selectIcon" : "Select Icon"
+    "selectIcon" : "Select Icon",
+    "//" : "Transaction detail view",
+    "transactionDetail" : "Transaction Detail",
+    "duplicateTransaction": "Duplicate Transaction",
+    "editTransaction" : "Edit Transaction",
+    "deleteTransaction" : "Delete Transaction"
 }
