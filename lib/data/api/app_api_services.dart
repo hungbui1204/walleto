@@ -244,4 +244,13 @@ class AppApiServices {
       successResponseMapperType: SuccessResponseMapperType.jsonArray,
     );
   }
+
+  Future<List<CurrencyData>?> getCurrencies() {
+    return _serverApiClientRest.request(
+      method: RequestMethod.get,
+      path: 'currencies',
+      decoder: (data) => CurrencyData.fromJson(data as Map<String, dynamic>),
+      successResponseMapperType: SuccessResponseMapperType.jsonArray,
+    );
+  }
 }

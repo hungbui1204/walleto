@@ -16,6 +16,7 @@ class RepositoryImpl implements Repository {
     this._categoryStatDataMapper,
     this._userDataMapper,
     this._supabaseImageDataMapper,
+    this._currencyDataMapper,
   );
 
   final AppApiServices _appApiServices;
@@ -29,6 +30,7 @@ class RepositoryImpl implements Repository {
   final CategoryStatDataMapper _categoryStatDataMapper;
   final UserDataMapper _userDataMapper;
   final SupabaseImageDataMapper _supabaseImageDataMapper;
+  final CurrencyDataMapper _currencyDataMapper;
 
   @override
   Future<bool> get isLoggedIn async => await _appPreferences.token != null;
@@ -224,5 +226,12 @@ class RepositoryImpl implements Repository {
     final response = await _appApiServices.getWalletImages();
 
     return _supabaseImageDataMapper.mapToListEntity(response);
+  }
+
+  @override
+  Future<List<Currency>> getCurrencies() async {
+    final response = await _appApiServices.getCurrencies();
+
+    return _currencyDataMapper.mapToListEntity(response);
   }
 }

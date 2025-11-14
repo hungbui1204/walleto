@@ -63,4 +63,6 @@ abstract class Repository {
   Future<List<SupabaseImage>> getCategoryImages();
 
   Future<List<SupabaseImage>> getWalletImages();
+
+  Future<List<Currency>> getCurrencies();
 }
