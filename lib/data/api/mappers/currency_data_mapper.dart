@@ -16,6 +16,7 @@ class CurrencyDataMapper extends BaseDataMapper<CurrencyData, Currency> with Dat
       decimalPlaces: data?.decimalPlaces ?? 0,
       isActive: data?.isActive ?? true,
       createdAt: data?.createdAt?.toDateTime(),
+      iconUrl: data?.iconUrl ?? '',
     );
   }
 
@@ -28,6 +29,7 @@ class CurrencyDataMapper extends BaseDataMapper<CurrencyData, Currency> with Dat
       decimalPlaces: entity.decimalPlaces,
       isActive: entity.isActive,
       createdAt: entity.createdAt?.toIso8601String(),
+      iconUrl: entity.iconUrl,
     );
   }
 }

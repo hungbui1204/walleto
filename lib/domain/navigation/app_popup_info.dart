@@ -66,4 +66,9 @@ sealed class AppPopupInfo with _$AppPopupInfo {
   }) = SelectIcon;
 
   const factory AppPopupInfo.createCategory(void Function()? onFetchNewCategories) = CreateCategory;
+
+  const factory AppPopupInfo.chooseCurrency({
+    required void Function(Currency) onCurrencySelected,
+    required Currency? currentCurrency,
+  }) = ChooseCurrency;
 }

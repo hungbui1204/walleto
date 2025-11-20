@@ -69,7 +69,7 @@ enum BottomTab {
 
 enum InvalidTokenHandlerStatus { emptyToken, tokenRefreshed, refreshTokenExpired }
 
-enum ImagePlaceHolderType { category, wallet, user }
+enum ImagePlaceHolderType { category, wallet, user, currency }
 
 enum OperationType {
   addition,

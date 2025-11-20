@@ -11,14 +11,17 @@ class CommonRectangleNetworkImage extends CommonShapeNetworkImage {
     super.placeHolderType,
     super.backgroundColor,
     super.enablePadding,
+    this.hasBorder = true,
   });
+
+  final bool hasBorder;
 
   @override
   Widget buildShapeImage(BuildContext context, {required Widget imageWidget}) {
     return Container(
       height: height,
       width: width,
-      decoration: BoxDecoration(color: backgroundColor, border: Border.all()),
+      decoration: BoxDecoration(color: backgroundColor, border: hasBorder ? Border.all() : null),
       alignment: Alignment.center,
       child: imageWidget,
     );

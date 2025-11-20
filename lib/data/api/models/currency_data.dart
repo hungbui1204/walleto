@@ -12,6 +12,7 @@ sealed class CurrencyData with _$CurrencyData {
     @JsonKey(name: 'decimal_places') int? decimalPlaces,
     @JsonKey(name: 'is_active') bool? isActive,
     @JsonKey(name: 'created_at') String? createdAt,
+    @JsonKey(name: 'icon_url') String? iconUrl,
   }) = _CurrencyData;
 
   factory CurrencyData.fromJson(Map<String, dynamic> json) => _$CurrencyDataFromJson(json);

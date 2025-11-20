@@ -10,6 +10,7 @@ sealed class Currency with _$Currency {
     @Default('') String symbol,
     @Default(0) int decimalPlaces,
     @Default(true) bool isActive,
+    @Default('') String iconUrl,
     DateTime? createdAt,
   }) = _Currency;
 }

@@ -20,4 +20,6 @@ class AppConstants {
   ];
 
   static const totalWalletId = -1;
+
+  static const defaultCurrencyCode = 'USD';
 }

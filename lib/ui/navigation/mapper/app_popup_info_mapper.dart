@@ -59,6 +59,11 @@ class AppPopupInfoMapper extends BasePopupInfoMapper {
       CreateCategory(:final onFetchNewCategories) => CreateCategoryPopup(
         onFetchNewCategories: onFetchNewCategories,
       ),
+      ChooseCurrency(:final onCurrencySelected, :final currentCurrency) =>
+        ChooseCurrencyBottomSheet(
+          onCurrencySelected: onCurrencySelected,
+          currentCurrency: currentCurrency,
+        ),
     };
   }
 }
