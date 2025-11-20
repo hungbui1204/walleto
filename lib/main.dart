@@ -25,6 +25,8 @@ void main() => runZonedGuarded(_runMyApp, _reportError);
 Future<void> _runMyApp() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  await EdgeToEdgeHelper.initialize();
+
   await AppInitializer(AppConfig.getInstance()).init();
 
   if (Platform.isAndroid) {
