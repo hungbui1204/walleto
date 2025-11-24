@@ -44,7 +44,11 @@ abstract class CommonShapeNetworkImage extends StatelessWidget {
         width: width,
         height: height,
       ),
-      ImagePlaceHolderType.currency => Icon(Icons.flag, size: width),
+      ImagePlaceHolderType.currency => Icon(
+        Icons.flag,
+        size: width! * 2 / 3,
+        color: secondaryColor,
+      ),
     };
   }
 

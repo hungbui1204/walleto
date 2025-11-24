@@ -29,6 +29,7 @@ class TransactionDataMapper extends BaseDataMapper<TransactionData, Transaction>
       userId: data?.userId,
       note: data?.note ?? '',
       type: _categoryTypeDataMapper.mapToEntity(data?.type),
+      currencyCode: data?.currencyCode ?? '',
     );
   }
 
@@ -42,6 +43,7 @@ class TransactionDataMapper extends BaseDataMapper<TransactionData, Transaction>
       walletId: entity.walletId,
       userId: entity.userId,
       note: entity.note,
+      currencyCode: entity.currencyCode,
     );
   }
 }

@@ -16,5 +16,6 @@ sealed class Transaction with _$Transaction {
     String? userId,
     @Default('') String note,
     @Default(CategoryType.expense) CategoryType type,
+    @Default('') String currencyCode,
   }) = _Transaction;
 }

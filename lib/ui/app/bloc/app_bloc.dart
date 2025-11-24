@@ -10,15 +10,17 @@ part 'app_bloc.freezed.dart';
 
 @lazySingleton
 class AppBloc extends BaseBloc<AppEvent, AppState> {
-  AppBloc(this._signOutUseCase, this._getWalletsUseCase) : super(const AppState()) {
-    on<SignOutButtonPressed>(_onSignOutButtonPressed);
-    on<DataFetched>(_onDataFetched);
-    on<TransactionsReloaded>(_onTransactionsReloaded);
-    on<StatisticalChartsReloaded>(_onStatisticalChartsReloaded);
+  AppBloc(this._signOutUseCase, this._getWalletsUseCase, this._getCurrenciesUseCase)
+    : super(const AppState()) {
+    on<SignOutButtonPressed>(_onSignOutButtonPressed, transformer: log());
+    on<DataFetched>(_onDataFetched, transformer: log());
+    on<TransactionsReloaded>(_onTransactionsReloaded, transformer: log());
+    on<StatisticalChartsReloaded>(_onStatisticalChartsReloaded, transformer: log());
   }
 
   final SignOutUseCase _signOutUseCase;
   final GetWalletsUseCase _getWalletsUseCase;
+  final GetCurrenciesUseCase _getCurrenciesUseCase;
 
   Future<void> _onSignOutButtonPressed(SignOutButtonPressed event, Emitter<AppState> emit) async {
     await runBlocCatching(
@@ -31,13 +33,23 @@ class AppBloc extends BaseBloc<AppEvent, AppState> {
   Future<void> _onDataFetched(DataFetched event, Emitter<AppState> emit) async {
     await runBlocCatching(
       action: () async {
-        final walletsOutput = await _getWalletsUseCase.execute(const GetWalletsInput());
+        // Fetch wallets
+        if (event.walletsFetched) {
+          final walletsOutput = await _getWalletsUseCase.execute(const GetWalletsInput());
 
-        final sortedByNameWallets =
-            walletsOutput.wallets.where((wallet) => wallet.name.isNotEmpty).toList()
-              ..sort((a, b) => a.name.compareTo(b.name));
+          final sortedByNameWallets =
+              walletsOutput.wallets.where((wallet) => wallet.name.isNotEmpty).toList()
+                ..sort((a, b) => a.name.compareTo(b.name));
 
-        emit(state.copyWith(wallets: sortedByNameWallets));
+          emit(state.copyWith(wallets: sortedByNameWallets));
+        }
+
+        // Fetch currencies
+        if (event.currenciesFetched) {
+          final currenciesOutput = await _getCurrenciesUseCase.execute(const GetCurrenciesInput());
+
+          emit(state.copyWith(currencies: currenciesOutput.currencies));
+        }
       },
     );
   }

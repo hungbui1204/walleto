@@ -5,6 +5,13 @@ sealed class CreateWalletEvent extends BaseBlocEvent {
 }
 
 @freezed
+sealed class CreateWalletViewInitiated extends CreateWalletEvent with _$CreateWalletViewInitiated {
+  const CreateWalletViewInitiated._();
+
+  const factory CreateWalletViewInitiated() = _CreateWalletViewInitiated;
+}
+
+@freezed
 sealed class CreateWalletConfirmButtonPressed extends CreateWalletEvent
     with _$CreateWalletConfirmButtonPressed {
   const CreateWalletConfirmButtonPressed._();
@@ -35,4 +42,12 @@ sealed class CreateWalletIconChanged extends CreateWalletEvent with _$CreateWall
   const CreateWalletIconChanged._();
 
   const factory CreateWalletIconChanged({required String iconUrl}) = _CreateWalletIconChanged;
+}
+
+@freezed
+sealed class CreateWalletCurrencyChanged extends CreateWalletEvent
+    with _$CreateWalletCurrencyChanged {
+  const CreateWalletCurrencyChanged._();
+  const factory CreateWalletCurrencyChanged({required Currency currency}) =
+      _CreateWalletCurrencyChanged;
 }

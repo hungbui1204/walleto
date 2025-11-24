@@ -25,6 +25,8 @@ class _CreateWalletViewState extends BasePageState<CreateWalletView, CreateWalle
     super.initState();
     _walletNameController = TextEditingController();
     _initialBalanceController = TextEditingController();
+
+    bloc.add(const CreateWalletViewInitiated());
   }
 
   @override
@@ -97,14 +99,32 @@ class _CreateWalletViewState extends BasePageState<CreateWalletView, CreateWalle
                       ],
                     ),
                     const CommonLine(),
-                    CommonForwardButton(
-                      padding: EdgeInsets.symmetric(vertical: Dimens.d8.responsive()),
-                      title: S.current.currency,
-                      color: whiteColor,
-                      onTap: () {
-                        // TODO: implement choosing currency
+                    BlocBuilder<CreateWalletBloc, CreateWalletState>(
+                      buildWhen: (previous, current) {
+                        return previous.selectedCurrency != current.selectedCurrency;
                       },
-                      leadingIcon: const CommonCurrencyContainer(),
+                      builder: (context, state) {
+                        return CommonForwardButton(
+                          padding: EdgeInsets.symmetric(vertical: Dimens.d8.responsive()),
+                          title: S.current.currency,
+                          color: whiteColor,
+                          onTap: () {
+                            navigator.showModalBottomSheet(
+                              AppPopupInfo.chooseCurrency(
+                                onCurrencySelected: (selectedCurrency) {
+                                  context.read<CreateWalletBloc>().add(
+                                    CreateWalletCurrencyChanged(currency: selectedCurrency),
+                                  );
+                                },
+                                currentCurrency: state.selectedCurrency,
+                              ),
+                            );
+                          },
+                          leadingIcon: CommonCurrencyContainer(
+                            currentCurrency: state.selectedCurrency,
+                          ),
+                        );
+                      },
                     ),
                     const CommonLine(),
                     CommonTextField2(

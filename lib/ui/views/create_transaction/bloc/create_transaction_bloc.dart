@@ -13,18 +13,25 @@ part 'create_transaction_bloc.freezed.dart';
 @injectable
 class CreateTransactionBloc extends BaseBloc<CreateTransactionEvent, CreateTransactionState> {
   CreateTransactionBloc(this._createTransactionUseCase) : super(const CreateTransactionState()) {
-    on<CreateTransactionViewInitiated>(_onCreateTransactionViewInitiated);
-    on<CreateTransactionKeyboardToggled>(_onCreateTransactionKeyboardToggled);
-    on<CreateTransactionAmountChanged>(_onCreateTransactionAmountChanged);
-    on<CreateTransactionOperationChanged>(_onCreateTransactionOperationChanged);
-    on<CreateTransactionBackspacePressed>(_onCreateTransactionBackspacePressed);
-    on<CreateTransactionClearPressed>(_onCreateTransactionClearPressed);
-    on<CreateTransactionEqualButtonPressed>(_onCreateTransactionEqualButtonPressed);
-    on<CreateTransactionConfirmButtonPressed>(_onCreateTransactionConfirmButtonPressed);
-    on<CreateTransactionCategorySelected>(_onCreateTransactionCategorySelected);
-    on<CreateTransactionDateSelected>(_onCreateTransactionDateSelected);
-    on<CreateTransactionNoteChanged>(_onCreateTransactionNoteChanged);
-    on<CreateTransactionWalletSelected>(_onCreateTransactionWalletSelected);
+    on<CreateTransactionViewInitiated>(_onCreateTransactionViewInitiated, transformer: log());
+    on<CreateTransactionKeyboardToggled>(_onCreateTransactionKeyboardToggled, transformer: log());
+    on<CreateTransactionAmountChanged>(_onCreateTransactionAmountChanged, transformer: log());
+    on<CreateTransactionOperationChanged>(_onCreateTransactionOperationChanged, transformer: log());
+    on<CreateTransactionBackspacePressed>(_onCreateTransactionBackspacePressed, transformer: log());
+    on<CreateTransactionClearPressed>(_onCreateTransactionClearPressed, transformer: log());
+    on<CreateTransactionEqualButtonPressed>(
+      _onCreateTransactionEqualButtonPressed,
+      transformer: log(),
+    );
+    on<CreateTransactionConfirmButtonPressed>(
+      _onCreateTransactionConfirmButtonPressed,
+      transformer: log(),
+    );
+    on<CreateTransactionCategorySelected>(_onCreateTransactionCategorySelected, transformer: log());
+    on<CreateTransactionDateSelected>(_onCreateTransactionDateSelected, transformer: log());
+    on<CreateTransactionNoteChanged>(_onCreateTransactionNoteChanged, transformer: log());
+    on<CreateTransactionWalletSelected>(_onCreateTransactionWalletSelected, transformer: log());
+    on<CreateTransactionCurrencySelected>(_onCreateTransactionCurrencySelected, transformer: log());
   }
 
   final CreateTransactionUseCase _createTransactionUseCase;
@@ -54,8 +61,18 @@ class CreateTransactionBloc extends BaseBloc<CreateTransactionEvent, CreateTrans
   ) {
     final now = DateTime.now();
     final defaultWallet = appBloc.state.wallets.first;
+    final defaultCurrency = appBloc.state.currencies.firstWhere(
+      (currency) => currency.code == defaultWallet.currencyCode,
+      orElse: () => appBloc.state.currencies.first,
+    );
 
-    emit(state.copyWith(selectedDate: now, selectedWallet: defaultWallet));
+    emit(
+      state.copyWith(
+        selectedDate: now,
+        selectedWallet: defaultWallet,
+        selectedCurrency: defaultCurrency,
+      ),
+    );
   }
 
   void _onCreateTransactionKeyboardToggled(
@@ -276,6 +293,7 @@ class CreateTransactionBloc extends BaseBloc<CreateTransactionEvent, CreateTrans
           createdAt: state.selectedDate,
           note: state.note,
           walletId: state.selectedWallet?.id ?? 0,
+          currencyCode: state.selectedCurrency?.code ?? '',
         );
 
         await _createTransactionUseCase.execute(
@@ -286,7 +304,7 @@ class CreateTransactionBloc extends BaseBloc<CreateTransactionEvent, CreateTrans
         // Refresh the wallets to update the balance
         appBloc.add(const TransactionsReloaded(needReloadTransactions: true));
         appBloc.add(const StatisticalChartsReloaded(needReloadStatisticalCharts: true));
-        appBloc.add(const DataFetched());
+        appBloc.add(const DataFetched(walletsFetched: true));
         navigator.pop();
       },
     );
@@ -311,5 +329,14 @@ class CreateTransactionBloc extends BaseBloc<CreateTransactionEvent, CreateTrans
     Emitter<CreateTransactionState> emit,
   ) {
     emit(state.copyWith(selectedWallet: event.wallet));
+  }
+
+  void _onCreateTransactionCurrencySelected(
+    CreateTransactionCurrencySelected event,
+    Emitter<CreateTransactionState> emit,
+  ) {
+    if (event.currency == state.selectedCurrency) return;
+
+    emit(state.copyWith(selectedCurrency: event.currency));
   }
 }

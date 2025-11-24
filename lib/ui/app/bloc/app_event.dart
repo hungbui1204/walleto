@@ -15,7 +15,10 @@ sealed class SignOutButtonPressed extends AppEvent with _$SignOutButtonPressed {
 sealed class DataFetched extends AppEvent with _$DataFetched {
   const DataFetched._();
 
-  const factory DataFetched() = _DataFetched;
+  const factory DataFetched({
+    @Default(false) bool walletsFetched,
+    @Default(false) bool currenciesFetched,
+  }) = _DataFetched;
 }
 
 @freezed

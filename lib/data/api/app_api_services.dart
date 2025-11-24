@@ -111,6 +111,7 @@ class AppApiServices {
         'note': transaction.note,
         'user_id': transaction.userId,
         'wallet_id': transaction.walletId,
+        'currency_code': transaction.currencyCode,
       },
     );
   }

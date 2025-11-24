@@ -106,3 +106,12 @@ sealed class CreateTransactionWalletSelected extends CreateTransactionEvent
   const factory CreateTransactionWalletSelected({required Wallet wallet}) =
       _CreateTransactionWalletSelected;
 }
+
+@freezed
+sealed class CreateTransactionCurrencySelected extends CreateTransactionEvent
+    with _$CreateTransactionCurrencySelected {
+  const CreateTransactionCurrencySelected._();
+
+  const factory CreateTransactionCurrencySelected({required Currency currency}) =
+      _CreateTransactionCurrencySelected;
+}

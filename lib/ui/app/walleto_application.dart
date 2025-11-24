@@ -30,6 +30,8 @@ class _WalletoApplicationState extends BasePageState<WalletoApplication, AppBloc
       // TODO: implement push noti for iOS
       FirebaseMessaging.instance.requestPermission();
     }
+
+    appBloc.add(const DataFetched(currenciesFetched: true));
     super.initState();
   }
 

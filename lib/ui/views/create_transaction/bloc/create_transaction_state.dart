@@ -14,5 +14,6 @@ sealed class CreateTransactionState extends BaseBlocState with _$CreateTransacti
     @Default('') String note,
     @Default(false) bool confirmButtonEnable,
     Wallet? selectedWallet,
+    Currency? selectedCurrency,
   }) = _CreateTransactionState;
 }

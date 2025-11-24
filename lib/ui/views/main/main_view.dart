@@ -44,7 +44,7 @@ class _MainViewState extends BasePageState<MainView, MainBloc> {
       });
     }
 
-    appBloc.add(const DataFetched());
+    appBloc.add(const DataFetched(currenciesFetched: true, walletsFetched: true));
 
     super.initState();
   }

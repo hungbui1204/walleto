@@ -9,5 +9,6 @@ sealed class CreateWalletState extends BaseBlocState with _$CreateWalletState {
     @Default('') String initialBalance,
     @Default(false) bool isConfirmButtonEnabled,
     @Default('') String iconUrl,
+    Currency? selectedCurrency,
   }) = _CreateWalletState;
 }

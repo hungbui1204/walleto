@@ -150,7 +150,28 @@ class _NewTransactionInfo extends StatelessWidget {
               Row(
                 children: [
                   Expanded(child: _AmountInput(controller: controller, focusNode: focusNode)),
-                  const CommonCurrencyContainer(),
+                  BlocBuilder<CreateTransactionBloc, CreateTransactionState>(
+                    buildWhen: (previous, current) {
+                      return previous.selectedCurrency != current.selectedCurrency;
+                    },
+                    builder: (context, state) {
+                      return GestureDetector(
+                        onTap: () {
+                          getIt.get<AppNavigator>().showModalBottomSheet(
+                            AppPopupInfo.chooseCurrency(
+                              onCurrencySelected: (selectedCurrency) {
+                                context.read<CreateTransactionBloc>().add(
+                                  CreateTransactionCurrencySelected(currency: selectedCurrency),
+                                );
+                              },
+                              currentCurrency: state.selectedCurrency,
+                            ),
+                          );
+                        },
+                        child: CommonCurrencyContainer(currentCurrency: state.selectedCurrency),
+                      );
+                    },
+                  ),
                 ],
               ),
             ],
