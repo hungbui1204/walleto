@@ -17,6 +17,7 @@ class RepositoryImpl implements Repository {
     this._userDataMapper,
     this._supabaseImageDataMapper,
     this._currencyDataMapper,
+    this._exchangeRateDataMapper,
   );
 
   final AppApiServices _appApiServices;
@@ -31,6 +32,7 @@ class RepositoryImpl implements Repository {
   final UserDataMapper _userDataMapper;
   final SupabaseImageDataMapper _supabaseImageDataMapper;
   final CurrencyDataMapper _currencyDataMapper;
+  final ExchangeRateDataMapper _exchangeRateDataMapper;
 
   @override
   Future<bool> get isLoggedIn async => await _appPreferences.token != null;
@@ -233,5 +235,18 @@ class RepositoryImpl implements Repository {
     final response = await _appApiServices.getCurrencies();
 
     return _currencyDataMapper.mapToListEntity(response);
+  }
+
+  @override
+  Future<ExchangeRate> getExchangeRate({
+    required String fromCurrencyCode,
+    required String toCurrencyCode,
+  }) async {
+    final response = await _appApiServices.getExchangeRate(
+      fromCurrency: fromCurrencyCode,
+      toCurrency: toCurrencyCode,
+    );
+
+    return _exchangeRateDataMapper.mapToEntity(response);
   }
 }

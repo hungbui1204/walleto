@@ -254,4 +254,16 @@ class AppApiServices {
       successResponseMapperType: SuccessResponseMapperType.jsonArray,
     );
   }
+
+  Future<ExchangeRateData?> getExchangeRate({
+    required String fromCurrency,
+    required String toCurrency,
+  }) async {
+    return _serverApiClientRest.request(
+      method: RequestMethod.get,
+      path: 'rpc/get_exchange_rate',
+      queryParameters: {'p_from_currency': fromCurrency, 'p_to_currency': toCurrency},
+      decoder: (data) => ExchangeRateData.fromJson(data as Map<String, dynamic>),
+    );
+  }
 }

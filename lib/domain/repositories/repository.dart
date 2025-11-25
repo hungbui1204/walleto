@@ -65,4 +65,9 @@ abstract class Repository {
   Future<List<SupabaseImage>> getWalletImages();
 
   Future<List<Currency>> getCurrencies();
+
+  Future<ExchangeRate> getExchangeRate({
+    required String fromCurrencyCode,
+    required String toCurrencyCode,
+  });
 }
