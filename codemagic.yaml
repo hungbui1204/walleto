@@ -1,0 +1,82 @@
+workflows:
+  ios-device-unsigned:
+    name: Build iOS Device Unsigned final
+    max_build_duration: 60
+    environment:
+      flutter: stable
+      xcode: latest
+      vars:
+        FLUTTER_BUILD_MODE: release
+
+    scripts:
+      - name: Clean and Pub Get
+        script: |
+          echo "--- BẮT ĐẦU CLEAN VÀ GET PUB ---"
+          flutter clean
+          flutter pub get
+
+      - name: Fix Podfile Deployment Target
+        script: |
+          echo "--- BẮT ĐẦU SỬA DEPLOYMENT TARGET (iOS 13.0) ---"
+          PODFILE_PATH="ios/Podfile"
+          PROJECT_FILE="ios/Runner.xcodeproj/project.pbxproj"
+
+          # A. Sửa Podfile
+          sed -i '' 's/platform :ios, .*/platform :ios, '\''13.0'\''/g' "$PODFILE_PATH"
+          sed -i '' '/platform :ios/ s/^# *//' "$PODFILE_PATH"
+
+          # B. Sửa project.pbxproj
+          sed -i '' 's/IPHONEOS_DEPLOYMENT_TARGET = [0-9.]*;/IPHONEOS_DEPLOYMENT_TARGET = 13.0;/g' "$PROJECT_FILE"
+          echo "--- HOÀN THÀNH SỬA DEPLOYMENT TARGET ---"
+
+      - name: Install and Update Pods
+        script: |
+          echo "--- BẮT ĐẦU CÀI ĐẶT VÀ CẬP NHẬT PODS ---"
+          (cd ios && pod update --repo-update)
+          echo "--- HOÀN THÀNH CÀI ĐẶT VÀ CẬP NHẬT PODS ---"
+
+      - name: Build iOS (XCODEBUILD Manual)
+        script: |
+          echo "--- BUILD BẰNG XCODEBUILD ---"
+          PROJECT_FILE="ios/Runner.xcodeproj/project.pbxproj"
+
+          # Tắt toàn bộ code signing
+          sed -i '' 's/DEVELOPMENT_TEAM = .*;/DEVELOPMENT_TEAM = ;/g' "$PROJECT_FILE"
+          sed -i '' 's/CODE_SIGN_IDENTITY = ".*";/CODE_SIGN_IDENTITY = "";/g' "$PROJECT_FILE"
+          sed -i '' 's/PROVISIONING_PROFILE_SPECIFIER = ".*";/PROVISIONING_PROFILE_SPECIFIER = "";/g' "$PROJECT_FILE"
+          sed -i '' 's/ProvisioningStyle = Automatic;/ProvisioningStyle = Manual;/g' "$PROJECT_FILE"
+
+          # Build unsigned
+          xcodebuild -workspace ios/Runner.xcworkspace -scheme Runner -configuration Release \
+            -destination 'generic/platform=iOS' \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" ONLY_ACTIVE_ARCH=NO build
+
+          echo "--- XONG BUILD ---"
+
+      - name: Package .app as IPA
+        script: |
+          echo "--- ĐÓNG GÓI IPA ---"
+
+          APP_PATH=$(find ~/Library/Developer/Xcode/DerivedData -path "*/Build/Products/Release-iphoneos/Runner.app" | head -n 1)
+
+          if [ -z "$APP_PATH" ]; then
+            echo "Không tìm thấy Runner.app"
+            exit 1
+          fi
+
+          echo "Runner.app: $APP_PATH"
+
+          IPA_DIR="build/ipa_output"
+          mkdir -p "$IPA_DIR/Payload"
+
+          cp -R "$APP_PATH" "$IPA_DIR/Payload/"
+
+          (cd "$IPA_DIR" && zip -qry final_app.ipa Payload)
+
+          rm -rf "$IPA_DIR/Payload"
+
+          echo "--- IPA TẠO TẠI: $IPA_DIR/final_app.ipa ---"
+
+    artifacts:
+      - build/**/final_app.ipa
