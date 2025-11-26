@@ -9,11 +9,22 @@ workflows:
         FLUTTER_BUILD_MODE: release
 
     scripts:
-      - name: Clean and Pub Get
+      - name: Install FVM
         script: |
-          echo "--- BẮT ĐẦU CLEAN VÀ GET PUB ---"
-          flutter clean
-          flutter pub get
+          echo "--- BẮT ĐẦU CÀI ĐẶT FVM ---"
+          brew tap leoafarias/fvm
+          brew install fvm
+          fvm install
+          fvm use 3.29.3 -f
+
+      - name: Clean, Pub Get, Build
+        script: |
+          echo "--- BẮT ĐẦU CLEAN, GET PUB, BUILD ---"
+          fvm flutter clean
+          fvm flutter pub get
+          fluttergen
+          fvm dart run intl_utils:generate
+          fvm dart run build_runner build --delete-conflicting-outputs
 
       - name: Fix Podfile Deployment Target
         script: |
@@ -57,8 +68,8 @@ workflows:
       - name: Package .app as IPA
         script: |
           echo "--- ĐÓNG GÓI IPA ---"
-
-          APP_PATH=$(find ~/Library/Developer/Xcode/DerivedData -path "*/Build/Products/Release-iphoneos/Runner.app" | head -n 1)
+          
+          APP_PATH="build/ios/iphoneos/Runner.app"
 
           if [ -z "$APP_PATH" ]; then
             echo "Không tìm thấy Runner.app"
