@@ -7,6 +7,8 @@ workflows:
       xcode: latest
       vars:
         FLUTTER_BUILD_MODE: release
+      groups:
+        - dev-env
 
     scripts:
       - name: Install FVM
@@ -16,6 +18,23 @@ workflows:
           brew install fvm
           fvm install
           fvm use 3.29.3 -f
+
+      - name: Generate env config from Codemagic variables
+        script: |
+          echo "--- TẠO FILE ENV ---"
+          mkdir -p env
+          cat > env/development.json <<EOL
+           {
+              "FLAVOR": "$FLAVOR",
+              "APP_API_DOMAIN": "$APP_API_DOMAIN",
+              "APP_API_FUNCTIONS_DOMAIN": "$APP_API_FUNCTIONS_DOMAIN",
+              "APP_API_KEY": "$APP_API_KEY"
+           }
+          EOL
+          echo "File development.json được tạo:"
+          cat env/development.json
+          fvm dart pub get --directory=tools/gen_env
+          fvm dart run tools/gen_env/lib/main.dart
 
       - name: Clean, Pub Get, Build
         script: |
@@ -42,8 +61,10 @@ workflows:
 
       - name: Install and Update Pods
         script: |
+          echo "--- PRECACHE FLUTTER IOS ENGINE ---"
+          fvm flutter precache --ios
           echo "--- BẮT ĐẦU CÀI ĐẶT VÀ CẬP NHẬT PODS ---"
-          (cd ios && pod update --repo-update)
+          (cd ios && pod install --repo-update)
           echo "--- HOÀN THÀNH CÀI ĐẶT VÀ CẬP NHẬT PODS ---"
 
       - name: Build iOS (XCODEBUILD Manual)
