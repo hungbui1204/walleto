@@ -9,5 +9,6 @@ sealed class DayTransactions with _$DayTransactions {
     @Default(<Transaction>[]) List<Transaction> transactions,
     DateTime? date,
     @Default(0) double totalAmount,
+    @Default('') String currencyCode,
   }) = _DayTransactions;
 }

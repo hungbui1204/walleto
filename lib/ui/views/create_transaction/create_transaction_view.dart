@@ -174,6 +174,46 @@ class _NewTransactionInfo extends StatelessWidget {
                   ),
                 ],
               ),
+              BlocBuilder<CreateTransactionBloc, CreateTransactionState>(
+                buildWhen: (previous, current) {
+                  return previous.convertedAmount != current.convertedAmount ||
+                      previous.selectedWallet != current.selectedWallet;
+                },
+                builder: (context, state) {
+                  if (state.convertedAmount == null || state.selectedWallet == null) {
+                    return const SizedBox.shrink();
+                  }
+
+                  return Tooltip(
+                    triggerMode: TooltipTriggerMode.tap,
+                    showDuration: DurationConstants.defaultTooltipShowDuration,
+                    message: S.current.amountConvertInfo(state.selectedWallet!.currencyCode),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: Dimens.d16.responsive(),
+                      vertical: Dimens.d12.responsive(),
+                    ),
+                    margin: EdgeInsets.symmetric(horizontal: Dimens.d10.responsive()),
+                    textStyle: AppTextStyles.s14wNormalWhite(),
+                    enableFeedback: true,
+                    child: Row(
+                      children: [
+                        Icon(Icons.question_mark, color: redColor, size: Dimens.d20.responsive()),
+                        Expanded(
+                          child: Text(
+                            S.current.willBeConvertedTo(
+                              state.convertedAmount!.toStringWithFormat(
+                                NumberFormatConstants.amountFormat,
+                              ),
+                              state.selectedWallet!.currencyCode,
+                            ),
+                            style: AppTextStyles.s14wNormalItalicGrey(),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
             ],
           ),
           const CommonLine(),

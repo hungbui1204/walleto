@@ -82,6 +82,8 @@
     "amount": "Amount",
     "selectCategory" : "Select Category",
     "save" : "Save",
+    "amountConvertInfo": "Amount will be converted to selected wallet currency ({currency}) for balance calculation.",
+    "willBeConvertedTo": "Will be converted to {amount}({currency})",
     "//": "currency type",
     "vnd": "VND",
     "//":"Select category bottom sheet",

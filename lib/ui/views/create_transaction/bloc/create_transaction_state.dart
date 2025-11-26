@@ -6,7 +6,7 @@ sealed class CreateTransactionState extends BaseBlocState with _$CreateTransacti
   const factory CreateTransactionState({
     @Default(false) bool showKeyboard,
     @Default('0') String amountInput,
-    @Default(0) int amount,
+    @Default(0) double amount,
     OperationType? currentOperation,
     @Default('') String amountError,
     Category? selectedCategory,
@@ -15,5 +15,7 @@ sealed class CreateTransactionState extends BaseBlocState with _$CreateTransacti
     @Default(false) bool confirmButtonEnable,
     Wallet? selectedWallet,
     Currency? selectedCurrency,
+    double? convertedAmount,
+    double? exchangeRate,
   }) = _CreateTransactionState;
 }

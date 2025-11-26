@@ -273,6 +273,17 @@ class AppTextStyles {
     );
   }
 
+  static TextStyle s14wNormalItalicGrey({double? tablet, double? ultraTablet}) {
+    return _baseTextStyle.merge(
+      TextStyle(
+        color: backgroundDisabled,
+        fontWeight: FontWeight.normal,
+        fontStyle: FontStyle.italic,
+        fontSize: Dimens.d14.responsive(tablet: tablet, ultraTablet: ultraTablet),
+      ),
+    );
+  }
+
   static TextStyle s14wNormalRed({double? tablet, double? ultraTablet}) {
     return _baseTextStyle.merge(
       TextStyle(

@@ -67,6 +67,7 @@ export 'widgets/base/common_shape_network_image.dart';
 export 'widgets/bottom_sheet/choose_currency_bottom_sheet.dart';
 export 'widgets/bottom_sheet/choose_wallet_bottom_sheet.dart';
 export 'widgets/bottom_sheet/note_input_bottom_sheet.dart';
+export 'widgets/common_amount_with_symbol.dart';
 export 'widgets/common_app_bar.dart';
 export 'widgets/common_button.dart';
 export 'widgets/common_button_2.dart';

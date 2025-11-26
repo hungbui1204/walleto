@@ -66,4 +66,11 @@ class AppUtils {
 
     return categoryMap.values.where((category) => category.isParent).toList();
   }
+
+  static double calculateAmountWithExchangeRate({
+    required double amount,
+    required double exchangeRate,
+  }) {
+    return amount * exchangeRate;
+  }
 }

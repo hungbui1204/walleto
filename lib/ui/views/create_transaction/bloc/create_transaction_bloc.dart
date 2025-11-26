@@ -12,7 +12,8 @@ part 'create_transaction_bloc.freezed.dart';
 
 @injectable
 class CreateTransactionBloc extends BaseBloc<CreateTransactionEvent, CreateTransactionState> {
-  CreateTransactionBloc(this._createTransactionUseCase) : super(const CreateTransactionState()) {
+  CreateTransactionBloc(this._createTransactionUseCase, this._getExchangeRateUseCase)
+    : super(const CreateTransactionState()) {
     on<CreateTransactionViewInitiated>(_onCreateTransactionViewInitiated, transformer: log());
     on<CreateTransactionKeyboardToggled>(_onCreateTransactionKeyboardToggled, transformer: log());
     on<CreateTransactionAmountChanged>(_onCreateTransactionAmountChanged, transformer: log());
@@ -35,6 +36,7 @@ class CreateTransactionBloc extends BaseBloc<CreateTransactionEvent, CreateTrans
   }
 
   final CreateTransactionUseCase _createTransactionUseCase;
+  final GetExchangeRateUseCase _getExchangeRateUseCase;
 
   bool _confirmButtonEnableCheck({
     required String amountInput,
@@ -53,6 +55,17 @@ class CreateTransactionBloc extends BaseBloc<CreateTransactionEvent, CreateTrans
         selectedDate != null &&
         amountError.isEmpty &&
         !AppUtils.isContainOperator(amountInput);
+  }
+
+  void _updateConvertAmount(Emitter emit) {
+    if (state.exchangeRate != null && state.convertedAmount != null) {
+      final convertedAmount = AppUtils.calculateAmountWithExchangeRate(
+        amount: state.amountInput.toDouble(),
+        exchangeRate: state.exchangeRate!,
+      );
+
+      emit(state.copyWith(convertedAmount: convertedAmount));
+    }
   }
 
   void _onCreateTransactionViewInitiated(
@@ -114,6 +127,9 @@ class CreateTransactionBloc extends BaseBloc<CreateTransactionEvent, CreateTrans
         ),
       ),
     );
+
+    // Update converted amount if currency is selected and different from wallet currency
+    _updateConvertAmount(emit);
   }
 
   void _onCreateTransactionEqualButtonPressed(
@@ -192,6 +208,9 @@ class CreateTransactionBloc extends BaseBloc<CreateTransactionEvent, CreateTrans
           ),
         ),
       );
+
+      // Update converted amount if currency is selected and different from wallet currency
+      _updateConvertAmount(emit);
     }
   }
 
@@ -247,6 +266,9 @@ class CreateTransactionBloc extends BaseBloc<CreateTransactionEvent, CreateTrans
           ),
         ),
       );
+
+      // Update converted amount if currency is selected and different from wallet currency
+      _updateConvertAmount(emit);
     }
   }
 
@@ -260,6 +282,7 @@ class CreateTransactionBloc extends BaseBloc<CreateTransactionEvent, CreateTrans
         currentOperation: null,
         amountError: '',
         confirmButtonEnable: false,
+        convertedAmount: null,
       ),
     );
   }
@@ -287,13 +310,17 @@ class CreateTransactionBloc extends BaseBloc<CreateTransactionEvent, CreateTrans
   ) async {
     await runBlocCatching(
       action: () async {
+        // If the [state.convertedAmount] is not null, use it as the transaction amount
+        // Otherwise, use the [state.amountInput] as the transaction amount
+        final amount = state.convertedAmount ?? state.amountInput.toDouble();
+
         final newTransaction = Transaction(
-          amount: state.amountInput.toDouble(),
+          amount: amount,
           categoryId: state.selectedCategory?.id ?? 0,
           createdAt: state.selectedDate,
           note: state.note,
           walletId: state.selectedWallet?.id ?? 0,
-          currencyCode: state.selectedCurrency?.code ?? '',
+          currencyCode: state.selectedWallet?.currencyCode ?? '',
         );
 
         await _createTransactionUseCase.execute(
@@ -331,12 +358,49 @@ class CreateTransactionBloc extends BaseBloc<CreateTransactionEvent, CreateTrans
     emit(state.copyWith(selectedWallet: event.wallet));
   }
 
-  void _onCreateTransactionCurrencySelected(
+  Future<void> _onCreateTransactionCurrencySelected(
     CreateTransactionCurrencySelected event,
     Emitter<CreateTransactionState> emit,
-  ) {
-    if (event.currency == state.selectedCurrency) return;
+  ) async {
+    await runBlocCatching(
+      action: () async {
+        if (event.currency == state.selectedCurrency) return;
 
-    emit(state.copyWith(selectedCurrency: event.currency));
+        // Check the selected currency is the same as the wallet currency
+        // Then reset the exchange rate and converted amount
+        if (event.currency.code == state.selectedWallet!.currencyCode) {
+          emit(
+            state.copyWith(
+              exchangeRate: null,
+              selectedCurrency: event.currency,
+              convertedAmount: null,
+            ),
+          );
+
+          return;
+        }
+
+        // Get exchange rate from selected currency to current wallet currency
+        final exchangeRateOutput = await _getExchangeRateUseCase.execute(
+          GetExchangeRateInput(
+            fromCurrencyCode: event.currency.code,
+            toCurrencyCode: state.selectedWallet!.currencyCode,
+          ),
+        );
+
+        final convertedAmount = AppUtils.calculateAmountWithExchangeRate(
+          amount: state.amountInput.toDouble(),
+          exchangeRate: exchangeRateOutput.exchangeRate.rate,
+        );
+
+        emit(
+          state.copyWith(
+            exchangeRate: exchangeRateOutput.exchangeRate.rate,
+            selectedCurrency: event.currency,
+            convertedAmount: convertedAmount,
+          ),
+        );
+      },
+    );
   }
 }

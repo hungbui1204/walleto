@@ -113,11 +113,9 @@ class _DayTransactionsWidget extends StatelessWidget {
                     ],
                   ),
                   const Spacer(),
-                  Text(
-                    dayTransactions.totalAmount.toStringWithFormat(
-                      NumberFormatConstants.amountFormat,
-                    ),
-                    style: AppTextStyles.s16wNormalBlack(),
+                  CommonAmountWithSymbol(
+                    amount: dayTransactions.totalAmount,
+                    currencyCode: dayTransactions.currencyCode,
                   ),
                 ],
               ),
@@ -159,9 +157,10 @@ class _TransactionInfoWidget extends StatelessWidget {
           SizedBox(width: Dimens.d10.responsive()),
           Text(transaction.category.name),
           const Spacer(),
-          Text(
-            transaction.amount.toStringWithFormat(NumberFormatConstants.amountFormat),
-            style:
+          CommonAmountWithSymbol(
+            amount: transaction.amount,
+            currencyCode: transaction.currencyCode,
+            textStyle:
                 transaction.type == CategoryType.expense
                     ? AppTextStyles.s14wNormalRed()
                     : AppTextStyles.s14wNormalGreen(),

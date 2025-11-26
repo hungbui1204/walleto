@@ -11,4 +11,5 @@ class DurationConstants {
   static const defaultAnimationDuration = Duration(milliseconds: 300);
   static const defaultChartAnimationDuration = Duration(milliseconds: 500);
   static const defaultReSendOtpDuration = Duration(seconds: 30);
+  static const defaultTooltipShowDuration = Duration(seconds: 5);
 }

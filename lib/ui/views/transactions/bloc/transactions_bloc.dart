@@ -120,6 +120,7 @@ class TransactionsBloc extends BaseBloc<TransactionsEvent, TransactionsState> {
             date: e.key.toDateTime(format: DateTimeFormatConstants.commonDateFormat),
             transactions: e.value.sortedWith((a, b) => b.createdAt!.compareTo(a.createdAt!)),
             totalAmount: totalAmount,
+            currencyCode: e.value.first.currencyCode,
           );
         })
         .sortedWith((a, b) => b.date!.compareTo(a.date!));
