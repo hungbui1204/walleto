@@ -1,7 +1,7 @@
 workflows:
   ios-device-unsigned:
-    name: Build iOS Device Unsigned final
-    max_build_duration: 60
+    name: Build iOS Device Unsigned - Flutter Build Method
+    max_build_duration: 120
     environment:
       flutter: stable
       xcode: latest
@@ -13,102 +13,190 @@ workflows:
     scripts:
       - name: Install FVM
         script: |
-          echo "--- BẮT ĐẦU CÀI ĐẶT FVM ---"
+          echo "--- INSTALL FVM ---"
           brew tap leoafarias/fvm
           brew install fvm
           fvm install
           fvm use 3.29.3 -f
+          echo "--- FVM INSTALLED ---"
 
       - name: Generate env config from Codemagic variables
         script: |
-          echo "--- TẠO FILE ENV ---"
+          echo "--- GENERATE ENV CONFIG ---"
           mkdir -p env
           cat > env/development.json <<EOL
-           {
-              "FLAVOR": "$FLAVOR",
-              "APP_API_DOMAIN": "$APP_API_DOMAIN",
-              "APP_API_FUNCTIONS_DOMAIN": "$APP_API_FUNCTIONS_DOMAIN",
-              "APP_API_KEY": "$APP_API_KEY"
-           }
+          {
+            "FLAVOR": "$FLAVOR",
+            "APP_API_DOMAIN": "$APP_API_DOMAIN",
+            "APP_API_FUNCTIONS_DOMAIN": "$APP_API_FUNCTIONS_DOMAIN",
+            "APP_API_KEY": "$APP_API_KEY"
+          }
           EOL
-          echo "File development.json được tạo:"
+          echo "Config file created:"
           cat env/development.json
           fvm dart pub get --directory=tools/gen_env
           fvm dart run tools/gen_env/lib/main.dart
+          echo "--- ENV CONFIG GENERATED ---"
 
-      - name: Clean, Pub Get, Build
+      - name: Flutter Clean and Pub Get
         script: |
-          echo "--- BẮT ĐẦU CLEAN, GET PUB, BUILD ---"
+          echo "--- FLUTTER CLEAN ---"
           fvm flutter clean
           fvm flutter pub get
-          fluttergen
-          fvm dart run intl_utils:generate
-          fvm dart run build_runner build --delete-conflicting-outputs
+          echo "--- FLUTTER CLEAN COMPLETE ---"
 
-      - name: Fix Podfile Deployment Target
-        script: |
-          echo "--- BẮT ĐẦU SỬA DEPLOYMENT TARGET (iOS 13.0) ---"
-          PODFILE_PATH="ios/Podfile"
-          PROJECT_FILE="ios/Runner.xcodeproj/project.pbxproj"
-
-          # A. Sửa Podfile
-          sed -i '' 's/platform :ios, .*/platform :ios, '\''13.0'\''/g' "$PODFILE_PATH"
-          sed -i '' '/platform :ios/ s/^# *//' "$PODFILE_PATH"
-
-          # B. Sửa project.pbxproj
-          sed -i '' 's/IPHONEOS_DEPLOYMENT_TARGET = [0-9.]*;/IPHONEOS_DEPLOYMENT_TARGET = 13.0;/g' "$PROJECT_FILE"
-          echo "--- HOÀN THÀNH SỬA DEPLOYMENT TARGET ---"
-
-      - name: Install and Update Pods
+      - name: Precache Flutter iOS Engine
         script: |
           echo "--- PRECACHE FLUTTER IOS ENGINE ---"
           fvm flutter precache --ios
-          echo "--- BẮT ĐẦU CÀI ĐẶT VÀ CẬP NHẬT PODS ---"
-          (cd ios && pod install --repo-update)
-          echo "--- HOÀN THÀNH CÀI ĐẶT VÀ CẬP NHẬT PODS ---"
+          echo "--- PRECACHE COMPLETE ---"
 
-      - name: Build iOS (XCODEBUILD Manual)
+      - name: Run Build Generators
         script: |
-          echo "--- BUILD BẰNG XCODEBUILD ---"
-          PROJECT_FILE="ios/Runner.xcodeproj/project.pbxproj"
+          echo "--- RUN BUILD GENERATORS ---"
+          fvm flutter pub run flutter_gen
+          fvm flutter pub run intl_utils:generate
+          fvm flutter pub run build_runner build --delete-conflicting-outputs
+          echo "--- BUILD GENERATORS COMPLETE ---"
 
-          # Tắt toàn bộ code signing
-          sed -i '' 's/DEVELOPMENT_TEAM = .*;/DEVELOPMENT_TEAM = ;/g' "$PROJECT_FILE"
-          sed -i '' 's/CODE_SIGN_IDENTITY = ".*";/CODE_SIGN_IDENTITY = "";/g' "$PROJECT_FILE"
-          sed -i '' 's/PROVISIONING_PROFILE_SPECIFIER = ".*";/PROVISIONING_PROFILE_SPECIFIER = "";/g' "$PROJECT_FILE"
-          sed -i '' 's/ProvisioningStyle = Automatic;/ProvisioningStyle = Manual;/g' "$PROJECT_FILE"
-
-          # Build unsigned
-          xcodebuild -workspace ios/Runner.xcworkspace -scheme Runner -configuration Release \
-            -destination 'generic/platform=iOS' \
-            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGN_IDENTITY="" ONLY_ACTIVE_ARCH=NO build
-
-          echo "--- XONG BUILD ---"
-
-      - name: Package .app as IPA
+      - name: Pod Deintegrate
         script: |
-          echo "--- ĐÓNG GÓI IPA ---"
+          echo "--- POD DEINTEGRATE ---"
+          cd ios
+          pod deintegrate || true
+          echo "--- POD DEINTEGRATE COMPLETE ---"
+          cd ..
+
+      - name: Remove Pod Artifacts and Cache
+        script: |
+          echo "--- REMOVE POD ARTIFACTS ---"
+          cd ios
+          rm -rf Pods
+          rm -rf Podfile.lock
+          rm -rf .symlinks
+          rm -rf Flutter/Flutter.podspec
+          cd ..
           
-          APP_PATH="build/ios/iphoneos/Runner.app"
+          echo "--- REMOVE XCODE CACHE ---"
+          rm -rf ~/Library/Developer/Xcode/DerivedData/Runner* || true
+          rm -rf ~/.cocoapods/repos/trunk || true
+          rm -rf ~/.cocoapods/repos/master || true
+          echo "--- POD ARTIFACTS REMOVED ---"
 
-          if [ -z "$APP_PATH" ]; then
-            echo "Không tìm thấy Runner.app"
+      - name: Pod Install Fresh
+        script: |
+          echo "--- POD REPO UPDATE ---"
+          pod repo update || true
+          
+          echo "--- POD INSTALL ---"
+          cd ios
+          pod install --repo-update
+          
+          # Wait for pod install to complete
+          sleep 5
+          
+          if [ ! -d "Pods" ]; then
+            echo "ERROR: Pods directory not created!"
+            exit 1
+          fi
+          
+          if [ ! -f "Pods.xcodeproj/project.pbxproj" ]; then
+            echo "WARNING: Pods.xcodeproj/project.pbxproj not found, checking alternative path..."
+            if [ ! -f "Pods/Pods.xcodeproj/project.pbxproj" ]; then
+              echo "ERROR: Pods not properly installed!"
+              exit 1
+            fi
+          fi
+          
+          echo "--- POD INSTALL VERIFICATION PASSED ---"
+          cd ..
+
+      - name: Verify Workspace
+        script: |
+          echo "--- VERIFY WORKSPACE ---"
+          if [ ! -f "ios/Runner.xcworkspace/contents.xcworkspacedata" ]; then
+            echo "ERROR: Workspace not found!"
+            exit 1
+          fi
+          echo "Workspace verified"
+          
+          ls -la ios/Pods*.xcodeproj/ 2>/dev/null || echo "Pods project checked"
+
+      - name: Build iOS (Flutter Build Method with Flavor)
+        script: |
+          echo "--- PARSE ENV CONFIG ---"
+          env_file="env/$FLAVOR.json"
+          dart_define=""
+          
+          if [ -f "$env_file" ]; then
+            while IFS=":" read -r key value; do
+              key=$(echo $key | tr -d '[:space:]' | tr -d '"')
+              value=$(echo $value | tr -d '[:space:]' | tr -d '",')
+              
+              if [[ ! -z "$key" && ! -z "$value" ]]; then
+                dart_define+="--dart-define=$key=$value "
+              fi
+            done < "$env_file"
+          fi
+          
+          echo "--- BUILD iOS via Flutter with Flavor ---"
+          fvm flutter build ios \
+            --release \
+            --no-codesign \
+            --flavor "$FLAVOR" \
+            -t lib/main.dart \
+            $dart_define \
+            --verbose
+          
+          if [ $? -eq 0 ]; then
+            echo "--- FLUTTER BUILD SUCCESS ---"
+          else
+            echo "--- FLUTTER BUILD FAILED ---"
             exit 1
           fi
 
-          echo "Runner.app: $APP_PATH"
+      - name: Verify Build Output
+        script: |
+          echo "--- VERIFY BUILD OUTPUT ---"
+          APP_PATH="build/ios/iphoneos/Runner.app"
+          
+          if [ ! -d "$APP_PATH" ]; then
+            echo "ERROR: Runner.app not found at $APP_PATH"
+            ls -la build/ios/ || echo "build/ios not exist"
+            exit 1
+          fi
+          
+          echo "Runner.app found at: $APP_PATH"
+          ls -lh "$APP_PATH"
 
+      - name: Package .app as IPA
+        script: |
+          echo "--- CREATE IPA ---"
+          
+          APP_PATH="build/ios/iphoneos/Runner.app"
+          
+          if [ ! -d "$APP_PATH" ]; then
+            echo "ERROR: Runner.app not found at $APP_PATH"
+            exit 1
+          fi
+          
+          echo "App path: $APP_PATH"
+          
           IPA_DIR="build/ipa_output"
           mkdir -p "$IPA_DIR/Payload"
-
+          
+          echo "--- COPY APP TO PAYLOAD ---"
           cp -R "$APP_PATH" "$IPA_DIR/Payload/"
-
-          (cd "$IPA_DIR" && zip -qry final_app.ipa Payload)
-
+          
+          echo "--- ZIP TO IPA ---"
+          cd "$IPA_DIR"
+          zip -qry final_app.ipa Payload
+          cd ../../
+          
           rm -rf "$IPA_DIR/Payload"
-
-          echo "--- IPA TẠO TẠI: $IPA_DIR/final_app.ipa ---"
+          
+          echo "--- IPA CREATED ---"
+          ls -lh "$IPA_DIR/final_app.ipa"
 
     artifacts:
-      - build/**/final_app.ipa
+      - build/ipa_output/final_app.ipa
