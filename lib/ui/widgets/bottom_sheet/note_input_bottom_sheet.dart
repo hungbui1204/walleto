@@ -76,6 +76,7 @@ class _NoteInputBottomSheetState extends State<NoteInputBottomSheet> {
                   ),
                 ],
               ),
+              SizedBox(height: Dimens.d32.responsive()),
             ],
           ),
         ),

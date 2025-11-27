@@ -106,6 +106,7 @@ class _ChooseCurrencyBottomSheetState extends State<ChooseCurrencyBottomSheet> {
                 ),
               ],
             ),
+            SizedBox(height: Dimens.d32.responsive()),
           ],
         ),
       ),

@@ -282,7 +282,7 @@ class CreateTransactionBloc extends BaseBloc<CreateTransactionEvent, CreateTrans
         currentOperation: null,
         amountError: '',
         confirmButtonEnable: false,
-        convertedAmount: null,
+        convertedAmount: state.convertedAmount != null ? 0.0 : null,
       ),
     );
   }
@@ -355,7 +355,22 @@ class CreateTransactionBloc extends BaseBloc<CreateTransactionEvent, CreateTrans
     CreateTransactionWalletSelected event,
     Emitter<CreateTransactionState> emit,
   ) {
-    emit(state.copyWith(selectedWallet: event.wallet));
+    if (event.wallet.id == state.selectedWallet?.id) return;
+
+    // Reset the selected currency to selected wallet's currency, exchange rate, and converted amount
+    final walletCurrency = appBloc.state.currencies.firstWhere(
+      (currency) => currency.code == event.wallet.currencyCode,
+      orElse: () => appBloc.state.currencies.first,
+    );
+
+    emit(
+      state.copyWith(
+        selectedWallet: event.wallet,
+        selectedCurrency: walletCurrency,
+        exchangeRate: null,
+        convertedAmount: null,
+      ),
+    );
   }
 
   Future<void> _onCreateTransactionCurrencySelected(

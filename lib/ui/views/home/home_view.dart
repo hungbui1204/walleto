@@ -94,11 +94,7 @@ class _AllWalletsWidget extends StatelessWidget {
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemBuilder: (context, index) {
-              return _WalletInfoWidget(
-                walletName: state.wallets[index].name,
-                walletBalance: state.wallets[index].amount,
-                walletIconUrl: state.wallets[index].iconUrl,
-              );
+              return _WalletInfoWidget(state.wallets[index]);
             },
             separatorBuilder: (context, index) {
               return const CommonLine(color: greyColor);
@@ -111,31 +107,22 @@ class _AllWalletsWidget extends StatelessWidget {
 }
 
 class _WalletInfoWidget extends StatelessWidget {
-  const _WalletInfoWidget({
-    required this.walletName,
-    required this.walletBalance,
-    required this.walletIconUrl,
-  });
+  const _WalletInfoWidget(this.wallet);
 
-  final String walletName;
-  final double walletBalance;
-  final String walletIconUrl;
+  final Wallet wallet;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
         CommonCircleNetworkImage(
-          imageUrl: walletIconUrl,
+          imageUrl: wallet.iconUrl,
           placeHolderType: ImagePlaceHolderType.wallet,
         ),
         SizedBox(width: Dimens.d10.responsive()),
-        Text(walletName, style: AppTextStyles.s16wNormalBlack()),
+        Text(wallet.name, style: AppTextStyles.s16wNormalBlack()),
         const Spacer(),
-        Text(
-          walletBalance.toStringWithFormat(NumberFormatConstants.amountFormat),
-          style: AppTextStyles.s16wNormalBlack(),
-        ),
+        CommonAmountWithSymbol(amount: wallet.amount, currencyCode: wallet.currencyCode),
       ],
     );
   }
@@ -211,9 +198,10 @@ class _RecentTransactionWidget extends StatelessWidget {
           ],
         ),
         const Spacer(),
-        Text(
-          transaction.amount.toStringWithFormat(NumberFormatConstants.amountFormat),
-          style:
+        CommonAmountWithSymbol(
+          amount: transaction.amount,
+          currencyCode: transaction.currencyCode,
+          textStyle:
               transaction.type == CategoryType.expense
                   ? AppTextStyles.s14wNormalRed()
                   : AppTextStyles.s14wNormalGreen(),

@@ -76,6 +76,7 @@ class _TransactionsViewState extends BasePageState<TransactionsView, Transaction
                   );
                 },
               ),
+              SizedBox(height: Dimens.d24.responsive()),
             ],
           ),
         ),

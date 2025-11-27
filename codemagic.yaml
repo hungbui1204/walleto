@@ -1,6 +1,6 @@
 workflows:
   ios-device-unsigned:
-    name: Build iOS Device Unsigned - Flutter Build Method
+    name: Build iOS Device Unsigned IPA
     max_build_duration: 120
     environment:
       flutter: stable
@@ -190,13 +190,13 @@ workflows:
           
           echo "--- ZIP TO IPA ---"
           cd "$IPA_DIR"
-          zip -qry final_app.ipa Payload
+          zip -qry walleto.ipa Payload
           cd ../../
           
           rm -rf "$IPA_DIR/Payload"
           
           echo "--- IPA CREATED ---"
-          ls -lh "$IPA_DIR/final_app.ipa"
+          ls -lh "$IPA_DIR/walleto.ipa"
 
     artifacts:
-      - build/ipa_output/final_app.ipa
+      - build/ipa_output/walleto.ipa

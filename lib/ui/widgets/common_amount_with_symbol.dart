@@ -25,7 +25,6 @@ class CommonAmountWithSymbol extends StatelessWidget {
           amount.toStringWithFormat(NumberFormatConstants.amountFormat),
           style: textStyle ?? AppTextStyles.s16wNormalBlack(),
         ),
-        const SizedBox(width: 4),
         BlocBuilder<AppBloc, AppState>(
           buildWhen: (previous, current) => previous.currencies != current.currencies,
           builder: (context, state) {

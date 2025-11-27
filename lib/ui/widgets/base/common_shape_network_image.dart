@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:walleto/domain/domain.dart';
 import 'package:walleto/resources/resources.dart';
@@ -24,13 +22,6 @@ abstract class CommonShapeNetworkImage extends StatelessWidget {
   final BoxFit fit;
   final ImagePlaceHolderType placeHolderType;
 
-  bool _isValidUrl(String? url) {
-    if (url == null || url.isEmpty) return false;
-
-    final uri = Uri.tryParse(url);
-    return uri != null && (uri.isScheme('http') || uri.isScheme('https'));
-  }
-
   Widget get _placeholder {
     return switch (placeHolderType) {
       ImagePlaceHolderType.user => ClipOval(
@@ -52,29 +43,6 @@ abstract class CommonShapeNetworkImage extends StatelessWidget {
     };
   }
 
-  Future<bool> _imageUrlCheck() async {
-    try {
-      if (!_isValidUrl(imageUrl)) return false;
-
-      final image = NetworkImage(imageUrl!);
-      final completer = Completer<bool>();
-      final stream = image.resolve(ImageConfiguration.empty);
-
-      final listener = ImageStreamListener(
-        (image, synchronousCall) => completer.complete(true),
-        onError: (exception, stackTrace) => completer.complete(false),
-      );
-
-      stream.addListener(listener);
-      final result = await completer.future;
-      stream.removeListener(listener);
-
-      return result;
-    } catch (_) {
-      return false;
-    }
-  }
-
   Widget buildShapeImage(BuildContext context, {required Widget imageWidget});
 
   @override
@@ -82,20 +50,17 @@ abstract class CommonShapeNetworkImage extends StatelessWidget {
     return SizedBox(
       width: width,
       height: height,
-      child: FutureBuilder<bool>(
-        future: _imageUrlCheck(),
-        builder: (context, snapshot) {
-          Widget imageWidget;
-
-          if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
-            if (snapshot.data!) {
-              imageWidget = Image.network(imageUrl!, fit: fit, width: width, height: height);
-            } else {
-              imageWidget = _placeholder;
-            }
-          } else {
-            imageWidget = _placeholder;
-          }
+      child: Builder(
+        builder: (context) {
+          final imageWidget = Image.network(
+            imageUrl ?? '',
+            fit: fit,
+            width: width,
+            height: height,
+            errorBuilder: (context, error, stackTrace) {
+              return _placeholder;
+            },
+          );
 
           return buildShapeImage(context, imageWidget: imageWidget);
         },

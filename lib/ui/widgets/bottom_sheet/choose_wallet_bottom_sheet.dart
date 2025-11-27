@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:walleto/di/di.dart';
 import 'package:walleto/domain/domain.dart';
 import 'package:walleto/resources/resources.dart';
-import 'package:walleto/shared/shared.dart';
 import 'package:walleto/ui/ui.dart';
 
 class ChooseWalletBottomSheet extends StatefulWidget {
@@ -31,11 +30,9 @@ class _ChooseWalletBottomSheetState extends State<ChooseWalletBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.translucent,
-      onTap: () => ViewUtils.hideKeyboard(context),
-      child: Padding(
-        padding: EdgeInsets.all(Dimens.d16.responsive()),
+    return Padding(
+      padding: EdgeInsets.all(Dimens.d16.responsive()),
+      child: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -96,6 +93,7 @@ class _ChooseWalletBottomSheetState extends State<ChooseWalletBottomSheet> {
                 ),
               ],
             ),
+            SizedBox(height: Dimens.d32.responsive()),
           ],
         ),
       ),
