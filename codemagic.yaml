@@ -200,3 +200,102 @@ workflows:
 
     artifacts:
       - build/ipa_output/walleto.ipa
+
+  android-apk-signed:
+    name: Build Android APK
+    instance_type: mac_mini_m2
+    max_build_duration: 90
+    environment:
+      flutter: stable
+      vars:
+        FLUTTER_BUILD_MODE: release
+      groups:
+        - dev-env
+    scripts:
+      - name: Install FVM
+        script: |
+          echo "--- INSTALL FVM ---"
+          brew tap leoafarias/fvm
+          brew install fvm
+          fvm install
+          fvm use 3.29.3 -f
+          echo "--- FVM INSTALLED ---"
+      - name: Generate env config from Codemagic variables
+        script: |
+          echo "--- GENERATE ENV CONFIG ---"
+          mkdir -p env
+          cat > env/development.json <<EOL
+          {
+            "FLAVOR": "$FLAVOR",
+            "APP_API_DOMAIN": "$APP_API_DOMAIN",
+            "APP_API_FUNCTIONS_DOMAIN": "$APP_API_FUNCTIONS_DOMAIN",
+            "APP_API_KEY": "$APP_API_KEY"
+          }
+          EOL
+          echo "Config file created:"
+          cat env/development.json
+          fvm dart pub get --directory=tools/gen_env
+          fvm dart run tools/gen_env/lib/main.dart
+          echo "--- ENV CONFIG GENERATED ---"
+
+      - name: Flutter Clean and Pub Get
+        script: |
+          echo "--- FLUTTER CLEAN ---"
+          fvm flutter clean
+          fvm flutter pub get
+          echo "--- FLUTTER CLEAN COMPLETE ---"
+
+      - name: Precache Flutter Android Engine
+        script: |
+          echo "--- PRECACHE FLUTTER ANDROID ENGINE ---"
+          fvm flutter precache --android
+          echo "--- PRECACHE COMPLETE ---"
+
+      - name: Run Build Generators
+        script: |
+          echo "--- RUN BUILD GENERATORS ---"
+          fvm flutter pub run flutter_gen
+          fvm flutter pub run intl_utils:generate
+          fvm flutter pub run build_runner build --delete-conflicting-outputs
+          echo "--- BUILD GENERATORS COMPLETE ---"
+
+      - name: Setup key.properties (Flutter Standard)
+        script: |
+          echo "--- CREATE key.properties ---"
+          cat > android/key.properties << EOF
+          storePassword=$ANDROID_KEYSTORE_PASSWORD
+          keyPassword=$ANDROID_KEY_PASSWORD
+          keyAlias=$ANDROID_KEY_ALIAS
+          storeFile=../my-release-key.jks
+          EOF
+
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > android/my-release-key.jks
+    
+          echo "✅ key.properties created:"
+          cat android/key.properties
+          ls -lh android/my-release-key.jks
+
+      - name: Build Android APK (Exact replica)
+        script: |
+          echo "--- EXACT LOCAL COMMAND ---"
+          cd tools && ./build_and_run_app.sh development build apk
+          
+          if [ $? -eq 0 ]; then
+            echo "--- ✅ ANDROID APK BUILD SUCCESS ---"
+          else
+            echo "--- ❌ ANDROID APK BUILD FAILED ---"
+            exit 1
+          fi
+
+      - name: Verify APK Output
+        script: |
+          echo "--- VERIFY APK OUTPUT ---"
+          find build -name "*.apk" -type f | head -5
+          if [ -z "$(find build -name '*.apk' -type f)" ]; then
+            echo "❌ No APK found!"
+            exit 1
+          fi
+          echo "✅ APK(s) found successfully"
+
+    artifacts:
+      - build/app/outputs/flutter-apk/*.apk
