@@ -364,3 +364,36 @@ entrypoint = "./functions/create_user/index.ts"
 # Specifies static files to be bundled with the function. Supports glob patterns.
 # For example, if you want to serve static HTML pages in your function:
 # static_files = [ "./functions/create_user/*.html" ]
+
+[functions.reset_password]
+enabled = true
+verify_jwt = true
+import_map = "./functions/reset_password/deno.json"
+# Uncomment to specify a custom file path to the entrypoint.
+# Supported file extensions are: .ts, .js, .mjs, .jsx, .tsx
+entrypoint = "./functions/reset_password/index.ts"
+# Specifies static files to be bundled with the function. Supports glob patterns.
+# For example, if you want to serve static HTML pages in your function:
+# static_files = [ "./functions/reset_password/*.html" ]
+
+[functions.otp_verify_reset_password]
+enabled = true
+verify_jwt = true
+import_map = "./functions/otp_verify_reset_password/deno.json"
+# Uncomment to specify a custom file path to the entrypoint.
+# Supported file extensions are: .ts, .js, .mjs, .jsx, .tsx
+entrypoint = "./functions/otp_verify_reset_password/index.ts"
+# Specifies static files to be bundled with the function. Supports glob patterns.
+# For example, if you want to serve static HTML pages in your function:
+# static_files = [ "./functions/otp_verify_reset_password/*.html" ]
+
+[functions.reset_user_password]
+enabled = true
+verify_jwt = true
+import_map = "./functions/reset_user_password/deno.json"
+# Uncomment to specify a custom file path to the entrypoint.
+# Supported file extensions are: .ts, .js, .mjs, .jsx, .tsx
+entrypoint = "./functions/reset_user_password/index.ts"
+# Specifies static files to be bundled with the function. Supports glob patterns.
+# For example, if you want to serve static HTML pages in your function:
+# static_files = [ "./functions/reset_user_password/*.html" ]
