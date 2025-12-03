@@ -39,6 +39,10 @@ class _LoginViewState extends BasePageState<LoginView, LoginBloc>
     _emailController.dispose();
     _passwordController.dispose();
     _tabController.dispose();
+    _otpController.dispose();
+    _emailSignUpController.dispose();
+    _passwordSignUpController.dispose();
+    _confirmPasswordSignUpController.dispose();
     super.dispose();
   }
 

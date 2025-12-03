@@ -266,4 +266,28 @@ class AppApiServices {
       decoder: (data) => ExchangeRateData.fromJson(data as Map<String, dynamic>),
     );
   }
+
+  Future<void> sendOtpForResetPassword({required String email}) {
+    return _serverApiFunctionsClient.request(
+      method: RequestMethod.post,
+      path: '/send_otp_reset_password',
+      body: {'email': email},
+    );
+  }
+
+  Future<void> verifyOtpForResetPassword({required String email, required String code}) {
+    return _serverApiFunctionsClient.request(
+      method: RequestMethod.post,
+      path: '/otp_verify_reset_password',
+      body: {'email': email, 'code': code},
+    );
+  }
+
+  Future<void> resetUserPassword({required String email, required String password}) {
+    return _serverApiFunctionsClient.request(
+      method: RequestMethod.post,
+      path: '/reset_user_password',
+      body: {'email': email, 'password': password},
+    );
+  }
 }

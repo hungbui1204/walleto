@@ -249,4 +249,19 @@ class RepositoryImpl implements Repository {
 
     return _exchangeRateDataMapper.mapToEntity(response);
   }
+
+  @override
+  Future<void> sendOtpForResetPassword({required String email}) async {
+    await _appApiServices.sendOtpForResetPassword(email: email);
+  }
+
+  @override
+  Future<void> verifyOtpForResetPassword({required String email, required String code}) async {
+    await _appApiServices.verifyOtpForResetPassword(email: email, code: code);
+  }
+
+  @override
+  Future<void> resetUserPassword({required String email, required String password}) async {
+    await _appApiServices.resetUserPassword(email: email, password: password);
+  }
 }

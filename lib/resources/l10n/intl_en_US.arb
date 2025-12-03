@@ -49,7 +49,7 @@
     "continueWithGoogle": "Continue with Google",
     "continueWithFacebook": "Continue with Facebook",
     "youWillAcceptOur" : "By Continuing, you will accept our",
-    "termsAndConditions" : "Terms and Conditions, Privacy Policy",
+    "termsAndConditions" : "Terms and Conditions",
     "or": "or",
     "sendCode": "Send Code",
     "weWillSendYouAnEmailWithOTPCodeToConfirmEmail" : "We will send you an email with OTP code to confirm your email address",
@@ -67,6 +67,7 @@
     "acceptOurTerms": "Accept our Terms and Conditions, Privacy Policy",
     "newAccountWithEmailIsCreatedSuccessfully" : "New account with email {email} is created successfully!",
     "loginNow" : "Login Now!",
+    "forgetPassword": "Forget Password?",
     "//":"Validation",
     "emailRequired": "Email field is required",
     "passwordRequired":"Password field is required",
@@ -154,5 +155,12 @@
     "transactionDetail" : "Transaction Detail",
     "duplicateTransaction": "Duplicate Transaction",
     "editTransaction" : "Edit Transaction",
-    "deleteTransaction" : "Delete Transaction"
+    "deleteTransaction" : "Delete Transaction",
+    "//" : "Reset password view",
+    "resetPassword" : "Reset Password",
+    "newPassword": "New Password",
+    "hintNewPassword": "Enter your new password here",
+    "confirmNewPassword": "Confirm New Password",
+    "hintConfirmNewPassword": "Enter your new password again",
+    "passwordResetSuccessfully": "Password reset successfully!"
 }

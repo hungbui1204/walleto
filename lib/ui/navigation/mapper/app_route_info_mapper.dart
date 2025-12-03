@@ -19,6 +19,7 @@ class AppRouteInfoMapper extends BaseRouteInfoMapper {
       CreateWallet(:final isFromSignUp) => CreateWalletRoute(isFromSignUp: isFromSignUp),
       Wallets() => const WalletsRoute(),
       TransactionDetail(:final transaction) => TransactionDetailRoute(transaction: transaction),
+      ResetPassword() => const ResetPasswordRoute(),
     };
   }
 }

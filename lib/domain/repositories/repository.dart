@@ -70,4 +70,10 @@ abstract class Repository {
     required String fromCurrencyCode,
     required String toCurrencyCode,
   });
+
+  Future<void> sendOtpForResetPassword({required String email});
+
+  Future<void> verifyOtpForResetPassword({required String email, required String code});
+
+  Future<void> resetUserPassword({required String email, required String password});
 }

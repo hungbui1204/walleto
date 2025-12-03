@@ -273,6 +273,30 @@ class AppTextStyles {
     );
   }
 
+  static TextStyle s14wNormalUnderlinePrimary({double? tablet, double? ultraTablet}) {
+    return _baseTextStyle.merge(
+      TextStyle(
+        color: primaryColor,
+        fontWeight: FontWeight.normal,
+        decoration: TextDecoration.underline,
+        decorationColor: primaryColor,
+        fontSize: Dimens.d14.responsive(tablet: tablet, ultraTablet: ultraTablet),
+      ),
+    );
+  }
+
+  static TextStyle s14wNormalUnderlineBlack({double? tablet, double? ultraTablet}) {
+    return _baseTextStyle.merge(
+      TextStyle(
+        color: blackColor,
+        fontWeight: FontWeight.normal,
+        decoration: TextDecoration.underline,
+        decorationColor: blackColor,
+        fontSize: Dimens.d14.responsive(tablet: tablet, ultraTablet: ultraTablet),
+      ),
+    );
+  }
+
   static TextStyle s14wNormalItalicGrey({double? tablet, double? ultraTablet}) {
     return _baseTextStyle.merge(
       TextStyle(

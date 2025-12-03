@@ -26,4 +26,6 @@ sealed class AppRouteInfo with _$AppRouteInfo {
 
   const factory AppRouteInfo.transactionDetail({required Transaction transaction}) =
       TransactionDetail;
+
+  const factory AppRouteInfo.resetPassword() = ResetPassword;
 }

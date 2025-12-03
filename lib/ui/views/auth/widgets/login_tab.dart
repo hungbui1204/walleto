@@ -1,6 +1,7 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:walleto/di/di.dart';
+import 'package:walleto/domain/domain.dart';
 import 'package:walleto/resources/resources.dart';
 import 'package:walleto/shared/shared.dart';
 import 'package:walleto/ui/ui.dart';
@@ -22,7 +23,7 @@ class LoginTab extends StatelessWidget {
             _EmailForm(emailController: emailController),
             SizedBox(height: Dimens.d20.responsive()),
             _PasswordForm(passwordController: passwordController),
-            SizedBox(height: Dimens.d40.responsive()),
+            SizedBox(height: Dimens.d30.responsive()),
             BlocBuilder<LoginBloc, LoginState>(
               buildWhen: (previous, current) {
                 return previous.isEnableLoginButton != current.isEnableLoginButton;
@@ -43,9 +44,9 @@ class LoginTab extends StatelessWidget {
                 );
               },
             ),
-            SizedBox(height: Dimens.d20.responsive()),
+            SizedBox(height: Dimens.d8.responsive()),
             Text(S.current.or, style: AppTextStyles.s14wNormalBlack()),
-            SizedBox(height: Dimens.d20.responsive()),
+            SizedBox(height: Dimens.d8.responsive()),
             SizedBox(
               width: double.infinity,
               child: CommonButton(
@@ -76,26 +77,31 @@ class LoginTab extends StatelessWidget {
                 },
               ),
             ),
-            SizedBox(height: Dimens.d30.responsive()),
-            Text.rich(
-              TextSpan(
-                text: S.current.youWillAcceptOur,
-                style: AppTextStyles.s12wNormalBlack(),
-                children: [
-                  TextSpan(text: S.current.space, style: AppTextStyles.s12wNormalBlack()),
-                  TextSpan(
-                    text: S.current.termsAndConditions,
-                    style: AppTextStyles.s12wNormalBlackUnderline(),
-                    recognizer:
-                        TapGestureRecognizer()
-                          ..onTap = () {
-                            // TODO: Navigate to Terms and Conditions page
-                          },
+            SizedBox(height: Dimens.d20.responsive()),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    getIt.get<AppNavigator>().push(const AppRouteInfo.resetPassword());
+                  },
+                  child: Text(
+                    S.current.forgetPassword,
+                    style: AppTextStyles.s14wNormalUnderlinePrimary(),
                   ),
-                  TextSpan(text: S.current.dot, style: AppTextStyles.s12wNormalBlack()),
-                ],
-              ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    // TODO: Navigate to Terms and Conditions page
+                  },
+                  child: Text(
+                    S.current.termsAndConditions,
+                    style: AppTextStyles.s14wNormalUnderlineBlack(),
+                  ),
+                ),
+              ],
             ),
+            SizedBox(height: Dimens.d30.responsive()),
           ],
         ),
       ),
