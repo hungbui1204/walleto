@@ -290,4 +290,19 @@ class AppApiServices {
       body: {'email': email, 'password': password},
     );
   }
+
+  Future<TransactionData?> updateTransaction({required TransactionData transaction}) {
+    return _serverApiClientRest.request(
+      method: RequestMethod.post,
+      path: 'rpc/update_transaction',
+      body: {
+        'p_id': transaction.id,
+        'p_amount': transaction.amount,
+        'p_category_id': transaction.categoryId,
+        'p_note': transaction.note,
+        'p_currency_code': transaction.currencyCode,
+      },
+      decoder: (data) => TransactionData.fromJson(data as Map<String, dynamic>),
+    );
+  }
 }

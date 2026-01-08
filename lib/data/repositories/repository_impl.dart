@@ -264,4 +264,12 @@ class RepositoryImpl implements Repository {
   Future<void> resetUserPassword({required String email, required String password}) async {
     await _appApiServices.resetUserPassword(email: email, password: password);
   }
+
+  @override
+  Future<Transaction> updateTransaction({required Transaction transaction}) async {
+    final transactionData = _transactionDataMapper.mapToData(transaction);
+    final response = await _appApiServices.updateTransaction(transaction: transactionData);
+
+    return _transactionDataMapper.mapToEntity(response);
+  }
 }
