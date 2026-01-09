@@ -76,4 +76,13 @@ abstract class Repository {
   Future<void> verifyOtpForResetPassword({required String email, required String code});
 
   Future<void> resetUserPassword({required String email, required String password});
+
+  Future<Transaction> updateTransaction({required Transaction transaction});
+
+  Future<Transaction> duplicateTransaction({
+    required int transactionId,
+    required DateTime newCreatedAt,
+  });
+
+  Future<void> deleteTransaction({required int transactionId});
 }

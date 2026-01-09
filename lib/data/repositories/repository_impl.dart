@@ -272,4 +272,22 @@ class RepositoryImpl implements Repository {
 
     return _transactionDataMapper.mapToEntity(response);
   }
+
+  @override
+  Future<void> deleteTransaction({required int transactionId}) async {
+    await _appApiServices.deleteTransaction(transactionId: transactionId);
+  }
+
+  @override
+  Future<Transaction> duplicateTransaction({
+    required int transactionId,
+    required DateTime newCreatedAt,
+  }) async {
+    final response = await _appApiServices.duplicateTransaction(
+      transactionId: transactionId,
+      newCreatedAt: newCreatedAt,
+    );
+
+    return _transactionDataMapper.mapToEntity(response);
+  }
 }

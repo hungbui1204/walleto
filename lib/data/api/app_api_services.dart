@@ -305,4 +305,24 @@ class AppApiServices {
       decoder: (data) => TransactionData.fromJson(data as Map<String, dynamic>),
     );
   }
+
+  Future<TransactionData?> duplicateTransaction({
+    required int transactionId,
+    required DateTime newCreatedAt,
+  }) {
+    return _serverApiClientRest.request(
+      method: RequestMethod.post,
+      path: 'rpc/duplicate_transaction',
+      body: {'p_id': transactionId, 'p_new_created_at': newCreatedAt.toIso8601String()},
+      decoder: (data) => TransactionData.fromJson(data as Map<String, dynamic>),
+    );
+  }
+
+  Future<void> deleteTransaction({required int transactionId}) {
+    return _serverApiClientRest.request(
+      method: RequestMethod.delete,
+      path: 'transactions',
+      queryParameters: {'p_id': 'eq.$transactionId'},
+    );
+  }
 }
