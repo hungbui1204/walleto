@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:walleto/di/di.dart';
 import 'package:walleto/domain/domain.dart';
 import 'package:walleto/resources/resources.dart';
 import 'package:walleto/shared/shared.dart';
@@ -15,9 +16,10 @@ class TransactionDetailView extends StatefulWidget {
   State<TransactionDetailView> createState() => _TransactionDetailViewState();
 }
 
-class _TransactionDetailViewState extends State<TransactionDetailView> {
+class _TransactionDetailViewState
+    extends BasePageState<TransactionDetailView, TransactionDetailBloc> {
   @override
-  Widget build(BuildContext context) {
+  Widget buildPage(BuildContext context) {
     return Scaffold(
       appBar: CommonAppBar(title: S.current.transactionDetail),
       body: Padding(
@@ -99,14 +101,30 @@ class _TransactionDetailViewState extends State<TransactionDetailView> {
               text: S.current.editTransaction,
               backgroundColor: secondaryColor,
               onTap: () {
-                // TODO: Implement edit transaction functionality
+                getIt.get<AppNavigator>().push(
+                  AppRouteInfo.editTransaction(transaction: widget.transaction),
+                );
               },
             ),
             SizedBox(height: Dimens.d12.responsive()),
             CommonButton(
               text: S.current.duplicateTransaction,
               onTap: () {
-                // TODO: Implement duplicate transaction functionality
+                navigator.showDialog(
+                  AppPopupInfo.duplicateTransaction(
+                    transaction: widget.transaction,
+                    onConfirm: (selectedDate) {
+                      bloc.add(
+                        TransactionDetailDuplicateButtonPressed(
+                          transactionId: widget.transaction.id,
+                          selectedDate: selectedDate,
+                        ),
+                      );
+
+                      navigator.pop(useRootNavigator: true);
+                    },
+                  ),
+                );
               },
             ),
             const Spacer(),
@@ -115,7 +133,21 @@ class _TransactionDetailViewState extends State<TransactionDetailView> {
               child: IconButton(
                 icon: const Icon(Icons.delete, color: redColor),
                 onPressed: () {
-                  // TODO: Implement delete transaction functionality
+                  navigator.showDialog(
+                    AppPopupInfo.confirm(
+                      message: S.current.areYouSureYouWantToDeleteThisTransaction,
+                      showCancel: true,
+                      onPressed: Func0(() {
+                        bloc.add(
+                          TransactionDetailDeleteButtonPressed(
+                            transactionId: widget.transaction.id,
+                          ),
+                        );
+
+                        navigator.pop(useRootNavigator: true);
+                      }),
+                    ),
+                  );
                 },
               ),
             ),

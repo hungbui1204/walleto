@@ -71,4 +71,9 @@ sealed class AppPopupInfo with _$AppPopupInfo {
     required void Function(Currency) onCurrencySelected,
     required Currency? currentCurrency,
   }) = ChooseCurrency;
+
+  const factory AppPopupInfo.duplicateTransaction({
+    required void Function(DateTime) onConfirm,
+    required Transaction transaction,
+  }) = DuplicateTransaction;
 }

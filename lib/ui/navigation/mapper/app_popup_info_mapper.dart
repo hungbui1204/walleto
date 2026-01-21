@@ -64,6 +64,10 @@ class AppPopupInfoMapper extends BasePopupInfoMapper {
           onCurrencySelected: onCurrencySelected,
           currentCurrency: currentCurrency,
         ),
+      DuplicateTransaction(:final onConfirm, :final transaction) => DuplicateTransactionPopup(
+        onConfirm: onConfirm,
+        transaction: transaction,
+      ),
     };
   }
 }

@@ -28,6 +28,8 @@ export 'usecases/create_category_use_case.dart';
 export 'usecases/create_transaction_use_case.dart';
 export 'usecases/create_user_by_email_use_case.dart';
 export 'usecases/create_wallet_use_case.dart';
+export 'usecases/delete_transaction_use_case.dart';
+export 'usecases/duplicate_transaction_use_case.dart';
 export 'usecases/edit_transaction_use_case.dart';
 export 'usecases/get_categories_use_case.dart';
 export 'usecases/get_category_images_use_case.dart';

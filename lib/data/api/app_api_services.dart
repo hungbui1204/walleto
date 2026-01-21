@@ -322,7 +322,7 @@ class AppApiServices {
     return _serverApiClientRest.request(
       method: RequestMethod.delete,
       path: 'transactions',
-      queryParameters: {'p_id': 'eq.$transactionId'},
+      queryParameters: {'id': 'eq.$transactionId'},
     );
   }
 }

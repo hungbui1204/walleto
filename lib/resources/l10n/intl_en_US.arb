@@ -156,6 +156,7 @@
     "duplicateTransaction": "Duplicate Transaction",
     "editTransaction" : "Edit Transaction",
     "deleteTransaction" : "Delete Transaction",
+    "areYouSureYouWantToDeleteThisTransaction" : "Are you sure you want to delete this transaction?",
     "//" : "Reset password view",
     "resetPassword" : "Reset Password",
     "newPassword": "New Password",

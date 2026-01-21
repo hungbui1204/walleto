@@ -510,6 +510,26 @@ class AppTextStyles {
     );
   }
 
+  static TextStyle s16wNormalGreen({double? tablet, double? ultraTablet}) {
+    return _baseTextStyle.merge(
+      TextStyle(
+        color: greenColor,
+        fontWeight: FontWeight.normal,
+        fontSize: Dimens.d16.responsive(tablet: tablet, ultraTablet: ultraTablet),
+      ),
+    );
+  }
+
+  static TextStyle s16wNormalRed({double? tablet, double? ultraTablet}) {
+    return _baseTextStyle.merge(
+      TextStyle(
+        color: redColor,
+        fontWeight: FontWeight.normal,
+        fontSize: Dimens.d16.responsive(tablet: tablet, ultraTablet: ultraTablet),
+      ),
+    );
+  }
+
   static TextStyle s16wBoldAlert({double? tablet, double? ultraTablet}) {
     return _baseTextStyle.merge(
       TextStyle(

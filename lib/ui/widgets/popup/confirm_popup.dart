@@ -39,7 +39,7 @@ class _ConfirmButton extends StatelessWidget {
           CommonButton(
             text: S.current.cancel,
             backgroundColor: secondaryColor,
-            onTap: () => getIt.get<AppNavigator>().pop(),
+            onTap: () => getIt.get<AppNavigator>().pop(useRootNavigator: true),
           ),
         ],
       ],
