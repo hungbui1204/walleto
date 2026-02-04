@@ -18,6 +18,7 @@ sealed class TransactionData with _$TransactionData {
     @JsonKey(name: 'note') String? note,
     @JsonKey(name: 'type') String? type,
     @JsonKey(name: 'currency_code') String? currencyCode,
+    @JsonKey(name: 'transaction_date') String? transactionDate,
   }) = _TransactionData;
 
   factory TransactionData.fromJson(Map<String, dynamic> json) => _$TransactionDataFromJson(json);

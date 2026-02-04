@@ -72,7 +72,7 @@ class _TransactionDetailViewState
                       ),
                       SizedBox(width: Dimens.d16.responsive()),
                       Text(
-                        widget.transaction.createdAt!.toStringWithFormat(
+                        widget.transaction.transactionDate!.toStringWithFormat(
                           DateTimeFormatConstants.commonDateFormat,
                         ),
                         style: AppTextStyles.s14wNormalBlack(),

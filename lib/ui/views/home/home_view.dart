@@ -193,7 +193,9 @@ class _RecentTransactionWidget extends StatelessWidget {
           children: [
             Text(transaction.category.name),
             Text(
-              transaction.createdAt!.toStringWithFormat(DateTimeFormatConstants.dayMonthYearFormat),
+              transaction.transactionDate!.toStringWithFormat(
+                DateTimeFormatConstants.dayMonthYearFormat,
+              ),
             ),
           ],
         ),

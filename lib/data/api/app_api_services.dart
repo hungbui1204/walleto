@@ -107,7 +107,7 @@ class AppApiServices {
       body: {
         'amount': transaction.amount,
         'category_id': transaction.categoryId,
-        'created_at': transaction.createdAt,
+        'transaction_date': transaction.transactionDate,
         'note': transaction.note,
         'user_id': transaction.userId,
         'wallet_id': transaction.walletId,
@@ -301,6 +301,8 @@ class AppApiServices {
         'p_category_id': transaction.categoryId,
         'p_note': transaction.note,
         'p_currency_code': transaction.currencyCode,
+        'p_wallet_id': transaction.walletId,
+        'p_transaction_date': transaction.transactionDate,
       },
       decoder: (data) => TransactionData.fromJson(data as Map<String, dynamic>),
     );
@@ -313,7 +315,7 @@ class AppApiServices {
     return _serverApiClientRest.request(
       method: RequestMethod.post,
       path: 'rpc/duplicate_transaction',
-      body: {'p_id': transactionId, 'p_new_created_at': newCreatedAt.toIso8601String()},
+      body: {'p_id': transactionId, 'p_new_transaction_date': newCreatedAt.toIso8601String()},
       decoder: (data) => TransactionData.fromJson(data as Map<String, dynamic>),
     );
   }

@@ -317,7 +317,7 @@ class CreateTransactionBloc extends BaseBloc<CreateTransactionEvent, CreateTrans
         final newTransaction = Transaction(
           amount: amount,
           categoryId: state.selectedCategory?.id ?? 0,
-          createdAt: state.selectedDate,
+          transactionDate: state.selectedDate,
           note: state.note,
           walletId: state.selectedWallet?.id ?? 0,
           currencyCode: state.selectedWallet?.currencyCode ?? '',

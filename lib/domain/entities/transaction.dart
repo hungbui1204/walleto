@@ -17,5 +17,6 @@ sealed class Transaction with _$Transaction {
     @Default('') String note,
     @Default(CategoryType.expense) CategoryType type,
     @Default('') String currencyCode,
+    DateTime? transactionDate,
   }) = _Transaction;
 }
