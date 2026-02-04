@@ -31,7 +31,7 @@ class _TransactionsViewState extends BasePageState<TransactionsView, Transaction
       },
       listener: (context, state) {
         // Reload transactions when the app state indicates a need to reload
-        bloc.add(const TransactionsViewInitialized());
+        bloc.add(const TransactionsRefreshed());
         // Reset the needReloadTransactions flag
         appBloc.add(const TransactionsReloaded(needReloadTransactions: false));
       },

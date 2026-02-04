@@ -23,6 +23,7 @@ class TransactionsBloc extends BaseBloc<TransactionsEvent, TransactionsState> {
     on<TransactionsDateRangePicked>(_onTransactionsDateRangePicked);
     on<TransactionsWalletSelected>(_onWalletSelected);
     on<TransactionsWalletsUpdated>(_onTransactionsWalletsUpdated);
+    on<TransactionsRefreshed>(_onTransactionsRefreshed);
   }
 
   final GetTransactionsUseCase _getTransactionsUseCase;
@@ -86,13 +87,45 @@ class TransactionsBloc extends BaseBloc<TransactionsEvent, TransactionsState> {
     );
   }
 
+  Future<void> _onTransactionsRefreshed(
+    TransactionsRefreshed event,
+    Emitter<TransactionsState> emit,
+  ) async {
+    await runBlocCatching(
+      action: () async {
+        // Fetch transactions for the month-year or date range based on current state
+        late final GetTransactionsInput transactionsInput;
+
+        if (state.selectedDate != null) {
+          transactionsInput = GetTransactionsInput(
+            targetMonth: state.selectedDate!.month,
+            targetYear: state.selectedDate!.year,
+            walletId: _getWalletId(state.selectedWallet.id),
+          );
+        } else if (state.selectedDateRange != null) {
+          transactionsInput = GetTransactionsInput(
+            fromDate: state.selectedDateRange!.start,
+            toDate: state.selectedDateRange!.end.add(const Duration(days: 1)),
+            walletId: _getWalletId(state.selectedWallet.id),
+          );
+        }
+
+        final transactionsOutput = await _getTransactionsUseCase.execute(transactionsInput);
+
+        final allDayTransactions = _getDayTransFromTrans(transactionsOutput.transactions);
+
+        emit(state.copyWith(allDayTransactions: allDayTransactions));
+      },
+    );
+  }
+
   /// Convert a list of [Transaction] to a list of [DayTransactions]
   List<DayTransactions> _getDayTransFromTrans(List<Transaction> transactions) {
     final groupedTransactions = transactions.fold<Map<String, List<Transaction>>>({}, (
       acc,
       transaction,
     ) {
-      final date = transaction.createdAt?.toStringWithFormat(
+      final date = transaction.transactionDate?.toStringWithFormat(
         DateTimeFormatConstants.commonDateFormat,
       );
 
@@ -118,7 +151,9 @@ class TransactionsBloc extends BaseBloc<TransactionsEvent, TransactionsState> {
 
           return DayTransactions(
             date: e.key.toDateTime(format: DateTimeFormatConstants.commonDateFormat),
-            transactions: e.value.sortedWith((a, b) => b.createdAt!.compareTo(a.createdAt!)),
+            transactions: e.value.sortedWith((a, b) {
+              return b.transactionDate!.compareTo(a.transactionDate!);
+            }),
             totalAmount: totalAmount,
             currencyCode: e.value.first.currencyCode,
           );

@@ -17,11 +17,13 @@ class CreateTransactionView extends StatefulWidget {
 
 class _CreateTransactionViewState
     extends BasePageState<CreateTransactionView, CreateTransactionBloc> {
-  final TextEditingController controller = TextEditingController();
-  final FocusNode focusNode = FocusNode();
+  late final TextEditingController controller;
+  late final FocusNode focusNode;
 
   @override
   void initState() {
+    controller = TextEditingController();
+    focusNode = FocusNode();
     bloc.add(const CreateTransactionViewInitiated());
     controller.text = bloc.state.amountInput;
     super.initState();
