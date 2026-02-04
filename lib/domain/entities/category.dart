@@ -14,5 +14,6 @@ sealed class Category with _$Category {
     int? parentId,
     @Default(CategoryType.expense) CategoryType type,
     @Default(<Category>[]) List<Category> children,
+    @Default(false) bool isSystem,
   }) = _Category;
 }

@@ -64,6 +64,7 @@ class AppApiServices {
     return _serverApiClientRest.request(
       method: RequestMethod.get,
       path: 'categories',
+      queryParameters: {'is_system': 'eq.false'},
       decoder: (data) => CategoryData.fromJson(data as Map<String, dynamic>),
       successResponseMapperType: SuccessResponseMapperType.jsonArray,
     );

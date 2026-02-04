@@ -13,6 +13,7 @@ sealed class CategoryData with _$CategoryData {
     @JsonKey(name: 'is_parent') bool? isParent,
     @JsonKey(name: 'parent_id') int? parentId,
     @JsonKey(name: 'type') String? type,
+    @JsonKey(name: 'is_system') bool? isSystem,
   }) = _CategoryData;
 
   factory CategoryData.fromJson(Map<String, dynamic> json) => _$CategoryDataFromJson(json);

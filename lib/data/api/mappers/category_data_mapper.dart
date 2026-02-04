@@ -18,6 +18,7 @@ class CategoryDataMapper extends BaseDataMapper<CategoryData, Category> with Dat
       parentId: data?.parentId,
       userId: data?.userId,
       type: _categoryTypeDataMapper.mapToEntity(data?.type),
+      isSystem: data?.isSystem ?? false,
     );
   }
 
@@ -31,6 +32,7 @@ class CategoryDataMapper extends BaseDataMapper<CategoryData, Category> with Dat
       parentId: entity.parentId,
       userId: entity.userId,
       type: _categoryTypeDataMapper.mapToData(entity.type),
+      isSystem: entity.isSystem,
     );
   }
 }

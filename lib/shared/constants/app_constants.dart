@@ -22,4 +22,7 @@ class AppConstants {
   static const totalWalletId = -1;
 
   static const defaultCurrencyCode = 'USD';
+
+  // This category id is used for updating wallet balance
+  static const updateWalletBalanceCategoryId = 999;
 }
