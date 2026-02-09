@@ -51,6 +51,8 @@ class EditWalletBloc extends BaseBloc<EditWalletEvent, EditWalletState> {
         );
 
         appBloc.add(const DataFetched(walletsFetched: true));
+        appBloc.add(const TransactionsReloaded(needReloadTransactions: true));
+        appBloc.add(const StatisticalChartsReloaded(needReloadStatisticalCharts: true));
 
         navigator.pop();
       },
