@@ -121,7 +121,7 @@ class _CreateWalletViewState extends BasePageState<CreateWalletView, CreateWalle
                             );
                           },
                           leadingIcon: CommonCurrencyContainer(
-                            currentCurrency: state.selectedCurrency,
+                            currentCurrencyCode: state.selectedCurrency?.code,
                           ),
                         );
                       },

@@ -328,4 +328,17 @@ class AppApiServices {
       queryParameters: {'id': 'eq.$transactionId'},
     );
   }
+
+  Future<void> editWallet({required WalletData wallet}) {
+    return _serverApiClientRest.request(
+      method: RequestMethod.post,
+      path: 'rpc/update_wallet',
+      body: {
+        'p_wallet_id': wallet.id,
+        'p_name': wallet.name,
+        'p_icon_url': wallet.iconUrl,
+        'p_new_amount': wallet.amount,
+      },
+    );
+  }
 }

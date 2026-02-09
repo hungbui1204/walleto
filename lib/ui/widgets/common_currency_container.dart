@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:walleto/domain/domain.dart';
 import 'package:walleto/resources/resources.dart';
 
 class CommonCurrencyContainer extends StatelessWidget {
-  const CommonCurrencyContainer({super.key, this.currentCurrency});
+  const CommonCurrencyContainer({super.key, this.currentCurrencyCode});
 
-  final Currency? currentCurrency;
+  final String? currentCurrencyCode;
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +16,7 @@ class CommonCurrencyContainer extends StatelessWidget {
         border: Border.all(),
         borderRadius: BorderRadius.circular(Dimens.d8.responsive()),
       ),
-      child: Center(child: Text(currentCurrency?.code ?? '', style: AppTextStyles.s14wBoldBlack())),
+      child: Center(child: Text(currentCurrencyCode ?? '', style: AppTextStyles.s14wBoldBlack())),
     );
   }
 }

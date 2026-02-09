@@ -51,5 +51,6 @@ export 'usecases/reset_user_password_use_case.dart';
 export 'usecases/send_otp_for_email_checking_use_case.dart';
 export 'usecases/send_otp_for_reset_password_use_case.dart';
 export 'usecases/sign_out_use_case.dart';
+export 'usecases/update_wallet_use_case.dart';
 export 'usecases/verify_otp_for_email_use_case.dart';
 export 'usecases/verify_otp_for_reset_password_use_case.dart';

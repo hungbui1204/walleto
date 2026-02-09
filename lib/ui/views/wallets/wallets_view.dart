@@ -56,6 +56,11 @@ class _WalletsViewState extends State<WalletsView> {
                       physics: const NeverScrollableScrollPhysics(),
                       itemBuilder: (context, index) {
                         return CommonRow(
+                          onTap: () {
+                            getIt.get<AppNavigator>().push(
+                              AppRouteInfo.editWallet(wallet: state.wallets[index]),
+                            );
+                          },
                           title: state.wallets[index].name,
                           content: state.wallets[index].amount.toStringWithFormat(
                             NumberFormatConstants.amountFormat,

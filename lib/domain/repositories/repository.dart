@@ -85,4 +85,6 @@ abstract class Repository {
   });
 
   Future<void> deleteTransaction({required int transactionId});
+
+  Future<void> editWallet({required Wallet wallet});
 }

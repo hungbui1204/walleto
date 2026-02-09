@@ -42,6 +42,8 @@ export 'views/create_wallet/bloc/create_wallet_bloc.dart';
 export 'views/create_wallet/create_wallet_view.dart';
 export 'views/edit_transaction/bloc/edit_transaction_bloc.dart';
 export 'views/edit_transaction/edit_transaction_view.dart';
+export 'views/edit_wallet/bloc/edit_wallet_bloc.dart';
+export 'views/edit_wallet/edit_wallet_view.dart';
 export 'views/home/bloc/home_bloc.dart';
 export 'views/home/home_view.dart';
 export 'views/home/widgets/daily_stats_chart.dart';

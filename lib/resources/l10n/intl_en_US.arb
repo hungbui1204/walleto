@@ -163,5 +163,7 @@
     "hintNewPassword": "Enter your new password here",
     "confirmNewPassword": "Confirm New Password",
     "hintConfirmNewPassword": "Enter your new password again",
-    "passwordResetSuccessfully": "Password reset successfully!"
+    "passwordResetSuccessfully": "Password reset successfully!",
+    "//": "Edit wallet view",
+    "editWallet" : "Edit Wallet"
 }

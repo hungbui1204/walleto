@@ -171,7 +171,9 @@ class _NewTransactionInfo extends StatelessWidget {
                             ),
                           );
                         },
-                        child: CommonCurrencyContainer(currentCurrency: state.selectedCurrency),
+                        child: CommonCurrencyContainer(
+                          currentCurrencyCode: state.selectedCurrency?.code,
+                        ),
                       );
                     },
                   ),

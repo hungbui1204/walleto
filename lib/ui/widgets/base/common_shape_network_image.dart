@@ -52,15 +52,18 @@ abstract class CommonShapeNetworkImage extends StatelessWidget {
       height: height,
       child: Builder(
         builder: (context) {
-          final imageWidget = Image.network(
-            imageUrl ?? '',
-            fit: fit,
-            width: width,
-            height: height,
-            errorBuilder: (context, error, stackTrace) {
-              return _placeholder;
-            },
-          );
+          final imageWidget =
+              imageUrl != null && imageUrl!.isNotEmpty
+                  ? Image.network(
+                    imageUrl!,
+                    fit: fit,
+                    width: width,
+                    height: height,
+                    errorBuilder: (context, error, stackTrace) {
+                      return _placeholder;
+                    },
+                  )
+                  : _placeholder;
 
           return buildShapeImage(context, imageWidget: imageWidget);
         },

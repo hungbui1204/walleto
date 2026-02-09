@@ -91,6 +91,11 @@ class AppRouter extends RootStackRouter {
               meta: const {'hideBottomNav': true},
             ),
             AutoRoute(
+              page: EditWalletRoute.page,
+              path: 'edit-wallet',
+              meta: const {'hideBottomNav': true},
+            ),
+            AutoRoute(
               page: CreateWalletRoute.page,
               path: 'create-wallet-from-account',
               meta: const {'hideBottomNav': true},

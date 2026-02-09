@@ -36,3 +36,9 @@ extension NumberExtensions on num {
     }
   }
 }
+
+extension DoubleFormatExtension on double {
+  String toStringAsFixedNoZero(int n) {
+    return toStringAsFixed(n).replaceAll(RegExp(r'0+$'), '').replaceAll(RegExp(r'\.$'), '');
+  }
+}

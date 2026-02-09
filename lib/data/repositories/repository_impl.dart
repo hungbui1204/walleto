@@ -290,4 +290,11 @@ class RepositoryImpl implements Repository {
 
     return _transactionDataMapper.mapToEntity(response);
   }
+
+  @override
+  Future<void> editWallet({required Wallet wallet}) async {
+    final walletData = _walletDataMapper.mapToData(wallet);
+
+    await _appApiServices.editWallet(wallet: walletData);
+  }
 }
