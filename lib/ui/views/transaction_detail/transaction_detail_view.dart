@@ -18,6 +18,15 @@ class TransactionDetailView extends StatefulWidget {
 
 class _TransactionDetailViewState
     extends BasePageState<TransactionDetailView, TransactionDetailBloc> {
+  late final bool isAdjustTransaction;
+
+  @override
+  void initState() {
+    isAdjustTransaction =
+        widget.transaction.category.id == AppConstants.updateWalletBalanceCategoryId;
+    super.initState();
+  }
+
   @override
   Widget buildPage(BuildContext context) {
     return Scaffold(
@@ -57,13 +66,31 @@ class _TransactionDetailViewState
                           NumberFormatConstants.amountFormat,
                         ),
                         style:
-                            widget.transaction.category.type == CategoryType.income
+                            widget.transaction.type == CategoryType.income
                                 ? AppTextStyles.s28wNormalGreen()
                                 : AppTextStyles.s28wNormalRed(),
                       ),
                     ],
                   ),
                   CommonLine(margin: EdgeInsets.only(bottom: Dimens.d12.responsive())),
+                  if (widget.transaction.note.isNotEmpty) ...[
+                    Row(
+                      children: [
+                        Assets.icons.note.svg(
+                          width: Dimens.d30.responsive(),
+                          height: Dimens.d30.responsive(),
+                        ),
+                        SizedBox(width: Dimens.d16.responsive()),
+                        Expanded(
+                          child: Text(
+                            widget.transaction.note,
+                            style: AppTextStyles.s14wNormalBlack(),
+                          ),
+                        ),
+                      ],
+                    ),
+                    CommonLine(margin: EdgeInsets.symmetric(vertical: Dimens.d12.responsive())),
+                  ],
                   Row(
                     children: [
                       Assets.icons.calendar.svg(
@@ -100,55 +127,64 @@ class _TransactionDetailViewState
             CommonButton(
               text: S.current.editTransaction,
               backgroundColor: secondaryColor,
-              onTap: () {
-                getIt.get<AppNavigator>().push(
-                  AppRouteInfo.editTransaction(transaction: widget.transaction),
-                );
-              },
+              onTap:
+                  isAdjustTransaction
+                      ? null
+                      : () {
+                        getIt.get<AppNavigator>().push(
+                          AppRouteInfo.editTransaction(transaction: widget.transaction),
+                        );
+                      },
             ),
             SizedBox(height: Dimens.d12.responsive()),
             CommonButton(
               text: S.current.duplicateTransaction,
-              onTap: () {
-                navigator.showDialog(
-                  AppPopupInfo.duplicateTransaction(
-                    transaction: widget.transaction,
-                    onConfirm: (selectedDate) {
-                      bloc.add(
-                        TransactionDetailDuplicateButtonPressed(
-                          transactionId: widget.transaction.id,
-                          selectedDate: selectedDate,
-                        ),
-                      );
+              onTap:
+                  isAdjustTransaction
+                      ? null
+                      : () {
+                        navigator.showDialog(
+                          AppPopupInfo.duplicateTransaction(
+                            transaction: widget.transaction,
+                            onConfirm: (selectedDate) {
+                              bloc.add(
+                                TransactionDetailDuplicateButtonPressed(
+                                  transactionId: widget.transaction.id,
+                                  selectedDate: selectedDate,
+                                ),
+                              );
 
-                      navigator.pop(useRootNavigator: true);
-                    },
-                  ),
-                );
-              },
+                              navigator.pop(useRootNavigator: true);
+                            },
+                          ),
+                        );
+                      },
             ),
             const Spacer(),
             Align(
               alignment: Alignment.centerRight,
               child: IconButton(
                 icon: const Icon(Icons.delete, color: redColor),
-                onPressed: () {
-                  navigator.showDialog(
-                    AppPopupInfo.confirm(
-                      message: S.current.areYouSureYouWantToDeleteThisTransaction,
-                      showCancel: true,
-                      onPressed: Func0(() {
-                        bloc.add(
-                          TransactionDetailDeleteButtonPressed(
-                            transactionId: widget.transaction.id,
-                          ),
-                        );
+                onPressed:
+                    isAdjustTransaction
+                        ? null
+                        : () {
+                          navigator.showDialog(
+                            AppPopupInfo.confirm(
+                              message: S.current.areYouSureYouWantToDeleteThisTransaction,
+                              showCancel: true,
+                              onPressed: Func0(() {
+                                bloc.add(
+                                  TransactionDetailDeleteButtonPressed(
+                                    transactionId: widget.transaction.id,
+                                  ),
+                                );
 
-                        navigator.pop(useRootNavigator: true);
-                      }),
-                    ),
-                  );
-                },
+                                navigator.pop(useRootNavigator: true);
+                              }),
+                            ),
+                          );
+                        },
               ),
             ),
           ],

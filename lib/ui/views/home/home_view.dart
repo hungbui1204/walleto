@@ -80,7 +80,7 @@ class _AllWalletsWidget extends StatelessWidget {
             onTap: () {
               getIt.get<AppNavigator>().push(const AppRouteInfo.wallets());
             },
-            child: Text(S.current.seeAll, style: AppTextStyles.s13wNormalBlack()),
+            child: Text(S.current.seeAll, style: AppTextStyles.s13wUnderlineItalicBlack()),
           ),
         ],
       ),
@@ -90,7 +90,7 @@ class _AllWalletsWidget extends StatelessWidget {
           if (state.wallets.isEmpty) return const SizedBox.shrink();
 
           return ListView.separated(
-            itemCount: state.wallets.length,
+            itemCount: 3,
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemBuilder: (context, index) {
@@ -169,46 +169,52 @@ class _RecentTransactionWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Stack(
-          clipBehavior: Clip.none,
-          children: [
-            CommonCircleNetworkImage(imageUrl: transaction.category.iconUrl),
-            Positioned(
-              bottom: 0,
-              right: -6,
-              child: CommonCircleNetworkImage(
-                imageUrl: transaction.wallet.iconUrl,
-                placeHolderType: ImagePlaceHolderType.wallet,
-                backgroundColor: secondaryColor,
-                size: Dimens.d16.responsive(),
+    return GestureDetector(
+      behavior: HitTestBehavior.translucent,
+      onTap: () {
+        getIt.get<AppNavigator>().push(AppRouteInfo.transactionDetail(transaction: transaction));
+      },
+      child: Row(
+        children: [
+          Stack(
+            clipBehavior: Clip.none,
+            children: [
+              CommonCircleNetworkImage(imageUrl: transaction.category.iconUrl),
+              Positioned(
+                bottom: 0,
+                right: -6,
+                child: CommonCircleNetworkImage(
+                  imageUrl: transaction.wallet.iconUrl,
+                  placeHolderType: ImagePlaceHolderType.wallet,
+                  backgroundColor: secondaryColor,
+                  size: Dimens.d16.responsive(),
+                ),
               ),
-            ),
-          ],
-        ),
-        SizedBox(width: Dimens.d16.responsive()),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(transaction.category.name),
-            Text(
-              transaction.transactionDate!.toStringWithFormat(
-                DateTimeFormatConstants.dayMonthYearFormat,
+            ],
+          ),
+          SizedBox(width: Dimens.d16.responsive()),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(transaction.category.name),
+              Text(
+                transaction.transactionDate!.toStringWithFormat(
+                  DateTimeFormatConstants.dayMonthYearFormat,
+                ),
               ),
-            ),
-          ],
-        ),
-        const Spacer(),
-        CommonAmountWithSymbol(
-          amount: transaction.amount,
-          currencyCode: transaction.currencyCode,
-          textStyle:
-              transaction.type == CategoryType.expense
-                  ? AppTextStyles.s14wNormalRed()
-                  : AppTextStyles.s14wNormalGreen(),
-        ),
-      ],
+            ],
+          ),
+          const Spacer(),
+          CommonAmountWithSymbol(
+            amount: transaction.amount,
+            currencyCode: transaction.currencyCode,
+            textStyle:
+                transaction.type == CategoryType.expense
+                    ? AppTextStyles.s14wNormalRed()
+                    : AppTextStyles.s14wNormalGreen(),
+          ),
+        ],
+      ),
     );
   }
 }

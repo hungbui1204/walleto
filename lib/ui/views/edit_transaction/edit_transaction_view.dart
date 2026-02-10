@@ -33,7 +33,7 @@ class _EditTransactionViewState extends BasePageState<EditTransactionView, EditT
   @override
   Widget buildPage(BuildContext context) {
     return Scaffold(
-      appBar: CommonAppBar(title: S.current.addTransaction),
+      appBar: CommonAppBar(title: S.current.editTransaction),
       body: Stack(
         children: [
           Padding(
@@ -288,11 +288,16 @@ class _NewTransactionInfo extends StatelessWidget {
                     ),
                     SizedBox(width: Dimens.d16.responsive()),
                     if (state.note.isNotEmpty) ...[
-                      Text(state.note, style: AppTextStyles.s14wNormalBlack()),
+                      Expanded(
+                        child: Text(
+                          state.note,
+                          style: AppTextStyles.s14wNormalBlack(),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
                     ] else ...[
                       Text(S.current.note, style: AppTextStyles.s14wNormalGrey()),
                     ],
-                    const Spacer(),
                     Icon(
                       Icons.arrow_forward_ios_rounded,
                       color: blackColor,

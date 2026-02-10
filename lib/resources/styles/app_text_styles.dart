@@ -173,6 +173,18 @@ class AppTextStyles {
     );
   }
 
+  static TextStyle s13wUnderlineItalicBlack({double? tablet, double? ultraTablet}) {
+    return _baseTextStyle.merge(
+      TextStyle(
+        color: blackColor,
+        fontWeight: FontWeight.normal,
+        fontStyle: FontStyle.italic,
+        decoration: TextDecoration.underline,
+        fontSize: Dimens.d13.responsive(tablet: tablet, ultraTablet: ultraTablet),
+      ),
+    );
+  }
+
   static TextStyle s13wNormalWhite({double? tablet, double? ultraTablet}) {
     return _baseTextStyle.merge(
       TextStyle(

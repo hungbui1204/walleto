@@ -180,8 +180,7 @@ class TransactionsBloc extends BaseBloc<TransactionsEvent, TransactionsState> {
           ),
         );
 
-        final allDayTransactions =
-            _getDayTransFromTrans(transactionsOutput.transactions).reversed.toList();
+        final allDayTransactions = _getDayTransFromTrans(transactionsOutput.transactions);
 
         emit(
           state.copyWith(
@@ -227,8 +226,7 @@ class TransactionsBloc extends BaseBloc<TransactionsEvent, TransactionsState> {
           ),
         );
 
-        final allDayTransactions =
-            _getDayTransFromTrans(transactionsOutput.transactions).reversed.toList();
+        final allDayTransactions = _getDayTransFromTrans(transactionsOutput.transactions);
 
         emit(
           state.copyWith(
@@ -260,8 +258,7 @@ class TransactionsBloc extends BaseBloc<TransactionsEvent, TransactionsState> {
           ),
         );
 
-        final transactions =
-            _getDayTransFromTrans(transactionsOutput.transactions).reversed.toList();
+        final transactions = _getDayTransFromTrans(transactionsOutput.transactions);
 
         emit(
           state.copyWith(selectedWallet: event.selectedWallet, allDayTransactions: transactions),
