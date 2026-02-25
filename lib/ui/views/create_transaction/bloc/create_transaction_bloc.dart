@@ -369,6 +369,12 @@ class CreateTransactionBloc extends BaseBloc<CreateTransactionEvent, CreateTrans
         selectedCurrency: walletCurrency,
         exchangeRate: null,
         convertedAmount: null,
+        confirmButtonEnable: _confirmButtonEnableCheck(
+          amountInput: state.amountInput,
+          selectedCategory: state.selectedCategory,
+          selectedDate: state.selectedDate,
+          amountError: state.amountError,
+        ),
       ),
     );
   }
