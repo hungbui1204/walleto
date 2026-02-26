@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:walleto/domain/domain.dart';
 import 'package:walleto/resources/resources.dart';
 import 'package:walleto/shared/shared.dart';
 import 'package:walleto/ui/ui.dart';
@@ -60,43 +61,84 @@ class StatisticWidget extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    BlocBuilder<HomeBloc, HomeState>(
-                      buildWhen: (previous, current) {
-                        return previous.selectedDateTime != current.selectedDateTime;
-                      },
-                      builder: (context, state) {
-                        if (state.selectedDateTime == null) return const SizedBox.shrink();
-
-                        return InkWell(
-                          borderRadius: BorderRadius.circular(Dimens.d8.responsive()),
-                          onTap: () {},
-                          child: Container(
-                            padding: EdgeInsets.symmetric(horizontal: Dimens.d6.responsive()),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(Dimens.d8.responsive()),
-                              border: Border.all(),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Assets.icons.calendar.svg(
-                                  width: Dimens.d30.responsive(),
-                                  height: Dimens.d30.responsive(),
+                    Row(
+                      children: [
+                        BlocBuilder<HomeBloc, HomeState>(
+                          buildWhen: (previous, current) {
+                            return previous.selectedCategoryType != current.selectedCategoryType;
+                          },
+                          builder: (context, state) {
+                            return SegmentedButton<CategoryType>(
+                              style: SegmentedButton.styleFrom(
+                                padding: EdgeInsets.symmetric(horizontal: Dimens.d12.responsive()),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(Dimens.d4.responsive()),
                                 ),
-                                SizedBox(width: Dimens.d10.responsive()),
-                                Text(
-                                  state.selectedDateTime!.toStringWithFormat(
-                                    DateTimeFormatConstants.monthYearFormat,
-                                  ),
-                                  style: AppTextStyles.s14wNormalBlack(),
+                                backgroundColor: whiteColor,
+                                selectedBackgroundColor: secondaryColor,
+                                selectedForegroundColor: blackColor,
+                                foregroundColor: blackColor,
+                              ),
+                              segments: [
+                                ButtonSegment(
+                                  value: CategoryType.expense,
+                                  label: Text(S.current.expense),
+                                ),
+                                ButtonSegment(
+                                  value: CategoryType.income,
+                                  label: Text(S.current.income),
                                 ),
                               ],
-                            ),
-                          ),
-                        );
-                      },
+                              selected: {state.selectedCategoryType},
+                              showSelectedIcon: false,
+                              onSelectionChanged: (type) {
+                                context.read<HomeBloc>().add(
+                                  HomeCategoryTypeSelected(categoryType: type.first),
+                                );
+                              },
+                            );
+                          },
+                        ),
+                        const Spacer(),
+                        BlocBuilder<HomeBloc, HomeState>(
+                          buildWhen: (previous, current) {
+                            return previous.selectedDateTime != current.selectedDateTime;
+                          },
+                          builder: (context, state) {
+                            if (state.selectedDateTime == null) return const SizedBox.shrink();
+
+                            return InkWell(
+                              borderRadius: BorderRadius.circular(Dimens.d8.responsive()),
+                              onTap: () {},
+                              child: Container(
+                                padding: EdgeInsets.symmetric(horizontal: Dimens.d6.responsive()),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(Dimens.d8.responsive()),
+                                  border: Border.all(),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Assets.icons.calendar.svg(
+                                      width: Dimens.d30.responsive(),
+                                      height: Dimens.d30.responsive(),
+                                    ),
+                                    SizedBox(width: Dimens.d10.responsive()),
+                                    Text(
+                                      state.selectedDateTime!.toStringWithFormat(
+                                        DateTimeFormatConstants.monthYearFormat,
+                                      ),
+                                      style: AppTextStyles.s14wNormalBlack(),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
                     ),
-                    SizedBox(height: Dimens.d20.responsive()),
+                    SizedBox(height: Dimens.d10.responsive()),
                     Expanded(
                       child: BlocBuilder<HomeBloc, HomeState>(
                         buildWhen: (previous, current) {

@@ -17,6 +17,7 @@ class HomeBloc extends BaseBloc<HomeEvent, HomeState> {
     this._getTopWalletStatsUseCase,
   ) : super(const HomeState()) {
     on<HomeViewInitialized>(_onHomeViewInitialized);
+    on<HomeCategoryTypeSelected>(_onHomeCategoryTypeSelected);
   }
 
   final GetMonthSummaryStatsUseCase _getMonthSummaryStatsUseCase;
@@ -52,6 +53,37 @@ class HomeBloc extends BaseBloc<HomeEvent, HomeState> {
             monthSummaryStats: monthSummaryStatsOutput.monthSummaryStats.reversed.toList(),
             walletStat: walletStatsOutput.walletStat,
             recentTransactions: recentTransactionsOutput.transactions,
+            selectedCategoryType: CategoryType.expense,
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _onHomeCategoryTypeSelected(
+    HomeCategoryTypeSelected event,
+    Emitter<HomeState> emit,
+  ) async {
+    await runBlocCatching(
+      action: () async {
+        if (event.categoryType == state.selectedCategoryType) {
+          return;
+        }
+
+        final now = DateTime.now();
+
+        final walletStatsOutput = await _getTopWalletStatsUseCase.execute(
+          GetTopWalletStatsInput(
+            targetMonth: now.month,
+            targetYear: now.year,
+            categoryType: event.categoryType,
+          ),
+        );
+
+        emit(
+          state.copyWith(
+            walletStat: walletStatsOutput.walletStat,
+            selectedCategoryType: event.categoryType,
           ),
         );
       },
