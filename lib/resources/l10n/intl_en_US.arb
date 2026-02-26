@@ -130,6 +130,7 @@
     "spentStats" : "Spent Stats",
     "thisMonth" : "This Month",
     "lastMonth" : "Last Month",
+    "topWallet": "Top Wallet",
     "//": "Account view",
     "changePassword": "Change Password",
     "settings" : "Settings",

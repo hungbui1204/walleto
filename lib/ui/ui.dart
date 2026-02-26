@@ -47,7 +47,7 @@ export 'views/edit_wallet/edit_wallet_view.dart';
 export 'views/home/bloc/home_bloc.dart';
 export 'views/home/home_view.dart';
 export 'views/home/widgets/daily_stats_chart.dart';
-export 'views/home/widgets/month_category_stats_chart.dart';
+export 'views/home/widgets/month_wallet_category_stats_chart.dart';
 export 'views/home/widgets/month_summary_chart.dart';
 export 'views/home/widgets/statistic_widget.dart';
 export 'views/main/bloc/main_bloc.dart';

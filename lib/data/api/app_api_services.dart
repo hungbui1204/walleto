@@ -136,21 +136,38 @@ class AppApiServices {
     );
   }
 
-  Future<List<CategoryStatData>?> getCategoryStats({
+  Future<List<WalletStatData>?> getWalletStats({
     required int targetMonth,
     required int targetYear,
     required CategoryType categoryType,
   }) {
     return _serverApiClientRest.request(
       method: RequestMethod.post,
-      path: 'rpc/get_parent_category_stats',
+      path: 'rpc/get_wallet_stats_with_parent_category',
       body: {
         'target_month': targetMonth,
         'target_year': targetYear,
         'target_type': categoryType.name,
       },
-      decoder: (data) => CategoryStatData.fromJson(data as Map<String, dynamic>),
+      decoder: (data) => WalletStatData.fromJson(data as Map<String, dynamic>),
       successResponseMapperType: SuccessResponseMapperType.jsonArray,
+    );
+  }
+
+  Future<WalletStatData?> getTopWalletStats({
+    required int targetMonth,
+    required int targetYear,
+    required CategoryType categoryType,
+  }) {
+    return _serverApiClientRest.request(
+      method: RequestMethod.post,
+      path: 'rpc/get_top_wallet_stats',
+      body: {
+        'target_month': targetMonth,
+        'target_year': targetYear,
+        'target_type': categoryType.name,
+      },
+      decoder: (data) => WalletStatData.fromJson(data as Map<String, dynamic>),
     );
   }
 

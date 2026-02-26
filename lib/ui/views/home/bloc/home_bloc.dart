@@ -12,14 +12,16 @@ part 'home_bloc.freezed.dart';
 class HomeBloc extends BaseBloc<HomeEvent, HomeState> {
   HomeBloc(
     this._getMonthSummaryStatsUseCase,
-    this._getCategoryStatsUseCase,
+    this._getWalletStatsUseCase,
     this._getRecentTransactionsUseCase,
+    this._getTopWalletStatsUseCase,
   ) : super(const HomeState()) {
     on<HomeViewInitialized>(_onHomeViewInitialized);
   }
 
   final GetMonthSummaryStatsUseCase _getMonthSummaryStatsUseCase;
-  final GetCategoryStatsUseCase _getCategoryStatsUseCase;
+  final GetWalletStatsUseCase _getWalletStatsUseCase;
+  final GetTopWalletStatsUseCase _getTopWalletStatsUseCase;
   final GetRecentTransactionsUseCase _getRecentTransactionsUseCase;
 
   Future<void> _onHomeViewInitialized(HomeViewInitialized event, Emitter<HomeState> emit) async {
@@ -33,8 +35,8 @@ class HomeBloc extends BaseBloc<HomeEvent, HomeState> {
           const GetMonthSummaryStatsInput(),
         );
 
-        final categoryStatsOutput = await _getCategoryStatsUseCase.execute(
-          GetCategoryStatsInput(
+        final walletStatsOutput = await _getTopWalletStatsUseCase.execute(
+          GetTopWalletStatsInput(
             targetMonth: now.month,
             targetYear: now.year,
             categoryType: CategoryType.expense,
@@ -48,7 +50,7 @@ class HomeBloc extends BaseBloc<HomeEvent, HomeState> {
         emit(
           state.copyWith(
             monthSummaryStats: monthSummaryStatsOutput.monthSummaryStats.reversed.toList(),
-            categoryStats: categoryStatsOutput.stats,
+            walletStat: walletStatsOutput.walletStat,
             recentTransactions: recentTransactionsOutput.transactions,
           ),
         );

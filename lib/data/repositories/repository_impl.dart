@@ -13,7 +13,7 @@ class RepositoryImpl implements Repository {
     this._transactionDataMapper,
     this._dailyStatDataMapper,
     this._monthSummaryStatDataMapper,
-    this._categoryStatDataMapper,
+    this._walletStatDataMapper,
     this._userDataMapper,
     this._supabaseImageDataMapper,
     this._currencyDataMapper,
@@ -28,11 +28,11 @@ class RepositoryImpl implements Repository {
   final TransactionDataMapper _transactionDataMapper;
   final DailyStatDataMapper _dailyStatDataMapper;
   final MonthSummaryStatDataMapper _monthSummaryStatDataMapper;
-  final CategoryStatDataMapper _categoryStatDataMapper;
   final UserDataMapper _userDataMapper;
   final SupabaseImageDataMapper _supabaseImageDataMapper;
   final CurrencyDataMapper _currencyDataMapper;
   final ExchangeRateDataMapper _exchangeRateDataMapper;
+  final WalletStatDataMapper _walletStatDataMapper;
 
   @override
   Future<bool> get isLoggedIn async => await _appPreferences.token != null;
@@ -158,18 +158,18 @@ class RepositoryImpl implements Repository {
   }
 
   @override
-  Future<List<CategoryStat>> getCategoryStats({
+  Future<List<WalletStat>> getWalletStats({
     required int targetMonth,
     required int targetYear,
     required CategoryType categoryType,
   }) async {
-    final response = await _appApiServices.getCategoryStats(
+    final response = await _appApiServices.getWalletStats(
       targetMonth: targetMonth,
       targetYear: targetYear,
       categoryType: categoryType,
     );
 
-    return _categoryStatDataMapper.mapToListEntity(response);
+    return _walletStatDataMapper.mapToListEntity(response);
   }
 
   @override
@@ -296,5 +296,20 @@ class RepositoryImpl implements Repository {
     final walletData = _walletDataMapper.mapToData(wallet);
 
     await _appApiServices.editWallet(wallet: walletData);
+  }
+
+  @override
+  Future<WalletStat> getTopWalletStats({
+    required int targetMonth,
+    required int targetYear,
+    required CategoryType categoryType,
+  }) async {
+    final response = await _appApiServices.getTopWalletStats(
+      targetMonth: targetMonth,
+      targetYear: targetYear,
+      categoryType: categoryType,
+    );
+
+    return _walletStatDataMapper.mapToEntity(response);
   }
 }

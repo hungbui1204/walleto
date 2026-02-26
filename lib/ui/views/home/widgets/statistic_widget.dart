@@ -39,7 +39,7 @@ class StatisticWidget extends StatelessWidget {
           ),
           SizedBox(height: Dimens.d16.responsive()),
           SizedBox(
-            height: Dimens.d300.responsive(),
+            height: Dimens.d330.responsive(),
             child: TabBarView(
               controller: tabController,
               children: [
@@ -79,7 +79,6 @@ class StatisticWidget extends StatelessWidget {
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Icon(Icons.arrow_outward_rounded, size: Dimens.d16.responsive()),
                                 Assets.icons.calendar.svg(
                                   width: Dimens.d30.responsive(),
                                   height: Dimens.d30.responsive(),
@@ -101,10 +100,10 @@ class StatisticWidget extends StatelessWidget {
                     Expanded(
                       child: BlocBuilder<HomeBloc, HomeState>(
                         buildWhen: (previous, current) {
-                          return previous.categoryStats != current.categoryStats;
+                          return previous.walletStat != current.walletStat;
                         },
                         builder: (context, state) {
-                          return MonthCategoryStatsChart(stats: state.categoryStats);
+                          return MonthWalletCategoryStatsChart(walletStat: state.walletStat);
                         },
                       ),
                     ),
