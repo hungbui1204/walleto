@@ -127,10 +127,11 @@ class AppApiServices {
     );
   }
 
-  Future<List<MonthSummaryStatData>?> getMonthSummaryStats() {
+  Future<List<MonthSummaryStatData>?> getMonthSummaryStats({String? baseCurrency}) {
     return _serverApiClientRest.request(
       method: RequestMethod.post,
       path: 'rpc/get_monthly_summary',
+      body: {if (baseCurrency != null) 'base_currency': baseCurrency},
       decoder: (data) => MonthSummaryStatData.fromJson(data as Map<String, dynamic>),
       successResponseMapperType: SuccessResponseMapperType.jsonArray,
     );
@@ -356,6 +357,14 @@ class AppApiServices {
         'p_icon_url': wallet.iconUrl,
         'p_new_amount': wallet.amount,
       },
+    );
+  }
+
+  Future<CurrencyData?> getUserDefaultCurrency() {
+    return _serverApiClientRest.request(
+      method: RequestMethod.get,
+      path: 'rpc/get_user_base_currency',
+      decoder: (data) => CurrencyData.fromJson(data as Map<String, dynamic>),
     );
   }
 }

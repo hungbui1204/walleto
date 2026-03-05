@@ -151,8 +151,8 @@ class RepositoryImpl implements Repository {
   }
 
   @override
-  Future<List<MonthSummaryStat>> getMonthSummaryStats() async {
-    final response = await _appApiServices.getMonthSummaryStats();
+  Future<List<MonthSummaryStat>> getMonthSummaryStats({String? baseCurrency}) async {
+    final response = await _appApiServices.getMonthSummaryStats(baseCurrency: baseCurrency);
 
     return _monthSummaryStatDataMapper.mapToListEntity(response);
   }
@@ -311,5 +311,12 @@ class RepositoryImpl implements Repository {
     );
 
     return _walletStatDataMapper.mapToEntity(response);
+  }
+
+  @override
+  Future<Currency> getUserDefaultCurrency() async {
+    final response = await _appApiServices.getUserDefaultCurrency();
+
+    return _currencyDataMapper.mapToEntity(response);
   }
 }

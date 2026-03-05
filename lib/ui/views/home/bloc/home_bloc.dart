@@ -15,25 +15,37 @@ class HomeBloc extends BaseBloc<HomeEvent, HomeState> {
     this._getWalletStatsUseCase,
     this._getRecentTransactionsUseCase,
     this._getTopWalletStatsUseCase,
+    this._getUserDefaultCurrencyUseCase,
   ) : super(const HomeState()) {
     on<HomeViewInitialized>(_onHomeViewInitialized);
     on<HomeCategoryTypeSelected>(_onHomeCategoryTypeSelected);
+    on<HomeCurrencySelected>(_onHomeCurrencySelected);
   }
 
   final GetMonthSummaryStatsUseCase _getMonthSummaryStatsUseCase;
   final GetWalletStatsUseCase _getWalletStatsUseCase;
   final GetTopWalletStatsUseCase _getTopWalletStatsUseCase;
   final GetRecentTransactionsUseCase _getRecentTransactionsUseCase;
+  final GetUserDefaultCurrencyUseCase _getUserDefaultCurrencyUseCase;
 
   Future<void> _onHomeViewInitialized(HomeViewInitialized event, Emitter<HomeState> emit) async {
     await runBlocCatching(
       action: () async {
         final now = DateTime.now();
-
         emit(state.copyWith(selectedDateTime: now));
 
+        /// Get user default currency and set to app state
+        final userDefaultCurrencyOutput = await _getUserDefaultCurrencyUseCase.execute(
+          const GetUserDefaultCurrencyInput(),
+        );
+
+        appBloc.add(UserDefaultCurrencyUpdated(newCurrency: userDefaultCurrencyOutput.currency));
+
+        /// Default currency is current user base currency from app state, which is used to get month summary stats.
+        add(HomeCurrencySelected(currencyCode: appBloc.state.userDefaultCurrency.code));
+
         final monthSummaryStatsOutput = await _getMonthSummaryStatsUseCase.execute(
-          const GetMonthSummaryStatsInput(),
+          GetMonthSummaryStatsInput(baseCurrency: userDefaultCurrencyOutput.currency.code),
         );
 
         final walletStatsOutput = await _getTopWalletStatsUseCase.execute(
@@ -88,5 +100,15 @@ class HomeBloc extends BaseBloc<HomeEvent, HomeState> {
         );
       },
     );
+  }
+
+  void _onHomeCurrencySelected(HomeCurrencySelected event, Emitter<HomeState> emit) {
+    if (event.currencyCode == state.defaultCurrencyCode) {
+      return;
+    }
+
+    /// TODO: update month summary stats
+
+    emit(state.copyWith(defaultCurrencyCode: event.currencyCode));
   }
 }

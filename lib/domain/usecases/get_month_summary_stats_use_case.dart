@@ -14,7 +14,9 @@ class GetMonthSummaryStatsUseCase
   @protected
   @override
   Future<GetMonthSummaryStatsOutput> buildUseCase(GetMonthSummaryStatsInput input) async {
-    final monthSummaryStats = await _repository.getMonthSummaryStats();
+    final monthSummaryStats = await _repository.getMonthSummaryStats(
+      baseCurrency: input.baseCurrency,
+    );
 
     return GetMonthSummaryStatsOutput(monthSummaryStats: monthSummaryStats);
   }
@@ -24,7 +26,7 @@ class GetMonthSummaryStatsUseCase
 sealed class GetMonthSummaryStatsInput extends BaseInput with _$GetMonthSummaryStatsInput {
   const GetMonthSummaryStatsInput._();
 
-  const factory GetMonthSummaryStatsInput() = _GetMonthSummaryStatsInput;
+  const factory GetMonthSummaryStatsInput({String? baseCurrency}) = _GetMonthSummaryStatsInput;
 }
 
 @freezed

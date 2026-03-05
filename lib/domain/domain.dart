@@ -41,6 +41,7 @@ export 'usecases/get_month_summary_stats_use_case.dart';
 export 'usecases/get_recent_transactions_use_case.dart';
 export 'usecases/get_top_wallet_stats_use_case.dart';
 export 'usecases/get_transactions_use_case.dart';
+export 'usecases/get_user_default_currency_use_case.dart';
 export 'usecases/get_user_info_use_case.dart';
 export 'usecases/get_wallet_images_use_case.dart';
 export 'usecases/get_wallet_stats_use_case.dart';

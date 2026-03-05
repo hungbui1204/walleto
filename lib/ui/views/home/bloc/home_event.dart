@@ -16,3 +16,9 @@ sealed class HomeCategoryTypeSelected extends HomeEvent with _$HomeCategoryTypeS
   const factory HomeCategoryTypeSelected({required CategoryType categoryType}) =
       _HomeCategoryTypeSelected;
 }
+
+@freezed
+sealed class HomeCurrencySelected extends HomeEvent with _$HomeCurrencySelected {
+  const HomeCurrencySelected._();
+  const factory HomeCurrencySelected({required String currencyCode}) = _HomeCurrencySelected;
+}

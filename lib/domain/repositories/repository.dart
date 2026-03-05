@@ -38,7 +38,7 @@ abstract class Repository {
 
   Future<List<DailyStat>> getMonthStat({required int targetMonth, required int targetYear});
 
-  Future<List<MonthSummaryStat>> getMonthSummaryStats();
+  Future<List<MonthSummaryStat>> getMonthSummaryStats({String? baseCurrency});
 
   Future<List<WalletStat>> getWalletStats({
     required int targetMonth,
@@ -93,4 +93,6 @@ abstract class Repository {
   Future<void> deleteTransaction({required int transactionId});
 
   Future<void> editWallet({required Wallet wallet});
+
+  Future<Currency> getUserDefaultCurrency();
 }

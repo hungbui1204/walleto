@@ -22,6 +22,13 @@ sealed class DataFetched extends AppEvent with _$DataFetched {
 }
 
 @freezed
+sealed class GetUserDefaultCurrency extends AppEvent with _$GetUserDefaultCurrency {
+  const GetUserDefaultCurrency._();
+
+  const factory GetUserDefaultCurrency() = _GetUserDefaultCurrency;
+}
+
+@freezed
 sealed class TransactionsReloaded extends AppEvent with _$TransactionsReloaded {
   const TransactionsReloaded._();
 
@@ -35,4 +42,12 @@ sealed class StatisticalChartsReloaded extends AppEvent with _$StatisticalCharts
 
   const factory StatisticalChartsReloaded({required bool needReloadStatisticalCharts}) =
       _StatisticalChartsReloaded;
+}
+
+@freezed
+sealed class UserDefaultCurrencyUpdated extends AppEvent with _$UserDefaultCurrencyUpdated {
+  const UserDefaultCurrencyUpdated._();
+
+  const factory UserDefaultCurrencyUpdated({required Currency newCurrency}) =
+      _UserDefaultCurrencyUpdated;
 }

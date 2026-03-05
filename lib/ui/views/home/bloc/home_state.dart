@@ -7,6 +7,10 @@ sealed class HomeState extends BaseBlocState with _$HomeState {
     /// This is used to display month summary stats in the home view.
     @Default(<MonthSummaryStat>[]) List<MonthSummaryStat> monthSummaryStats,
 
+    /// This currency is used to get monthly stats.
+    /// It can be set manually by user.
+    @Default('') String defaultCurrencyCode,
+
     /// WalletStat will contain its own list of CategoryStat, which contain parent category info.
     /// This is used to display top wallet statistics (for the selected month and category type).
     @Default(WalletStat()) WalletStat walletStat,

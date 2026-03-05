@@ -10,17 +10,24 @@ part 'app_bloc.freezed.dart';
 
 @lazySingleton
 class AppBloc extends BaseBloc<AppEvent, AppState> {
-  AppBloc(this._signOutUseCase, this._getWalletsUseCase, this._getCurrenciesUseCase)
-    : super(const AppState()) {
+  AppBloc(
+    this._signOutUseCase,
+    this._getWalletsUseCase,
+    this._getCurrenciesUseCase,
+    this._getUserDefaultCurrencyUseCase,
+  ) : super(const AppState()) {
     on<SignOutButtonPressed>(_onSignOutButtonPressed, transformer: log());
     on<DataFetched>(_onDataFetched, transformer: log());
     on<TransactionsReloaded>(_onTransactionsReloaded, transformer: log());
     on<StatisticalChartsReloaded>(_onStatisticalChartsReloaded, transformer: log());
+    on<UserDefaultCurrencyUpdated>(_onUserDefaultCurrencyUpdated, transformer: log());
+    on<GetUserDefaultCurrency>(_onGetUserDefaultCurrency, transformer: log());
   }
 
   final SignOutUseCase _signOutUseCase;
   final GetWalletsUseCase _getWalletsUseCase;
   final GetCurrenciesUseCase _getCurrenciesUseCase;
+  final GetUserDefaultCurrencyUseCase _getUserDefaultCurrencyUseCase;
 
   Future<void> _onSignOutButtonPressed(SignOutButtonPressed event, Emitter<AppState> emit) async {
     await runBlocCatching(
@@ -60,5 +67,30 @@ class AppBloc extends BaseBloc<AppEvent, AppState> {
 
   void _onStatisticalChartsReloaded(StatisticalChartsReloaded event, Emitter<AppState> emit) {
     emit(state.copyWith(needReloadStatisticalCharts: event.needReloadStatisticalCharts));
+  }
+
+  Future<void> _onGetUserDefaultCurrency(
+    GetUserDefaultCurrency event,
+    Emitter<AppState> emit,
+  ) async {
+    await runBlocCatching(
+      action: () async {
+        final output = await _getUserDefaultCurrencyUseCase.execute(
+          const GetUserDefaultCurrencyInput(),
+        );
+
+        emit(state.copyWith(userDefaultCurrency: output.currency));
+      },
+    );
+  }
+
+  void _onUserDefaultCurrencyUpdated(UserDefaultCurrencyUpdated event, Emitter<AppState> emit) {
+    if (event.newCurrency.code == state.userDefaultCurrency.code) {
+      return;
+    }
+
+    /// TODO: update user default currency API
+
+    emit(state.copyWith(userDefaultCurrency: event.newCurrency));
   }
 }
