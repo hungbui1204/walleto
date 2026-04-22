@@ -167,6 +167,11 @@ fvm flutter test
 fvm flutter clean
 ```
 
+
+## More docs
+
+- [Supabase setup](docs/supabase-setup.md)
+
 ## Troubleshooting
 
 - If Flutter commands behave inconsistently, confirm you are using `fvm flutter`.
