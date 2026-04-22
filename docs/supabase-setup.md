@@ -40,6 +40,38 @@ From the source, Supabase is used for:
 - Exchange rate lookups.
 - Notification / cron-style backend tasks.
 
+## Functions found in the source
+
+### Edge Functions
+
+- `create_user`
+- `cron_transactions_reminder`
+- `otp_verify`
+- `otp_verify_reset_password`
+- `reset_user_password`
+- `send_otp`
+- `send_otp_reset_password`
+
+### Database functions and migrations
+
+Notable SQL migration files include transaction, exchange-rate, and auth-related functions such as:
+
+- user existence checks
+- exchange rate lookup RPCs
+- transaction update/duplicate RPCs
+- wallet balance trigger logic
+
+## Suggested commit strategy for Supabase changes
+
+When a Supabase function differs from the Flutter source and needs updates, keep changes isolated:
+
+1. One function or one SQL concern per commit.
+2. One migration file per logical change.
+3. One PR can contain multiple commits, but each commit should be easy to review.
+4. Update README or docs only when the public setup flow changes.
+
+That keeps history readable when you later inspect function changes in GitHub.
+
 ## Migrations
 
 Keep schema changes in `supabase/migrations/`.
