@@ -54,6 +54,8 @@ abstract class Repository {
 
   Future<User> getUserInfo();
 
+  Future<AiChatMessage> sendAiChatMessage({required String message});
+
   Future<List<Transaction>> getRecentTransactions({int? walletId});
 
   Future<void> sendOtpForEmailChecking({required String email});

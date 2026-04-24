@@ -15,6 +15,7 @@ class RepositoryImpl implements Repository {
     this._monthSummaryStatDataMapper,
     this._walletStatDataMapper,
     this._userDataMapper,
+    this._aiChatResponseDataMapper,
     this._supabaseImageDataMapper,
     this._currencyDataMapper,
     this._exchangeRateDataMapper,
@@ -29,6 +30,7 @@ class RepositoryImpl implements Repository {
   final DailyStatDataMapper _dailyStatDataMapper;
   final MonthSummaryStatDataMapper _monthSummaryStatDataMapper;
   final UserDataMapper _userDataMapper;
+  final AiChatResponseDataMapper _aiChatResponseDataMapper;
   final SupabaseImageDataMapper _supabaseImageDataMapper;
   final CurrencyDataMapper _currencyDataMapper;
   final ExchangeRateDataMapper _exchangeRateDataMapper;
@@ -178,6 +180,14 @@ class RepositoryImpl implements Repository {
     final response = await _appApiServices.getUserInfo(userId: userId);
 
     return _userDataMapper.mapToEntity(response?.first);
+  }
+
+
+  @override
+  Future<AiChatMessage> sendAiChatMessage({required String message}) async {
+    final response = await _appApiServices.sendAiChatMessage(message: message);
+
+    return _aiChatResponseDataMapper.mapToEntity(response);
   }
 
   @override

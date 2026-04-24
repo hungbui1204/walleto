@@ -1,3 +1,7 @@
+export 'entities/ai_chat_debug_context.dart';
+export 'entities/ai_chat_message.dart';
+export 'entities/ai_chat_prompt_tokens_details.dart';
+export 'entities/ai_chat_usage.dart';
 export 'entities/authentication.dart';
 export 'entities/base/paged_list.dart';
 export 'entities/category.dart';
@@ -51,6 +55,7 @@ export 'usecases/is_logged_in_use_case.dart';
 export 'usecases/load_initial_resource_use_case.dart';
 export 'usecases/login_by_password_use_case.dart';
 export 'usecases/reset_user_password_use_case.dart';
+export 'usecases/send_ai_chat_message_use_case.dart';
 export 'usecases/send_otp_for_email_checking_use_case.dart';
 export 'usecases/send_otp_for_reset_password_use_case.dart';
 export 'usecases/sign_out_use_case.dart';
