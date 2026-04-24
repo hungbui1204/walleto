@@ -56,6 +56,11 @@ abstract class Repository {
 
   Future<AiChatMessage> sendAiChatMessage({required String message});
 
+  Future<List<AiChatHistoryMessage>> getAiChatHistory({
+    required int offset,
+    required int limit,
+  });
+
   Future<List<Transaction>> getRecentTransactions({int? walletId});
 
   Future<void> sendOtpForEmailChecking({required String email});
