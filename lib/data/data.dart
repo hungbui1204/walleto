@@ -7,7 +7,6 @@ export 'api/client/server_api_client_rest.dart';
 export 'api/client/server_api_client_storage.dart';
 export 'api/client/server_api_functions_client.dart';
 export 'api/exception_mapper/dio_exception_mapper.dart';
-export 'helper/postgrest_query_constants.dart';
 export 'api/mappers/ai_chat_debug_context_data_mapper.dart';
 export 'api/mappers/ai_chat_history_message_data_mapper.dart';
 export 'api/mappers/ai_chat_prompt_tokens_details_data_mapper.dart';
