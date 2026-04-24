@@ -16,6 +16,7 @@ class RepositoryImpl implements Repository {
     this._walletStatDataMapper,
     this._userDataMapper,
     this._aiChatResponseDataMapper,
+    this._aiChatHistoryMessageDataMapper,
     this._supabaseImageDataMapper,
     this._currencyDataMapper,
     this._exchangeRateDataMapper,
@@ -31,6 +32,7 @@ class RepositoryImpl implements Repository {
   final MonthSummaryStatDataMapper _monthSummaryStatDataMapper;
   final UserDataMapper _userDataMapper;
   final AiChatResponseDataMapper _aiChatResponseDataMapper;
+  final AiChatHistoryMessageDataMapper _aiChatHistoryMessageDataMapper;
   final SupabaseImageDataMapper _supabaseImageDataMapper;
   final CurrencyDataMapper _currencyDataMapper;
   final ExchangeRateDataMapper _exchangeRateDataMapper;
@@ -182,6 +184,17 @@ class RepositoryImpl implements Repository {
     return _userDataMapper.mapToEntity(response?.first);
   }
 
+
+
+  @override
+  Future<List<AiChatHistoryMessage>> getAiChatHistory({
+    required int offset,
+    required int limit,
+  }) async {
+    final response = await _appApiServices.getAiChatHistory(offset: offset, limit: limit);
+
+    return _aiChatHistoryMessageDataMapper.mapToListEntity(response);
+  }
 
   @override
   Future<AiChatMessage> sendAiChatMessage({required String message}) async {
