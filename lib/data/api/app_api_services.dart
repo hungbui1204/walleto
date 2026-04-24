@@ -192,6 +192,17 @@ class AppApiServices {
     );
   }
 
+
+  Future<AiChatResponseData?> sendAiChatMessage({required String message}) {
+    return _serverApiFunctionsClient.request(
+      method: RequestMethod.post,
+      path: '/ai_chat',
+      body: {'message': message},
+      decoder: (data) => AiChatResponseData.fromJson(data as Map<String, dynamic>),
+      successResponseMapperType: SuccessResponseMapperType.jsonObject,
+    );
+  }
+
   Future<void> sendOtpForEmailChecking({required String email}) {
     return _serverApiFunctionsClient.request(
       method: RequestMethod.post,
