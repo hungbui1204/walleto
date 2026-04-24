@@ -4,16 +4,18 @@ import 'package:walleto/domain/domain.dart';
 
 @injectable
 class AiChatResponseDataMapper extends BaseDataMapper<AiChatResponseData, AiChatMessage> {
-  const AiChatResponseDataMapper();
+  const AiChatResponseDataMapper(this._aiChatUsageDataMapper, this._aiChatDebugContextDataMapper);
+
+  final AiChatUsageDataMapper _aiChatUsageDataMapper;
+  final AiChatDebugContextDataMapper _aiChatDebugContextDataMapper;
 
   @override
   AiChatMessage mapToEntity(AiChatResponseData? data) {
     return AiChatMessage(
       reply: data?.reply ?? '',
       model: data?.model ?? '',
-      promptTokens: data?.usage?.promptTokens ?? 0,
-      completionTokens: data?.usage?.completionTokens ?? 0,
-      totalTokens: data?.usage?.totalTokens ?? 0,
+      usage: _aiChatUsageDataMapper.mapToEntity(data?.usage),
+      debugContext: _aiChatDebugContextDataMapper.mapToEntity(data?.debugContext),
     );
   }
 }
