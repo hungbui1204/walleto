@@ -1,4 +1,7 @@
+export 'entities/ai_chat_debug_context.dart';
 export 'entities/ai_chat_message.dart';
+export 'entities/ai_chat_prompt_tokens_details.dart';
+export 'entities/ai_chat_usage.dart';
 export 'entities/authentication.dart';
 export 'entities/base/paged_list.dart';
 export 'entities/category.dart';
