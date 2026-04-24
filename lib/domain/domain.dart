@@ -1,4 +1,5 @@
 export 'entities/ai_chat_debug_context.dart';
+export 'entities/ai_chat_history_message.dart';
 export 'entities/ai_chat_message.dart';
 export 'entities/ai_chat_prompt_tokens_details.dart';
 export 'entities/ai_chat_usage.dart';
@@ -36,6 +37,7 @@ export 'usecases/create_wallet_use_case.dart';
 export 'usecases/delete_transaction_use_case.dart';
 export 'usecases/duplicate_transaction_use_case.dart';
 export 'usecases/edit_transaction_use_case.dart';
+export 'usecases/get_ai_chat_history_use_case.dart';
 export 'usecases/get_categories_use_case.dart';
 export 'usecases/get_category_images_use_case.dart';
 export 'usecases/get_currencies_use_case.dart';
