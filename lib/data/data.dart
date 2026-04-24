@@ -38,6 +38,8 @@ export 'api/middleware/cookie_interceptor.dart';
 export 'api/middleware/custom_log_interceptor.dart';
 export 'api/middleware/header_interceptor.dart';
 export 'api/middleware/retry_on_error_interceptor.dart';
+export 'api/models/ai_chat_debug_context_data.dart';
+export 'api/models/ai_chat_prompt_tokens_details_data.dart';
 export 'api/models/ai_chat_response_data.dart';
 export 'api/models/ai_chat_usage_data.dart';
 export 'api/models/authentication_data.dart';
