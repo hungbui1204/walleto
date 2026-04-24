@@ -10,6 +10,7 @@ sealed class AiChatResponseData with _$AiChatResponseData {
     @JsonKey(name: 'reply') String? reply,
     @JsonKey(name: 'model') String? model,
     @JsonKey(name: 'usage') AiChatUsageData? usage,
+    @JsonKey(name: 'debug_context') AiChatDebugContextData? debugContext,
   }) = _AiChatResponseData;
 
   factory AiChatResponseData.fromJson(Map<String, dynamic> json) =>
