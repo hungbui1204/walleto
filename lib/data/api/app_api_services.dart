@@ -193,6 +193,25 @@ class AppApiServices {
   }
 
 
+
+  Future<List<AiChatHistoryMessageData>?> getAiChatHistory({
+    required int offset,
+    required int limit,
+  }) {
+    return _serverApiClientRest.request(
+      method: RequestMethod.get,
+      path: 'ai_chat_messages',
+      queryParameters: {
+        'select': '*',
+        'order': 'created_at.desc',
+        'offset': offset,
+        'limit': limit,
+      },
+      decoder: (data) => AiChatHistoryMessageData.fromJson(data as Map<String, dynamic>),
+      successResponseMapperType: SuccessResponseMapperType.jsonArray,
+    );
+  }
+
   Future<AiChatResponseData?> sendAiChatMessage({required String message}) {
     return _serverApiFunctionsClient.request(
       method: RequestMethod.post,
