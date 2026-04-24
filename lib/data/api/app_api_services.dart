@@ -203,7 +203,7 @@ class AppApiServices {
       path: 'ai_chat_messages',
       queryParameters: {
         'select': '*',
-        'order': 'created_at.desc',
+        'order': PostgrestQueryConstants.aiChatMessagesOrder,
         'offset': offset,
         'limit': limit,
       },
