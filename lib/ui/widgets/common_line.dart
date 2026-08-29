@@ -5,7 +5,7 @@ class CommonLine extends StatelessWidget {
   const CommonLine({
     super.key,
     this.thickness = 1,
-    this.color = blackColor,
+    this.color = frameColor,
     this.margin,
     this.padding,
   });
@@ -22,7 +22,9 @@ class CommonLine extends StatelessWidget {
       margin: margin ?? EdgeInsets.symmetric(vertical: Dimens.d12.responsive()),
       height: thickness,
       width: double.infinity,
-      child: CustomPaint(painter: CustomLinePainter(color: color, thickness: thickness)),
+      child: CustomPaint(
+        painter: CustomLinePainter(color: color, thickness: thickness),
+      ),
     );
   }
 }

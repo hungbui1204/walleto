@@ -74,7 +74,6 @@ class _EmailForm extends StatelessWidget {
                     width: Dimens.d24.responsive(),
                     height: Dimens.d24.responsive(),
                   ),
-                  prefixBackgroundColor: secondaryShadeColor,
                   hintText: S.current.hintEmail,
                   controller: emailSignUpController,
                   onChanged: (email) {

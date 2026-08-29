@@ -5,7 +5,10 @@ import 'package:walleto/shared/shared.dart';
 import 'package:walleto/ui/ui.dart';
 
 class SignUpConfirmOtpStepWidget extends StatelessWidget {
-  const SignUpConfirmOtpStepWidget({super.key, required this.otpSignUpController});
+  const SignUpConfirmOtpStepWidget({
+    super.key,
+    required this.otpSignUpController,
+  });
 
   final TextEditingController otpSignUpController;
 
@@ -16,14 +19,19 @@ class SignUpConfirmOtpStepWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           BlocBuilder<LoginBloc, LoginState>(
-            buildWhen: (previous, current) => previous.signUpEmail != current.signUpEmail,
+            buildWhen:
+                (previous, current) =>
+                    previous.signUpEmail != current.signUpEmail,
             builder: (context, state) {
               return Text.rich(
                 TextSpan(
                   text: S.current.aSixDigitCodeHasBeenSentToEmail,
                   style: AppTextStyles.s14wNormalBlack(),
                   children: [
-                    TextSpan(text: state.signUpEmail, style: AppTextStyles.s14wBoldBlack()),
+                    TextSpan(
+                      text: state.signUpEmail,
+                      style: AppTextStyles.s14wBoldBlack(),
+                    ),
                   ],
                 ),
               );
@@ -36,7 +44,8 @@ class SignUpConfirmOtpStepWidget extends StatelessWidget {
             buildWhen: (previous, current) {
               return previous.isEnableConfirmOtpSignUpButton !=
                       current.isEnableConfirmOtpSignUpButton ||
-                  previous.remainingSecondsForReSendOtp != current.remainingSecondsForReSendOtp;
+                  previous.remainingSecondsForReSendOtp !=
+                      current.remainingSecondsForReSendOtp;
             },
             builder: (context, state) {
               return CommonButton(
@@ -45,7 +54,9 @@ class SignUpConfirmOtpStepWidget extends StatelessWidget {
                     state.isEnableConfirmOtpSignUpButton
                         ? () {
                           ViewUtils.hideKeyboard(context);
-                          context.read<LoginBloc>().add(const ConfirmOtpSignUpButtonPressed());
+                          context.read<LoginBloc>().add(
+                            const ConfirmOtpSignUpButtonPressed(),
+                          );
                         }
                         : null,
               );
@@ -54,15 +65,18 @@ class SignUpConfirmOtpStepWidget extends StatelessWidget {
           SizedBox(height: Dimens.d10.responsive()),
           BlocBuilder<LoginBloc, LoginState>(
             buildWhen: (previous, current) {
-              return previous.remainingSecondsForReSendOtp != current.remainingSecondsForReSendOtp;
+              return previous.remainingSecondsForReSendOtp !=
+                  current.remainingSecondsForReSendOtp;
             },
             builder: (context, state) {
               return ButtonWithSecondCounting(
                 text: S.current.resendCode,
                 count: state.remainingSecondsForReSendOtp,
-                color: secondaryColor,
+                color: primaryShadeColor,
                 onTap: () {
-                  context.read<LoginBloc>().add(const SignUpResendOtpButtonPressed());
+                  context.read<LoginBloc>().add(
+                    const SignUpResendOtpButtonPressed(),
+                  );
                 },
               );
             },
@@ -85,7 +99,8 @@ class _OtpForm extends StatelessWidget {
       children: [
         BlocBuilder<LoginBloc, LoginState>(
           buildWhen: (previous, current) {
-            return previous.otp != current.otp || previous.otpError != current.otpError;
+            return previous.otp != current.otp ||
+                previous.otpError != current.otpError;
           },
           builder: (context, state) {
             return Column(
@@ -102,13 +117,18 @@ class _OtpForm extends StatelessWidget {
                   hintText: S.current.hintOtp,
                   controller: otpSignUpController,
                   onChanged: (otp) {
-                    context.read<LoginBloc>().add(SignUpOtpInputChanged(otp: otp));
+                    context.read<LoginBloc>().add(
+                      SignUpOtpInputChanged(otp: otp),
+                    );
                   },
                 ),
                 if (state.otpError.isNotEmpty)
                   Padding(
                     padding: EdgeInsets.only(top: Dimens.d8.responsive()),
-                    child: Text(state.otpError, style: AppTextStyles.s14wNormalRed()),
+                    child: Text(
+                      state.otpError,
+                      style: AppTextStyles.s14wNormalRed(),
+                    ),
                   ),
               ],
             );

@@ -8,16 +8,23 @@ import 'package:walleto/resources/resources.dart';
 class AppTextStyles {
   AppTextStyles._();
 
-  static const _defaultLetterSpacing = 0.05;
+  static const _defaultLetterSpacing = 0.0;
 
-  static const _baseTextStyle = TextStyle(height: 1.5, letterSpacing: _defaultLetterSpacing);
+  static const _baseTextStyle = TextStyle(
+    height: 1.45,
+    letterSpacing: _defaultLetterSpacing,
+    fontFamily: FontFamily.dMSans,
+  );
 
   static TextStyle s6wNormalBlack({double? tablet, double? ultraTablet}) {
     return _baseTextStyle.merge(
       TextStyle(
         color: blackColor,
         fontWeight: FontWeight.normal,
-        fontSize: Dimens.d6.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d6.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
@@ -27,7 +34,10 @@ class AppTextStyles {
       TextStyle(
         color: blackColor,
         fontWeight: FontWeight.bold,
-        fontSize: Dimens.d8.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d8.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
@@ -37,7 +47,10 @@ class AppTextStyles {
       TextStyle(
         color: whiteColor,
         fontWeight: FontWeight.normal,
-        fontSize: Dimens.d10.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d10.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
@@ -47,7 +60,10 @@ class AppTextStyles {
       TextStyle(
         color: blackColor,
         fontWeight: FontWeight.normal,
-        fontSize: Dimens.d10.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d10.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
@@ -57,7 +73,10 @@ class AppTextStyles {
       TextStyle(
         color: redColor,
         fontWeight: FontWeight.normal,
-        fontSize: Dimens.d10.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d10.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
@@ -67,7 +86,10 @@ class AppTextStyles {
       TextStyle(
         color: greenColor,
         fontWeight: FontWeight.normal,
-        fontSize: Dimens.d10.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d10.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
@@ -77,7 +99,10 @@ class AppTextStyles {
       TextStyle(
         color: darkGreyColor,
         fontWeight: FontWeight.normal,
-        fontSize: Dimens.d10.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d10.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
@@ -87,7 +112,10 @@ class AppTextStyles {
       TextStyle(
         color: whiteColor,
         fontWeight: FontWeight.bold,
-        fontSize: Dimens.d10.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d10.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
@@ -97,7 +125,10 @@ class AppTextStyles {
       TextStyle(
         color: blackColor,
         fontWeight: FontWeight.bold,
-        fontSize: Dimens.d10.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d10.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
@@ -105,9 +136,12 @@ class AppTextStyles {
   static TextStyle s10wBoldGrey({double? tablet, double? ultraTablet}) {
     return _baseTextStyle.merge(
       TextStyle(
-        color: greyColor,
+        color: darkGreyColor,
         fontWeight: FontWeight.bold,
-        fontSize: Dimens.d10.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d10.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
@@ -117,7 +151,10 @@ class AppTextStyles {
       TextStyle(
         color: blackColor,
         fontWeight: FontWeight.normal,
-        fontSize: Dimens.d12.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d12.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
@@ -127,7 +164,10 @@ class AppTextStyles {
       TextStyle(
         color: whiteColor,
         fontWeight: FontWeight.normal,
-        fontSize: Dimens.d12.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d12.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
@@ -137,17 +177,26 @@ class AppTextStyles {
       TextStyle(
         color: whiteColor,
         fontWeight: FontWeight.bold,
-        fontSize: Dimens.d12.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d12.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
 
-  static TextStyle s12wNormalBlackUnderline({double? tablet, double? ultraTablet}) {
+  static TextStyle s12wNormalBlackUnderline({
+    double? tablet,
+    double? ultraTablet,
+  }) {
     return _baseTextStyle.merge(
       TextStyle(
         color: blackColor,
         fontWeight: FontWeight.normal,
-        fontSize: Dimens.d12.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d12.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
         decoration: TextDecoration.underline,
       ),
     );
@@ -156,9 +205,12 @@ class AppTextStyles {
   static TextStyle s12wNormalGrey({double? tablet, double? ultraTablet}) {
     return _baseTextStyle.merge(
       TextStyle(
-        color: greyColor,
+        color: darkGreyColor,
         fontWeight: FontWeight.normal,
-        fontSize: Dimens.d12.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d12.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
@@ -168,19 +220,28 @@ class AppTextStyles {
       TextStyle(
         color: blackColor,
         fontWeight: FontWeight.normal,
-        fontSize: Dimens.d13.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d13.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
 
-  static TextStyle s13wUnderlineItalicBlack({double? tablet, double? ultraTablet}) {
+  static TextStyle s13wUnderlineItalicBlack({
+    double? tablet,
+    double? ultraTablet,
+  }) {
     return _baseTextStyle.merge(
       TextStyle(
         color: blackColor,
         fontWeight: FontWeight.normal,
         fontStyle: FontStyle.italic,
         decoration: TextDecoration.underline,
-        fontSize: Dimens.d13.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d13.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
@@ -190,7 +251,10 @@ class AppTextStyles {
       TextStyle(
         color: whiteColor,
         fontWeight: FontWeight.normal,
-        fontSize: Dimens.d13.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d13.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
@@ -200,7 +264,10 @@ class AppTextStyles {
       TextStyle(
         color: whiteColor,
         fontWeight: FontWeight.bold,
-        fontSize: Dimens.d13.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d13.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
@@ -210,7 +277,10 @@ class AppTextStyles {
       TextStyle(
         color: blackColor,
         fontWeight: FontWeight.bold,
-        fontSize: Dimens.d13.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d13.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
@@ -218,9 +288,12 @@ class AppTextStyles {
   static TextStyle s13wBoldGrey({double? tablet, double? ultraTablet}) {
     return _baseTextStyle.merge(
       TextStyle(
-        color: greyColor,
+        color: darkGreyColor,
         fontWeight: FontWeight.bold,
-        fontSize: Dimens.d13.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d13.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
@@ -230,7 +303,10 @@ class AppTextStyles {
       TextStyle(
         color: navyColor,
         fontWeight: FontWeight.normal,
-        fontSize: Dimens.d13.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d13.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
@@ -240,7 +316,10 @@ class AppTextStyles {
       TextStyle(
         color: alertColor,
         fontWeight: FontWeight.normal,
-        fontSize: Dimens.d13.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d13.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
@@ -248,9 +327,12 @@ class AppTextStyles {
   static TextStyle s13wNormalGrey({double? tablet, double? ultraTablet}) {
     return _baseTextStyle.merge(
       TextStyle(
-        color: greyColor,
+        color: darkGreyColor,
         fontWeight: FontWeight.normal,
-        fontSize: Dimens.d13.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d13.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
@@ -260,7 +342,10 @@ class AppTextStyles {
       TextStyle(
         color: whiteColor,
         fontWeight: FontWeight.normal,
-        fontSize: Dimens.d14.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d14.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
@@ -270,7 +355,10 @@ class AppTextStyles {
       TextStyle(
         color: blackColor,
         fontWeight: FontWeight.normal,
-        fontSize: Dimens.d14.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d14.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
@@ -278,33 +366,48 @@ class AppTextStyles {
   static TextStyle s14wNormalGrey({double? tablet, double? ultraTablet}) {
     return _baseTextStyle.merge(
       TextStyle(
-        color: backgroundDisabled,
+        color: darkGreyColor,
         fontWeight: FontWeight.normal,
-        fontSize: Dimens.d14.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d14.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
 
-  static TextStyle s14wNormalUnderlinePrimary({double? tablet, double? ultraTablet}) {
+  static TextStyle s14wNormalUnderlinePrimary({
+    double? tablet,
+    double? ultraTablet,
+  }) {
     return _baseTextStyle.merge(
       TextStyle(
         color: primaryColor,
         fontWeight: FontWeight.normal,
         decoration: TextDecoration.underline,
         decorationColor: primaryColor,
-        fontSize: Dimens.d14.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d14.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
 
-  static TextStyle s14wNormalUnderlineBlack({double? tablet, double? ultraTablet}) {
+  static TextStyle s14wNormalUnderlineBlack({
+    double? tablet,
+    double? ultraTablet,
+  }) {
     return _baseTextStyle.merge(
       TextStyle(
         color: blackColor,
         fontWeight: FontWeight.normal,
         decoration: TextDecoration.underline,
         decorationColor: blackColor,
-        fontSize: Dimens.d14.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d14.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
@@ -312,10 +415,13 @@ class AppTextStyles {
   static TextStyle s14wNormalItalicGrey({double? tablet, double? ultraTablet}) {
     return _baseTextStyle.merge(
       TextStyle(
-        color: backgroundDisabled,
+        color: darkGreyColor,
         fontWeight: FontWeight.normal,
         fontStyle: FontStyle.italic,
-        fontSize: Dimens.d14.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d14.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
@@ -325,7 +431,10 @@ class AppTextStyles {
       TextStyle(
         color: redColor,
         fontWeight: FontWeight.normal,
-        fontSize: Dimens.d14.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d14.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
@@ -335,17 +444,26 @@ class AppTextStyles {
       TextStyle(
         color: greenColor,
         fontWeight: FontWeight.normal,
-        fontSize: Dimens.d14.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d14.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
 
-  static TextStyle s14wNormalBlackUnderline({double? tablet, double? ultraTablet}) {
+  static TextStyle s14wNormalBlackUnderline({
+    double? tablet,
+    double? ultraTablet,
+  }) {
     return _baseTextStyle.merge(
       TextStyle(
         color: blackColor,
         fontWeight: FontWeight.normal,
-        fontSize: Dimens.d14.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d14.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
         decoration: TextDecoration.underline,
       ),
     );
@@ -356,7 +474,10 @@ class AppTextStyles {
       TextStyle(
         color: whiteColor,
         fontWeight: FontWeight.bold,
-        fontSize: Dimens.d14.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d14.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
@@ -366,7 +487,10 @@ class AppTextStyles {
       TextStyle(
         color: blackColor,
         fontWeight: FontWeight.bold,
-        fontSize: Dimens.d14.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d14.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
@@ -374,9 +498,12 @@ class AppTextStyles {
   static TextStyle s14wBoldGrey({double? tablet, double? ultraTablet}) {
     return _baseTextStyle.merge(
       TextStyle(
-        color: greyColor,
+        color: darkGreyColor,
         fontWeight: FontWeight.bold,
-        fontSize: Dimens.d14.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d14.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
@@ -386,7 +513,10 @@ class AppTextStyles {
       TextStyle(
         color: darkGreyColor,
         fontWeight: FontWeight.bold,
-        fontSize: Dimens.d14.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d14.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
@@ -396,7 +526,10 @@ class AppTextStyles {
       TextStyle(
         color: alertColor,
         fontWeight: FontWeight.bold,
-        fontSize: Dimens.d14.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d14.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
@@ -406,7 +539,10 @@ class AppTextStyles {
       TextStyle(
         color: blackColor,
         fontWeight: FontWeight.normal,
-        fontSize: Dimens.d15.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d15.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
@@ -416,7 +552,10 @@ class AppTextStyles {
       TextStyle(
         color: blackColor,
         fontWeight: FontWeight.bold,
-        fontSize: Dimens.d15.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d15.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
@@ -424,9 +563,12 @@ class AppTextStyles {
   static TextStyle s15wNormalGrey({double? tablet, double? ultraTablet}) {
     return _baseTextStyle.merge(
       TextStyle(
-        color: backgroundDisabled,
+        color: darkGreyColor,
         fontWeight: FontWeight.normal,
-        fontSize: Dimens.d15.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d15.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
@@ -436,7 +578,10 @@ class AppTextStyles {
       TextStyle(
         color: whiteColor,
         fontWeight: FontWeight.normal,
-        fontSize: Dimens.d16.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d16.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
@@ -446,7 +591,10 @@ class AppTextStyles {
       TextStyle(
         color: blackColor,
         fontWeight: FontWeight.normal,
-        fontSize: Dimens.d16.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d16.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
@@ -454,9 +602,12 @@ class AppTextStyles {
   static TextStyle s16wNormalGrey({double? tablet, double? ultraTablet}) {
     return _baseTextStyle.merge(
       TextStyle(
-        color: backgroundDisabled,
+        color: darkGreyColor,
         fontWeight: FontWeight.normal,
-        fontSize: Dimens.d16.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d16.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
@@ -466,7 +617,10 @@ class AppTextStyles {
       TextStyle(
         color: whiteColor,
         fontWeight: FontWeight.bold,
-        fontSize: Dimens.d16.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d16.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
@@ -476,7 +630,10 @@ class AppTextStyles {
       TextStyle(
         color: blackColor,
         fontWeight: FontWeight.bold,
-        fontSize: Dimens.d16.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d16.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
@@ -486,7 +643,10 @@ class AppTextStyles {
       TextStyle(
         color: primaryColor,
         fontWeight: FontWeight.bold,
-        fontSize: Dimens.d16.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d16.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
@@ -494,9 +654,12 @@ class AppTextStyles {
   static TextStyle s16wBoldGrey({double? tablet, double? ultraTablet}) {
     return _baseTextStyle.merge(
       TextStyle(
-        color: greyColor,
+        color: darkGreyColor,
         fontWeight: FontWeight.bold,
-        fontSize: Dimens.d16.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d16.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
@@ -506,7 +669,10 @@ class AppTextStyles {
       TextStyle(
         color: alertColor,
         fontWeight: FontWeight.normal,
-        fontSize: Dimens.d16.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d16.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
@@ -516,7 +682,10 @@ class AppTextStyles {
       TextStyle(
         color: navyColor,
         fontWeight: FontWeight.normal,
-        fontSize: Dimens.d16.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d16.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
         decoration: TextDecoration.underline,
       ),
     );
@@ -527,7 +696,10 @@ class AppTextStyles {
       TextStyle(
         color: greenColor,
         fontWeight: FontWeight.normal,
-        fontSize: Dimens.d16.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d16.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
@@ -537,7 +709,10 @@ class AppTextStyles {
       TextStyle(
         color: redColor,
         fontWeight: FontWeight.normal,
-        fontSize: Dimens.d16.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d16.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
@@ -547,7 +722,10 @@ class AppTextStyles {
       TextStyle(
         color: alertColor,
         fontWeight: FontWeight.bold,
-        fontSize: Dimens.d16.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d16.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
@@ -557,7 +735,10 @@ class AppTextStyles {
       TextStyle(
         color: blackColor,
         fontWeight: FontWeight.normal,
-        fontSize: Dimens.d18.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d18.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
@@ -565,9 +746,12 @@ class AppTextStyles {
   static TextStyle s18wNormalGrey({double? tablet, double? ultraTablet}) {
     return _baseTextStyle.merge(
       TextStyle(
-        color: backgroundDisabled,
+        color: darkGreyColor,
         fontWeight: FontWeight.normal,
-        fontSize: Dimens.d18.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d18.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
@@ -577,7 +761,10 @@ class AppTextStyles {
       TextStyle(
         color: blackColor,
         fontWeight: FontWeight.bold,
-        fontSize: Dimens.d18.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d18.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
@@ -587,7 +774,10 @@ class AppTextStyles {
       TextStyle(
         color: blackColor,
         fontWeight: FontWeight.normal,
-        fontSize: Dimens.d20.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d20.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
@@ -597,7 +787,10 @@ class AppTextStyles {
       TextStyle(
         color: blackColor,
         fontWeight: FontWeight.bold,
-        fontSize: Dimens.d20.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d20.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
@@ -607,7 +800,10 @@ class AppTextStyles {
       TextStyle(
         color: alertColor,
         fontWeight: FontWeight.bold,
-        fontSize: Dimens.d20.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d20.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
@@ -617,7 +813,10 @@ class AppTextStyles {
       TextStyle(
         color: blackColor,
         fontWeight: FontWeight.normal,
-        fontSize: Dimens.d28.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d28.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
@@ -627,7 +826,10 @@ class AppTextStyles {
       TextStyle(
         color: greenColor,
         fontWeight: FontWeight.normal,
-        fontSize: Dimens.d28.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d28.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
@@ -637,7 +839,10 @@ class AppTextStyles {
       TextStyle(
         color: redColor,
         fontWeight: FontWeight.normal,
-        fontSize: Dimens.d28.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d28.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
@@ -645,9 +850,12 @@ class AppTextStyles {
   static TextStyle s28wBoldGrey({double? tablet, double? ultraTablet}) {
     return _baseTextStyle.merge(
       TextStyle(
-        color: backgroundDisabled,
+        color: darkGreyColor,
         fontWeight: FontWeight.bold,
-        fontSize: Dimens.d28.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d28.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }
@@ -657,7 +865,10 @@ class AppTextStyles {
       TextStyle(
         color: blackColor,
         fontWeight: FontWeight.bold,
-        fontSize: Dimens.d28.responsive(tablet: tablet, ultraTablet: ultraTablet),
+        fontSize: Dimens.d28.responsive(
+          tablet: tablet,
+          ultraTablet: ultraTablet,
+        ),
       ),
     );
   }

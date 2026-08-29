@@ -26,43 +26,47 @@ class _AccountViewState extends BasePageState<AccountView, AccountBloc> {
   Widget buildPage(BuildContext context) {
     return Scaffold(
       appBar: CommonAppBar(title: S.current.account),
-      body: Padding(
-        padding: EdgeInsets.only(top: Dimens.d30.responsive()),
-        child: Stack(
-          alignment: Alignment.topCenter,
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: Dimens.d16.responsive()),
-              child: Column(
-                children: [
-                  SizedBox(height: Dimens.d40.responsive()),
-                  const _AccountInfoWidget(),
-                  SizedBox(height: Dimens.d20.responsive()),
-                  const _UtilitiesWidget(),
-                  SizedBox(height: Dimens.d20.responsive()),
-                  const _SupportiveWidget(),
-                  SizedBox(height: Dimens.d20.responsive()),
-                  CommonButton(
-                    text: S.current.signOut,
-                    backgroundColor: redColor,
-                    textColor: whiteColor,
-                    onTap: () {
-                      getIt.get<AppNavigator>().showDialog(
-                        AppPopupInfo.confirm(
-                          message: S.current.areYouSureYouWantToSignOut,
-                          showCancel: true,
-                          onPressed: Func0(() {
-                            appBloc.add(const SignOutButtonPressed());
-                          }),
-                        ),
-                      );
-                    },
-                  ),
-                ],
+      body: NoirScaffoldBody(
+        child: Padding(
+          padding: EdgeInsets.only(top: Dimens.d30.responsive()),
+          child: Stack(
+            alignment: Alignment.topCenter,
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: Dimens.d16.responsive(),
+                ),
+                child: Column(
+                  children: [
+                    SizedBox(height: Dimens.d40.responsive()),
+                    const _AccountInfoWidget(),
+                    SizedBox(height: Dimens.d20.responsive()),
+                    const _UtilitiesWidget(),
+                    SizedBox(height: Dimens.d20.responsive()),
+                    const _SupportiveWidget(),
+                    SizedBox(height: Dimens.d20.responsive()),
+                    CommonButton(
+                      text: S.current.signOut,
+                      backgroundColor: surfaceColor,
+                      textColor: redColor,
+                      onTap: () {
+                        getIt.get<AppNavigator>().showDialog(
+                          AppPopupInfo.confirm(
+                            message: S.current.areYouSureYouWantToSignOut,
+                            showCancel: true,
+                            onPressed: Func0(() {
+                              appBloc.add(const SignOutButtonPressed());
+                            }),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const _UserCircleAvatarWidget(),
-          ],
+              const _UserCircleAvatarWidget(),
+            ],
+          ),
         ),
       ),
     );
@@ -75,7 +79,9 @@ class _UserCircleAvatarWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AccountBloc, AccountState>(
-      buildWhen: (previous, current) => previous.user.avatarUrl != current.user.avatarUrl,
+      buildWhen:
+          (previous, current) =>
+              previous.user.avatarUrl != current.user.avatarUrl,
       builder: (context, state) {
         return GestureDetector(
           behavior: HitTestBehavior.translucent,
@@ -107,19 +113,28 @@ class _AccountInfoWidget extends StatelessWidget {
         children: [
           SizedBox(height: Dimens.d40.responsive()),
           BlocBuilder<AccountBloc, AccountState>(
-            buildWhen: (previous, current) => previous.user.fullName != current.user.fullName,
+            buildWhen:
+                (previous, current) =>
+                    previous.user.fullName != current.user.fullName,
             builder: (context, state) {
-              return Text(state.user.fullName, style: AppTextStyles.s18wBoldBlack());
+              return Text(
+                state.user.fullName,
+                style: AppTextStyles.s18wBoldBlack(),
+              );
             },
           ),
           BlocBuilder<AccountBloc, AccountState>(
-            buildWhen: (previous, current) => previous.user.email != current.user.email,
+            buildWhen:
+                (previous, current) =>
+                    previous.user.email != current.user.email,
             builder: (context, state) {
-              return Text(state.user.email, style: AppTextStyles.s14wNormalBlack());
+              return Text(
+                state.user.email,
+                style: AppTextStyles.s14wNormalBlack(),
+              );
             },
           ),
           CommonLine(
-            color: greyColor,
             margin: EdgeInsets.only(
               top: Dimens.d10.responsive(),
               left: Dimens.d16.responsive(),
@@ -128,13 +143,15 @@ class _AccountInfoWidget extends StatelessWidget {
           ),
           CommonForwardButton(
             title: S.current.changePassword,
+            showBorder: false,
+            color: surfaceColor,
             leadingIcon: Assets.icons.locker.svg(
               width: Dimens.d24.responsive(),
               height: Dimens.d24.responsive(),
             ),
             borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(Dimens.d10.responsive()),
-              bottomRight: Radius.circular(Dimens.d10.responsive()),
+              bottomLeft: Radius.circular(Dimens.d16.responsive()),
+              bottomRight: Radius.circular(Dimens.d16.responsive()),
             ),
             onTap: () {
               //TODO: Implement change password functionality
@@ -156,13 +173,15 @@ class _UtilitiesWidget extends StatelessWidget {
         children: [
           CommonForwardButton(
             title: S.current.myWallets,
+            showBorder: false,
+            color: surfaceColor,
             leadingIcon: Assets.icons.walletImagePlaceHolder.svg(
               width: Dimens.d24.responsive(),
               height: Dimens.d24.responsive(),
             ),
             borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(Dimens.d10.responsive()),
-              topRight: Radius.circular(Dimens.d10.responsive()),
+              topLeft: Radius.circular(Dimens.d16.responsive()),
+              topRight: Radius.circular(Dimens.d16.responsive()),
             ),
             onTap: () {
               getIt.get<AppNavigator>().push(const AppRouteInfo.wallets());
@@ -170,17 +189,18 @@ class _UtilitiesWidget extends StatelessWidget {
           ),
           CommonLine(
             margin: EdgeInsets.symmetric(horizontal: Dimens.d16.responsive()),
-            color: greyColor,
           ),
           CommonForwardButton(
             title: S.current.categories,
+            showBorder: false,
+            color: surfaceColor,
             leadingIcon: Assets.icons.categoryImagePlaceHolder.svg(
               width: Dimens.d24.responsive(),
               height: Dimens.d24.responsive(),
             ),
             borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(Dimens.d10.responsive()),
-              bottomRight: Radius.circular(Dimens.d10.responsive()),
+              bottomLeft: Radius.circular(Dimens.d16.responsive()),
+              bottomRight: Radius.circular(Dimens.d16.responsive()),
             ),
             onTap: () {
               getIt.get<AppNavigator>().push(const AppRouteInfo.categories());
@@ -202,10 +222,16 @@ class _SupportiveWidget extends StatelessWidget {
         children: [
           CommonForwardButton(
             title: S.current.settings,
-            leadingIcon: Icon(Icons.settings, size: Dimens.d24.responsive(), color: blackColor),
+            showBorder: false,
+            color: surfaceColor,
+            leadingIcon: Icon(
+              Icons.settings,
+              size: Dimens.d24.responsive(),
+              color: darkGreyColor,
+            ),
             borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(Dimens.d10.responsive()),
-              topRight: Radius.circular(Dimens.d10.responsive()),
+              topLeft: Radius.circular(Dimens.d16.responsive()),
+              topRight: Radius.circular(Dimens.d16.responsive()),
             ),
             onTap: () {
               // TODO: Implement settings functionality
@@ -213,14 +239,15 @@ class _SupportiveWidget extends StatelessWidget {
           ),
           CommonLine(
             margin: EdgeInsets.symmetric(horizontal: Dimens.d16.responsive()),
-            color: greyColor,
           ),
           CommonForwardButton(
             title: S.current.help,
+            showBorder: false,
+            color: surfaceColor,
             leadingIcon: Icon(
               Icons.help_outline_rounded,
               size: Dimens.d24.responsive(),
-              color: blackColor,
+              color: darkGreyColor,
             ),
             onTap: () {
               // TODO: Implement help functionality
@@ -228,18 +255,19 @@ class _SupportiveWidget extends StatelessWidget {
           ),
           CommonLine(
             margin: EdgeInsets.symmetric(horizontal: Dimens.d16.responsive()),
-            color: greyColor,
           ),
           CommonForwardButton(
             title: S.current.about,
+            showBorder: false,
+            color: surfaceColor,
             leadingIcon: Icon(
               Icons.info_outline_rounded,
               size: Dimens.d24.responsive(),
-              color: blackColor,
+              color: darkGreyColor,
             ),
             borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(Dimens.d10.responsive()),
-              bottomRight: Radius.circular(Dimens.d10.responsive()),
+              bottomLeft: Radius.circular(Dimens.d16.responsive()),
+              bottomRight: Radius.circular(Dimens.d16.responsive()),
             ),
             onTap: () {
               // TODO: Implement about functionality

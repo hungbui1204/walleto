@@ -20,11 +20,8 @@ class CommonContainer2 extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: padding,
-      decoration: BoxDecoration(
-        color: color ?? primaryShade1Color,
-        borderRadius: BorderRadius.circular(borderRadius ?? Dimens.d10.responsive()),
-        border: Border.all(),
-      ),
+      decoration: AppDecorations.glassPanel(color: color, radius: borderRadius),
+      clipBehavior: Clip.antiAlias,
       child: child,
     );
   }

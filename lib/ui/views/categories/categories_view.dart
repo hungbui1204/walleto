@@ -28,128 +28,135 @@ class _CategoriesViewState extends BasePageState<CategoriesView, CategoriesBloc>
   Widget buildPage(BuildContext context) {
     return Scaffold(
       appBar: CommonAppBar(title: S.current.categories),
-      body: Padding(
-        padding: EdgeInsets.symmetric(
-          horizontal: Dimens.d16.responsive(),
-          vertical: Dimens.d16.responsive(),
-        ),
-        child: Column(
-          children: [
-            TabBar(
-              controller: _tabController,
-              tabs: [
-                Padding(
-                  padding: EdgeInsets.all(Dimens.d12.responsive()),
-                  child: Text(
-                    S.current.expense,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.all(Dimens.d12.responsive()),
-                  child: Text(
-                    S.current.income,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: Dimens.d20.responsive()),
-            BlocBuilder<CategoriesBloc, CategoriesState>(
-              buildWhen: (previous, current) {
-                return previous.parentIncomeCategories != current.parentIncomeCategories ||
-                    previous.parentExpenseCategories != current.parentExpenseCategories;
-              },
-              builder: (context, state) {
-                return CommonButton(
-                  text: S.current.newCategory,
-                  backgroundColor: secondaryColor,
-                  onTap: () {
-                    navigator.showDialog(
-                      AppPopupInfo.createCategory(() {
-                        bloc.add(const CategoriesViewInitiated());
-                      }),
-                    );
-                  },
-                  icon: Icon(
-                    Icons.add_circle_outline,
-                    size: Dimens.d20.responsive(),
-                    color: blackColor,
-                  ),
-                  borderRadius: BorderRadius.all(Radius.circular(Dimens.d16.responsive())),
-                );
-              },
-            ),
-            SizedBox(height: Dimens.d20.responsive()),
-            Expanded(
-              child: TabBarView(
+      body: NoirScaffoldBody(
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: Dimens.d16.responsive(),
+            vertical: Dimens.d16.responsive(),
+          ),
+          child: Column(
+            children: [
+              TabBar(
                 controller: _tabController,
-                children: [
-                  BlocBuilder<CategoriesBloc, CategoriesState>(
-                    buildWhen: (previous, current) {
-                      return previous.parentExpenseCategories != current.parentExpenseCategories;
-                    },
-                    builder: (context, state) {
-                      return Padding(
-                        padding: EdgeInsets.symmetric(horizontal: Dimens.d8.responsive()),
-                        child: ListView.separated(
-                          padding: EdgeInsets.zero,
-                          itemCount: state.parentExpenseCategories.length,
-                          shrinkWrap: true,
-                          itemBuilder: (context, index) {
-                            return SingleChildScrollView(
-                              child: CategoryTreeWidget(
-                                parentCategory: state.parentExpenseCategories[index],
-                                onCategorySelected: (category) {
-                                  // TODO: Navigate to category edit page
-                                },
-                                onParentCategorySelected: (category) {
-                                  // TODO: Navigate to category edit page
-                                },
-                              ),
-                            );
-                          },
-                          separatorBuilder: (context, index) {
-                            return SizedBox(height: Dimens.d20.responsive());
-                          },
-                        ),
-                      );
-                    },
+                tabs: [
+                  Padding(
+                    padding: EdgeInsets.all(Dimens.d12.responsive()),
+                    child: Text(S.current.expense),
                   ),
-                  BlocBuilder<CategoriesBloc, CategoriesState>(
-                    buildWhen: (previous, current) {
-                      return previous.parentIncomeCategories != current.parentIncomeCategories;
-                    },
-                    builder: (context, state) {
-                      return Padding(
-                        padding: EdgeInsets.symmetric(horizontal: Dimens.d8.responsive()),
-                        child: ListView.separated(
-                          itemCount: state.parentIncomeCategories.length,
-                          shrinkWrap: true,
-                          itemBuilder: (context, index) {
-                            return SingleChildScrollView(
-                              child: CategoryTreeWidget(
-                                parentCategory: state.parentIncomeCategories[index],
-                                onCategorySelected: (category) {
-                                  // TODO: Navigate to category edit page
-                                },
-                                onParentCategorySelected: (category) {
-                                  // TODO: Navigate to category edit page
-                                },
-                              ),
-                            );
-                          },
-                          separatorBuilder: (context, index) {
-                            return SizedBox(height: Dimens.d20.responsive());
-                          },
-                        ),
-                      );
-                    },
+                  Padding(
+                    padding: EdgeInsets.all(Dimens.d12.responsive()),
+                    child: Text(S.current.income),
                   ),
                 ],
               ),
-            ),
-          ],
+              SizedBox(height: Dimens.d20.responsive()),
+              BlocBuilder<CategoriesBloc, CategoriesState>(
+                buildWhen: (previous, current) {
+                  return previous.parentIncomeCategories !=
+                          current.parentIncomeCategories ||
+                      previous.parentExpenseCategories !=
+                          current.parentExpenseCategories;
+                },
+                builder: (context, state) {
+                  return CommonButton(
+                    text: S.current.newCategory,
+                    onTap: () {
+                      navigator.showDialog(
+                        AppPopupInfo.createCategory(() {
+                          bloc.add(const CategoriesViewInitiated());
+                        }),
+                      );
+                    },
+                    icon: Icon(
+                      Icons.add_circle_outline,
+                      size: Dimens.d20.responsive(),
+                      color: onPrimaryColor,
+                    ),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(Dimens.d16.responsive()),
+                    ),
+                  );
+                },
+              ),
+              SizedBox(height: Dimens.d20.responsive()),
+              Expanded(
+                child: TabBarView(
+                  controller: _tabController,
+                  children: [
+                    BlocBuilder<CategoriesBloc, CategoriesState>(
+                      buildWhen: (previous, current) {
+                        return previous.parentExpenseCategories !=
+                            current.parentExpenseCategories;
+                      },
+                      builder: (context, state) {
+                        return Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: Dimens.d8.responsive(),
+                          ),
+                          child: ListView.separated(
+                            padding: EdgeInsets.zero,
+                            itemCount: state.parentExpenseCategories.length,
+                            shrinkWrap: true,
+                            itemBuilder: (context, index) {
+                              return SingleChildScrollView(
+                                child: CategoryTreeWidget(
+                                  parentCategory:
+                                      state.parentExpenseCategories[index],
+                                  onCategorySelected: (category) {
+                                    // TODO: Navigate to category edit page
+                                  },
+                                  onParentCategorySelected: (category) {
+                                    // TODO: Navigate to category edit page
+                                  },
+                                ),
+                              );
+                            },
+                            separatorBuilder: (context, index) {
+                              return SizedBox(height: Dimens.d20.responsive());
+                            },
+                          ),
+                        );
+                      },
+                    ),
+                    BlocBuilder<CategoriesBloc, CategoriesState>(
+                      buildWhen: (previous, current) {
+                        return previous.parentIncomeCategories !=
+                            current.parentIncomeCategories;
+                      },
+                      builder: (context, state) {
+                        return Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: Dimens.d8.responsive(),
+                          ),
+                          child: ListView.separated(
+                            itemCount: state.parentIncomeCategories.length,
+                            shrinkWrap: true,
+                            itemBuilder: (context, index) {
+                              return SingleChildScrollView(
+                                child: CategoryTreeWidget(
+                                  parentCategory:
+                                      state.parentIncomeCategories[index],
+                                  onCategorySelected: (category) {
+                                    // TODO: Navigate to category edit page
+                                  },
+                                  onParentCategorySelected: (category) {
+                                    // TODO: Navigate to category edit page
+                                  },
+                                ),
+                              );
+                            },
+                            separatorBuilder: (context, index) {
+                              return SizedBox(height: Dimens.d20.responsive());
+                            },
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

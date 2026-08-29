@@ -22,12 +22,15 @@ class SignUpSigningUpStepWidget extends StatelessWidget {
           SizedBox(height: Dimens.d16.responsive()),
           _PasswordForm(signUpPasswordController: passwordSignUpController),
           SizedBox(height: Dimens.d16.responsive()),
-          _PasswordConfirmForm(signUpConfirmPasswordController: confirmPasswordSignUpController),
+          _PasswordConfirmForm(
+            signUpConfirmPasswordController: confirmPasswordSignUpController,
+          ),
           SizedBox(height: Dimens.d16.responsive()),
           const _AcceptTermCheckbox(),
           BlocBuilder<LoginBloc, LoginState>(
             buildWhen: (previous, current) {
-              return previous.isEnableSignUpButton != current.isEnableSignUpButton;
+              return previous.isEnableSignUpButton !=
+                  current.isEnableSignUpButton;
             },
             builder: (context, state) {
               return CommonButton(
@@ -35,7 +38,9 @@ class SignUpSigningUpStepWidget extends StatelessWidget {
                 onTap:
                     state.isEnableSignUpButton
                         ? () {
-                          context.read<LoginBloc>().add(const SignUpConfirmButtonPressed());
+                          context.read<LoginBloc>().add(
+                            const SignUpConfirmButtonPressed(),
+                          );
                         }
                         : null,
               );
@@ -71,16 +76,23 @@ class _EmailWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(S.current.yourConfirmedEmail, style: AppTextStyles.s14wBoldBlack()),
+        Text(
+          S.current.yourConfirmedEmail,
+          style: AppTextStyles.s14wBoldBlack(),
+        ),
         SizedBox(height: Dimens.d4.responsive()),
         BlocBuilder<LoginBloc, LoginState>(
-          buildWhen: (previous, current) => previous.signUpEmail != current.signUpEmail,
+          buildWhen:
+              (previous, current) =>
+                  previous.signUpEmail != current.signUpEmail,
           builder: (context, state) {
             return Container(
               decoration: BoxDecoration(
-                color: whiteColor,
-                border: Border.all(),
-                borderRadius: BorderRadius.all(Radius.circular(Dimens.d12.responsive())),
+                color: fieldFillColor,
+                border: Border.all(color: frameColor),
+                borderRadius: BorderRadius.all(
+                  Radius.circular(Dimens.d12.responsive()),
+                ),
               ),
               child: Row(
                 children: [
@@ -89,7 +101,9 @@ class _EmailWidget extends StatelessWidget {
                     padding: EdgeInsets.all(Dimens.d16.responsive()),
                     decoration: BoxDecoration(
                       color: primaryShadeColor,
-                      border: const Border(right: BorderSide()),
+                      border: const Border(
+                        right: BorderSide(color: frameColor),
+                      ),
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(Dimens.d12.responsive()),
                         bottomLeft: Radius.circular(Dimens.d12.responsive()),
@@ -139,7 +153,9 @@ class _PasswordForm extends StatelessWidget {
                   ),
                   hintText: S.current.hintPassword,
                   onChanged: (password) {
-                    context.read<LoginBloc>().add(SignUpPasswordInputChanged(password: password));
+                    context.read<LoginBloc>().add(
+                      SignUpPasswordInputChanged(password: password),
+                    );
                   },
                   controller: signUpPasswordController,
                   isPasswordField: true,
@@ -147,7 +163,10 @@ class _PasswordForm extends StatelessWidget {
                 if (state.signUpPasswordError.isNotEmpty)
                   Padding(
                     padding: EdgeInsets.only(top: Dimens.d8.responsive()),
-                    child: Text(state.signUpPasswordError, style: AppTextStyles.s14wNormalRed()),
+                    child: Text(
+                      state.signUpPasswordError,
+                      style: AppTextStyles.s14wNormalRed(),
+                    ),
                   ),
               ],
             );
@@ -172,8 +191,10 @@ class _PasswordConfirmForm extends StatelessWidget {
         SizedBox(height: Dimens.d4.responsive()),
         BlocBuilder<LoginBloc, LoginState>(
           buildWhen: (previous, current) {
-            return previous.signUpConfirmPassword != current.signUpConfirmPassword ||
-                previous.signUpConfirmPasswordError != current.signUpConfirmPasswordError;
+            return previous.signUpConfirmPassword !=
+                    current.signUpConfirmPassword ||
+                previous.signUpConfirmPasswordError !=
+                    current.signUpConfirmPasswordError;
           },
           builder: (context, state) {
             return Column(
@@ -187,7 +208,9 @@ class _PasswordConfirmForm extends StatelessWidget {
                   hintText: S.current.hintConfirmPassword,
                   onChanged: (password) {
                     context.read<LoginBloc>().add(
-                      SignUpConfirmPasswordInputChanged(confirmPassword: password),
+                      SignUpConfirmPasswordInputChanged(
+                        confirmPassword: password,
+                      ),
                     );
                   },
                   controller: signUpConfirmPasswordController,
@@ -224,7 +247,8 @@ class _AcceptTermCheckbox extends StatelessWidget {
         children: [
           BlocBuilder<LoginBloc, LoginState>(
             buildWhen: (previous, current) {
-              return previous.isCheckedAcceptTerms != current.isCheckedAcceptTerms;
+              return previous.isCheckedAcceptTerms !=
+                  current.isCheckedAcceptTerms;
             },
             builder: (context, state) {
               return Checkbox(
@@ -232,16 +256,22 @@ class _AcceptTermCheckbox extends StatelessWidget {
                 fillColor:
                     state.isCheckedAcceptTerms
                         ? WidgetStateProperty.all(primaryColor)
-                        : WidgetStateProperty.all(greyColor),
-                side: BorderSide.none,
+                        : WidgetStateProperty.all(fieldFillColor),
+                checkColor: onPrimaryColor,
+                side: const BorderSide(color: frameColor),
                 value: state.isCheckedAcceptTerms,
                 onChanged: (_) {
-                  context.read<LoginBloc>().add(const SignUpAcceptTermsCheckboxToggled());
+                  context.read<LoginBloc>().add(
+                    const SignUpAcceptTermsCheckboxToggled(),
+                  );
                 },
               );
             },
           ),
-          Text(S.current.acceptOurTerms, style: AppTextStyles.s12wNormalBlack()),
+          Text(
+            S.current.acceptOurTerms,
+            style: AppTextStyles.s12wNormalBlack(),
+          ),
         ],
       ),
     );

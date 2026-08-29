@@ -7,7 +7,7 @@ class CommonTextField extends StatefulWidget {
     super.key,
     this.onChanged,
     this.controller,
-    this.contentPadding = const EdgeInsets.symmetric(horizontal: 8),
+    this.contentPadding,
     this.isPasswordField = false,
     this.prefixIcon,
     this.hintText,
@@ -19,7 +19,7 @@ class CommonTextField extends StatefulWidget {
 
   final void Function(String)? onChanged;
   final TextEditingController? controller;
-  final EdgeInsetsGeometry contentPadding;
+  final EdgeInsetsGeometry? contentPadding;
   final bool isPasswordField;
   final SvgPicture? prefixIcon;
   final Color? prefixBackgroundColor;
@@ -35,6 +35,13 @@ class CommonTextField extends StatefulWidget {
 class _CommonTextFieldState extends State<CommonTextField> {
   bool isVisible = true;
 
+  OutlineInputBorder _border({Color color = glassHairlineColor}) {
+    return OutlineInputBorder(
+      borderRadius: BorderRadius.all(Radius.circular(Dimens.d16.responsive())),
+      borderSide: BorderSide(color: color),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return TextFormField(
@@ -45,44 +52,56 @@ class _CommonTextFieldState extends State<CommonTextField> {
       maxLines: widget.maxLines,
       maxLength: widget.maxLength,
       keyboardType: widget.keyboardType,
+      cursorColor: primaryColor,
       decoration: InputDecoration(
         counterText: '',
         hintText: widget.hintText,
-        contentPadding: widget.contentPadding,
+        hintStyle: AppTextStyles.s14wNormalGrey(),
+        contentPadding:
+            widget.contentPadding ??
+            EdgeInsets.symmetric(
+              horizontal: Dimens.d16.responsive(),
+              vertical: Dimens.d14.responsive(),
+            ),
         filled: true,
         fillColor: fieldFillColor,
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(Dimens.d12.responsive())),
-        ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(Dimens.d12.responsive())),
-        ),
+        enabledBorder: _border(),
+        focusedBorder: _border(color: primaryColor),
+        border: _border(),
+        errorBorder: _border(color: fieldErrorColor),
+        focusedErrorBorder: _border(color: fieldErrorColor),
         prefixIcon:
             widget.prefixIcon != null
-                ? Container(
-                  margin: EdgeInsets.only(right: Dimens.d8.responsive()),
-                  padding: EdgeInsets.all(Dimens.d16.responsive()),
-                  decoration: BoxDecoration(
-                    color: widget.prefixBackgroundColor ?? primaryShadeColor,
-                    border: Border.all(),
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(Dimens.d12.responsive()),
-                      bottomLeft: Radius.circular(Dimens.d12.responsive()),
-                    ),
+                ? Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: Dimens.d12.responsive(),
                   ),
-                  child: widget.prefixIcon,
+                  child: ColorFiltered(
+                    colorFilter: ColorFilter.mode(
+                      widget.prefixBackgroundColor ?? darkGreyColor,
+                      BlendMode.srcIn,
+                    ),
+                    child: widget.prefixIcon,
+                  ),
                 )
                 : null,
+        prefixIconConstraints: BoxConstraints(
+          minWidth: Dimens.d44.responsive(),
+          minHeight: Dimens.d44.responsive(),
+        ),
         suffixIcon:
             widget.isPasswordField
-                ? GestureDetector(
-                  onTap:
-                      () => setState(() {
-                        isVisible = !isVisible;
-                      }),
-                  child: Icon(
-                    isVisible ? Icons.visibility : Icons.visibility_off,
-                    color: primaryShadeColor,
+                ? IconButton(
+                  onPressed: () {
+                    setState(() {
+                      isVisible = !isVisible;
+                    });
+                  },
+                  icon: Icon(
+                    isVisible
+                        ? Icons.visibility_outlined
+                        : Icons.visibility_off_outlined,
+                    color: darkGreyColor,
                   ),
                 )
                 : null,

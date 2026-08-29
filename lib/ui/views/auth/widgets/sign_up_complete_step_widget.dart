@@ -17,15 +17,26 @@ class SignUpCompleteStepWidget extends StatelessWidget {
         Container(
           alignment: Alignment.center,
           padding: EdgeInsets.all(Dimens.d16.responsive()),
-          decoration: const BoxDecoration(shape: BoxShape.circle, color: primaryColor),
-          child: Icon(Icons.check, color: whiteColor, size: Dimens.d48.responsive()),
+          decoration: const BoxDecoration(
+            shape: BoxShape.circle,
+            color: primaryColor,
+          ),
+          child: Icon(
+            Icons.check,
+            color: onPrimaryColor,
+            size: Dimens.d48.responsive(),
+          ),
         ),
         SizedBox(height: Dimens.d24.responsive()),
         BlocBuilder<LoginBloc, LoginState>(
-          buildWhen: (previous, current) => previous.signUpEmail != current.signUpEmail,
+          buildWhen:
+              (previous, current) =>
+                  previous.signUpEmail != current.signUpEmail,
           builder: (context, state) {
             return Text(
-              S.current.newAccountWithEmailIsCreatedSuccessfully(state.signUpEmail),
+              S.current.newAccountWithEmailIsCreatedSuccessfully(
+                state.signUpEmail,
+              ),
               style: AppTextStyles.s15wNormalBlack(),
             );
           },
@@ -38,7 +49,11 @@ class SignUpCompleteStepWidget extends StatelessWidget {
           },
           child: Row(
             children: [
-              Icon(Icons.arrow_back_rounded, size: Dimens.d56.responsive(), color: primaryColor),
+              Icon(
+                Icons.arrow_back_rounded,
+                size: Dimens.d56.responsive(),
+                color: primaryColor,
+              ),
               SizedBox(width: Dimens.d8.responsive()),
               Text(S.current.loginNow, style: AppTextStyles.s16wBoldBlack()),
             ],

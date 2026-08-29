@@ -23,7 +23,7 @@ class PopUpWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      backgroundColor: whiteColor,
+      backgroundColor: surfaceColor,
       iconPadding: EdgeInsets.symmetric(
         horizontal: Dimens.d24.responsive(),
         vertical: Dimens.d40.responsive(),
@@ -47,13 +47,20 @@ class PopUpWidget extends StatelessWidget {
                     horizontal: Dimens.d24.responsive(),
                     vertical: Dimens.d40.responsive(),
                   ).copyWith(top: 0),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Dimens.d8.responsive())),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(Dimens.d16.responsive()),
+        side: const BorderSide(color: glassHairlineColor),
+      ),
       icon: icon,
       content: SizedBox(
         width: context.sizeOf.width,
         child:
             message != null
-                ? Text(message!, style: AppTextStyles.s16wBoldBlack(), textAlign: TextAlign.center)
+                ? Text(
+                  message!,
+                  style: AppTextStyles.s16wBoldBlack(),
+                  textAlign: TextAlign.center,
+                )
                 : content,
       ),
       actions: [

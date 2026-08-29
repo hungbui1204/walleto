@@ -16,7 +16,14 @@ class _BudgetsViewState extends State<BudgetsView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CommonAppBar(title: S.current.budgets),
-      body: const Center(child: Text('Budgets!')),
+      body: NoirScaffoldBody(
+        child: Center(
+          child: CommonEmptyPanel(
+            icon: Icons.pie_chart_outline_rounded,
+            message: S.current.budgets,
+          ),
+        ),
+      ),
     );
   }
 }

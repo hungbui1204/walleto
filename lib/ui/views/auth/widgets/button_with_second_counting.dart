@@ -19,23 +19,31 @@ class ButtonWithSecondCounting extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isCounting = count != null && count! > 0;
+    final background = color ?? primaryColor;
+    final onColor =
+        background == primaryColor || background == secondaryColor
+            ? onPrimaryColor
+            : blackColor;
 
     return Stack(
       children: [
         CommonButton(
           text: text,
           onTap: isCounting ? null : onTap,
-          backgroundColor: color ?? primaryColor,
+          backgroundColor: background,
+          textColor: onColor,
         ),
         if (isCounting)
           Positioned.fill(
             child: Container(
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(Dimens.d30.responsive())),
-                color: blackColor.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.all(
+                  Radius.circular(Dimens.d16.responsive()),
+                ),
+                color: scaffoldBackgroundColor.withValues(alpha: 0.55),
               ),
               alignment: Alignment.center,
-              child: Text('$count', style: AppTextStyles.s16wBoldWhite()),
+              child: Text('$count', style: AppTextStyles.s16wBoldBlack()),
             ),
           ),
       ],

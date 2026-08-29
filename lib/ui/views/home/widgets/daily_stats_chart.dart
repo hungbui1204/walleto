@@ -1,8 +1,10 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:walleto/domain/domain.dart';
 import 'package:walleto/resources/resources.dart';
 import 'package:walleto/shared/shared.dart';
+import 'package:walleto/ui/ui.dart';
 
 class DailyStatsChart extends StatelessWidget {
   const DailyStatsChart({super.key, required this.stats});
@@ -11,6 +13,16 @@ class DailyStatsChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (stats.isEmpty) {
+      return AspectRatio(
+        aspectRatio: 1.4,
+        child: ChartEmptyPanel(
+          onRetry:
+              () => context.read<HomeBloc>().add(const HomeViewInitialized()),
+        ),
+      );
+    }
+
     return AspectRatio(
       aspectRatio: 1.4,
       child: BarChart(
@@ -28,7 +40,10 @@ class DailyStatsChart extends StatelessWidget {
                 getTitlesWidget: (value, meta) {
                   return SideTitleWidget(
                     meta: meta,
-                    child: Text(meta.formattedValue, style: AppTextStyles.s10wNormalBlack()),
+                    child: Text(
+                      meta.formattedValue,
+                      style: AppTextStyles.s10wNormalGrey(),
+                    ),
                   );
                 },
               ),
@@ -46,13 +61,17 @@ class DailyStatsChart extends StatelessWidget {
           gridData: FlGridData(
             drawVerticalLine: false,
             getDrawingHorizontalLine: (value) {
-              return const FlLine(color: greyColor, strokeWidth: 0.5, dashArray: [4, 3]);
+              return const FlLine(
+                color: frameColor,
+                strokeWidth: 0.5,
+                dashArray: [4, 3],
+              );
             },
           ),
           borderData: FlBorderData(
             border: const Border(
-              bottom: BorderSide(color: greyColor),
-              left: BorderSide(color: greyColor),
+              bottom: BorderSide(color: frameColor),
+              left: BorderSide(color: frameColor),
             ),
           ),
           groupsSpace: Dimens.d10.responsive(),
@@ -64,7 +83,9 @@ class DailyStatsChart extends StatelessWidget {
               ).copyWith(bottom: 0, top: Dimens.d4.responsive()),
               getTooltipItem: (group, groupIndex, rod, rodIndex) {
                 return BarTooltipItem(
-                  rod.toY.toStringWithFormat(NumberFormatConstants.amountFormat),
+                  rod.toY.toStringWithFormat(
+                    NumberFormatConstants.amountFormat,
+                  ),
                   rod.color == greenColor
                       ? AppTextStyles.s10wNormalGreen()
                       : AppTextStyles.s10wNormalRed(),
@@ -115,14 +136,20 @@ class DailyStatsChart extends StatelessWidget {
 
     return SideTitleWidget(
       meta: meta,
-      child: Text(day.toString(), style: AppTextStyles.s10wNormalBlack()),
+      child: Text(day.toString(), style: AppTextStyles.s10wNormalGrey()),
     );
   }
 
   // Calculate the maximum Y value for the chart based on the stats
   double _getMaxY() {
-    final maxIncome = stats.map((e) => e.totalIncome).fold(0.0, (a, b) => a > b ? a : b);
-    final maxExpense = stats.map((e) => e.totalExpense).fold(0.0, (a, b) => a > b ? a : b);
-    return (maxIncome > maxExpense ? maxIncome : maxExpense) * 1.2;
+    if (stats.isEmpty) return 1;
+    final maxIncome = stats
+        .map((e) => e.totalIncome)
+        .fold(0.0, (a, b) => a > b ? a : b);
+    final maxExpense = stats
+        .map((e) => e.totalExpense)
+        .fold(0.0, (a, b) => a > b ? a : b);
+    final peak = maxIncome > maxExpense ? maxIncome : maxExpense;
+    return peak <= 0 ? 1 : peak * 1.2;
   }
 }

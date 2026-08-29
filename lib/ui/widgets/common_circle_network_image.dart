@@ -27,7 +27,7 @@ class CommonCircleNetworkImage extends CommonShapeNetworkImage {
         decoration: BoxDecoration(
           color: backgroundColor,
           shape: BoxShape.circle,
-          border: Border.all(),
+          border: Border.all(color: glassHairlineColor),
         ),
         alignment: Alignment.center,
         child: imageWidget,

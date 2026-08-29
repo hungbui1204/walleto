@@ -14,7 +14,8 @@ class CreateCategoryPopup extends StatefulWidget {
   State<CreateCategoryPopup> createState() => _CreateCategoryPopupState();
 }
 
-class _CreateCategoryPopupState extends BasePageState<CreateCategoryPopup, CreateCategoryBloc> {
+class _CreateCategoryPopupState
+    extends BasePageState<CreateCategoryPopup, CreateCategoryBloc> {
   late final TextEditingController _categoryNameController;
 
   @override
@@ -37,15 +38,18 @@ class _CreateCategoryPopupState extends BasePageState<CreateCategoryPopup, Creat
         type: MaterialType.transparency,
         child: Center(
           child: Container(
-            constraints: BoxConstraints(maxHeight: context.mediaQuery.size.height * 0.7),
+            constraints: BoxConstraints(
+              maxHeight: context.mediaQuery.size.height * 0.7,
+            ),
             margin: EdgeInsets.symmetric(horizontal: Dimens.d16.responsive()),
             padding: EdgeInsets.symmetric(
               horizontal: Dimens.d16.responsive(),
               vertical: Dimens.d20.responsive(),
             ),
             decoration: BoxDecoration(
-              color: whiteColor,
+              color: surfaceColor,
               borderRadius: BorderRadius.circular(Dimens.d16.responsive()),
+              border: Border.all(color: frameColor),
             ),
             child: SingleChildScrollView(
               child: Padding(
@@ -56,8 +60,11 @@ class _CreateCategoryPopupState extends BasePageState<CreateCategoryPopup, Creat
                     Container(
                       padding: EdgeInsets.all(Dimens.d10.responsive()),
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(Dimens.d12.responsive()),
-                        border: Border.all(),
+                        color: fieldFillColor,
+                        borderRadius: BorderRadius.circular(
+                          Dimens.d16.responsive(),
+                        ),
+                        border: Border.all(color: frameColor),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -72,17 +79,27 @@ class _CreateCategoryPopupState extends BasePageState<CreateCategoryPopup, Creat
                                     AppPopupInfo.selectIcon(
                                       iconType: IconType.category,
                                       onIconSelected: (iconUrl) {
-                                        bloc.add(CreateCategoryIconChanged(icon: iconUrl));
+                                        bloc.add(
+                                          CreateCategoryIconChanged(
+                                            icon: iconUrl,
+                                          ),
+                                        );
                                       },
                                     ),
                                   );
                                 },
-                                child: BlocBuilder<CreateCategoryBloc, CreateCategoryState>(
-                                  buildWhen: (previous, current) => previous.icon != current.icon,
+                                child: BlocBuilder<
+                                  CreateCategoryBloc,
+                                  CreateCategoryState
+                                >(
+                                  buildWhen:
+                                      (previous, current) =>
+                                          previous.icon != current.icon,
                                   builder: (context, state) {
                                     return CommonCircleNetworkImage(
                                       imageUrl: state.icon,
                                       size: Dimens.d36.responsive(),
+                                      backgroundColor: primaryShadeColor,
                                     );
                                   },
                                 ),
@@ -93,7 +110,11 @@ class _CreateCategoryPopupState extends BasePageState<CreateCategoryPopup, Creat
                                   controller: _categoryNameController,
                                   hintText: S.current.nameYourCategoryHere,
                                   onChanged: (name) {
-                                    bloc.add(CreateCategoryNameInputChanged(categoryName: name));
+                                    bloc.add(
+                                      CreateCategoryNameInputChanged(
+                                        categoryName: name,
+                                      ),
+                                    );
                                   },
                                 ),
                               ),
@@ -108,9 +129,13 @@ class _CreateCategoryPopupState extends BasePageState<CreateCategoryPopup, Creat
                                 size: Dimens.d28.responsive(),
                               ),
                               SizedBox(width: Dimens.d8.responsive()),
-                              BlocBuilder<CreateCategoryBloc, CreateCategoryState>(
+                              BlocBuilder<
+                                CreateCategoryBloc,
+                                CreateCategoryState
+                              >(
                                 buildWhen: (previous, current) {
-                                  return previous.categoryType != current.categoryType;
+                                  return previous.categoryType !=
+                                      current.categoryType;
                                 },
                                 builder: (context, state) {
                                   return SegmentedButton<CategoryType>(
@@ -119,12 +144,16 @@ class _CreateCategoryPopupState extends BasePageState<CreateCategoryPopup, Creat
                                         horizontal: Dimens.d12.responsive(),
                                       ),
                                       shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(Dimens.d4.responsive()),
+                                        borderRadius: BorderRadius.circular(
+                                          Dimens.d8.responsive(),
+                                        ),
                                       ),
-                                      backgroundColor: whiteColor,
-                                      selectedBackgroundColor: secondaryColor,
-                                      selectedForegroundColor: blackColor,
-                                      foregroundColor: blackColor,
+                                      backgroundColor: surfaceColor,
+                                      selectedBackgroundColor:
+                                          primaryShadeColor,
+                                      selectedForegroundColor: primaryColor,
+                                      foregroundColor: darkGreyColor,
+                                      side: const BorderSide(color: frameColor),
                                     ),
                                     segments: [
                                       ButtonSegment(
@@ -139,7 +168,11 @@ class _CreateCategoryPopupState extends BasePageState<CreateCategoryPopup, Creat
                                     selected: {state.categoryType},
                                     showSelectedIcon: false,
                                     onSelectionChanged: (type) {
-                                      bloc.add(CreateCategoryTypeChanged(categoryType: type.first));
+                                      bloc.add(
+                                        CreateCategoryTypeChanged(
+                                          categoryType: type.first,
+                                        ),
+                                      );
                                     },
                                   );
                                 },
@@ -151,7 +184,8 @@ class _CreateCategoryPopupState extends BasePageState<CreateCategoryPopup, Creat
                             buildWhen:
                                 (previous, current) =>
                                     previous.parent != current.parent ||
-                                    previous.categoryType != current.categoryType,
+                                    previous.categoryType !=
+                                        current.categoryType,
                             builder: (context, state) {
                               return InkWell(
                                 onTap: () {
@@ -160,7 +194,11 @@ class _CreateCategoryPopupState extends BasePageState<CreateCategoryPopup, Creat
                                       isSelectingParent: true,
                                       categoryType: state.categoryType,
                                       onCategorySelected: (category) {
-                                        bloc.add(CreateCategoryParentChanged(parent: category));
+                                        bloc.add(
+                                          CreateCategoryParentChanged(
+                                            parent: category,
+                                          ),
+                                        );
                                       },
                                     ),
                                   );
@@ -179,7 +217,8 @@ class _CreateCategoryPopupState extends BasePageState<CreateCategoryPopup, Creat
                                         vertical: Dimens.d8.responsive(),
                                       ),
                                       child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
                                           Icon(
                                             Icons.category_rounded,
@@ -188,18 +227,25 @@ class _CreateCategoryPopupState extends BasePageState<CreateCategoryPopup, Creat
                                           ),
                                           Column(
                                             children: [
-                                              SizedBox(height: Dimens.d4.responsive()),
+                                              SizedBox(
+                                                height: Dimens.d4.responsive(),
+                                              ),
                                               if (state.parent != null)
                                                 Text(
                                                   state.parent!.name,
-                                                  style: AppTextStyles.s16wNormalBlack(),
+                                                  style:
+                                                      AppTextStyles.s16wNormalBlack(),
                                                 )
                                               else
                                                 Text(
                                                   S.current.selectCategory,
-                                                  style: AppTextStyles.s15wNormalGrey().copyWith(
-                                                    fontStyle: FontStyle.italic,
-                                                  ),
+                                                  style:
+                                                      AppTextStyles.s15wNormalGrey()
+                                                          .copyWith(
+                                                            fontStyle:
+                                                                FontStyle
+                                                                    .italic,
+                                                          ),
                                                 ),
                                             ],
                                           ),
@@ -211,7 +257,9 @@ class _CreateCategoryPopupState extends BasePageState<CreateCategoryPopup, Creat
                                           else
                                             GestureDetector(
                                               onTap: () {
-                                                bloc.add(const CreateCategoryParentRemoved());
+                                                bloc.add(
+                                                  const CreateCategoryParentRemoved(),
+                                                );
                                               },
                                               child: Icon(
                                                 Icons.close,
@@ -232,7 +280,8 @@ class _CreateCategoryPopupState extends BasePageState<CreateCategoryPopup, Creat
                     SizedBox(height: Dimens.d30.responsive()),
                     BlocBuilder<CreateCategoryBloc, CreateCategoryState>(
                       buildWhen: (previous, current) {
-                        return previous.confirmButtonEnable != current.confirmButtonEnable;
+                        return previous.confirmButtonEnable !=
+                            current.confirmButtonEnable;
                       },
                       builder: (context, state) {
                         return CommonButton(

@@ -51,57 +51,66 @@ class _LoginViewState extends BasePageState<LoginView, LoginBloc>
     return GestureDetector(
       onTap: () => ViewUtils.hideKeyboard(context),
       child: Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          backgroundColor: primaryShade1Color,
-          toolbarHeight: Dimens.d220.responsive(),
-          title: Stack(
-            children: [
-              Align(
-                alignment: Alignment.centerRight,
-                child: Assets.images.payment.svg(
-                  width: Dimens.d220.responsive(),
-                  height: Dimens.d220.responsive(),
-                  fit: BoxFit.cover,
-                ),
-              ),
-              Text(S.current.welcomeToApp, style: AppTextStyles.s28wBoldBlack()),
-            ],
-          ),
-        ),
-        body: Stack(
-          children: [
-            CustomPaint(
-              size: Size(context.mediaQuery.size.width, context.mediaQuery.size.width / 2),
-              painter: HalfCirclePainter(),
-            ),
-            Column(
+        backgroundColor: scaffoldBackgroundColor,
+        body: NoirScaffoldBody(
+          child: SafeArea(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                TabBar(
-                  controller: _tabController,
-                  indicatorAnimation: TabIndicatorAnimation.elastic,
-                  tabs: [
-                    Padding(
-                      padding: EdgeInsets.all(Dimens.d12.responsive()),
-                      child: Text(
-                        S.current.login,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: Dimens.d16.responsive(),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(
+                    Dimens.d24.responsive(),
+                    Dimens.d36.responsive(),
+                    Dimens.d24.responsive(),
+                    Dimens.d8.responsive(),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'WALLETO',
+                        style: AppThemes.display(
+                          fontSize: Dimens.d12.responsive(),
+                          fontWeight: FontWeight.w600,
+                          color: primaryColor,
+                          letterSpacing: 3,
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(Dimens.d12.responsive()),
-                      child: Text(
-                        S.current.signUp,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: Dimens.d16.responsive(),
+                      SizedBox(height: Dimens.d20.responsive()),
+                      Text(
+                        S.current.welcomeToApp,
+                        style: AppThemes.display(
+                          fontSize: Dimens.d32.responsive(),
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
-                    ),
-                  ],
+                      SizedBox(height: Dimens.d12.responsive()),
+                      const AccentRule(),
+                    ],
+                  ),
+                ),
+                SizedBox(height: Dimens.d16.responsive()),
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: Dimens.d24.responsive(),
+                  ),
+                  child: TabBar(
+                    controller: _tabController,
+                    tabs: [
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                          vertical: Dimens.d12.responsive(),
+                        ),
+                        child: Text(S.current.login),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                          vertical: Dimens.d12.responsive(),
+                        ),
+                        child: Text(S.current.signUp),
+                      ),
+                    ],
+                  ),
                 ),
                 Expanded(
                   child: TabBarView(
@@ -114,7 +123,8 @@ class _LoginViewState extends BasePageState<LoginView, LoginBloc>
                       SignUpTab(
                         emailSignUpController: _emailSignUpController,
                         passwordSignUpController: _passwordSignUpController,
-                        confirmPasswordSignUpController: _confirmPasswordSignUpController,
+                        confirmPasswordSignUpController:
+                            _confirmPasswordSignUpController,
                         otpSignUpController: _otpController,
                         tabController: _tabController,
                       ),
@@ -123,7 +133,7 @@ class _LoginViewState extends BasePageState<LoginView, LoginBloc>
                 ),
               ],
             ),
-          ],
+          ),
         ),
       ),
     );

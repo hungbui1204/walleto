@@ -19,14 +19,18 @@ class CommonAmountWithSymbol extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final style = textStyle ?? AppThemes.amount();
+
     return Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
         Text(
           amount.toStringWithFormat(NumberFormatConstants.amountFormat),
-          style: textStyle ?? AppTextStyles.s16wNormalBlack(),
+          style: style,
         ),
         BlocBuilder<AppBloc, AppState>(
-          buildWhen: (previous, current) => previous.currencies != current.currencies,
+          buildWhen:
+              (previous, current) => previous.currencies != current.currencies,
           builder: (context, state) {
             final currency = state.currencies.firstOrNullWhere((currency) {
               return currency.code == currencyCode;
@@ -34,7 +38,7 @@ class CommonAmountWithSymbol extends StatelessWidget {
 
             if (currency == null) return const SizedBox.shrink();
 
-            return Text(currency.symbol, style: textStyle ?? AppTextStyles.s16wNormalBlack());
+            return Text(currency.symbol, style: style);
           },
         ),
       ],

@@ -6,7 +6,11 @@ import 'package:walleto/shared/shared.dart';
 import 'package:walleto/ui/ui.dart';
 
 class NoteInputBottomSheet extends StatefulWidget {
-  const NoteInputBottomSheet({super.key, required this.currentNote, required this.onNoteChanged});
+  const NoteInputBottomSheet({
+    super.key,
+    required this.currentNote,
+    required this.onNoteChanged,
+  });
 
   final String currentNote;
   final void Function(String) onNoteChanged;
@@ -51,12 +55,8 @@ class _NoteInputBottomSheetState extends State<NoteInputBottomSheet> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   CommonButton(
+                    compact: true,
                     text: S.current.save,
-                    borderRadius: BorderRadius.circular(Dimens.d8.responsive()),
-                    padding: EdgeInsets.symmetric(
-                      horizontal: Dimens.d24.responsive(),
-                      vertical: Dimens.d6.responsive(),
-                    ),
                     onTap: () {
                       widget.onNoteChanged.call(_controller.text);
 
@@ -65,13 +65,10 @@ class _NoteInputBottomSheetState extends State<NoteInputBottomSheet> {
                   ),
                   SizedBox(width: Dimens.d8.responsive()),
                   CommonButton(
+                    compact: true,
                     text: S.current.cancel,
-                    padding: EdgeInsets.symmetric(
-                      horizontal: Dimens.d24.responsive(),
-                      vertical: Dimens.d6.responsive(),
-                    ),
-                    borderRadius: BorderRadius.circular(Dimens.d8.responsive()),
-                    backgroundColor: whiteColor,
+                    backgroundColor: surfaceColor,
+                    textColor: blackColor,
                     onTap: () => getIt.get<AppNavigator>().pop(),
                   ),
                 ],

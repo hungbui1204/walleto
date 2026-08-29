@@ -11,15 +11,26 @@ class CommonDateRangePicker extends StatelessWidget {
   Widget build(BuildContext context) {
     return Theme(
       data: context.theme.copyWith(
-        colorScheme: context.theme.colorScheme.copyWith(primary: primaryColor),
+        colorScheme: context.theme.colorScheme.copyWith(
+          primary: primaryColor,
+          onPrimary: onPrimaryColor,
+          surface: surfaceColor,
+          onSurface: blackColor,
+        ),
         datePickerTheme: DatePickerThemeData(
+          backgroundColor: surfaceColor,
           rangePickerElevation: 0,
           rangeSelectionBackgroundColor: primaryShade1Color,
           rangePickerHeaderBackgroundColor: primaryShadeColor,
           rangePickerHeaderHeadlineStyle: AppTextStyles.s20wBoldBlack(),
+          rangePickerBackgroundColor: surfaceColor,
           dayBackgroundColor: WidgetStateColor.resolveWith((states) {
             if (states.contains(WidgetState.selected)) return primaryColor;
             return Colors.transparent;
+          }),
+          dayForegroundColor: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.selected)) return onPrimaryColor;
+            return blackColor;
           }),
         ),
       ),

@@ -52,7 +52,11 @@ class _SelectMonthPopupState extends State<SelectMonthPopup> {
     };
 
     return Dialog(
-      backgroundColor: whiteColor,
+      backgroundColor: surfaceColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(Dimens.d16.responsive()),
+        side: const BorderSide(color: glassHairlineColor),
+      ),
       child: Padding(
         padding: EdgeInsets.symmetric(
           horizontal: Dimens.d16.responsive(),
@@ -61,12 +65,15 @@ class _SelectMonthPopupState extends State<SelectMonthPopup> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(S.current.selectMonthTitle, style: AppTextStyles.s20wBoldBlack()),
+            Text(
+              S.current.selectMonthTitle,
+              style: AppTextStyles.s20wBoldBlack(),
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 IconButton(
-                  icon: const Icon(Icons.arrow_left),
+                  icon: const Icon(Icons.arrow_left, color: darkGreyColor),
                   onPressed: () {
                     if (selectedYear > widget.firstYear) {
                       setState(() => selectedYear--);
@@ -75,7 +82,7 @@ class _SelectMonthPopupState extends State<SelectMonthPopup> {
                 ),
                 Text('$selectedYear', style: AppTextStyles.s18wNormalBlack()),
                 IconButton(
-                  icon: const Icon(Icons.arrow_right),
+                  icon: const Icon(Icons.arrow_right, color: darkGreyColor),
                   onPressed: () {
                     if (selectedYear < widget.lastYear) {
                       setState(() => selectedYear++);
@@ -95,6 +102,7 @@ class _SelectMonthPopupState extends State<SelectMonthPopup> {
               crossAxisSpacing: Dimens.d8.responsive(),
               children: List.generate(months.length, (index) {
                 final month = index + 1;
+                final isSelected = selectedMonth == month;
 
                 return GestureDetector(
                   onTap: () {
@@ -102,16 +110,22 @@ class _SelectMonthPopupState extends State<SelectMonthPopup> {
                   },
                   child: Container(
                     decoration: BoxDecoration(
-                      color: selectedMonth == month ? primaryColor : primaryShade1Color,
-                      borderRadius: BorderRadius.circular(Dimens.d8.responsive()),
-                      border: Border.all(),
+                      color: isSelected ? primaryColor : fieldFillColor,
+                      borderRadius: BorderRadius.circular(
+                        Dimens.d12.responsive(),
+                      ),
+                      border: Border.all(
+                        color: isSelected ? primaryColor : glassHairlineColor,
+                      ),
                     ),
                     alignment: Alignment.center,
                     child: Text(
                       '${months[month]}',
                       style:
-                          selectedMonth == month
-                              ? AppTextStyles.s14wBoldWhite()
+                          isSelected
+                              ? AppTextStyles.s14wBoldBlack().copyWith(
+                                color: onPrimaryColor,
+                              )
                               : AppTextStyles.s14wNormalBlack(),
                     ),
                   ),
@@ -123,13 +137,8 @@ class _SelectMonthPopupState extends State<SelectMonthPopup> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 CommonButton(
+                  compact: true,
                   text: S.current.save,
-                  borderRadius: BorderRadius.circular(Dimens.d8.responsive()),
-                  padding: EdgeInsets.symmetric(
-                    horizontal: Dimens.d24.responsive(),
-                    vertical: Dimens.d6.responsive(),
-                  ),
-                  backgroundColor: secondaryColor,
                   onTap: () {
                     final pickedDate = DateTime(selectedYear, selectedMonth);
                     widget.onMonthSelected.call(pickedDate);
@@ -139,13 +148,10 @@ class _SelectMonthPopupState extends State<SelectMonthPopup> {
                 ),
                 SizedBox(width: Dimens.d8.responsive()),
                 CommonButton(
+                  compact: true,
                   text: S.current.cancel,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: Dimens.d24.responsive(),
-                    vertical: Dimens.d6.responsive(),
-                  ),
-                  borderRadius: BorderRadius.circular(Dimens.d8.responsive()),
-                  backgroundColor: whiteColor,
+                  backgroundColor: surfaceColor,
+                  textColor: blackColor,
                   onTap: () => getIt.get<AppNavigator>().pop(),
                 ),
               ],

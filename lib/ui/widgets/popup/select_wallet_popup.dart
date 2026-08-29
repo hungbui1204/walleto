@@ -23,21 +23,27 @@ class SelectWalletPopup extends StatelessWidget {
       type: MaterialType.transparency,
       child: Center(
         child: Container(
-          constraints: BoxConstraints(maxHeight: context.mediaQuery.size.height * 0.7),
+          constraints: BoxConstraints(
+            maxHeight: context.mediaQuery.size.height * 0.7,
+          ),
           margin: EdgeInsets.symmetric(horizontal: Dimens.d16.responsive()),
           padding: EdgeInsets.symmetric(
             horizontal: Dimens.d16.responsive(),
             vertical: Dimens.d20.responsive(),
           ),
           decoration: BoxDecoration(
-            color: whiteColor,
+            color: surfaceColor,
             borderRadius: BorderRadius.circular(Dimens.d16.responsive()),
+            border: Border.all(color: frameColor),
           ),
           child: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(S.current.selectWallet, style: AppTextStyles.s20wNormalBlack()),
+                Text(
+                  S.current.selectWallet,
+                  style: AppTextStyles.s20wNormalBlack(),
+                ),
                 SizedBox(height: Dimens.d20.responsive()),
                 if (wallets.first.id == AppConstants.totalWalletId)
                   _TotalWalletWidget(
@@ -85,12 +91,16 @@ class _TotalWalletWidget extends StatelessWidget {
         children: [
           SizedBox(
             width: Dimens.d20.responsive(),
-            child: isSelected ? const Icon(Icons.check, color: checkColor) : null,
+            child:
+                isSelected ? const Icon(Icons.check, color: checkColor) : null,
           ),
           SizedBox(width: Dimens.d4.responsive()),
           ClipOval(
             child: Container(
-              decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all()),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: frameColor),
+              ),
               child: Assets.icons.summation.svg(
                 width: Dimens.d32.responsive(),
                 height: Dimens.d32.responsive(),
@@ -100,7 +110,11 @@ class _TotalWalletWidget extends StatelessWidget {
           SizedBox(width: Dimens.d8.responsive()),
           Text(totalWallet.name),
           const Spacer(),
-          Text(totalWallet.amount.toStringWithFormat(NumberFormatConstants.amountFormat)),
+          Text(
+            totalWallet.amount.toStringWithFormat(
+              NumberFormatConstants.amountFormat,
+            ),
+          ),
         ],
       ),
     );
@@ -128,7 +142,8 @@ class _WalletsWidget extends StatelessWidget {
         final wallet = wallets[index];
 
         // Skip the 'Total Wallet' item in the list
-        if (wallet.id == AppConstants.totalWalletId) return const SizedBox.shrink();
+        if (wallet.id == AppConstants.totalWalletId)
+          return const SizedBox.shrink();
 
         return GestureDetector(
           behavior: HitTestBehavior.translucent,
@@ -150,13 +165,19 @@ class _WalletsWidget extends StatelessWidget {
               SizedBox(width: Dimens.d8.responsive()),
               Text(wallet.name),
               const Spacer(),
-              Text(wallet.amount.toStringWithFormat(NumberFormatConstants.amountFormat)),
+              Text(
+                wallet.amount.toStringWithFormat(
+                  NumberFormatConstants.amountFormat,
+                ),
+              ),
             ],
           ),
         );
       },
       separatorBuilder:
-          (context, index) => CommonLine(padding: EdgeInsets.only(left: Dimens.d24.responsive())),
+          (context, index) => CommonLine(
+            padding: EdgeInsets.only(left: Dimens.d24.responsive()),
+          ),
     );
   }
 }

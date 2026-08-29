@@ -45,6 +45,8 @@ class NumericKeyboard extends StatelessWidget {
       S.current.done,
     ];
 
+    final operatorSymbols = OperationType.values.map((e) => e.symbol).toList();
+
     return SizedBox(
       height: Dimens.d300.responsive(),
       width: Dimens.d390.responsive(),
@@ -64,22 +66,42 @@ class NumericKeyboard extends StatelessWidget {
         ),
         itemBuilder: (context, index) {
           final key = keys[index];
+          final isClearOrBackspace =
+              key == S.current.clear || key == S.current.backspace;
+          final isDone = key == S.current.done;
+          final isOperator =
+              operatorSymbols.contains(key) || key == S.current.equal;
+
+          final Color backgroundColor;
+          final Color foregroundColor;
+          if (isDone) {
+            backgroundColor = primaryColor;
+            foregroundColor = onPrimaryColor;
+          } else if (isOperator) {
+            backgroundColor = primaryShadeColor;
+            foregroundColor = primaryColor;
+          } else if (isClearOrBackspace) {
+            backgroundColor = fieldFillColor;
+            foregroundColor = darkGreyColor;
+          } else {
+            backgroundColor = fieldFillColor;
+            foregroundColor = blackColor;
+          }
 
           return ElevatedButton(
             style: ElevatedButton.styleFrom(
               padding: EdgeInsets.zero,
-              side: const BorderSide(),
+              side: BorderSide(
+                color: isDone ? primaryColor : glassHairlineColor,
+              ),
               shadowColor: transParentColor,
               elevation: 0,
-              backgroundColor:
-                  key == S.current.clear || key == S.current.backspace
-                      ? secondaryColor
-                      : OperationType.values.map((e) => e.symbol).toList().contains(key) ||
-                          key == S.current.equal ||
-                          key == S.current.done
-                      ? primaryColor
-                      : primaryShade1Color,
-              foregroundColor: blackColor,
+              backgroundColor: backgroundColor,
+              foregroundColor: foregroundColor,
+              minimumSize: Size(
+                Dimens.d44.responsive(),
+                Dimens.d44.responsive(),
+              ),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(Dimens.d12.responsive()),
               ),
@@ -93,13 +115,20 @@ class NumericKeyboard extends StatelessWidget {
                 onDone();
               } else if (key == S.current.equal) {
                 onEqual();
-              } else if (OperationType.values.map((e) => e.symbol).toList().contains(key)) {
+              } else if (operatorSymbols.contains(key)) {
                 onOperatorKeyTap(key);
               } else {
                 onNumberKeyTap(key);
               }
             },
-            child: Text(key, style: AppTextStyles.s20wNormalBlack()),
+            child: Text(
+              key,
+              style: AppThemes.amount(
+                fontSize: Dimens.d18.responsive(),
+                fontWeight: FontWeight.w600,
+                color: foregroundColor,
+              ),
+            ),
           );
         },
       ),

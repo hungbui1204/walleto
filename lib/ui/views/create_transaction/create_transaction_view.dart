@@ -33,80 +33,117 @@ class _CreateTransactionViewState
   Widget buildPage(BuildContext context) {
     return Scaffold(
       appBar: CommonAppBar(title: S.current.addTransaction),
-      body: Stack(
-        children: [
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: Dimens.d16.responsive()),
-            child: Column(
-              children: [
-                SizedBox(height: Dimens.d20.responsive()),
-                _NewTransactionInfo(controller: controller, focusNode: focusNode),
-                SizedBox(height: Dimens.d20.responsive()),
-                BlocBuilder<CreateTransactionBloc, CreateTransactionState>(
-                  buildWhen:
-                      (previous, current) =>
-                          previous.confirmButtonEnable != current.confirmButtonEnable,
-                  builder: (context, state) {
-                    return CommonButton(
-                      text: S.current.save,
-                      onTap:
-                          state.confirmButtonEnable
-                              ? () => bloc.add(const CreateTransactionConfirmButtonPressed())
-                              : null,
-                    );
-                  },
-                ),
-              ],
+      body: NoirScaffoldBody(
+        child: Stack(
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: Dimens.d16.responsive(),
+              ),
+              child: Column(
+                children: [
+                  SizedBox(height: Dimens.d20.responsive()),
+                  _NewTransactionInfo(
+                    controller: controller,
+                    focusNode: focusNode,
+                  ),
+                  SizedBox(height: Dimens.d20.responsive()),
+                  BlocBuilder<CreateTransactionBloc, CreateTransactionState>(
+                    buildWhen:
+                        (previous, current) =>
+                            previous.confirmButtonEnable !=
+                            current.confirmButtonEnable,
+                    builder: (context, state) {
+                      return CommonButton(
+                        text: S.current.save,
+                        onTap:
+                            state.confirmButtonEnable
+                                ? () => bloc.add(
+                                  const CreateTransactionConfirmButtonPressed(),
+                                )
+                                : null,
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
-          ),
-          BlocBuilder<CreateTransactionBloc, CreateTransactionState>(
-            buildWhen:
-                (previous, current) =>
-                    previous.showKeyboard != current.showKeyboard ||
-                    previous.currentOperation != current.currentOperation,
-            builder: (context, state) {
-              return AnimatedPositioned(
-                duration: DurationConstants.defaultAnimationDuration,
-                curve: Curves.easeOut,
-                bottom: state.showKeyboard ? 0 : -Dimens.d400.responsive(),
-                child: NumericKeyboard(
-                  onNumberKeyTap: (value) {
-                    bloc.add(CreateTransactionAmountChanged(number: value));
-                  },
-                  onOperatorKeyTap: (operation) {
-                    bloc.add(CreateTransactionOperationChanged(operation: operation));
-                  },
-                  onBackspace: () => bloc.add(const CreateTransactionBackspacePressed()),
-                  onClear: () => bloc.add(const CreateTransactionClearPressed()),
-                  onDone: () => bloc.add(const CreateTransactionKeyboardToggled(show: false)),
-                  onEqual: () => bloc.add(const CreateTransactionEqualButtonPressed()),
-                ),
-              );
-            },
-          ),
-        ],
+            BlocBuilder<CreateTransactionBloc, CreateTransactionState>(
+              buildWhen:
+                  (previous, current) =>
+                      previous.showKeyboard != current.showKeyboard ||
+                      previous.currentOperation != current.currentOperation,
+              builder: (context, state) {
+                return AnimatedPositioned(
+                  duration: DurationConstants.defaultAnimationDuration,
+                  curve: Curves.easeOut,
+                  bottom: state.showKeyboard ? 0 : -Dimens.d400.responsive(),
+                  child: DecoratedBox(
+                    decoration: AppDecorations.keyboardSheet(),
+                    child: SafeArea(
+                      top: false,
+                      child: NumericKeyboard(
+                        onNumberKeyTap: (value) {
+                          bloc.add(
+                            CreateTransactionAmountChanged(number: value),
+                          );
+                        },
+                        onOperatorKeyTap: (operation) {
+                          bloc.add(
+                            CreateTransactionOperationChanged(
+                              operation: operation,
+                            ),
+                          );
+                        },
+                        onBackspace:
+                            () => bloc.add(
+                              const CreateTransactionBackspacePressed(),
+                            ),
+                        onClear:
+                            () =>
+                                bloc.add(const CreateTransactionClearPressed()),
+                        onDone:
+                            () => bloc.add(
+                              const CreateTransactionKeyboardToggled(
+                                show: false,
+                              ),
+                            ),
+                        onEqual:
+                            () => bloc.add(
+                              const CreateTransactionEqualButtonPressed(),
+                            ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
 }
 
 class _NewTransactionInfo extends StatelessWidget {
-  const _NewTransactionInfo({required this.controller, required this.focusNode});
+  const _NewTransactionInfo({
+    required this.controller,
+    required this.focusNode,
+  });
   final TextEditingController controller;
   final FocusNode focusNode;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(Dimens.d12.responsive()),
-        border: Border.all(),
-      ),
-      padding: EdgeInsets.all(Dimens.d10.responsive()),
+      decoration: AppDecorations.glassPanel(),
+      padding: EdgeInsets.all(Dimens.d16.responsive()),
       child: Column(
         children: [
           BlocBuilder<CreateTransactionBloc, CreateTransactionState>(
-            buildWhen: (previous, current) => previous.selectedWallet != current.selectedWallet,
+            buildWhen:
+                (previous, current) =>
+                    previous.selectedWallet != current.selectedWallet,
             builder: (context, state) {
               if (state.selectedWallet == null) return const SizedBox.shrink();
 
@@ -130,13 +167,17 @@ class _NewTransactionInfo extends StatelessWidget {
                       imageUrl: state.selectedWallet!.iconUrl,
                       size: Dimens.d30.responsive(),
                       placeHolderType: ImagePlaceHolderType.wallet,
+                      backgroundColor: primaryShadeColor,
                     ),
                     SizedBox(width: Dimens.d16.responsive()),
-                    Text(state.selectedWallet!.name, style: AppTextStyles.s14wNormalBlack()),
+                    Text(
+                      state.selectedWallet!.name,
+                      style: AppTextStyles.s14wNormalBlack(),
+                    ),
                     const Spacer(),
                     Icon(
                       Icons.arrow_forward_ios_rounded,
-                      color: blackColor,
+                      color: darkGreyColor,
                       size: Dimens.d18.responsive(),
                     ),
                   ],
@@ -148,13 +189,19 @@ class _NewTransactionInfo extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(S.current.amount, style: AppTextStyles.s12wNormalBlack()),
+              Text(S.current.amount, style: AppTextStyles.s12wNormalGrey()),
               Row(
                 children: [
-                  Expanded(child: _AmountInput(controller: controller, focusNode: focusNode)),
+                  Expanded(
+                    child: _AmountInput(
+                      controller: controller,
+                      focusNode: focusNode,
+                    ),
+                  ),
                   BlocBuilder<CreateTransactionBloc, CreateTransactionState>(
                     buildWhen: (previous, current) {
-                      return previous.selectedCurrency != current.selectedCurrency;
+                      return previous.selectedCurrency !=
+                          current.selectedCurrency;
                     },
                     builder: (context, state) {
                       return GestureDetector(
@@ -163,7 +210,9 @@ class _NewTransactionInfo extends StatelessWidget {
                             AppPopupInfo.chooseCurrency(
                               onCurrencySelected: (selectedCurrency) {
                                 context.read<CreateTransactionBloc>().add(
-                                  CreateTransactionCurrencySelected(currency: selectedCurrency),
+                                  CreateTransactionCurrencySelected(
+                                    currency: selectedCurrency,
+                                  ),
                                 );
                               },
                               currentCurrency: state.selectedCurrency,
@@ -184,24 +233,40 @@ class _NewTransactionInfo extends StatelessWidget {
                       previous.selectedWallet != current.selectedWallet;
                 },
                 builder: (context, state) {
-                  if (state.convertedAmount == null || state.selectedWallet == null) {
+                  if (state.convertedAmount == null ||
+                      state.selectedWallet == null) {
                     return const SizedBox.shrink();
                   }
 
                   return Tooltip(
                     triggerMode: TooltipTriggerMode.tap,
                     showDuration: DurationConstants.defaultTooltipShowDuration,
-                    message: S.current.amountConvertInfo(state.selectedWallet!.currencyCode),
+                    message: S.current.amountConvertInfo(
+                      state.selectedWallet!.currencyCode,
+                    ),
                     padding: EdgeInsets.symmetric(
                       horizontal: Dimens.d16.responsive(),
                       vertical: Dimens.d12.responsive(),
                     ),
-                    margin: EdgeInsets.symmetric(horizontal: Dimens.d10.responsive()),
-                    textStyle: AppTextStyles.s14wNormalWhite(),
+                    margin: EdgeInsets.symmetric(
+                      horizontal: Dimens.d10.responsive(),
+                    ),
+                    textStyle: AppTextStyles.s14wNormalBlack(),
+                    decoration: BoxDecoration(
+                      color: surfaceColor,
+                      borderRadius: BorderRadius.circular(
+                        Dimens.d8.responsive(),
+                      ),
+                      border: Border.all(color: frameColor),
+                    ),
                     enableFeedback: true,
                     child: Row(
                       children: [
-                        Icon(Icons.question_mark, color: redColor, size: Dimens.d20.responsive()),
+                        Icon(
+                          Icons.question_mark,
+                          color: redColor,
+                          size: Dimens.d20.responsive(),
+                        ),
                         Expanded(
                           child: Text(
                             S.current.willBeConvertedTo(
@@ -222,7 +287,9 @@ class _NewTransactionInfo extends StatelessWidget {
           ),
           const CommonLine(),
           BlocBuilder<CreateTransactionBloc, CreateTransactionState>(
-            buildWhen: (previous, current) => previous.selectedCategory != current.selectedCategory,
+            buildWhen:
+                (previous, current) =>
+                    previous.selectedCategory != current.selectedCategory,
             builder: (context, state) {
               return GestureDetector(
                 behavior: HitTestBehavior.translucent,
@@ -242,18 +309,24 @@ class _NewTransactionInfo extends StatelessWidget {
                     CommonCircleNetworkImage(
                       imageUrl: state.selectedCategory?.iconUrl,
                       size: Dimens.d30.responsive(),
-                      backgroundColor: secondaryColor,
+                      backgroundColor: primaryShadeColor,
                     ),
                     SizedBox(width: Dimens.d16.responsive()),
                     if (state.selectedCategory != null) ...[
-                      Text(state.selectedCategory!.name, style: AppTextStyles.s14wNormalBlack()),
+                      Text(
+                        state.selectedCategory!.name,
+                        style: AppTextStyles.s14wNormalBlack(),
+                      ),
                     ] else ...[
-                      Text(S.current.selectCategory, style: AppTextStyles.s14wNormalGrey()),
+                      Text(
+                        S.current.selectCategory,
+                        style: AppTextStyles.s14wNormalGrey(),
+                      ),
                     ],
                     const Spacer(),
                     Icon(
                       Icons.arrow_forward_ios_rounded,
-                      color: blackColor,
+                      color: darkGreyColor,
                       size: Dimens.d18.responsive(),
                     ),
                   ],
@@ -289,12 +362,15 @@ class _NewTransactionInfo extends StatelessWidget {
                     if (state.note.isNotEmpty) ...[
                       Text(state.note, style: AppTextStyles.s14wNormalBlack()),
                     ] else ...[
-                      Text(S.current.note, style: AppTextStyles.s14wNormalGrey()),
+                      Text(
+                        S.current.note,
+                        style: AppTextStyles.s14wNormalGrey(),
+                      ),
                     ],
                     const Spacer(),
                     Icon(
                       Icons.arrow_forward_ios_rounded,
-                      color: blackColor,
+                      color: darkGreyColor,
                       size: Dimens.d18.responsive(),
                     ),
                   ],
@@ -304,19 +380,23 @@ class _NewTransactionInfo extends StatelessWidget {
           ),
           const CommonLine(),
           BlocBuilder<CreateTransactionBloc, CreateTransactionState>(
-            buildWhen: (previous, current) => previous.selectedDate != current.selectedDate,
+            buildWhen:
+                (previous, current) =>
+                    previous.selectedDate != current.selectedDate,
             builder: (context, state) {
               return GestureDetector(
                 behavior: HitTestBehavior.translucent,
                 onTap: () async {
                   final now = DateTime.now();
 
-                  final selectedDate = await getIt.get<AppNavigator>().showDatePicker(
-                    firstDate: DateTime(AppConstants.firstYear),
-                    lastDate: DateTime(AppConstants.lastYear),
-                    currentDate: now,
-                    initialDate: state.selectedDate,
-                  );
+                  final selectedDate = await getIt
+                      .get<AppNavigator>()
+                      .showDatePicker(
+                        firstDate: DateTime(AppConstants.firstYear),
+                        lastDate: DateTime(AppConstants.lastYear),
+                        currentDate: now,
+                        initialDate: state.selectedDate,
+                      );
 
                   if (selectedDate != null) {
                     // ignore: use_build_context_synchronously
@@ -342,7 +422,7 @@ class _NewTransactionInfo extends StatelessWidget {
                     const Spacer(),
                     Icon(
                       Icons.arrow_forward_ios_rounded,
-                      color: blackColor,
+                      color: darkGreyColor,
                       size: Dimens.d18.responsive(),
                     ),
                   ],
@@ -377,7 +457,12 @@ class _AmountInput extends StatelessWidget {
               cursorHeight: Dimens.d28.responsive(),
               readOnly: true,
               showCursor: true,
-              style: AppTextStyles.s28wNormalBlack(),
+              cursorColor: primaryColor,
+              style: AppThemes.amount(
+                fontSize: Dimens.d32.responsive(),
+                fontWeight: FontWeight.w600,
+                color: primaryColor,
+              ),
               decoration: const InputDecoration(
                 contentPadding: EdgeInsets.zero,
                 border: InputBorder.none,

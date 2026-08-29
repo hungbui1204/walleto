@@ -1,5 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:walleto/domain/domain.dart';
 import 'package:walleto/resources/resources.dart';
 import 'package:walleto/shared/shared.dart';
@@ -11,10 +12,12 @@ class MonthWalletCategoryStatsChart extends StatefulWidget {
   final WalletStat walletStat;
 
   @override
-  State<MonthWalletCategoryStatsChart> createState() => _MonthWalletCategoryStatsChartState();
+  State<MonthWalletCategoryStatsChart> createState() =>
+      _MonthWalletCategoryStatsChartState();
 }
 
-class _MonthWalletCategoryStatsChartState extends State<MonthWalletCategoryStatsChart> {
+class _MonthWalletCategoryStatsChartState
+    extends State<MonthWalletCategoryStatsChart> {
   int _touchedIndex = -1;
 
   void _handleTap(int index) {
@@ -29,6 +32,15 @@ class _MonthWalletCategoryStatsChartState extends State<MonthWalletCategoryStats
 
   @override
   Widget build(BuildContext context) {
+    final categoryStats = widget.walletStat.categoryStats;
+
+    if (categoryStats.isEmpty) {
+      return ChartEmptyPanel(
+        onRetry:
+            () => context.read<HomeBloc>().add(const HomeViewInitialized()),
+      );
+    }
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -49,14 +61,17 @@ class _MonthWalletCategoryStatsChartState extends State<MonthWalletCategoryStats
                 flex: 2,
                 child: PieChart(
                   PieChartData(
-                    sections: _buildPieSections(widget.walletStat.categoryStats),
+                    sections: _buildPieSections(categoryStats),
                     sectionsSpace: Dimens.d2.responsive(),
                     centerSpaceRadius: Dimens.d50.responsive(),
                     borderData: FlBorderData(show: false),
                     pieTouchData: PieTouchData(
                       touchCallback: (event, response) {
-                        if (response?.touchedSection != null && event is FlTapUpEvent) {
-                          _handleTap(response!.touchedSection!.touchedSectionIndex);
+                        if (response?.touchedSection != null &&
+                            event is FlTapUpEvent) {
+                          _handleTap(
+                            response!.touchedSection!.touchedSectionIndex,
+                          );
                         }
                       },
                     ),
@@ -65,7 +80,7 @@ class _MonthWalletCategoryStatsChartState extends State<MonthWalletCategoryStats
               ),
               Expanded(
                 child: ListView.builder(
-                  itemCount: widget.walletStat.categoryStats.length,
+                  itemCount: categoryStats.length,
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   itemBuilder: (context, index) {
@@ -82,7 +97,7 @@ class _MonthWalletCategoryStatsChartState extends State<MonthWalletCategoryStats
                         SizedBox(width: Dimens.d8.responsive()),
                         Expanded(
                           child: Text(
-                            widget.walletStat.categoryStats[index].categoryName,
+                            categoryStats[index].categoryName,
                             style: AppTextStyles.s14wNormalBlack(),
                           ),
                         ),
@@ -103,7 +118,8 @@ class _MonthWalletCategoryStatsChartState extends State<MonthWalletCategoryStats
       final stat = stats[index];
       final isTouched = index == _touchedIndex;
       final total = stats.fold<double>(0, (sum, e) => sum + e.totalAmount);
-      final double radius = isTouched ? Dimens.d60.responsive() : Dimens.d50.responsive();
+      final double radius =
+          isTouched ? Dimens.d60.responsive() : Dimens.d50.responsive();
       final title =
           isTouched
               ? stat.totalAmount.round().toCompactString()

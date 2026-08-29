@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:walleto/resources/resources.dart';
+import 'package:walleto/ui/widgets/pressable.dart';
 
 class CommonButton2 extends StatelessWidget {
   const CommonButton2({
@@ -7,7 +8,7 @@ class CommonButton2 extends StatelessWidget {
     this.onTap,
     required this.text,
     this.padding,
-    this.backgroundColor = whiteColor,
+    this.backgroundColor = surfaceColor,
     this.icon,
     this.borderRadius,
     this.textStyle,
@@ -23,20 +24,38 @@ class CommonButton2 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    final radius =
+        borderRadius ?? BorderRadius.circular(Dimens.d16.responsive());
+
+    return Pressable(
       onTap: onTap,
-      borderRadius: borderRadius ?? BorderRadius.circular(Dimens.d20.responsive()),
+      borderRadius: radius,
+      semanticLabel: text,
       child: Container(
-        padding: padding ?? EdgeInsets.only(right: Dimens.d12.responsive()),
-        decoration: BoxDecoration(
-          borderRadius: borderRadius ?? BorderRadius.circular(Dimens.d20.responsive()),
-          border: const Border(bottom: BorderSide(), top: BorderSide(), right: BorderSide()),
+        constraints: BoxConstraints(minHeight: Dimens.d44.responsive()),
+        padding:
+            padding ??
+            EdgeInsets.symmetric(
+              horizontal: Dimens.d12.responsive(),
+              vertical: Dimens.d8.responsive(),
+            ),
+        decoration: AppDecorations.secondaryCta(
+          radius: radius,
+          color: backgroundColor,
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (icon != null) ...[icon!, SizedBox(width: Dimens.d8.responsive())],
-            Text(text, style: textStyle ?? AppTextStyles.s14wNormalBlack()),
+            if (icon != null) ...[
+              icon!,
+              SizedBox(width: Dimens.d8.responsive()),
+            ],
+            Flexible(
+              child: Text(
+                text,
+                style: textStyle ?? AppTextStyles.s14wNormalBlack(),
+              ),
+            ),
           ],
         ),
       ),

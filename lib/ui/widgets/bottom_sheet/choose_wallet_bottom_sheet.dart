@@ -16,7 +16,8 @@ class ChooseWalletBottomSheet extends StatefulWidget {
   final Wallet? currentWallet;
 
   @override
-  State<ChooseWalletBottomSheet> createState() => _ChooseWalletBottomSheetState();
+  State<ChooseWalletBottomSheet> createState() =>
+      _ChooseWalletBottomSheetState();
 }
 
 class _ChooseWalletBottomSheetState extends State<ChooseWalletBottomSheet> {
@@ -39,7 +40,8 @@ class _ChooseWalletBottomSheetState extends State<ChooseWalletBottomSheet> {
             Text(S.current.chooseWallet, style: AppTextStyles.s18wBoldBlack()),
             SizedBox(height: Dimens.d20.responsive()),
             BlocBuilder<AppBloc, AppState>(
-              buildWhen: (previous, current) => previous.wallets != current.wallets,
+              buildWhen:
+                  (previous, current) => previous.wallets != current.wallets,
               builder: (context, state) {
                 return ListView.separated(
                   physics: const NeverScrollableScrollPhysics(),
@@ -66,12 +68,8 @@ class _ChooseWalletBottomSheetState extends State<ChooseWalletBottomSheet> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 CommonButton(
+                  compact: true,
                   text: S.current.save,
-                  borderRadius: BorderRadius.circular(Dimens.d8.responsive()),
-                  padding: EdgeInsets.symmetric(
-                    horizontal: Dimens.d24.responsive(),
-                    vertical: Dimens.d6.responsive(),
-                  ),
                   onTap: () {
                     if (selectedWallet != null) {
                       widget.onWalletSelected.call(selectedWallet!);
@@ -82,13 +80,10 @@ class _ChooseWalletBottomSheetState extends State<ChooseWalletBottomSheet> {
                 ),
                 SizedBox(width: Dimens.d8.responsive()),
                 CommonButton(
+                  compact: true,
                   text: S.current.cancel,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: Dimens.d24.responsive(),
-                    vertical: Dimens.d6.responsive(),
-                  ),
-                  borderRadius: BorderRadius.circular(Dimens.d8.responsive()),
-                  backgroundColor: whiteColor,
+                  backgroundColor: surfaceColor,
+                  textColor: blackColor,
                   onTap: () => getIt.get<AppNavigator>().pop(),
                 ),
               ],
@@ -102,7 +97,11 @@ class _ChooseWalletBottomSheetState extends State<ChooseWalletBottomSheet> {
 }
 
 class _WalletWidget extends StatelessWidget {
-  const _WalletWidget({required this.isSelected, required this.wallet, required this.onTap});
+  const _WalletWidget({
+    required this.isSelected,
+    required this.wallet,
+    required this.onTap,
+  });
 
   final bool isSelected;
   final Wallet wallet;
@@ -113,7 +112,7 @@ class _WalletWidget extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: ColoredBox(
-        color: isSelected ? primaryShade1Color : whiteColor,
+        color: isSelected ? primaryShade1Color : surfaceColor,
         child: Padding(
           padding: EdgeInsets.all(Dimens.d12.responsive()),
           child: Row(

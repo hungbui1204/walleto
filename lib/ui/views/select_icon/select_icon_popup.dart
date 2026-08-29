@@ -34,10 +34,7 @@ class _SelectIconPopupState extends BasePageState<SelectIconPopup, SelectIconBlo
             horizontal: Dimens.d16.responsive(),
             vertical: Dimens.d20.responsive(),
           ),
-          decoration: BoxDecoration(
-            color: whiteColor,
-            borderRadius: BorderRadius.circular(Dimens.d16.responsive()),
-          ),
+          decoration: AppDecorations.glassPanel(),
           child: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,

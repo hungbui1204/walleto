@@ -25,7 +25,7 @@ class ParentCategoryWidget extends StatelessWidget {
             CommonCircleNetworkImage(
               imageUrl: category.iconUrl,
               size: Dimens.d38.responsive(),
-              backgroundColor: secondaryColor,
+              backgroundColor: primaryShadeColor,
             ),
             SizedBox(width: Dimens.d20.responsive()),
             Text(category.name, style: AppTextStyles.s18wNormalBlack()),

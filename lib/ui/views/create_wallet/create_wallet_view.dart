@@ -16,7 +16,8 @@ class CreateWalletView extends StatefulWidget {
   State<CreateWalletView> createState() => _CreateWalletViewState();
 }
 
-class _CreateWalletViewState extends BasePageState<CreateWalletView, CreateWalletBloc> {
+class _CreateWalletViewState
+    extends BasePageState<CreateWalletView, CreateWalletBloc> {
   late final TextEditingController _walletNameController;
   late final TextEditingController _initialBalanceController;
 
@@ -43,122 +44,145 @@ class _CreateWalletViewState extends BasePageState<CreateWalletView, CreateWalle
       onTap: () => ViewUtils.hideKeyboard(context),
       child: Scaffold(
         appBar: CommonAppBar(
-          title: widget.isFromSignUp ? S.current.createYourFirstWallet : S.current.createWallet,
+          title:
+              widget.isFromSignUp
+                  ? S.current.createYourFirstWallet
+                  : S.current.createWallet,
         ),
-        body: Padding(
-          padding: EdgeInsets.symmetric(horizontal: Dimens.d16.responsive()),
-          child: Column(
-            children: [
-              SizedBox(height: Dimens.d20.responsive()),
-              Container(
-                padding: EdgeInsets.all(Dimens.d10.responsive()),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(Dimens.d12.responsive()),
-                  border: Border.all(),
-                ),
-                child: Column(
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        GestureDetector(
-                          behavior: HitTestBehavior.translucent,
-                          onTap: () {
-                            navigator.showDialog(
-                              AppPopupInfo.selectIcon(
-                                iconType: IconType.wallet,
-                                onIconSelected: (url) {
-                                  bloc.add(CreateWalletIconChanged(iconUrl: url));
-                                },
-                              ),
-                            );
-                          },
-                          child: BlocBuilder<CreateWalletBloc, CreateWalletState>(
-                            buildWhen: (previous, current) {
-                              return previous.iconUrl != current.iconUrl;
-                            },
-                            builder: (context, state) {
-                              return CommonCircleNetworkImage(
-                                imageUrl: state.iconUrl,
-                                size: Dimens.d36.responsive(),
-                                placeHolderType: ImagePlaceHolderType.wallet,
+        body: NoirScaffoldBody(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: Dimens.d16.responsive()),
+            child: Column(
+              children: [
+                SizedBox(height: Dimens.d20.responsive()),
+                Container(
+                  padding: EdgeInsets.all(Dimens.d16.responsive()),
+                  decoration: AppDecorations.glassPanel(),
+                  child: Column(
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          GestureDetector(
+                            behavior: HitTestBehavior.translucent,
+                            onTap: () {
+                              navigator.showDialog(
+                                AppPopupInfo.selectIcon(
+                                  iconType: IconType.wallet,
+                                  onIconSelected: (url) {
+                                    bloc.add(
+                                      CreateWalletIconChanged(iconUrl: url),
+                                    );
+                                  },
+                                ),
                               );
                             },
+                            child: BlocBuilder<
+                              CreateWalletBloc,
+                              CreateWalletState
+                            >(
+                              buildWhen: (previous, current) {
+                                return previous.iconUrl != current.iconUrl;
+                              },
+                              builder: (context, state) {
+                                return CommonCircleNetworkImage(
+                                  imageUrl: state.iconUrl,
+                                  size: Dimens.d36.responsive(),
+                                  placeHolderType: ImagePlaceHolderType.wallet,
+                                  backgroundColor: primaryShadeColor,
+                                );
+                              },
+                            ),
                           ),
-                        ),
-                        SizedBox(width: Dimens.d10.responsive()),
-                        Expanded(
-                          child: CommonTextField2(
-                            controller: _walletNameController,
-                            hintText: S.current.nameYourWalletHere,
-                            onChanged: (name) {
-                              bloc.add(CreateWalletNameInputChanged(walletName: name));
-                            },
+                          SizedBox(width: Dimens.d10.responsive()),
+                          Expanded(
+                            child: CommonTextField2(
+                              controller: _walletNameController,
+                              hintText: S.current.nameYourWalletHere,
+                              onChanged: (name) {
+                                bloc.add(
+                                  CreateWalletNameInputChanged(
+                                    walletName: name,
+                                  ),
+                                );
+                              },
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    const CommonLine(),
-                    BlocBuilder<CreateWalletBloc, CreateWalletState>(
-                      buildWhen: (previous, current) {
-                        return previous.selectedCurrency != current.selectedCurrency;
-                      },
-                      builder: (context, state) {
-                        return CommonForwardButton(
-                          padding: EdgeInsets.symmetric(vertical: Dimens.d8.responsive()),
-                          title: S.current.currency,
-                          color: whiteColor,
-                          onTap: () {
-                            navigator.showModalBottomSheet(
-                              AppPopupInfo.chooseCurrency(
-                                onCurrencySelected: (selectedCurrency) {
-                                  context.read<CreateWalletBloc>().add(
-                                    CreateWalletCurrencyChanged(currency: selectedCurrency),
-                                  );
-                                },
-                                currentCurrency: state.selectedCurrency,
-                              ),
-                            );
-                          },
-                          leadingIcon: CommonCurrencyContainer(
-                            currentCurrencyCode: state.selectedCurrency?.code,
-                          ),
-                        );
-                      },
-                    ),
-                    const CommonLine(),
-                    CommonTextField2(
-                      controller: _initialBalanceController,
-                      hintText: S.current.initialBalance,
-                      inputType: TextInputType.number,
-                      maxLength: 24,
-                      onChanged: (balance) {
-                        bloc.add(CreateWalletInitialBalanceInputChanged(initialBalance: balance));
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: Dimens.d30.responsive()),
-              BlocBuilder<CreateWalletBloc, CreateWalletState>(
-                buildWhen: (previous, current) {
-                  return previous.isConfirmButtonEnabled != current.isConfirmButtonEnabled;
-                },
-                builder: (context, state) {
-                  return CommonButton(
-                    text: S.current.save,
-                    onTap:
-                        state.isConfirmButtonEnabled
-                            ? () {
-                              context.read<CreateWalletBloc>().add(
-                                const CreateWalletConfirmButtonPressed(),
+                        ],
+                      ),
+                      const CommonLine(),
+                      BlocBuilder<CreateWalletBloc, CreateWalletState>(
+                        buildWhen: (previous, current) {
+                          return previous.selectedCurrency !=
+                              current.selectedCurrency;
+                        },
+                        builder: (context, state) {
+                          return CommonForwardButton(
+                            padding: EdgeInsets.symmetric(
+                              vertical: Dimens.d8.responsive(),
+                            ),
+                            title: S.current.currency,
+                            color: surfaceColor,
+                            showBorder: false,
+                            onTap: () {
+                              navigator.showModalBottomSheet(
+                                AppPopupInfo.chooseCurrency(
+                                  onCurrencySelected: (selectedCurrency) {
+                                    context.read<CreateWalletBloc>().add(
+                                      CreateWalletCurrencyChanged(
+                                        currency: selectedCurrency,
+                                      ),
+                                    );
+                                  },
+                                  currentCurrency: state.selectedCurrency,
+                                ),
                               );
-                            }
-                            : null,
-                  );
-                },
-              ),
-            ],
+                            },
+                            leadingIcon: CommonCurrencyContainer(
+                              currentCurrencyCode: state.selectedCurrency?.code,
+                            ),
+                          );
+                        },
+                      ),
+                      const CommonLine(),
+                      CommonTextField2(
+                        controller: _initialBalanceController,
+                        hintText: S.current.initialBalance,
+                        inputType: TextInputType.number,
+                        maxLength: 24,
+                        onChanged: (balance) {
+                          bloc.add(
+                            CreateWalletInitialBalanceInputChanged(
+                              initialBalance: balance,
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: Dimens.d30.responsive()),
+                BlocBuilder<CreateWalletBloc, CreateWalletState>(
+                  buildWhen: (previous, current) {
+                    return previous.isConfirmButtonEnabled !=
+                        current.isConfirmButtonEnabled;
+                  },
+                  builder: (context, state) {
+                    return CommonButton(
+                      text: S.current.save,
+                      onTap:
+                          state.isConfirmButtonEnabled
+                              ? () {
+                                context.read<CreateWalletBloc>().add(
+                                  const CreateWalletConfirmButtonPressed(),
+                                );
+                              }
+                              : null,
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),

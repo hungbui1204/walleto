@@ -44,7 +44,9 @@ class _MainViewState extends BasePageState<MainView, MainBloc> {
       });
     }
 
-    appBloc.add(const DataFetched(currenciesFetched: true, walletsFetched: true));
+    appBloc.add(
+      const DataFetched(currenciesFetched: true, walletsFetched: true),
+    );
 
     super.initState();
   }
@@ -61,13 +63,22 @@ class _MainViewState extends BasePageState<MainView, MainBloc> {
               ? null
               : FloatingActionButton(
                 shape: const CircleBorder(),
-                elevation: 0,
-                onPressed: () async => await navigator.push(const AppRouteInfo.createTransaction()),
+                elevation: 4,
+                tooltip: S.current.addTransaction,
+                onPressed:
+                    () async => await navigator.push(
+                      const AppRouteInfo.createTransaction(),
+                    ),
                 backgroundColor: primaryColor,
+                foregroundColor: onPrimaryColor,
                 splashColor: primaryShadeColor,
                 child: Assets.icons.plus.svg(
-                  width: Dimens.d28.responsive(),
-                  height: Dimens.d28.responsive(),
+                  width: Dimens.d24.responsive(),
+                  height: Dimens.d24.responsive(),
+                  colorFilter: const ColorFilter.mode(
+                    onPrimaryColor,
+                    BlendMode.srcIn,
+                  ),
                 ),
               ),
       bottomNavigationBuilder: (_, tabsRouter) {

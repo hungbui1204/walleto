@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:walleto/resources/resources.dart';
-import 'package:walleto/ui/ui.dart';
 
 class CommonContainer extends StatelessWidget {
   const CommonContainer({
@@ -21,28 +20,41 @@ class CommonContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(Dimens.d12.responsive()),
-        border: Border.all(),
+      decoration: AppDecorations.glassPanel(
+        color: titleBackgroundColor ?? surfaceColor,
       ),
+      clipBehavior: Clip.antiAlias,
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Container(
-            padding: titlePadding ?? EdgeInsets.all(Dimens.d10.responsive()),
-            decoration: BoxDecoration(
-              color: titleBackgroundColor ?? primaryShade1Color,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(Dimens.d12.responsive()),
-                topRight: Radius.circular(Dimens.d12.responsive()),
-              ),
+          if (titleWidget != null)
+            Padding(
+              padding:
+                  titlePadding ??
+                  EdgeInsets.fromLTRB(
+                    Dimens.d16.responsive(),
+                    Dimens.d16.responsive(),
+                    Dimens.d16.responsive(),
+                    contentWidget == null
+                        ? Dimens.d16.responsive()
+                        : Dimens.d8.responsive(),
+                  ),
+              child: titleWidget,
             ),
-            child: titleWidget,
-          ),
-          const CommonLine(margin: EdgeInsets.zero),
-          Padding(
-            padding: contentPadding ?? EdgeInsets.all(Dimens.d10.responsive()),
-            child: contentWidget,
-          ),
+          if (contentWidget != null)
+            Padding(
+              padding:
+                  contentPadding ??
+                  EdgeInsets.fromLTRB(
+                    Dimens.d16.responsive(),
+                    titleWidget == null
+                        ? Dimens.d16.responsive()
+                        : Dimens.d4.responsive(),
+                    Dimens.d16.responsive(),
+                    Dimens.d16.responsive(),
+                  ),
+              child: contentWidget,
+            ),
         ],
       ),
     );

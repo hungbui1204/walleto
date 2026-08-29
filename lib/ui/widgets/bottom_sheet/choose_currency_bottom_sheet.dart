@@ -16,7 +16,8 @@ class ChooseCurrencyBottomSheet extends StatefulWidget {
   final Currency? currentCurrency;
 
   @override
-  State<ChooseCurrencyBottomSheet> createState() => _ChooseCurrencyBottomSheetState();
+  State<ChooseCurrencyBottomSheet> createState() =>
+      _ChooseCurrencyBottomSheetState();
 }
 
 class _ChooseCurrencyBottomSheetState extends State<ChooseCurrencyBottomSheet> {
@@ -45,7 +46,9 @@ class _ChooseCurrencyBottomSheetState extends State<ChooseCurrencyBottomSheet> {
             Text(S.current.chooseWallet, style: AppTextStyles.s18wBoldBlack()),
             SizedBox(height: Dimens.d20.responsive()),
             BlocBuilder<AppBloc, AppState>(
-              buildWhen: (previous, current) => previous.currencies != current.currencies,
+              buildWhen:
+                  (previous, current) =>
+                      previous.currencies != current.currencies,
               builder: (context, state) {
                 return ListView.separated(
                   physics: const NeverScrollableScrollPhysics(),
@@ -79,15 +82,13 @@ class _ChooseCurrencyBottomSheetState extends State<ChooseCurrencyBottomSheet> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 CommonButton(
+                  compact: true,
                   text: S.current.save,
-                  borderRadius: BorderRadius.circular(Dimens.d8.responsive()),
-                  padding: EdgeInsets.symmetric(
-                    horizontal: Dimens.d24.responsive(),
-                    vertical: Dimens.d6.responsive(),
-                  ),
                   onTap: () {
                     if (selectedCurrencyNotifier.value != null) {
-                      widget.onCurrencySelected.call(selectedCurrencyNotifier.value!);
+                      widget.onCurrencySelected.call(
+                        selectedCurrencyNotifier.value!,
+                      );
                     }
 
                     getIt.get<AppNavigator>().pop();
@@ -95,13 +96,10 @@ class _ChooseCurrencyBottomSheetState extends State<ChooseCurrencyBottomSheet> {
                 ),
                 SizedBox(width: Dimens.d8.responsive()),
                 CommonButton(
+                  compact: true,
                   text: S.current.cancel,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: Dimens.d24.responsive(),
-                    vertical: Dimens.d6.responsive(),
-                  ),
-                  borderRadius: BorderRadius.circular(Dimens.d8.responsive()),
-                  backgroundColor: whiteColor,
+                  backgroundColor: surfaceColor,
+                  textColor: blackColor,
                   onTap: () => getIt.get<AppNavigator>().pop(),
                 ),
               ],
@@ -115,7 +113,11 @@ class _ChooseCurrencyBottomSheetState extends State<ChooseCurrencyBottomSheet> {
 }
 
 class _CurrencyWidget extends StatelessWidget {
-  const _CurrencyWidget({required this.currency, required this.onTap, required this.isSelected});
+  const _CurrencyWidget({
+    required this.currency,
+    required this.onTap,
+    required this.isSelected,
+  });
 
   final Currency currency;
   final VoidCallback onTap;
@@ -127,7 +129,7 @@ class _CurrencyWidget extends StatelessWidget {
       behavior: HitTestBehavior.translucent,
       onTap: onTap,
       child: ColoredBox(
-        color: isSelected ? primaryShade1Color : whiteColor,
+        color: isSelected ? primaryShade1Color : surfaceColor,
         child: Padding(
           padding: EdgeInsets.all(Dimens.d12.responsive()),
           child: Row(

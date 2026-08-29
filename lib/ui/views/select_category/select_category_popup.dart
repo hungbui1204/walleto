@@ -25,7 +25,8 @@ class SelectCategoryPopup extends StatefulWidget {
   State<SelectCategoryPopup> createState() => _SelectCategoryPopupState();
 }
 
-class _SelectCategoryPopupState extends BasePageState<SelectCategoryPopup, SelectCategoryBloc>
+class _SelectCategoryPopupState
+    extends BasePageState<SelectCategoryPopup, SelectCategoryBloc>
     with SingleTickerProviderStateMixin {
   late final TabController _tabController;
 
@@ -51,25 +52,37 @@ class _SelectCategoryPopupState extends BasePageState<SelectCategoryPopup, Selec
         return [
           Padding(
             padding: EdgeInsets.all(Dimens.d12.responsive()),
-            child: Text(S.current.expense, style: const TextStyle(fontWeight: FontWeight.bold)),
+            child: Text(
+              S.current.expense,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
           ),
         ];
       case CategoryType.income:
         return [
           Padding(
             padding: EdgeInsets.all(Dimens.d12.responsive()),
-            child: Text(S.current.income, style: const TextStyle(fontWeight: FontWeight.bold)),
+            child: Text(
+              S.current.income,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
           ),
         ];
       case null:
         return [
           Padding(
             padding: EdgeInsets.all(Dimens.d12.responsive()),
-            child: Text(S.current.expense, style: const TextStyle(fontWeight: FontWeight.bold)),
+            child: Text(
+              S.current.expense,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
           ),
           Padding(
             padding: EdgeInsets.all(Dimens.d12.responsive()),
-            child: Text(S.current.income, style: const TextStyle(fontWeight: FontWeight.bold)),
+            child: Text(
+              S.current.income,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
           ),
         ];
     }
@@ -111,26 +124,27 @@ class _SelectCategoryPopupState extends BasePageState<SelectCategoryPopup, Selec
       type: MaterialType.transparency,
       child: Center(
         child: Container(
-          constraints: BoxConstraints(maxHeight: context.mediaQuery.size.height * 0.7),
+          constraints: BoxConstraints(
+            maxHeight: context.mediaQuery.size.height * 0.7,
+          ),
           margin: EdgeInsets.symmetric(horizontal: Dimens.d16.responsive()),
           padding: EdgeInsets.symmetric(
             horizontal: Dimens.d16.responsive(),
             vertical: Dimens.d20.responsive(),
           ),
-          decoration: BoxDecoration(
-            color: whiteColor,
-            borderRadius: BorderRadius.circular(Dimens.d16.responsive()),
-          ),
+          decoration: AppDecorations.glassPanel(),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(S.current.selectCategory, style: AppTextStyles.s20wNormalBlack()),
+              Text(
+                S.current.selectCategory,
+                style: AppTextStyles.s20wNormalBlack(),
+              ),
               TabBar(controller: _tabController, tabs: buildTabBar()),
               SizedBox(height: Dimens.d20.responsive()),
               if (!widget.isSelectingParent) ...[
                 CommonButton(
                   text: S.current.newCategory,
-                  backgroundColor: secondaryColor,
                   onTap: () {
                     navigator.showDialog(
                       AppPopupInfo.createCategory(() {
@@ -141,13 +155,20 @@ class _SelectCategoryPopupState extends BasePageState<SelectCategoryPopup, Selec
                   icon: Icon(
                     Icons.add_circle_outline,
                     size: Dimens.d20.responsive(),
-                    color: blackColor,
+                    color: onPrimaryColor,
                   ),
-                  borderRadius: BorderRadius.all(Radius.circular(Dimens.d16.responsive())),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(Dimens.d16.responsive()),
+                  ),
                 ),
                 SizedBox(height: Dimens.d20.responsive()),
               ],
-              Expanded(child: TabBarView(controller: _tabController, children: buildTabBarView())),
+              Expanded(
+                child: TabBarView(
+                  controller: _tabController,
+                  children: buildTabBarView(),
+                ),
+              ),
             ],
           ),
         ),
@@ -157,7 +178,10 @@ class _SelectCategoryPopupState extends BasePageState<SelectCategoryPopup, Selec
 }
 
 class _ExpenseCategoryTab extends StatelessWidget {
-  const _ExpenseCategoryTab({required this.onCategorySelected, this.isSelectingParent = false});
+  const _ExpenseCategoryTab({
+    required this.onCategorySelected,
+    this.isSelectingParent = false,
+  });
 
   final void Function(Category) onCategorySelected;
   final bool isSelectingParent;
@@ -166,7 +190,8 @@ class _ExpenseCategoryTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<SelectCategoryBloc, SelectCategoryState>(
       buildWhen: (previous, current) {
-        return previous.parentExpenseCategories != current.parentExpenseCategories;
+        return previous.parentExpenseCategories !=
+            current.parentExpenseCategories;
       },
       builder: (context, state) {
         return ListView.separated(
@@ -191,7 +216,10 @@ class _ExpenseCategoryTab extends StatelessWidget {
 }
 
 class _IncomeCategoryTab extends StatelessWidget {
-  const _IncomeCategoryTab({required this.onCategorySelected, this.isSelectingParent = false});
+  const _IncomeCategoryTab({
+    required this.onCategorySelected,
+    this.isSelectingParent = false,
+  });
 
   final void Function(Category) onCategorySelected;
   final bool isSelectingParent;
@@ -200,7 +228,8 @@ class _IncomeCategoryTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<SelectCategoryBloc, SelectCategoryState>(
       buildWhen: (previous, current) {
-        return previous.parentIncomeCategories != current.parentIncomeCategories;
+        return previous.parentIncomeCategories !=
+            current.parentIncomeCategories;
       },
       builder: (context, state) {
         return ListView.separated(

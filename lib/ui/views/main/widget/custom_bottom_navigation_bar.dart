@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:walleto/domain/domain.dart';
@@ -11,36 +13,55 @@ class CustomBottomNavigationBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      bottom: false,
-      child: BottomAppBar(
-        padding: EdgeInsets.zero,
-        height: Dimens.d56.responsive(),
-        color: primaryShadeColor,
-        key: key,
-        // shape: const CircularNotchedRectangle(),
-        // notchMargin: Dimens.d10.responsive(),
-        child: Row(
-          children: List.generate(BottomTab.values.length, (index) {
-            // Create [indexWithout3rdIcon] that not include the createTrans tab
-            final indexWithout3rdIcon = index < BottomTab.createTrans.index ? index : index - 1;
+    return ClipRect(
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: surfaceColor.withValues(alpha: 0.82),
+            border: const Border(top: BorderSide(color: glassHairlineColor)),
+          ),
+          child: SafeArea(
+            top: false,
+            child: SizedBox(
+              height: Dimens.d64.responsive(),
+              child: Row(
+                children: List.generate(BottomTab.values.length, (index) {
+                  final indexWithout3rdIcon =
+                      index < BottomTab.createTrans.index ? index : index - 1;
 
-            // Skip the createTrans tab for the bottom navigation bar
-            // Replace it with a SizedBox to maintain the FAB
-            if (index == BottomTab.createTrans.index) {
-              return SizedBox(width: Dimens.d50.responsive());
-            }
+                  if (index == BottomTab.createTrans.index) {
+                    return SizedBox(width: Dimens.d56.responsive());
+                  }
 
-            final tab = BottomTab.values[index];
-            return Expanded(
-              child: BottomBarIconButton(
-                onTap: () {
-                  tabsRouter.setActiveIndex(indexWithout3rdIcon);
-                },
-                icon: tab.icon(selected: tabsRouter.activeIndex == indexWithout3rdIcon),
+                  final tab = BottomTab.values[index];
+                  final selected =
+                      tabsRouter.activeIndex == indexWithout3rdIcon;
+
+                  return Expanded(
+                    child: BottomBarIconButton(
+                      label: tab.title,
+                      selected: selected,
+                      onTap: () {
+                        tabsRouter.setActiveIndex(indexWithout3rdIcon);
+                      },
+                      icon: ColorFiltered(
+                        colorFilter: ColorFilter.mode(
+                          selected ? primaryColor : darkGreyColor,
+                          BlendMode.srcIn,
+                        ),
+                        child: SizedBox(
+                          width: Dimens.d24.responsive(),
+                          height: Dimens.d24.responsive(),
+                          child: FittedBox(child: tab.icon(selected: selected)),
+                        ),
+                      ),
+                    ),
+                  );
+                }),
               ),
-            );
-          }),
+            ),
+          ),
         ),
       ),
     );

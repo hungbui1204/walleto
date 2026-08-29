@@ -9,14 +9,24 @@ class CommonCurrencyContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: Dimens.d30.responsive(),
-      width: Dimens.d40.responsive(),
-      decoration: BoxDecoration(
-        color: secondaryColor,
-        border: Border.all(),
-        borderRadius: BorderRadius.circular(Dimens.d8.responsive()),
+      constraints: BoxConstraints(
+        minHeight: Dimens.d44.responsive(),
+        minWidth: Dimens.d48.responsive(),
       ),
-      child: Center(child: Text(currentCurrencyCode ?? '', style: AppTextStyles.s14wBoldBlack())),
+      padding: EdgeInsets.symmetric(horizontal: Dimens.d8.responsive()),
+      decoration: BoxDecoration(
+        color: primaryShadeColor,
+        border: Border.all(color: glassHairlineColor),
+        borderRadius: BorderRadius.circular(Dimens.d12.responsive()),
+      ),
+      alignment: Alignment.center,
+      child: Text(
+        currentCurrencyCode ?? '',
+        style: AppThemes.amount(
+          fontSize: Dimens.d14.responsive(),
+          color: primaryColor,
+        ),
+      ),
     );
   }
 }
