@@ -98,18 +98,30 @@ flutter_launcher_icons:
   android: true
   remove_alpha_ios: true
   image_path: assets/images/walleto_logo.png
-  adaptive_icon_background: assets/images/adaptive-icon.png
+  adaptive_icon_background: "#2DD4BF"
+  adaptive_icon_foreground: assets/images/walleto_adaptive_foreground.png
+  adaptive_icon_foreground_inset: 0
+  adaptive_icon_monochrome: assets/images/walleto_monochrome.png
+  min_sdk_android: 21
 
 # dart run flutter_native_splash:create
 flutter_native_splash:
   ios: true
   android: true
+  web: false
   fullscreen: true
+  android_gravity: center
+  ios_content_mode: center
   image: assets/images/walleto_splash_screen.png
   color: "#050506"
-  # background_image: assets/images/.png
+  color_dark: "#050506"
   android_12:
+    image: assets/images/walleto_android12_splash.png
     color: "#050506"
+    icon_background_color: "#2DD4BF"
+    image_dark: assets/images/walleto_android12_splash.png
+    color_dark: "#050506"
+    icon_background_color_dark: "#2DD4BF"
 
 # dart run intl_utils:generate
 flutter_intl:

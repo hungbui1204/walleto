@@ -8,6 +8,11 @@ update_app_icon:
 	fvm dart run flutter_launcher_icons:main
 update_splash:
 	fvm dart run flutter_native_splash:create
+update_brand:
+	python3.12 tools/generate_noir_glass_brand_assets.py 2>/dev/null || python3 tools/generate_noir_glass_brand_assets.py
+	fvm dart run flutter_launcher_icons:main
+	fvm dart run flutter_native_splash:create
+	perl -i -pe 's/red="1" green="1" blue="1"/red="0.019607844" green="0.019607844" blue="0.023529412"/' ios/Runner/Base.lproj/LaunchScreen.storyboard
 remove_splash:
 	fvm dart run flutter_native_splash:remove
 
