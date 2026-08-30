@@ -1,0 +1,28 @@
+---
+description: Noir Glass design tokens and shared widgets for Walleto
+globs: "{lib/ui/**/*.dart,lib/resources/**/*.dart}"
+alwaysApply: false
+---
+
+# Design system (Noir Glass)
+
+Look up tokens before inventing new ones:
+
+- Colors: `grep '^const' lib/resources/styles/app_colors.dart`
+- Text: `grep 'static TextStyle' lib/resources/styles/app_text_styles.dart`
+- Glass/CTA: `AppDecorations` in `lib/resources/styles/app_decorations.dart`
+- Widgets: `ls lib/ui/widgets/` (`CommonButton`, `CommonAppBar`, `NoirScaffoldBody`, fields, popups, bottom sheets)
+
+```dart
+// ✅
+padding: EdgeInsets.all(Dimens.d16.responsive()),
+style: AppTextStyles.s18wBoldBlack(),
+color: primaryColor,
+decoration: AppDecorations.glassPanel(),
+Text(S.current.createWallet)
+
+// ❌
+EdgeInsets.all(16), TextStyle(...), Color(0xFF...), Text('Create wallet')
+```
+
+Every `Dimens` value must call `.responsive()`. Scaffold body: `NoirScaffoldBody`.

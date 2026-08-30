@@ -12,6 +12,9 @@ analyzer:
     unused_import: warning
     invalid_annotation_target: ignore
 
+formatter:
+  page_width: 100
+
 # https://dart.dev/tools/linter-rules
 linter:
   rules:

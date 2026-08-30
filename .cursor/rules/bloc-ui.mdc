@@ -1,0 +1,16 @@
+---
+description: BLoC, views, and navigation conventions for Walleto UI
+globs: lib/ui/**/*.dart
+alwaysApply: false
+---
+
+# BLoC & UI
+
+- Page: `@RoutePage()` + `BasePageState<View, Bloc>`. Load on open → `bloc.add(const <Screen>ViewInitiated())`.
+- BLoC: `@injectable`, extend `BaseBloc`, inject use cases, `on<Event>(_h, transformer: log())`.
+- Async emit → `runBlocCatching(action: ...)`.
+- Event/state: `part of` bloc file; sealed + freezed; event names describe intent (`ConfirmButtonPressed`), not API calls.
+- `BlocBuilder`/`Listener`/`Consumer`: always `buildWhen`/`listenWhen`.
+- New screens: one-feature folder `lib/ui/views/<feature>/` (no nested `<feature>/<feature>/`). Child UI → `widgets/<screen>_<component>_widget.dart`, public class, export `lib/ui/ui.dart`.
+- Navigate via `AppNavigator` / `AppRouteInfo`. Register in `app_router.dart`. Protected: `AuthRouteGuard`.
+- Samples: `lib/ui/views/create_wallet/`, `lib/ui/views/home/`.

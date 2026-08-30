@@ -1,0 +1,21 @@
+---
+description: Clean Architecture layer rules for Walleto Dart code
+globs: lib/**/*.dart
+alwaysApply: false
+---
+
+# Clean Architecture
+
+```
+lib/ui/  ──calls──▶  lib/domain/  ◀──implements──  lib/data/
+```
+
+- **UI** may call use cases via BLoC only. Never import `package:walleto/data/`.
+- **Domain** is pure Dart entities, use cases, `Repository`. No Flutter widgets, no Dio.
+- **Data** implements `Repository`, owns `*Data` models + mappers. Do not leak `*Data` outside data.
+
+Use cases live **flat** in `lib/domain/usecases/<verb>_<noun>_use_case.dart`, inject `Repository`, extend `BaseFutureUseCase`.
+
+API path: `AppApiServices` → `*Data` + `*DataMapper` in `lib/data/api/mappers/` → method on `Repository`/`RepositoryImpl` → use case.
+
+Match existing files: `get_wallets_use_case.dart`, `wallet_data_mapper.dart`, `repository.dart`.

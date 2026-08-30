@@ -1,14 +1,14 @@
 ---
 name: commit-mr
-description: Commit thay đổi hiện tại và tạo Merge Request vào nhánh develop cho STG-VT (GitLab gitlab.dc.local). Tự tạo branch feature/* nếu đang ở develop/main, commit theo conventional style, push kèm GitLab push-options để mở MR. Dùng khi user muốn "commit", "tạo MR/merge request", "push tạo MR vào develop", "mở merge request".
+description: Commit thay đổi hiện tại và tạo Pull Request vào nhánh develop cho Walleto (GitHub hungbui1204/walleto). Tự tạo branch feature/* nếu đang ở develop/main, commit theo conventional style, push rồi gh pr create. Dùng khi user muốn "commit", "tạo PR/pull request", "push tạo PR vào develop", "mở pull request".
 ---
 
-# Commit + tạo MR vào develop (STG-VT)
+# Commit + tạo PR vào develop (Walleto)
 
-Repo dùng **GitLab** (`git@gitlab.dc.local:skg.stg-vt/stg-vt.git`), flow `feature/* → develop → main`.
-**Không có `gh`; `glab` KHÔNG cài** → tạo MR bằng **git push-options**, không dùng CLI khác.
+Repo dùng **GitHub** (`https://github.com/hungbui1204/walleto.git`), flow `feature/* → develop → main`.
+Dùng **`gh`**. Không dùng GitLab / `glab` / git push-options `merge_request.*`.
 
-> Chỉ chạy skill này khi user yêu cầu rõ ràng commit/tạo MR (đây chính là sự cho phép). Push là hành động ra ngoài — không tự ý làm nếu user chưa yêu cầu.
+> Chỉ chạy skill này khi user yêu cầu rõ ràng commit/tạo PR (đây chính là sự cho phép). Push là hành động ra ngoài — không tự ý làm nếu user chưa yêu cầu.
 
 ## 0. Nắm scope
 ```bash
@@ -17,17 +17,16 @@ git status --short
 git diff --stat
 ```
 - Đọc kỹ diff các file sẽ commit. **Chỉ** `git add` đúng file thuộc scope task — không add đại `git add -A`.
-- **Tuyệt đối không commit:** `env/*.json`, keystore/secrets/token, provisioning, file generated không liên quan (`*.g.dart`, `*.freezed.dart`, `*.gr.dart`, `di.config.dart`) trừ khi codegen tạo ra đúng cho thay đổi này.
+- **Tuyệt đối không commit:** `env/*.json`, keystore/secrets/token, `key.properties`, provisioning, file generated (`*.g.dart`, `*.freezed.dart`, `*.gr.dart`, `di.config.dart` — đã gitignore).
 - Nếu diff lẫn code ngoài scope → hỏi user trước, đừng gộp bừa.
 
 ## 1. Pre-flight (bắt buộc pass trước khi commit)
 Nếu vừa sửa Dart mà chưa kiểm tra:
 ```bash
-make analyze                       # phải "No issues found"
+make analyze                       # phải "No issues found" (hoặc giải thích lỗi còn lại)
 fvm dart format <các-file-đã-sửa>  # format đúng file, không format cả thư mục
 ```
-- Custom lint `stg_vt_lints` **không** hiện qua `make analyze` → chạy thêm `fvm dart analyze <file đã sửa>` cho file Dart quan trọng.
-- Đụng freezed/injectable/auto_route/json_serializable → `make force_build_all`. Thêm string → 3 ARB + `make l10n`.
+- Đụng freezed/injectable/auto_route/json_serializable → `make force_build`. Thêm string → ARB + `make l10n`.
 - Analyze fail → **dừng, sửa xong mới commit.**
 
 ## 2. Tạo branch (nếu cần)
@@ -35,56 +34,53 @@ fvm dart format <các-file-đã-sửa>  # format đúng file, không format cả
 ```bash
 git checkout -b feature/<mo-ta-ngan-gon>
 ```
-- Đang ở sẵn một `feature/*` phù hợp → commit thẳng, bỏ qua bước tạo branch.
-- Tên branch ngắn, mô tả đúng thay đổi (vd `feature/device-binding-headers`). Nếu không chắc tên → đề xuất 1 tên rồi tiếp tục.
+- Đang ở sẵn một `feature/*` phù hợp → commit thẳng.
+- Tên branch ngắn, mô tả đúng thay đổi. Nếu không chắc → đề xuất 1 tên rồi tiếp tục.
 
 ## 3. Commit
-Message theo **conventional commits** (`feat:` / `fix:` / `refactor:` / `build:` / `chore:` …), tiếng Anh, tiêu đề ≤ ~72 ký tự, thân giải thích *tại sao*. Kết thúc bằng trailer Co-Authored-By của Codex:
+Message theo **conventional commits** (`feat:` / `fix:` / `refactor:` / `build:` / `chore:` …), tiếng Anh, tiêu đề ≤ ~72 ký tự, thân giải thích *tại sao*:
+
 ```bash
 git add <đúng-các-file>
-git commit -F - <<'EOF'
+git commit -m "$(cat <<'EOF'
 <type>: <tóm tắt thay đổi>
 
 <thân: bối cảnh + lý do, không chỉ liệt kê file>
 
-Co-Authored-By: Codex Opus 4.8 <noreply@anthropic.com>
 EOF
+)"
 ```
-> Dùng đúng model trailer của phiên hiện tại (mặc định `Codex Opus 4.8 <noreply@anthropic.com>`).
 
-## 4. Push + tạo MR (dùng template MR của repo)
-MR description **bắt buộc** theo template repo: `.gitlab/merge_request_templates/Default.md`.
+Không `--no-verify`. Không amend commit đã push.
 
-> Khi tạo MR bằng push-option, GitLab **KHÔNG** tự áp template và **KHÔNG** expand `%{first_multiline_commit}`. Phải tự dựng description từ file template rồi truyền vào. Push-option **hỗ trợ nhiều dòng** (giữ trong biến shell là được).
+## 4. Push + tạo PR
+PR description **bám** `.github/pull_request_template.md` nếu file tồn tại.
 
 ```bash
-# Dựng description từ template repo, thay %{first_multiline_commit} bằng commit message.
-MR_DESC="$(python3 - <<'PY'
-import subprocess
-tpl = open('.gitlab/merge_request_templates/Default.md').read()
-msg = subprocess.run(['git', 'log', '-1', '--pretty=%B'], capture_output=True, text=True).stdout.strip()
-print(tpl.replace('%{first_multiline_commit}', msg), end='')
-PY
-)"
+git push -u origin HEAD
 
-git push -u origin <branch> \
-  -o merge_request.create \
-  -o merge_request.target=develop \
-  -o merge_request.remove_source_branch \
-  -o merge_request.title="<type>: <tóm tắt>" \
-  -o merge_request.description="$MR_DESC"
+gh pr create --base develop --title "<type>: <tóm tắt>" --body "$(cat <<'EOF'
+## Summary
+<1-3 bullet points: what and why>
+
+## Test plan
+- [ ] make analyze
+- [ ] make testing (nếu có test mới/sửa)
+- [ ] Manual: <bước kiểm tra UI/flow nếu có>
+
+EOF
+)"
 ```
-- **Chỉ điền phần chắc chắn:** `%{first_multiline_commit}` → commit message. Có link Redmine/Backlog/ticket do user đưa → thay vào chỗ `xxxxxx`; **không có thì giữ nguyên placeholder** của template (đừng bịa link).
-- Tick mục checklist **đã thật sự làm** (vd `[x] Import only barrel file`); mục chưa làm để `[ ]`.
-- `/assign me` cuối template là quick-action GitLab → giữ nguyên, đừng xoá.
-- MR đã tồn tại cho branch này (push lần 2+) → **bỏ** mọi `-o merge_request.*`, chỉ `git push` (options tạo MR sẽ báo lỗi "MR already exists").
-- **Không** `--force`. Không đổi target sang `main`.
+
+- **Không** `--force`. Không đổi base sang `main` trừ khi user yêu cầu.
+- PR đã tồn tại cho branch này → chỉ `git push` (không `gh pr create` lần nữa). Trả URL PR hiện có: `gh pr view --web` / `gh pr view --json url`.
+- Tick checklist **đã thật sự làm**. Không bịa ticket/link.
 
 ## 5. Báo cáo
-GitLab in URL MR trong output remote (`View merge request ...`). Trả lại cho user:
-- Tên branch, hash commit, và **link MR** (dạng `http://gitlab.dc.local/skg.stg-vt/stg-vt/-/merge_requests/<id>`).
-- Nhắc user vào MR review + assign reviewer.
+Trả lại cho user:
+- Tên branch, hash commit, và **link PR**.
+- Nhắc review + merge vào `develop`.
 
 ## Xử lý sự cố
-- **Push-option MR không tạo** (GitLab cũ / bị tắt): branch vẫn push lên. Lấy URL "create merge request" mà remote in ra, hoặc mở thủ công: `http://gitlab.dc.local/skg.stg-vt/stg-vt/-/merge_requests/new?merge_request%5Bsource_branch%5D=<branch>&merge_request%5Btarget_branch%5D=develop`.
-- **Push bị từ chối / mất mạng nội bộ:** báo user (cần VPN/quyền tới `gitlab.dc.local`), đã commit local xong — không mất gì.
+- **`gh` chưa login / thiếu quyền:** báo user; commit local vẫn giữ.
+- **Push bị từ chối:** báo user, không `--force` trừ khi user yêu cầu rõ.

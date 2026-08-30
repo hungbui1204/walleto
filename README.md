@@ -1,6 +1,8 @@
 # walleto
 A money manager app
 
+**AI agents:** read [CLAUDE.md](CLAUDE.md) before changing code. Conventions: [CODING_RULES.md](CODING_RULES.md). Roles: [AGENTS.md](AGENTS.md). Use FVM Flutter `3.29.3` (`fvm flutter` / `fvm dart`).
+
 ## Setup on macOS
 
 ### Prerequisites

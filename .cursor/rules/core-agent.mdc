@@ -1,0 +1,27 @@
+---
+description: Core AI agent rules for Walleto — read before any code change
+alwaysApply: true
+---
+
+# Walleto — core agent rules
+
+Read [CLAUDE.md](../../CLAUDE.md) before acting. Conventions: [CODING_RULES.md](../../CODING_RULES.md). Roles: [AGENTS.md](../../AGENTS.md).
+
+**This repo is GitHub** (`hungbui1204/walleto`), flow `feature/*` → `develop` → `main`. Use `gh`. Do not use GitLab/`glab`.
+
+## Invariants (violation = fail)
+
+1. Do not commit / push / open PR / deploy unless the user explicitly asks.
+2. Layer: `ui → domain ← data`. UI never imports `data/` or calls `Repository`/API.
+3. Async `emit` in BLoC must use `runBlocCatching`. Handlers use `transformer: log()`.
+4. `BlocBuilder`/`Listener`/`Consumer` must have `buildWhen`/`listenWhen`.
+5. No hard-coded color / `TextStyle` / user string / magic number → `app_colors`, `AppTextStyles`, `S.current`, `Dimens.dXX.responsive()`.
+6. Do not edit generated files (`*.g.dart`, `*.freezed.dart`, `*.gr.dart`, `di.config.dart`, `lib/resources/gen/`).
+7. Import/export via barrels (`domain.dart`, `data.dart`, `ui.dart`, `shared.dart`, `resources.dart`).
+8. User-facing strings go in every existing ARB (currently `intl_en_US.arb`) → `make l10n`.
+9. After Dart changes: `make analyze` + format touched files. New feature/bugfix includes tests in `test/` mirroring `lib/`.
+10. Minimize scope. Do not touch `ios/`, `android/`, `.github/`, `env/` unless the task requires it.
+
+One `Repository` interface — add methods, do not invent per-feature repos unless asked.
+
+Discover existing widgets/colors/use cases with the commands in CLAUDE.md §2.1 before creating new ones.

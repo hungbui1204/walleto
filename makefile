@@ -40,6 +40,21 @@ dart_fix:
 analyze:
 	fvm flutter analyze --no-pub --suppress-analytics
 
+# Format lib/ (respects `formatter: page_width` in analysis_options.yaml).
+# Excludes generated files (mirrors analyzer.exclude in analysis_options.yaml).
+# Tip: format only the files you touched, not whole dirs, to keep diffs scoped:
+#   fvm dart format lib/path/to/changed_file.dart
+GENERATED_DART_FILTER=! -name '*.g.dart' ! -name '*.gr.dart' ! -name '*.freezed.dart' ! -name '*.config.dart' ! -name '*.gen.dart' ! -path '*/generated/*'
+
+format:
+	find lib -name '*.dart' $(GENERATED_DART_FILTER) -print0 | xargs -0 fvm dart format
+
+format_check:
+	find lib -name '*.dart' $(GENERATED_DART_FILTER) -print0 | xargs -0 fvm dart format --output=none --set-exit-if-changed
+
+# analyze + format_check + testing — run before opening a PR
+verify: analyze format_check testing
+
 gen_env:
 	fvm dart pub get --directory=tools/gen_env
 	fvm dart run tools/gen_env/lib/main.dart
@@ -58,6 +73,7 @@ build_all:
 	fvm dart run build_runner build
 force_build:
 	fvm dart run build_runner build --delete-conflicting-outputs
+force_build_all: force_build
 
 watch:
 	fvm dart run build_runner watch
