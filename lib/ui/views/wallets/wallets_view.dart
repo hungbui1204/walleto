@@ -1,7 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:walleto/di/di.dart';
 import 'package:walleto/domain/domain.dart';
 import 'package:walleto/resources/resources.dart';
 import 'package:walleto/shared/shared.dart';
@@ -15,9 +14,15 @@ class WalletsView extends StatefulWidget {
   State<WalletsView> createState() => _WalletsViewState();
 }
 
-class _WalletsViewState extends State<WalletsView> {
+class _WalletsViewState extends BasePageState<WalletsView, WalletsBloc> {
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    bloc.add(const WalletsViewInitiated());
+    super.initState();
+  }
+
+  @override
+  Widget buildPage(BuildContext context) {
     return Scaffold(
       appBar: CommonAppBar(title: S.current.myWallets),
       body: NoirScaffoldBody(
@@ -33,26 +38,19 @@ class _WalletsViewState extends State<WalletsView> {
                   child: IconButton(
                     tooltip: S.current.createWallet,
                     onPressed: () {
-                      getIt.get<AppNavigator>().push(
-                        const AppRouteInfo.createWallet(),
-                      );
+                      navigator.push(const AppRouteInfo.createWallet());
                     },
                     icon: Assets.icons.plus.svg(
                       width: Dimens.d24.responsive(),
                       height: Dimens.d24.responsive(),
                       fit: BoxFit.cover,
-                      colorFilter: const ColorFilter.mode(
-                        primaryColor,
-                        BlendMode.srcIn,
-                      ),
+                      colorFilter: const ColorFilter.mode(primaryColor, BlendMode.srcIn),
                     ),
                   ),
                 ),
                 SizedBox(height: Dimens.d10.responsive()),
                 BlocBuilder<AppBloc, AppState>(
-                  buildWhen:
-                      (previous, current) =>
-                          previous.wallets != current.wallets,
+                  buildWhen: (previous, current) => previous.wallets != current.wallets,
                   builder: (context, state) {
                     if (state.wallets.isEmpty) {
                       return CommonEmptyPanel(
@@ -60,9 +58,7 @@ class _WalletsViewState extends State<WalletsView> {
                         message: S.current.createYourFirstWallet,
                         actionLabel: S.current.createWallet,
                         onAction: () {
-                          getIt.get<AppNavigator>().push(
-                            const AppRouteInfo.createWallet(),
-                          );
+                          navigator.push(const AppRouteInfo.createWallet());
                         },
                       );
                     }
@@ -76,17 +72,12 @@ class _WalletsViewState extends State<WalletsView> {
                         itemBuilder: (context, index) {
                           return CommonRow(
                             onTap: () {
-                              getIt.get<AppNavigator>().push(
-                                AppRouteInfo.editWallet(
-                                  wallet: state.wallets[index],
-                                ),
-                              );
+                              navigator.push(AppRouteInfo.editWallet(wallet: state.wallets[index]));
                             },
                             title: state.wallets[index].name,
-                            content: state.wallets[index].amount
-                                .toStringWithFormat(
-                                  NumberFormatConstants.amountFormat,
-                                ),
+                            content: state.wallets[index].amount.toStringWithFormat(
+                              NumberFormatConstants.amountFormat,
+                            ),
                             prefix: CommonCircleNetworkImage(
                               imageUrl: state.wallets[index].iconUrl,
                               placeHolderType: ImagePlaceHolderType.wallet,
