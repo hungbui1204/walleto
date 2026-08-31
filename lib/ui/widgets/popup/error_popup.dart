@@ -4,7 +4,7 @@ import 'package:walleto/ui/ui.dart';
 
 class ErrorPopup extends PopUpWidget {
   const ErrorPopup({super.key, required super.message, this.errorAction})
-    : super(icon: const _ErrorIcon(), action: errorAction ?? const _ErrorButton());
+    : super(icon: const _ErrorIcon(), action: errorAction ?? const SizedBox.shrink());
 
   final Widget? errorAction;
 }
@@ -25,29 +25,8 @@ class _ErrorIcon extends StatelessWidget {
             border: Border.all(color: alertColor, width: Dimens.d4.responsive()),
           ),
         ),
-        // Assets.icons.close.svg(
-        //   width: Dimens.d60.responsive(),
-        //   height: Dimens.d60.responsive(),
-        //   colorFilter: const ColorFilter.mode(alertColor, BlendMode.srcIn),
-        // ),
+        Icon(Icons.close, size: Dimens.d34.responsive(), color: alertColor),
       ],
     );
-  }
-}
-
-class _ErrorButton extends StatelessWidget {
-  const _ErrorButton();
-
-  @override
-  Widget build(BuildContext context) {
-    return const SizedBox.shrink();
-    // ButtonWidget(
-    //   width: Dimens.d160.responsive(),
-    //   text: S.current.dismiss,
-    //   isShowEndIcon: false,
-    //   buttonSize: ButtonSize.small,
-    //   buttonColor: ButtonColor.white,
-    //   onPressed: () => getIt.get<AppNavigator>().pop(useRootNavigator: true),
-    // );
   }
 }
