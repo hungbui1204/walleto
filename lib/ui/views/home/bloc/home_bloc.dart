@@ -17,9 +17,9 @@ class HomeBloc extends BaseBloc<HomeEvent, HomeState> {
     this._getTopWalletStatsUseCase,
     this._getUserDefaultCurrencyUseCase,
   ) : super(const HomeState()) {
-    on<HomeViewInitialized>(_onHomeViewInitialized);
-    on<HomeCategoryTypeSelected>(_onHomeCategoryTypeSelected);
-    on<HomeCurrencySelected>(_onHomeCurrencySelected);
+    on<HomeViewInitialized>(_onHomeViewInitialized, transformer: log());
+    on<HomeCategoryTypeSelected>(_onHomeCategoryTypeSelected, transformer: log());
+    on<HomeCurrencySelected>(_onHomeCurrencySelected, transformer: log());
   }
 
   final GetMonthSummaryStatsUseCase _getMonthSummaryStatsUseCase;

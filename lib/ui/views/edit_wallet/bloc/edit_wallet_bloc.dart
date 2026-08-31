@@ -11,9 +11,9 @@ part 'edit_wallet_bloc.freezed.dart';
 @injectable
 class EditWalletBloc extends BaseBloc<EditWalletEvent, EditWalletState> {
   EditWalletBloc(this._updateWalletUseCase) : super(const EditWalletState()) {
-    on<EditWalletViewInitialized>(_onEditWalletViewInitialized);
-    on<EditWalletAmountInputChanged>(_onEditWalletAmountInputChanged);
-    on<EditWalletConfirmButtonPressed>(_onEditWalletConfirmButtonPressed);
+    on<EditWalletViewInitialized>(_onEditWalletViewInitialized, transformer: log());
+    on<EditWalletAmountInputChanged>(_onEditWalletAmountInputChanged, transformer: log());
+    on<EditWalletConfirmButtonPressed>(_onEditWalletConfirmButtonPressed, transformer: log());
   }
 
   final UpdateWalletUseCase _updateWalletUseCase;

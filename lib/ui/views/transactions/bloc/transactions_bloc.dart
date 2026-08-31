@@ -17,13 +17,16 @@ part 'transactions_bloc.freezed.dart';
 @injectable
 class TransactionsBloc extends BaseBloc<TransactionsEvent, TransactionsState> {
   TransactionsBloc(this._getTransactionsUseCase) : super(const TransactionsState()) {
-    on<TransactionsViewInitialized>(_onTransactionsViewInitialized);
-    on<TransactionsMonthSelected>(_onTransactionsMonthSelected);
-    on<TransactionsDatePickerMethodExpandTriggered>(_onTransactionsDatePickerMethodExpandTriggered);
-    on<TransactionsDateRangePicked>(_onTransactionsDateRangePicked);
-    on<TransactionsWalletSelected>(_onWalletSelected);
-    on<TransactionsWalletsUpdated>(_onTransactionsWalletsUpdated);
-    on<TransactionsRefreshed>(_onTransactionsRefreshed);
+    on<TransactionsViewInitialized>(_onTransactionsViewInitialized, transformer: log());
+    on<TransactionsMonthSelected>(_onTransactionsMonthSelected, transformer: log());
+    on<TransactionsDatePickerMethodExpandTriggered>(
+      _onTransactionsDatePickerMethodExpandTriggered,
+      transformer: log(),
+    );
+    on<TransactionsDateRangePicked>(_onTransactionsDateRangePicked, transformer: log());
+    on<TransactionsWalletSelected>(_onWalletSelected, transformer: log());
+    on<TransactionsWalletsUpdated>(_onTransactionsWalletsUpdated, transformer: log());
+    on<TransactionsRefreshed>(_onTransactionsRefreshed, transformer: log());
   }
 
   final GetTransactionsUseCase _getTransactionsUseCase;

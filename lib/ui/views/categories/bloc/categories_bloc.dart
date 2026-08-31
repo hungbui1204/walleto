@@ -12,7 +12,7 @@ part 'categories_bloc.freezed.dart';
 @injectable
 class CategoriesBloc extends BaseBloc<CategoriesEvent, CategoriesState> {
   CategoriesBloc(this._getCategoriesUseCase) : super(const CategoriesState()) {
-    on<CategoriesViewInitiated>(_onCategoriesViewInitiated);
+    on<CategoriesViewInitiated>(_onCategoriesViewInitiated, transformer: log());
   }
 
   final GetCategoriesUseCase _getCategoriesUseCase;

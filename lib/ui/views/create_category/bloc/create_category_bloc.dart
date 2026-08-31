@@ -11,13 +11,16 @@ part 'create_category_bloc.freezed.dart';
 @injectable
 class CreateCategoryBloc extends BaseBloc<CreateCategoryEvent, CreateCategoryState> {
   CreateCategoryBloc(this._createCategoryUseCase) : super(const CreateCategoryState()) {
-    on<CreateCategoryViewInitiated>(_onCreateCategoryViewInitiated);
-    on<CreateCategoryNameInputChanged>(_onCreateCategoryNameInputChanged);
-    on<CreateCategoryConfirmButtonPressed>(_onCreateCategoryConfirmButtonPressed);
-    on<CreateCategoryTypeChanged>(_onCreateCategoryTypeChanged);
-    on<CreateCategoryParentChanged>(_onCreateCategoryParentChanged);
-    on<CreateCategoryParentRemoved>(_onCreateCategoryParentRemoved);
-    on<CreateCategoryIconChanged>(_onCreateCategoryIconChanged);
+    on<CreateCategoryViewInitiated>(_onCreateCategoryViewInitiated, transformer: log());
+    on<CreateCategoryNameInputChanged>(_onCreateCategoryNameInputChanged, transformer: log());
+    on<CreateCategoryConfirmButtonPressed>(
+      _onCreateCategoryConfirmButtonPressed,
+      transformer: log(),
+    );
+    on<CreateCategoryTypeChanged>(_onCreateCategoryTypeChanged, transformer: log());
+    on<CreateCategoryParentChanged>(_onCreateCategoryParentChanged, transformer: log());
+    on<CreateCategoryParentRemoved>(_onCreateCategoryParentRemoved, transformer: log());
+    on<CreateCategoryIconChanged>(_onCreateCategoryIconChanged, transformer: log());
   }
 
   final CreateCategoryUseCase _createCategoryUseCase;
