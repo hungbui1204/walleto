@@ -13,7 +13,7 @@ part 'select_icon_bloc.freezed.dart';
 class SelectIconBloc extends BaseBloc<SelectIconEvent, SelectIconState> {
   SelectIconBloc(this._getCategoryImagesUseCase, this._getWalletImagesUseCase)
     : super(const SelectIconState()) {
-    on<SelectIconViewInitialized>(_onSelectIconViewInitialized);
+    on<SelectIconViewInitialized>(_onSelectIconViewInitialized, transformer: log());
   }
 
   final GetCategoryImagesUseCase _getCategoryImagesUseCase;

@@ -11,7 +11,7 @@ part 'account_bloc.freezed.dart';
 @injectable
 class AccountBloc extends BaseBloc<AccountEvent, AccountState> {
   AccountBloc(this._getUserInfoUseCase) : super(const AccountState()) {
-    on<AccountViewInitiated>(_onAccountViewInitiated);
+    on<AccountViewInitiated>(_onAccountViewInitiated, transformer: log());
   }
 
   final GetUserInfoUseCase _getUserInfoUseCase;

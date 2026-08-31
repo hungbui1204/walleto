@@ -12,7 +12,7 @@ part 'select_category_bloc.freezed.dart';
 @injectable
 class SelectCategoryBloc extends BaseBloc<SelectCategoryEvent, SelectCategoryState> {
   SelectCategoryBloc(this._getCategoriesUseCase) : super(const SelectCategoryState()) {
-    on<SelectCategoryViewInitiated>(_onSelectCategoryViewInitiated);
+    on<SelectCategoryViewInitiated>(_onSelectCategoryViewInitiated, transformer: log());
   }
 
   final GetCategoriesUseCase _getCategoriesUseCase;
