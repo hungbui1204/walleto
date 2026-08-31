@@ -16,8 +16,7 @@ class ChooseCurrencyBottomSheet extends StatefulWidget {
   final Currency? currentCurrency;
 
   @override
-  State<ChooseCurrencyBottomSheet> createState() =>
-      _ChooseCurrencyBottomSheetState();
+  State<ChooseCurrencyBottomSheet> createState() => _ChooseCurrencyBottomSheetState();
 }
 
 class _ChooseCurrencyBottomSheetState extends State<ChooseCurrencyBottomSheet> {
@@ -43,12 +42,10 @@ class _ChooseCurrencyBottomSheetState extends State<ChooseCurrencyBottomSheet> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(S.current.chooseWallet, style: AppTextStyles.s18wBoldBlack()),
+            Text(S.current.chooseCurrency, style: AppTextStyles.s18wBoldBlack()),
             SizedBox(height: Dimens.d20.responsive()),
             BlocBuilder<AppBloc, AppState>(
-              buildWhen:
-                  (previous, current) =>
-                      previous.currencies != current.currencies,
+              buildWhen: (previous, current) => previous.currencies != current.currencies,
               builder: (context, state) {
                 return ListView.separated(
                   physics: const NeverScrollableScrollPhysics(),
@@ -86,9 +83,7 @@ class _ChooseCurrencyBottomSheetState extends State<ChooseCurrencyBottomSheet> {
                   text: S.current.save,
                   onTap: () {
                     if (selectedCurrencyNotifier.value != null) {
-                      widget.onCurrencySelected.call(
-                        selectedCurrencyNotifier.value!,
-                      );
+                      widget.onCurrencySelected.call(selectedCurrencyNotifier.value!);
                     }
 
                     getIt.get<AppNavigator>().pop();
@@ -113,11 +108,7 @@ class _ChooseCurrencyBottomSheetState extends State<ChooseCurrencyBottomSheet> {
 }
 
 class _CurrencyWidget extends StatelessWidget {
-  const _CurrencyWidget({
-    required this.currency,
-    required this.onTap,
-    required this.isSelected,
-  });
+  const _CurrencyWidget({required this.currency, required this.onTap, required this.isSelected});
 
   final Currency currency;
   final VoidCallback onTap;

@@ -77,6 +77,8 @@
     "//" : "Add transaction view",
     "addTransaction" : "Add Transaction",
     "chooseWallet" : "Choose Wallet",
+    "chooseCurrency": "Choose Currency",
+    "@chooseCurrency": { "description": "Title of the bottom sheet to pick a currency" },
     "note": "Note",
     "editNote" :"Edit Note",
     "createNoteHere" :"Create note here",
