@@ -14,9 +14,10 @@ class AppPopupInfoMapper extends BasePopupInfoMapper {
         onPressed: onPressed,
         confirmAction: actions,
       ),
-      ErrorWithRetry(:final message, :final actions) => ErrorPopup(
+      ErrorWithRetry(:final message, :final actions, :final onRetryPressed) => ErrorWithRetryPopup(
         message: message,
         errorAction: actions,
+        onRetryPressed: onRetryPressed,
       ),
       Complete(:final message, :final actions) => CompletePopup(
         message: message,

@@ -56,20 +56,10 @@ class PopUpWidget extends StatelessWidget {
         width: context.sizeOf.width,
         child:
             message != null
-                ? Text(
-                  message!,
-                  style: AppTextStyles.s16wBoldBlack(),
-                  textAlign: TextAlign.center,
-                )
+                ? Text(message!, style: AppTextStyles.s16wBoldBlack(), textAlign: TextAlign.center)
                 : content,
       ),
-      actions: [
-        action ?? const SizedBox.shrink(),
-        // ButtonWidget(
-        //   text: S.current.ok,
-        //   onPressed: () => getIt.get<AppNavigator>().pop(useRootNavigator: true),
-        // ),
-      ],
+      actions: [action ?? const SizedBox.shrink()],
     );
   }
 }

@@ -4,7 +4,7 @@ import 'package:walleto/ui/ui.dart';
 
 class WarningPopup extends PopUpWidget {
   const WarningPopup({super.key, required super.content})
-    : super(icon: const _WarningIcon(), action: const _DismissButton());
+    : super(icon: const _WarningIcon(), action: const SizedBox.shrink());
 }
 
 class _WarningIcon extends StatelessWidget {
@@ -23,19 +23,5 @@ class _WarningIcon extends StatelessWidget {
         Icon(Icons.priority_high_rounded, size: Dimens.d34.responsive(), color: iconYellow),
       ],
     );
-  }
-}
-
-class _DismissButton extends StatelessWidget {
-  const _DismissButton();
-
-  @override
-  Widget build(BuildContext context) {
-    return const SizedBox.shrink();
-    // ButtonWidget(
-    //   text: S.current.dismiss,
-    //   isShowEndIcon: false,
-    //   onPressed: () => getIt.get<AppNavigator>().pop(useRootNavigator: true),
-    // );
   }
 }

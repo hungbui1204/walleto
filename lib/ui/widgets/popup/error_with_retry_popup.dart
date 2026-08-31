@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:walleto/di/di.dart';
+import 'package:walleto/domain/domain.dart';
 import 'package:walleto/resources/resources.dart';
 import 'package:walleto/shared/shared.dart';
 import 'package:walleto/ui/ui.dart';
@@ -30,11 +32,7 @@ class _ErrorIcon extends StatelessWidget {
             border: Border.all(color: alertColor, width: Dimens.d4.responsive()),
           ),
         ),
-        // Assets.icons.close.svg(
-        //   width: Dimens.d60.responsive(),
-        //   height: Dimens.d60.responsive(),
-        //   colorFilter: const ColorFilter.mode(alertColor, BlendMode.srcIn),
-        // ),
+        Icon(Icons.close, size: Dimens.d34.responsive(), color: alertColor),
       ],
     );
   }
@@ -49,24 +47,18 @@ class _ErrorButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // ButtonWidget(
-        //   text: S.current.retry,
-        //   width: Dimens.d160.responsive(),
-        //   isShowEndIcon: false,
-        //   buttonSize: ButtonSize.small,
-        //   buttonColor: ButtonColor.white,
-        //   onPressed: onRetryPressed?.call ??
-        //       () {
-        //         getIt.get<AppNavigator>().pop(useRootNavigator: true);
-        //       },
-        // ),
+        CommonButton(
+          text: S.current.retry,
+          onTap:
+              onRetryPressed?.call ?? () => getIt.get<AppNavigator>().pop(useRootNavigator: true),
+        ),
         SizedBox(height: Dimens.d18.responsive()),
-        // LinkWidget(
-        //   text: S.current.cancel,
-        //   textStyle: AppTextStyles.s16wBoldBlack().copyWith(height: 1),
-        //   padding: EdgeInsets.all(Dimens.d8.responsive()),
-        //   onTap: () => getIt.get<AppNavigator>().pop(useRootNavigator: true),
-        // ),
+        CommonButton(
+          text: S.current.cancel,
+          backgroundColor: surfaceColor,
+          textColor: blackColor,
+          onTap: () => getIt.get<AppNavigator>().pop(useRootNavigator: true),
+        ),
       ],
     );
   }
