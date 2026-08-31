@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:walleto/di/di.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:walleto/domain/domain.dart';
 import 'package:walleto/resources/resources.dart';
 import 'package:walleto/shared/shared.dart';
@@ -60,7 +60,7 @@ class _NoteInputBottomSheetState extends State<NoteInputBottomSheet> {
                     onTap: () {
                       widget.onNoteChanged.call(_controller.text);
 
-                      getIt.get<AppNavigator>().pop();
+                      context.read<AppNavigator>().pop();
                     },
                   ),
                   SizedBox(width: Dimens.d8.responsive()),
@@ -69,7 +69,7 @@ class _NoteInputBottomSheetState extends State<NoteInputBottomSheet> {
                     text: S.current.cancel,
                     backgroundColor: surfaceColor,
                     textColor: blackColor,
-                    onTap: () => getIt.get<AppNavigator>().pop(),
+                    onTap: () => context.read<AppNavigator>().pop(),
                   ),
                 ],
               ),

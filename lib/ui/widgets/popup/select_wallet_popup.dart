@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:walleto/di/di.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:walleto/domain/domain.dart';
 import 'package:walleto/resources/resources.dart';
 import 'package:walleto/shared/shared.dart';
@@ -51,7 +51,7 @@ class SelectWalletPopup extends StatelessWidget {
                     isSelected: wallets.first.id == selectedWallet?.id,
                     onWalletSelected: (p0) {
                       onWalletSelected.call(p0);
-                      getIt.get<AppNavigator>().pop();
+                      context.read<AppNavigator>().pop();
                     },
                   ),
                 _WalletsWidget(
@@ -59,7 +59,7 @@ class SelectWalletPopup extends StatelessWidget {
                   selectedWallet: selectedWallet,
                   onWalletSelected: (p0) {
                     onWalletSelected.call(p0);
-                    getIt.get<AppNavigator>().pop();
+                    context.read<AppNavigator>().pop();
                   },
                 ),
               ],

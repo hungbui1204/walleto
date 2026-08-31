@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:walleto/di/di.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:walleto/domain/domain.dart';
 import 'package:walleto/resources/resources.dart';
 import 'package:walleto/shared/shared.dart';
@@ -38,7 +38,7 @@ class _ConfirmButton extends StatelessWidget {
           text: S.current.ok,
           onTap:
               onPressed?.call ??
-              () => getIt.get<AppNavigator>().pop(useRootNavigator: true),
+              () => context.read<AppNavigator>().pop(useRootNavigator: true),
         ),
         if (showCancel) ...[
           SizedBox(height: Dimens.d18.responsive()),
@@ -46,7 +46,7 @@ class _ConfirmButton extends StatelessWidget {
             text: S.current.cancel,
             backgroundColor: surfaceColor,
             textColor: blackColor,
-            onTap: () => getIt.get<AppNavigator>().pop(useRootNavigator: true),
+            onTap: () => context.read<AppNavigator>().pop(useRootNavigator: true),
           ),
         ],
       ],

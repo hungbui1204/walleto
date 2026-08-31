@@ -1,7 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:walleto/di/di.dart';
 import 'package:walleto/domain/domain.dart';
 import 'package:walleto/resources/resources.dart';
 import 'package:walleto/shared/shared.dart';
@@ -150,7 +149,7 @@ class _NewTransactionInfo extends StatelessWidget {
               return GestureDetector(
                 behavior: HitTestBehavior.translucent,
                 onTap: () {
-                  getIt.get<AppNavigator>().showModalBottomSheet(
+                  context.read<AppNavigator>().showModalBottomSheet(
                     AppPopupInfo.chooseWallet(
                       onWalletSelected: (wallet) {
                         context.read<CreateTransactionBloc>().add(
@@ -206,7 +205,7 @@ class _NewTransactionInfo extends StatelessWidget {
                     builder: (context, state) {
                       return GestureDetector(
                         onTap: () {
-                          getIt.get<AppNavigator>().showModalBottomSheet(
+                          context.read<AppNavigator>().showModalBottomSheet(
                             AppPopupInfo.chooseCurrency(
                               onCurrencySelected: (selectedCurrency) {
                                 context.read<CreateTransactionBloc>().add(
@@ -294,7 +293,7 @@ class _NewTransactionInfo extends StatelessWidget {
               return GestureDetector(
                 behavior: HitTestBehavior.translucent,
                 onTap: () {
-                  getIt.get<AppNavigator>().showDialog(
+                  context.read<AppNavigator>().showDialog(
                     AppPopupInfo.selectCategory(
                       onCategorySelected: (category) {
                         context.read<CreateTransactionBloc>().add(
@@ -341,7 +340,7 @@ class _NewTransactionInfo extends StatelessWidget {
               return GestureDetector(
                 behavior: HitTestBehavior.translucent,
                 onTap: () {
-                  getIt.get<AppNavigator>().showModalBottomSheet(
+                  context.read<AppNavigator>().showModalBottomSheet(
                     AppPopupInfo.noteInput(
                       currentNote: state.note,
                       onNoteChanged: (note) {
@@ -389,8 +388,8 @@ class _NewTransactionInfo extends StatelessWidget {
                 onTap: () async {
                   final now = DateTime.now();
 
-                  final selectedDate = await getIt
-                      .get<AppNavigator>()
+                  final selectedDate = await context
+                      .read<AppNavigator>()
                       .showDatePicker(
                         firstDate: DateTime(AppConstants.firstYear),
                         lastDate: DateTime(AppConstants.lastYear),

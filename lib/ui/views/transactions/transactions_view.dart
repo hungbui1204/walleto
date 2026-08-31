@@ -1,7 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:walleto/di/di.dart';
 import 'package:walleto/domain/domain.dart';
 import 'package:walleto/resources/resources.dart';
 import 'package:walleto/shared/shared.dart';
@@ -69,7 +68,7 @@ class _TransactionsViewState
                         message: S.current.noRecentTransactions,
                         actionLabel: S.current.addTransaction,
                         onAction: () {
-                          getIt.get<AppNavigator>().push(
+                          navigator.push(
                             const AppRouteInfo.createTransaction(),
                           );
                         },
@@ -180,7 +179,7 @@ class _TransactionInfoWidget extends StatelessWidget {
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onTap: () {
-        getIt.get<AppNavigator>().push(
+        context.read<AppNavigator>().push(
           AppRouteInfo.transactionDetail(transaction: transaction),
         );
       },
@@ -289,7 +288,7 @@ class _DatePickerDropDownWidget extends StatelessWidget {
                               showBorder: false,
                               borderRadius: BorderRadius.zero,
                               onTap: () {
-                                getIt.get<AppNavigator>().showDialog(
+                                context.read<AppNavigator>().showDialog(
                                   AppPopupInfo.selectMonth(
                                     firstYear: AppConstants.firstYear,
                                     lastYear: AppConstants.lastYear,
@@ -376,7 +375,7 @@ class _SelectedWalletWidget extends StatelessWidget {
                   ),
 
           onTap: () {
-            getIt.get<AppNavigator>().showDialog(
+            context.read<AppNavigator>().showDialog(
               AppPopupInfo.selectWallet(
                 wallets: state.wallets,
                 selectedWallet: state.selectedWallet,

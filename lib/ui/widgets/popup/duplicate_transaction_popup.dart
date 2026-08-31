@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:walleto/di/di.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:walleto/domain/domain.dart';
 import 'package:walleto/resources/resources.dart';
 import 'package:walleto/shared/shared.dart';
@@ -31,7 +31,7 @@ class _DuplicateTransactionPopupState extends State<DuplicateTransactionPopup> {
   }
 
   Future<void> _dateTimeSelect() async {
-    final selectedDate = await getIt.get<AppNavigator>().showDatePicker(
+    final selectedDate = await context.read<AppNavigator>().showDatePicker(
       useRootNavigator: true,
       firstDate: DateTime(AppConstants.firstYear),
       lastDate: DateTime(AppConstants.lastYear),
