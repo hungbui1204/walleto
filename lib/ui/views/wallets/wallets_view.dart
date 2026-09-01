@@ -63,7 +63,7 @@ class _WalletsViewState extends BasePageState<WalletsView, WalletsBloc> {
                       );
                     }
 
-                    return CommonContainer2(
+                    return CommonGlassPanel(
                       padding: EdgeInsets.all(Dimens.d16.responsive()),
                       child: ListView.separated(
                         itemCount: state.wallets.length,

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:walleto/resources/resources.dart';
 import 'package:walleto/ui/widgets/pressable.dart';
 
-class CommonButton2 extends StatelessWidget {
-  const CommonButton2({
+class CommonChipButton extends StatelessWidget {
+  const CommonChipButton({
     super.key,
     this.onTap,
     required this.text,

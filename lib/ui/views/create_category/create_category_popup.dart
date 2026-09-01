@@ -88,7 +88,7 @@ class _CreateCategoryPopupState extends BasePageState<CreateCategoryPopup, Creat
                               ),
                               SizedBox(width: Dimens.d10.responsive()),
                               Expanded(
-                                child: CommonTextField2(
+                                child: CommonInlineTextField(
                                   controller: _categoryNameController,
                                   hintText: S.current.nameYourCategoryHere,
                                   onChanged: (name) {

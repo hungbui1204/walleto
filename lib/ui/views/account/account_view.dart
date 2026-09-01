@@ -107,7 +107,7 @@ class _AccountInfoWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CommonContainer2(
+    return CommonGlassPanel(
       child: Column(
         children: [
           SizedBox(height: Dimens.d40.responsive()),
@@ -167,7 +167,7 @@ class _UtilitiesWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CommonContainer2(
+    return CommonGlassPanel(
       child: Column(
         children: [
           CommonForwardButton(
@@ -216,7 +216,7 @@ class _SupportiveWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CommonContainer2(
+    return CommonGlassPanel(
       child: Column(
         children: [
           CommonForwardButton(

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:walleto/resources/resources.dart';
 
-class CommonContainer extends StatelessWidget {
-  const CommonContainer({
+class CommonTitledPanel extends StatelessWidget {
+  const CommonTitledPanel({
     super.key,
     required this.titleWidget,
     required this.contentWidget,

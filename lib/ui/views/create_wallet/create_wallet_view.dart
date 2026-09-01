@@ -96,7 +96,7 @@ class _CreateWalletViewState
                           ),
                           SizedBox(width: Dimens.d10.responsive()),
                           Expanded(
-                            child: CommonTextField2(
+                            child: CommonInlineTextField(
                               controller: _walletNameController,
                               hintText: S.current.nameYourWalletHere,
                               onChanged: (name) {
@@ -145,7 +145,7 @@ class _CreateWalletViewState
                         },
                       ),
                       const CommonLine(),
-                      CommonTextField2(
+                      CommonInlineTextField(
                         controller: _initialBalanceController,
                         hintText: S.current.initialBalance,
                         inputType: TextInputType.number,

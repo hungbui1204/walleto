@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:walleto/resources/resources.dart';
 
-class CommonTextField2 extends StatelessWidget {
-  const CommonTextField2({
+class CommonInlineTextField extends StatelessWidget {
+  const CommonInlineTextField({
     super.key,
     required this.controller,
     this.hintText,

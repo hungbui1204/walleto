@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:walleto/resources/resources.dart';
 
-class CommonContainer2 extends StatelessWidget {
-  const CommonContainer2({
+class CommonGlassPanel extends StatelessWidget {
+  const CommonGlassPanel({
     super.key,
     this.padding,
     this.color,

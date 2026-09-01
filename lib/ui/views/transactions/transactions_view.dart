@@ -110,7 +110,7 @@ class _DayTransactionsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CommonContainer(
+    return CommonTitledPanel(
       titleWidget:
           dayTransactions.date == null
               ? null
@@ -351,7 +351,7 @@ class _SelectedWalletWidget extends StatelessWidget {
             previous.wallets != current.wallets;
       },
       builder: (context, state) {
-        return CommonButton2(
+        return CommonChipButton(
           text: state.selectedWallet.name,
           icon:
               state.selectedWallet.id == AppConstants.totalWalletId

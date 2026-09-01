@@ -164,11 +164,11 @@ Không gộp thành một màn. Tách phần trùng:
 
 Không xóa hành vi; merge API nếu thực sự trùng.
 
-- [ ] `CommonButton2` → tên theo vai trò (vd. secondary / compact chip)
-- [ ] `CommonContainer` vs `CommonContainer2` — titled panel vs glass child panel
-- [ ] `CommonTextField` vs `CommonTextField2` — thống nhất hoặc đặt tên rõ (underline vs filled)
+- [x] `CommonButton2` → `CommonChipButton` (`common_chip_button.dart`) — compact secondary chip (`surfaceColor`, nhỏ hơn `CommonButton`)
+- [x] `CommonContainer` → `CommonTitledPanel`; `CommonContainer2` → `CommonGlassPanel` — titled panel vs child-only glass panel
+- [x] `CommonTextField` giữ (outlined + password/prefix); `CommonTextField2` → `CommonInlineTextField` — collapsed, không border
 
-Cập nhật mọi call site + barrel.
+Cập nhật mọi call site + barrel. Không gộp API vì visual/constructor khác nhau.
 
 ### 6.3 Một flow chọn ví
 

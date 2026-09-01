@@ -59,7 +59,7 @@ class _DuplicateTransactionPopupState extends State<DuplicateTransactionPopup> {
             children: [
               Text(S.current.duplicateTransaction, style: AppTextStyles.s20wNormalBlack()),
               SizedBox(height: Dimens.d20.responsive()),
-              CommonContainer2(
+              CommonGlassPanel(
                 padding: EdgeInsets.symmetric(
                   horizontal: Dimens.d12.responsive(),
                   vertical: Dimens.d10.responsive(),
@@ -100,7 +100,7 @@ class _DuplicateTransactionPopupState extends State<DuplicateTransactionPopup> {
                 ),
               ),
               SizedBox(height: Dimens.d20.responsive()),
-              CommonContainer2(
+              CommonGlassPanel(
                 color: fieldFillColor,
                 padding: EdgeInsets.symmetric(
                   horizontal: Dimens.d8.responsive(),
