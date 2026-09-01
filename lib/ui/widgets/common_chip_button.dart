@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:walleto/resources/resources.dart';
-import 'package:walleto/ui/widgets/pressable.dart';
+
+import 'pressable.dart';
 
 class CommonChipButton extends StatelessWidget {
   const CommonChipButton({
@@ -24,8 +25,7 @@ class CommonChipButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final radius =
-        borderRadius ?? BorderRadius.circular(Dimens.d16.responsive());
+    final radius = borderRadius ?? BorderRadius.circular(Dimens.d16.responsive());
 
     return Pressable(
       onTap: onTap,
@@ -39,23 +39,12 @@ class CommonChipButton extends StatelessWidget {
               horizontal: Dimens.d12.responsive(),
               vertical: Dimens.d8.responsive(),
             ),
-        decoration: AppDecorations.secondaryCta(
-          radius: radius,
-          color: backgroundColor,
-        ),
+        decoration: AppDecorations.secondaryCta(radius: radius, color: backgroundColor),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (icon != null) ...[
-              icon!,
-              SizedBox(width: Dimens.d8.responsive()),
-            ],
-            Flexible(
-              child: Text(
-                text,
-                style: textStyle ?? AppTextStyles.s14wNormalBlack(),
-              ),
-            ),
+            if (icon != null) ...[icon!, SizedBox(width: Dimens.d8.responsive())],
+            Flexible(child: Text(text, style: textStyle ?? AppTextStyles.s14wNormalBlack())),
           ],
         ),
       ),

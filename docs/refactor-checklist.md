@@ -195,7 +195,13 @@ Cập nhật mọi call site + barrel. Không gộp API vì visual/constructor k
 
 ### 7.3 Barrel import (nice-to-have, PR riêng nếu đụng file)
 
-- [ ] Deep import → barrel: `numeric_keyboard.dart`, `main_view.dart` (`app_route_info`), `select_icon_bloc`, `common_button*.dart` → `pressable`, v.v.
+- [x] Deep import → barrel, **chỉ** file trong danh sách (không sweep `lib/`):
+  - `lib/ui/views/main/main_view.dart` — `package:walleto/domain/navigation/app_route_info.dart` → `package:walleto/domain/domain.dart` (**chỉ** dòng import; không đụng `AppNavigatorImpl` / `tabRoutes` / `tabsRouter` / FCM — **3.4**)
+  - `lib/ui/views/select_icon/bloc/select_icon_bloc.dart` — `package:walleto/shared/constants/url_constants.dart` → `package:walleto/shared/shared.dart`
+  - `lib/ui/widgets/numeric_keyboard.dart` — **giữ relative** `../extensions/operation_type_extension.dart` (file được export từ `ui.dart` → `import 'package:walleto/ui/ui.dart'` circular). Không đụng `transaction_amount_calculator.dart` / `app_utils.dart`
+  - `lib/ui/widgets/common_button.dart` + `common_chip_button.dart` — **giữ relative** `pressable.dart` (cùng folder; circular nếu import `ui.dart`)
+  - `common_forward_button.dart` / `common_row.dart` — cùng pattern `pressable` → relative `pressable.dart` (diff nhỏ). Không lan `transaction_form_panel` sibling widgets
+- Không làm 3.2 `BudgetsView` / 3.4 `MainView` logic / Phase 6 / 8 / 9. Diff ~import-only, không tách 7.3b
 
 ---
 

@@ -2,7 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:walleto/domain/domain.dart';
-import 'package:walleto/shared/constants/url_constants.dart';
+import 'package:walleto/shared/shared.dart';
 import 'package:walleto/ui/ui.dart';
 
 part 'select_icon_event.dart';

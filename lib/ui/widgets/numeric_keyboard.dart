@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:walleto/domain/domain.dart';
 import 'package:walleto/resources/resources.dart';
-import 'package:walleto/ui/extensions/operation_type_extension.dart';
+
+import '../extensions/operation_type_extension.dart';
 
 class NumericKeyboard extends StatelessWidget {
   const NumericKeyboard({
