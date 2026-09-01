@@ -154,11 +154,11 @@ Làm **sau** Phase 3–4 để tránh conflict với extract navigator / enum.
 
 Không gộp thành một màn. Tách phần trùng:
 
-- [ ] Widget chung: amount input, row ví / category / date / note / currency (file `widgets/` public, export `ui.dart`) *(6.1b)*
+- [x] Widget chung: amount input, row ví / category / date / note / currency (file `widgets/` public, export `ui.dart`) *(6.1b)* — `TransactionFormPanel` + `TransactionAmountInput` + `TransactionNumericKeyboardSheet` (`lib/ui/widgets/`)
 - [x] Helper calculator (split operator, max length, format) — `lib/ui/utils/transaction_amount_calculator.dart` — **một** chỗ, create + edit bloc gọi lại *(6.1a)*
-- [ ] `create_transaction_view.dart` / `edit_transaction_view.dart` chỉ còn layout + `BasePageState` *(6.1b)*
+- [x] `create_transaction_view.dart` / `edit_transaction_view.dart` chỉ còn layout + `BasePageState` *(6.1b)*
 
-**Xong khi:** sửa calculator một lần áp dụng cả create và edit.
+**Xong khi:** sửa calculator một lần áp dụng cả create và edit *(6.1a)*. Sửa row/amount/keyboard widget một lần áp dụng cả create và edit *(6.1b)*.
 
 ### 6.2 Đặt tên lại `Common*2` theo vai trò
 
