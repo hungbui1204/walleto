@@ -6,18 +6,13 @@ import 'package:walleto/shared/shared.dart';
 import 'package:walleto/ui/ui.dart';
 
 class DuplicateTransactionPopup extends StatefulWidget {
-  const DuplicateTransactionPopup({
-    super.key,
-    required this.onConfirm,
-    required this.transaction,
-  });
+  const DuplicateTransactionPopup({super.key, required this.onConfirm, required this.transaction});
 
   final void Function(DateTime) onConfirm;
   final Transaction transaction;
 
   @override
-  State<DuplicateTransactionPopup> createState() =>
-      _DuplicateTransactionPopupState();
+  State<DuplicateTransactionPopup> createState() => _DuplicateTransactionPopupState();
 }
 
 class _DuplicateTransactionPopupState extends State<DuplicateTransactionPopup> {
@@ -52,26 +47,17 @@ class _DuplicateTransactionPopupState extends State<DuplicateTransactionPopup> {
       type: MaterialType.transparency,
       child: Center(
         child: Container(
-          constraints: BoxConstraints(
-            maxHeight: context.mediaQuery.size.height * 0.7,
-          ),
+          constraints: BoxConstraints(maxHeight: context.mediaQuery.size.height * 0.7),
           margin: EdgeInsets.symmetric(horizontal: Dimens.d16.responsive()),
           padding: EdgeInsets.symmetric(
             horizontal: Dimens.d16.responsive(),
             vertical: Dimens.d20.responsive(),
           ),
-          decoration: BoxDecoration(
-            color: surfaceColor,
-            borderRadius: BorderRadius.circular(Dimens.d16.responsive()),
-            border: Border.all(color: frameColor),
-          ),
+          decoration: AppDecorations.glassPanel(),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                S.current.duplicateTransaction,
-                style: AppTextStyles.s20wNormalBlack(),
-              ),
+              Text(S.current.duplicateTransaction, style: AppTextStyles.s20wNormalBlack()),
               SizedBox(height: Dimens.d20.responsive()),
               CommonContainer2(
                 padding: EdgeInsets.symmetric(
@@ -106,8 +92,7 @@ class _DuplicateTransactionPopupState extends State<DuplicateTransactionPopup> {
                         NumberFormatConstants.amountFormat,
                       ),
                       style:
-                          widget.transaction.category.type ==
-                                  CategoryType.income
+                          widget.transaction.category.type == CategoryType.income
                               ? AppTextStyles.s16wNormalGreen()
                               : AppTextStyles.s16wNormalRed(),
                     ),
