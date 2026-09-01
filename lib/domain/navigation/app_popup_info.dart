@@ -49,11 +49,15 @@ sealed class AppPopupInfo with _$AppPopupInfo {
     required void Function(String) onNoteChanged,
   }) = NoteInput;
 
+  /// Bottom sheet; wallets from AppBloc (no Total). Save/Cancel.
+  /// Not [SelectWallet] (caller-supplied list + dialog).
   const factory AppPopupInfo.chooseWallet({
     required void Function(Wallet) onWalletSelected,
     required Wallet? currentWallet,
   }) = ChooseWallet;
 
+  /// Dialog; [wallets] from caller (may include Total). Tap selects and pops.
+  /// Not [ChooseWallet] (AppBloc list + bottom sheet).
   const factory AppPopupInfo.selectWallet({
     required List<Wallet> wallets,
     required void Function(Wallet) onWalletSelected,
