@@ -112,8 +112,8 @@ Domain **không** import `flutter/`, `flutter_svg`, `resources`, không trả `W
 
 ### 4.2 `SignOutUseCase` không navigate
 
-- [ ] `lib/domain/usecases/sign_out_use_case.dart` — chỉ `repository.signOut()`, bỏ inject `AppNavigator`
-- [ ] `lib/ui/app/bloc/app_bloc.dart` — `replace(AppRouteInfo.login())` sau khi use case thành công
+- [x] `lib/domain/usecases/sign_out_use_case.dart` — chỉ `repository.signOut()`, bỏ inject `AppNavigator`
+- [x] `lib/ui/app/bloc/app_bloc.dart` — `replace(AppRouteInfo.login())` sau khi use case thành công
 
 ---
 

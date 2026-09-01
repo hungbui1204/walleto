@@ -33,6 +33,7 @@ class AppBloc extends BaseBloc<AppEvent, AppState> {
     await runBlocCatching(
       action: () async {
         await _signOutUseCase.execute(const SignOutInput());
+        await navigator.replace(const AppRouteInfo.login());
       },
     );
   }
