@@ -34,6 +34,7 @@ export 'views/auth/widgets/sign_up_confirm_email_step_widget.dart';
 export 'views/auth/widgets/sign_up_confirm_otp_step_widget.dart';
 export 'views/auth/widgets/sign_up_signing_up_step_widget.dart';
 export 'views/auth/widgets/sign_up_tab.dart';
+export 'views/budgets/bloc/budgets_bloc.dart';
 export 'views/budgets/budgets_view.dart';
 export 'views/categories/bloc/categories_bloc.dart';
 export 'views/categories/categories_view.dart';
