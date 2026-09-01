@@ -130,11 +130,13 @@ Không bắt buộc đổi mọi `Colors.transparent`.
 
 ### 5.2 Panel kính thống nhất
 
-- [ ] `lib/ui/views/create_category/create_category_popup.dart` — `AppDecorations.glassPanel()` thay `BoxDecoration` phẳng
-- [ ] `lib/ui/widgets/popup/select_wallet_popup.dart`
-- [ ] `lib/ui/widgets/popup/duplicate_transaction_popup.dart`
+- [x] `lib/ui/views/create_category/create_category_popup.dart` — `AppDecorations.glassPanel()` thay `BoxDecoration` phẳng
+- [x] `lib/ui/widgets/popup/select_wallet_popup.dart`
+- [x] `lib/ui/widgets/popup/duplicate_transaction_popup.dart`
 
 Bottom nav blur (`custom_bottom_navigation_bar.dart`) để riêng — chrome đặc thù, không bắt `glassPanel()`.
+
+**Xong khi:** 3 popup trên dùng `AppDecorations.glassPanel()`; không còn `BoxDecoration` phẳng thay panel kính. Inner fill (`fieldFillColor`) và circle border không đổi.
 
 ### 5.3 Magic number / duration (chỉ khi đụng file)
 
