@@ -65,7 +65,7 @@ abstract class AppNavigator {
     Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)? transitionBuilder,
     Duration transitionDuration = DurationConstants.defaultGeneralDialogTransitionDuration,
     bool barrierDismissible = true,
-    Color barrierColor = const Color(0x80000000),
+    Color barrierColor = backgroundOverlayColor,
     bool useRootNavigator = true,
   });
 
@@ -75,7 +75,7 @@ abstract class AppNavigator {
     bool useRootNavigator = false,
     bool isDismissible = true,
     bool enableDrag = true,
-    Color barrierColor = Colors.black54,
+    Color barrierColor = backgroundOverlayColor,
     Color backgroundColor = surfaceColor,
   });
 
@@ -89,7 +89,7 @@ abstract class AppNavigator {
     required DateTime lastDate,
     DateTime? currentDate,
     bool useRootNavigator = false,
-    Color barrierColor = Colors.black54,
+    Color barrierColor = backgroundOverlayColor,
     Color? backgroundColor,
   });
 

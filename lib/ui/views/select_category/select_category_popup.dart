@@ -25,8 +25,7 @@ class SelectCategoryPopup extends StatefulWidget {
   State<SelectCategoryPopup> createState() => _SelectCategoryPopupState();
 }
 
-class _SelectCategoryPopupState
-    extends BasePageState<SelectCategoryPopup, SelectCategoryBloc>
+class _SelectCategoryPopupState extends BasePageState<SelectCategoryPopup, SelectCategoryBloc>
     with SingleTickerProviderStateMixin {
   late final TabController _tabController;
 
@@ -49,41 +48,13 @@ class _SelectCategoryPopupState
   List<Widget> buildTabBar() {
     switch (widget.categoryType) {
       case CategoryType.expense:
-        return [
-          Padding(
-            padding: EdgeInsets.all(Dimens.d12.responsive()),
-            child: Text(
-              S.current.expense,
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ),
-        ];
+        return [_SelectCategoryTabLabel(S.current.expense)];
       case CategoryType.income:
-        return [
-          Padding(
-            padding: EdgeInsets.all(Dimens.d12.responsive()),
-            child: Text(
-              S.current.income,
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ),
-        ];
+        return [_SelectCategoryTabLabel(S.current.income)];
       case null:
         return [
-          Padding(
-            padding: EdgeInsets.all(Dimens.d12.responsive()),
-            child: Text(
-              S.current.expense,
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.all(Dimens.d12.responsive()),
-            child: Text(
-              S.current.income,
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ),
+          _SelectCategoryTabLabel(S.current.expense),
+          _SelectCategoryTabLabel(S.current.income),
         ];
     }
   }
@@ -124,9 +95,7 @@ class _SelectCategoryPopupState
       type: MaterialType.transparency,
       child: Center(
         child: Container(
-          constraints: BoxConstraints(
-            maxHeight: context.mediaQuery.size.height * 0.7,
-          ),
+          constraints: BoxConstraints(maxHeight: context.mediaQuery.size.height * 0.7),
           margin: EdgeInsets.symmetric(horizontal: Dimens.d16.responsive()),
           padding: EdgeInsets.symmetric(
             horizontal: Dimens.d16.responsive(),
@@ -136,10 +105,7 @@ class _SelectCategoryPopupState
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                S.current.selectCategory,
-                style: AppTextStyles.s20wNormalBlack(),
-              ),
+              Text(S.current.selectCategory, style: AppTextStyles.s20wNormalBlack()),
               TabBar(controller: _tabController, tabs: buildTabBar()),
               SizedBox(height: Dimens.d20.responsive()),
               if (!widget.isSelectingParent) ...[
@@ -157,18 +123,11 @@ class _SelectCategoryPopupState
                     size: Dimens.d20.responsive(),
                     color: onPrimaryColor,
                   ),
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(Dimens.d16.responsive()),
-                  ),
+                  borderRadius: BorderRadius.all(Radius.circular(Dimens.d16.responsive())),
                 ),
                 SizedBox(height: Dimens.d20.responsive()),
               ],
-              Expanded(
-                child: TabBarView(
-                  controller: _tabController,
-                  children: buildTabBarView(),
-                ),
-              ),
+              Expanded(child: TabBarView(controller: _tabController, children: buildTabBarView())),
             ],
           ),
         ),
@@ -178,10 +137,7 @@ class _SelectCategoryPopupState
 }
 
 class _ExpenseCategoryTab extends StatelessWidget {
-  const _ExpenseCategoryTab({
-    required this.onCategorySelected,
-    this.isSelectingParent = false,
-  });
+  const _ExpenseCategoryTab({required this.onCategorySelected, this.isSelectingParent = false});
 
   final void Function(Category) onCategorySelected;
   final bool isSelectingParent;
@@ -190,8 +146,7 @@ class _ExpenseCategoryTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<SelectCategoryBloc, SelectCategoryState>(
       buildWhen: (previous, current) {
-        return previous.parentExpenseCategories !=
-            current.parentExpenseCategories;
+        return previous.parentExpenseCategories != current.parentExpenseCategories;
       },
       builder: (context, state) {
         return ListView.separated(
@@ -216,10 +171,7 @@ class _ExpenseCategoryTab extends StatelessWidget {
 }
 
 class _IncomeCategoryTab extends StatelessWidget {
-  const _IncomeCategoryTab({
-    required this.onCategorySelected,
-    this.isSelectingParent = false,
-  });
+  const _IncomeCategoryTab({required this.onCategorySelected, this.isSelectingParent = false});
 
   final void Function(Category) onCategorySelected;
   final bool isSelectingParent;
@@ -228,8 +180,7 @@ class _IncomeCategoryTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<SelectCategoryBloc, SelectCategoryState>(
       buildWhen: (previous, current) {
-        return previous.parentIncomeCategories !=
-            current.parentIncomeCategories;
+        return previous.parentIncomeCategories != current.parentIncomeCategories;
       },
       builder: (context, state) {
         return ListView.separated(
@@ -248,6 +199,25 @@ class _IncomeCategoryTab extends StatelessWidget {
           },
         );
       },
+    );
+  }
+}
+
+class _SelectCategoryTabLabel extends StatelessWidget {
+  const _SelectCategoryTabLabel(this.label);
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.all(Dimens.d12.responsive()),
+      child: Text(
+        label,
+        style: AppTextStyles.s15wBoldBlack().copyWith(
+          color: DefaultTextStyle.of(context).style.color,
+        ),
+      ),
     );
   }
 }

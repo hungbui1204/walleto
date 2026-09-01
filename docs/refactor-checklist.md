@@ -121,10 +121,10 @@ Domain **không** import `flutter/`, `flutter_svg`, `resources`, không trả `W
 
 ### 5.1 Hard-code style / màu barrier
 
-- [ ] `lib/ui/views/select_category/select_category_popup.dart` — `TextStyle(fontWeight: FontWeight.bold)` → `AppTextStyles`
-- [ ] `lib/ui/widgets/common_app_bar.dart` — `AppThemes.display(...)` → `AppTextStyles` phù hợp
-- [ ] `lib/ui/views/auth/login_view.dart` — `AppThemes.display` → `AppTextStyles`
-- [ ] `lib/domain/navigation/app_navigator.dart` + `lib/ui/navigation/app_navigator_impl.dart` — barrier `Color(0x…)` / `Colors.black54` → `backgroundOverlayColor` (hoặc token hiện có)
+- [x] `lib/ui/views/select_category/select_category_popup.dart` — `TextStyle(fontWeight: FontWeight.bold)` → `AppTextStyles`
+- [x] `lib/ui/widgets/common_app_bar.dart` — `AppThemes.display(...)` → `AppTextStyles` phù hợp
+- [x] `lib/ui/views/auth/login_view.dart` — `AppThemes.display` → `AppTextStyles`
+- [x] `lib/domain/navigation/app_navigator.dart` + `lib/ui/navigation/app_navigator_impl.dart` — barrier `Color(0x…)` / `Colors.black54` → `backgroundOverlayColor` (hoặc token hiện có)
 
 Không bắt buộc đổi mọi `Colors.transparent`.
 
