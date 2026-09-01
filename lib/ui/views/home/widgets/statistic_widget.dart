@@ -12,7 +12,7 @@ class StatisticWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CommonContainer(
+    return CommonTitledPanel(
       titleWidget: Align(
         alignment: Alignment.centerLeft,
         child: Text(

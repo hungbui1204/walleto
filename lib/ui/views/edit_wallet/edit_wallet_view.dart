@@ -69,7 +69,7 @@ class _EditWalletViewState
                       Row(
                         children: [
                           Expanded(
-                            child: CommonTextField2(
+                            child: CommonInlineTextField(
                               controller: _amountController,
                               hintText: S.current.initialBalance,
                               inputType: TextInputType.number,

@@ -42,7 +42,7 @@ class _TransactionDetailViewState
           child: Column(
             children: [
               SizedBox(height: Dimens.d16.responsive()),
-              CommonContainer2(
+              CommonGlassPanel(
                 padding: EdgeInsets.all(Dimens.d16.responsive()),
                 child: Column(
                   children: [
