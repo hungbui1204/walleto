@@ -183,9 +183,9 @@ Cập nhật mọi call site + barrel. Không gộp API vì visual/constructor k
 
 ### 7.1 Xóa hoặc wire dead export
 
-- [ ] `lib/ui/views/home/widgets/daily_stats_chart.dart` — xóa **hoặc** gắn vào `StatisticWidget` nếu còn nhu cầu
-- [ ] Gỡ export `lib/ui/ui.dart` nếu xóa
-- [ ] `MainBloc` rỗng: giữ nếu `BasePageState` bắt buộc bloc; nếu 3.4 đã chuyển logic vào đây thì không còn “rỗng”
+- [x] `lib/ui/views/home/widgets/daily_stats_chart.dart` — **xóa** (không gắn vào `StatisticWidget`: Home chỉ render `MonthSummaryChart` + `MonthWalletCategoryStatsChart`; không có call site)
+- [x] Gỡ export `lib/ui/ui.dart` (đã xóa file)
+- [x] `MainBloc` rỗng: **giữ stub vì `BasePageState` bắt buộc bloc** (`MainView extends BasePageState<MainView, MainBloc>`). Không đụng `main_view.dart` — 3.4 / FCM làm PR riêng.
 
 ### 7.2 Typo / folder / gitignore
 
