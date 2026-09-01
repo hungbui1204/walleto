@@ -47,6 +47,7 @@ export 'model/typedef.dart';
 export 'utils/device_utils.dart';
 export 'utils/file_utils.dart';
 export 'utils/locale_utils.dart';
+export 'utils/log_redactor.dart';
 export 'utils/log_utils.dart';
 export 'utils/object_utils.dart';
 export 'utils/parse_utils.dart';

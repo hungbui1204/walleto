@@ -18,7 +18,8 @@ class EnvConstants {
   static void init() {
     Log.d(flavor, name: flavorKey);
     Log.d(appApiDomain, name: appApiDomainKey);
-    Log.d(appApiKey, name: appApiKeyKey);
+    final apiKeyStatus = appApiKey.isEmpty ? 'empty' : 'set';
+    Log.d(apiKeyStatus, name: appApiKeyKey);
     Log.d(appApiFunctionsDomain, name: appApiFunctionsDomainKey);
   }
 }

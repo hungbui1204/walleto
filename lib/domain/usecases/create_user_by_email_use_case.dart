@@ -1,6 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:walleto/domain/domain.dart';
+import 'package:walleto/shared/shared.dart';
 
 part 'create_user_by_email_use_case.freezed.dart';
 
@@ -26,6 +27,10 @@ sealed class CreateUserByEmailInput extends BaseInput with _$CreateUserByEmailIn
 
   const factory CreateUserByEmailInput({required String email, required String password}) =
       _CreateUserByEmailInput;
+
+  @override
+  String toString() =>
+      'CreateUserByEmailInput(email: $email, password: ${LogRedactor.placeholder})';
 }
 
 @freezed

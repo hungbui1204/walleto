@@ -207,12 +207,16 @@ Cập nhật mọi call site + barrel. Không gộp API vì visual/constructor k
 
 ## Phase 8 — Bảo mật log (debug)
 
-Không tắt hết log; **redact** field nhạy cảm.
+Không tắt hết log; **redact** field nhạy cảm. **Không tách 8a/8b** (diff nhỏ, một PR).
 
-- [ ] `lib/shared/constants/env_constants.dart` — không `Log.d(appApiKey)`
-- [ ] `lib/data/api/middleware/custom_log_interceptor.dart` — redact `Authorization`, password, refresh_token, body auth
-- [ ] `LoginByPasswordInput` (và event password) — `toString` / log không in password (`@JsonKey` / override `toString` / tắt `enableLogUseCaseInput` cho auth)
-- [ ] `lib/ui/base/bloc/app_bloc_observer.dart` — không log nguyên event chứa password
+- [x] `lib/shared/constants/env_constants.dart` — bỏ log giá trị API key; `Log.d(..., name: APP_API_KEY)` in `empty`/`set`. Giữ log `flavor` / domain / functions domain
+- [x] `lib/data/api/middleware/custom_log_interceptor.dart` — `LogRedactor` trên headers + request/response/error body (kể cả `onResponse` dump `requestOptions.data`). Redact `Authorization`, `apiKey`, `password`, `refresh_token` / `access_token` (và biến thể). Interceptor vẫn bật
+- [x] Helper `lib/shared/utils/log_redactor.dart` (+ test nhỏ `test/shared/utils/log_redactor_test.dart`). Export `shared.dart`
+- [x] Custom `toString` (freezed **không** generate `toString` khi class đã override): `LoginByPasswordInput`, `CreateUserByEmailInput`, `ResetUserPasswordInput` — password → `[redacted]`. Không tắt global `LogConfig.enableLogUseCaseInput`
+- [x] Event password custom `toString`: `LoginPasswordInputChanged`, `SignUpPasswordInputChanged`, `SignUpConfirmPasswordInputChanged`, `ResetPasswordPasswordInputChanged`, `ResetPasswordConfirmPasswordInputChanged`
+- [x] `lib/ui/base/bloc/app_bloc_observer.dart` — `onEvent` dùng `LogRedactor.forEvent` (type `*PasswordInput*` / `*ConfirmPassword*` → `( [redacted] )`). `logOnEvent` vẫn bật; không tắt `logOnChange` / interceptor
+
+Không làm trong PR 8: 3.2 `BudgetsView`, 3.4 `MainView` / FCM, Phase 9 seed `bloc_test`.
 
 ---
 
