@@ -39,6 +39,9 @@ sealed class ResetPasswordPasswordInputChanged extends ResetPasswordEvent
   const ResetPasswordPasswordInputChanged._();
   const factory ResetPasswordPasswordInputChanged({required String password}) =
       _ResetPasswordPasswordInputChanged;
+
+  @override
+  String toString() => 'ResetPasswordPasswordInputChanged(password: ${LogRedactor.placeholder})';
 }
 
 @freezed
@@ -47,6 +50,10 @@ sealed class ResetPasswordConfirmPasswordInputChanged extends ResetPasswordEvent
   const ResetPasswordConfirmPasswordInputChanged._();
   const factory ResetPasswordConfirmPasswordInputChanged({required String confirmPassword}) =
       _ResetPasswordConfirmPasswordInputChanged;
+
+  @override
+  String toString() =>
+      'ResetPasswordConfirmPasswordInputChanged(confirmPassword: ${LogRedactor.placeholder})';
 }
 
 @freezed

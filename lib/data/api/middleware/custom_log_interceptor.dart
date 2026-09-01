@@ -32,24 +32,12 @@ class CustomLogInterceptor extends BaseInterceptor {
     log.add('🌐 Request: ${options.method} ${options.uri}');
     if (options.headers.isNotEmpty) {
       log.add('🌐 Request Headers:');
-      log.add('🌐 ${_prettyResponse(options.headers)}');
+      log.add('🌐 ${_prettyBody(options.headers)}');
     }
 
     if (options.data != null) {
       log.add('🌐 Request Body:');
-      if (options.data is FormData) {
-        final data = options.data as FormData;
-        if (data.fields.isNotEmpty) {
-          log.add('🌐 Fields: ${_prettyResponse(data.fields)}');
-        }
-        if (data.files.isNotEmpty) {
-          log.add(
-            '🌐 Files: ${_prettyResponse(data.files.map((e) => MapEntry(e.key, 'File name: ${e.value.filename}, Content type: ${e.value.contentType}, Length: ${e.value.length}')))}',
-          );
-        }
-      } else {
-        log.add('🌐 ${_prettyResponse(options.data)}');
-      }
+      log.add('🌐 ${_prettyBody(options.data)}');
     }
 
     Log.d(log.join('\n'));
@@ -68,9 +56,9 @@ class CustomLogInterceptor extends BaseInterceptor {
 
     log.add('************ Request Response ************');
     log.add('🎉 ${response.requestOptions.method} ${response.requestOptions.uri}');
-    log.add('🎉 Request Body: ${_prettyResponse(response.requestOptions.data)}');
+    log.add('🎉 Request Body: ${_prettyBody(response.requestOptions.data)}');
     log.add('🎉 Success Code: ${response.statusCode}');
-    log.add('🎉 ${_prettyResponse(response.data)}');
+    log.add('🎉 ${_prettyBody(response.data)}');
 
     Log.d(log.join('\n'));
     handler.next(response);
@@ -89,17 +77,27 @@ class CustomLogInterceptor extends BaseInterceptor {
     log.add('************ Request Error ************');
     log.add('⛔️ ${err.requestOptions.method} ${err.requestOptions.uri}');
     log.add('⛔️ Error Code: ${err.response?.statusCode ?? 'unknown status code'}');
-    log.add('⛔️ Json: ${err.response}');
+    log.add('⛔️ Request Body: ${_prettyBody(err.requestOptions.data)}');
+    log.add('⛔️ ${LogRedactor.stringify(err.response?.data)}');
 
     Log.e(log.join('\n'));
     handler.next(err);
   }
 
-  String _prettyResponse(dynamic data) {
-    if (data is Map) {
-      return Log.prettyJson(data as Map<String, dynamic>);
+  String _prettyBody(dynamic data) {
+    if (data is FormData) {
+      return LogRedactor.stringify({
+        if (data.fields.isNotEmpty)
+          'fields': {for (final field in data.fields) field.key: field.value},
+        if (data.files.isNotEmpty)
+          'files': [
+            for (final file in data.files)
+              '${file.key}: File name: ${file.value.filename}, '
+                  'Content type: ${file.value.contentType}, Length: ${file.value.length}',
+          ],
+      });
     }
 
-    return data.toString();
+    return LogRedactor.stringify(data);
   }
 }

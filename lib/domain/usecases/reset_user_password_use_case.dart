@@ -1,6 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:walleto/domain/domain.dart';
+import 'package:walleto/shared/shared.dart';
 
 part 'reset_user_password_use_case.freezed.dart';
 
@@ -26,6 +27,10 @@ sealed class ResetUserPasswordInput extends BaseInput with _$ResetUserPasswordIn
 
   const factory ResetUserPasswordInput({required String email, required String password}) =
       _ResetUserPasswordInput;
+
+  @override
+  String toString() =>
+      'ResetUserPasswordInput(email: $email, password: ${LogRedactor.placeholder})';
 }
 
 @freezed

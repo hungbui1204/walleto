@@ -54,7 +54,7 @@ class AppBlocObserver extends BlocObserver {
   void onEvent(Bloc<dynamic, dynamic> bloc, Object? event) {
     super.onEvent(bloc, event);
     if (logOnEvent) {
-      Log.d('onEvent $event', name: bloc.runtimeType.toString());
+      Log.d('onEvent ${LogRedactor.forEvent(event)}', name: bloc.runtimeType.toString());
     }
   }
 

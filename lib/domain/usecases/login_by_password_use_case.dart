@@ -1,6 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:walleto/domain/domain.dart';
+import 'package:walleto/shared/shared.dart';
 
 part 'login_by_password_use_case.freezed.dart';
 
@@ -35,6 +36,10 @@ sealed class LoginByPasswordInput extends BaseInput with _$LoginByPasswordInput 
     required String fcmToken,
     required String timezone,
   }) = _LoginByPasswordInput;
+
+  @override
+  String toString() =>
+      'LoginByPasswordInput(email: $email, password: ${LogRedactor.placeholder}, fcmToken: $fcmToken, timezone: $timezone)';
 }
 
 @freezed

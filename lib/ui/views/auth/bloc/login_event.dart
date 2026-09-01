@@ -14,6 +14,9 @@ sealed class LoginEmailInputChanged extends LoginEvent with _$LoginEmailInputCha
 sealed class LoginPasswordInputChanged extends LoginEvent with _$LoginPasswordInputChanged {
   const LoginPasswordInputChanged._();
   const factory LoginPasswordInputChanged({required String password}) = _LoginPasswordInputChanged;
+
+  @override
+  String toString() => 'LoginPasswordInputChanged(password: ${LogRedactor.placeholder})';
 }
 
 @freezed
@@ -52,6 +55,9 @@ sealed class SignUpPasswordInputChanged extends LoginEvent with _$SignUpPassword
   const SignUpPasswordInputChanged._();
   const factory SignUpPasswordInputChanged({required String password}) =
       _SignUpPasswordInputChanged;
+
+  @override
+  String toString() => 'SignUpPasswordInputChanged(password: ${LogRedactor.placeholder})';
 }
 
 @freezed
@@ -60,6 +66,10 @@ sealed class SignUpConfirmPasswordInputChanged extends LoginEvent
   const SignUpConfirmPasswordInputChanged._();
   const factory SignUpConfirmPasswordInputChanged({required String confirmPassword}) =
       _SignUpConfirmPasswordInputChanged;
+
+  @override
+  String toString() =>
+      'SignUpConfirmPasswordInputChanged(confirmPassword: ${LogRedactor.placeholder})';
 }
 
 @freezed
