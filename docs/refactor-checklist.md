@@ -189,9 +189,9 @@ Cập nhật mọi call site + barrel. Không gộp API vì visual/constructor k
 
 ### 7.2 Typo / folder / gitignore
 
-- [ ] `lib/domain/usecases/duplicate_transaction_use_case.dart` — `respone` → `response`
-- [x] `lib/ui/views/main/widget/` → `widgets/` (đổi mọi import)
-- [ ] `.gitignore`: `**/resource/gen` → khớp `lib/resources/gen/` (đừng ignore nhầm path)
+- [x] `lib/domain/usecases/duplicate_transaction_use_case.dart` — `respone` → `response` (local `final respone` → `response`; Grep toàn repo không còn `respone`; không đổi API backend / freezed)
+- [x] `lib/ui/views/main/widget/` → `widgets/` (đổi mọi import) — đã xong #16; xác nhận không còn path cũ, không rename lại
+- [x] `.gitignore`: `**/resource/gen` → `lib/resources/gen/` (khớp path thật `resources` số nhiều; không broaden sang folder khác; `*.gen.dart` vẫn ignore file generated)
 
 ### 7.3 Barrel import (nice-to-have, PR riêng nếu đụng file)
 

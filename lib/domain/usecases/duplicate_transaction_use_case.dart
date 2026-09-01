@@ -14,12 +14,12 @@ class DuplicateTransactionUseCase
   @protected
   @override
   Future<DuplicateTransactionOutput> buildUseCase(DuplicateTransactionInput input) async {
-    final respone = await _repository.duplicateTransaction(
+    final response = await _repository.duplicateTransaction(
       transactionId: input.transactionId,
       newCreatedAt: input.newCreatedAt,
     );
 
-    return DuplicateTransactionOutput(transaction: respone);
+    return DuplicateTransactionOutput(transaction: response);
   }
 }
 
