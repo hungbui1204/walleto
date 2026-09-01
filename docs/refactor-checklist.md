@@ -95,9 +95,11 @@ Không làm trong PR 3.2: 3.4 `MainView` / `AppNavigatorImpl` / `tabRoutes` / FC
 
 ### 3.4 `MainView` không cast `AppNavigatorImpl`
 
-- [ ] `lib/ui/views/main/main_view.dart` — bỏ `(navigator as AppNavigatorImpl).tabRoutes` / `tabsRouter =`
-- [ ] Đưa `tabRoutes` / set `tabsRouter` vào `AppNavigator` port (hoặc helper UI), không leak impl vào view
+- [x] `lib/ui/views/main/main_view.dart` — bỏ `(navigator as AppNavigatorImpl).tabRoutes` / `tabsRouter =`
+- [x] Đưa `tabRoutes` / set `tabsRouter` vào `AppNavigator` port (hoặc helper UI), không leak impl vào view
 - [ ] (Tuỳ chọn cùng PR) chuyển đăng ký FCM từ `initState` sang `MainBloc` / service — **không** copy-paste thêm TODO iOS
+
+**PR 3.4:** view không còn cast `AppNavigatorImpl`; `tabRoutes` (get) + set `tabsRouter` trên `AppNavigator` (Flutter/`PageRouteInfo` giữ ở `domain/navigation/` theo CODING_RULES). `AppNavigatorImpl` vẫn sở hữu list tab + `TabsRouter`. FCM giữ `initState` (skip). Không làm Phase 10 / budgets feature / FCM iOS.
 
 ---
 
