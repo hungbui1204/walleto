@@ -222,14 +222,14 @@ Không làm trong PR 8: 3.2 `BudgetsView`, 3.4 `MainView` / FCM, Phase 9 seed `b
 
 ## Phase 9 — Test convention (seed, không cover cả app)
 
-CODING_RULES §15: repo chưa có `test/`. Feature **mới** sau này phải có test; seed trước để có mẫu.
+CODING_RULES §15. Repo **đã có** `test/` trước seed này: `test/ui/utils/transaction_amount_calculator_test.dart` (#17), `test/shared/utils/log_redactor_test.dart` + `test/domain/usecases/login_by_password_input_test.dart` (#24). Feature **mới** sau này phải có test; seed này là mẫu use case + BLoC (không xóa test cũ, không cover cả app).
 
-- [ ] Thêm `bloc_test` + `mocktail` vào `dev_dependencies` nếu chưa có
-- [ ] `test/domain/usecases/get_wallets_use_case_test.dart` (hoặc `create_wallet`) — mock `Repository` local trong file, không `test/helpers/mocks.dart`
-- [ ] `test/ui/views/create_wallet/bloc/create_wallet_bloc_test.dart` — harness `BaseBlocDelegate` như §15
-- [ ] `make testing` pass
+- [x] `dev_dependencies`: `bloc_test` 10.0.0 + `mocktail` 1.0.5 (`pubspec.yaml`)
+- [x] `test/domain/usecases/get_wallets_use_case_test.dart` — mock `Repository` local trong file, không `test/helpers/mocks.dart` (success trả `Wallet`; `AppException` propagate; lỗi lạ → `AppUncaughtException`)
+- [x] `test/ui/views/create_wallet/bloc/create_wallet_bloc_test.dart` — harness `BaseBlocDelegate` như §15 (`bloc_test` + mock use case local)
+- [x] `make testing` pass (kèm test cũ Phase 6.1a / 8)
 
-Không viết test giả (assert luôn true). Không cover 32 use case trong một PR.
+Không viết test giả (assert luôn true). Không cover 32 use case trong một PR. Không làm 3.2 `BudgetsView` / 3.4 `MainView` / FCM / Phase 10 TODO product.
 
 ---
 
