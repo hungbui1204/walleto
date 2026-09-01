@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:auto_route/auto_route.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:walleto/domain/navigation/app_route_info.dart';
+import 'package:walleto/domain/domain.dart';
 import 'package:walleto/resources/resources.dart';
 import 'package:walleto/shared/shared.dart';
 import 'package:walleto/ui/ui.dart';

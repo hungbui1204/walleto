@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:walleto/resources/resources.dart';
 import 'package:walleto/shared/shared.dart';
-import 'package:walleto/ui/widgets/pressable.dart';
+
+import 'pressable.dart';
 
 class CommonButton extends StatelessWidget {
   const CommonButton({
@@ -28,9 +29,7 @@ class CommonButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final enabled = onTap != null;
-    final radius =
-        borderRadius ??
-        BorderRadius.all(Radius.circular(Dimens.d16.responsive()));
+    final radius = borderRadius ?? BorderRadius.all(Radius.circular(Dimens.d16.responsive()));
     final isPrimary = backgroundColor == primaryColor;
     final isDestructive = backgroundColor == redColor || textColor == redColor;
 
@@ -38,10 +37,7 @@ class CommonButton extends StatelessWidget {
         isPrimary
             ? (enabled
                 ? AppDecorations.primaryCta(radius: radius)
-                : AppDecorations.secondaryCta(
-                  radius: radius,
-                  color: frameColor,
-                ))
+                : AppDecorations.secondaryCta(radius: radius, color: frameColor))
             : AppDecorations.secondaryCta(
               radius: radius,
               color: backgroundColor ?? surfaceColor,
@@ -69,26 +65,19 @@ class CommonButton extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: compact ? MainAxisSize.min : MainAxisSize.max,
               children: [
-                if (icon != null) ...[
-                  icon!,
-                  SizedBox(width: Dimens.d8.responsive()),
-                ],
+                if (icon != null) ...[icon!, SizedBox(width: Dimens.d8.responsive())],
                 if (compact)
                   Text(
                     text,
                     textAlign: TextAlign.center,
-                    style: AppTextStyles.s16wBoldBlack().copyWith(
-                      color: textColor,
-                    ),
+                    style: AppTextStyles.s16wBoldBlack().copyWith(color: textColor),
                   )
                 else
                   Flexible(
                     child: Text(
                       text,
                       textAlign: TextAlign.center,
-                      style: AppTextStyles.s16wBoldBlack().copyWith(
-                        color: textColor,
-                      ),
+                      style: AppTextStyles.s16wBoldBlack().copyWith(color: textColor),
                     ),
                   ),
               ],
@@ -98,11 +87,6 @@ class CommonButton extends StatelessWidget {
       ),
     );
 
-    return Pressable(
-      onTap: onTap,
-      borderRadius: radius,
-      semanticLabel: text,
-      child: child,
-    );
+    return Pressable(onTap: onTap, borderRadius: radius, semanticLabel: text, child: child);
   }
 }

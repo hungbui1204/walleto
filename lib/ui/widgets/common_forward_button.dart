@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:walleto/resources/resources.dart';
-import 'package:walleto/ui/widgets/pressable.dart';
+
+import 'pressable.dart';
 
 class CommonForwardButton extends StatelessWidget {
   const CommonForwardButton({
@@ -24,8 +25,7 @@ class CommonForwardButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final radius =
-        borderRadius ?? BorderRadius.circular(Dimens.d16.responsive());
+    final radius = borderRadius ?? BorderRadius.circular(Dimens.d16.responsive());
 
     return Pressable(
       onTap: onTap,
@@ -41,18 +41,9 @@ class CommonForwardButton extends StatelessWidget {
         ),
         child: Row(
           children: [
-            if (leadingIcon != null) ...[
-              leadingIcon!,
-              SizedBox(width: Dimens.d8.responsive()),
-            ],
-            Expanded(
-              child: Text(title, style: AppTextStyles.s14wNormalBlack()),
-            ),
-            Icon(
-              Icons.arrow_forward_ios,
-              size: Dimens.d14.responsive(),
-              color: darkGreyColor,
-            ),
+            if (leadingIcon != null) ...[leadingIcon!, SizedBox(width: Dimens.d8.responsive())],
+            Expanded(child: Text(title, style: AppTextStyles.s14wNormalBlack())),
+            Icon(Icons.arrow_forward_ios, size: Dimens.d14.responsive(), color: darkGreyColor),
           ],
         ),
       ),
