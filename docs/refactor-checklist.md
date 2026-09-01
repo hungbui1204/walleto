@@ -172,8 +172,10 @@ Cập nhật mọi call site + barrel. Không gộp API vì visual/constructor k
 
 ### 6.3 Một flow chọn ví
 
-- [ ] So `ChooseWallet` (bottom sheet, ví từ `AppBloc`) vs `SelectWallet` (popup, list truyền vào)
-- [ ] Gom UX nếu product cho phép; nếu giữ hai chỗ thì document khác biệt trong comment ngắn trên `AppPopupInfo`
+- [x] So `ChooseWallet` (bottom sheet, ví từ `AppBloc`) vs `SelectWallet` (popup, list truyền vào)
+- [x] Gom UX nếu product cho phép; nếu giữ hai chỗ thì document khác biệt trong comment ngắn trên `AppPopupInfo`
+
+**Giữ 2 flow + comment:** không merge UI. `ChooseWallet` = sheet, list từ `AppBloc`, Save/Cancel (create/edit transaction). `SelectWallet` = dialog, list caller (kèm Total), tap-to-select (transactions filter). Comment trên factory `chooseWallet` / `selectWallet` trong `AppPopupInfo`.
 
 ---
 
