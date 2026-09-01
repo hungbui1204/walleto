@@ -5,6 +5,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:walleto/domain/navigation/app_route_info.dart';
 import 'package:walleto/resources/resources.dart';
+import 'package:walleto/shared/shared.dart';
 import 'package:walleto/ui/ui.dart';
 
 @RoutePage()
@@ -26,7 +27,7 @@ class _MainViewState extends BasePageState<MainView, MainBloc> {
         if (message != null) {
           /// Waiting for app to initialize
           Future.delayed(
-            const Duration(milliseconds: 500),
+            DurationConstants.durationUntilAppInitialized,
             () => LocalNotificationService.handleNavigate(message: message),
           );
         }
@@ -44,9 +45,7 @@ class _MainViewState extends BasePageState<MainView, MainBloc> {
       });
     }
 
-    appBloc.add(
-      const DataFetched(currenciesFetched: true, walletsFetched: true),
-    );
+    appBloc.add(const DataFetched(currenciesFetched: true, walletsFetched: true));
 
     super.initState();
   }
@@ -63,22 +62,16 @@ class _MainViewState extends BasePageState<MainView, MainBloc> {
               ? null
               : FloatingActionButton(
                 shape: const CircleBorder(),
-                elevation: 4,
+                elevation: Dimens.d4.responsive(),
                 tooltip: S.current.addTransaction,
-                onPressed:
-                    () async => await navigator.push(
-                      const AppRouteInfo.createTransaction(),
-                    ),
+                onPressed: () async => await navigator.push(const AppRouteInfo.createTransaction()),
                 backgroundColor: primaryColor,
                 foregroundColor: onPrimaryColor,
                 splashColor: primaryShadeColor,
                 child: Assets.icons.plus.svg(
                   width: Dimens.d24.responsive(),
                   height: Dimens.d24.responsive(),
-                  colorFilter: const ColorFilter.mode(
-                    onPrimaryColor,
-                    BlendMode.srcIn,
-                  ),
+                  colorFilter: const ColorFilter.mode(onPrimaryColor, BlendMode.srcIn),
                 ),
               ),
       bottomNavigationBuilder: (_, tabsRouter) {

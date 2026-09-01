@@ -14,7 +14,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return ClipRect(
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+        filter: ImageFilter.blur(sigmaX: Dimens.d20.responsive(), sigmaY: Dimens.d20.responsive()),
         child: DecoratedBox(
           decoration: BoxDecoration(
             color: surfaceColor.withValues(alpha: 0.82),
