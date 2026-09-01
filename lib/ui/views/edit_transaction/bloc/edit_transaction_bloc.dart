@@ -106,25 +106,17 @@ class EditTransactionBloc extends BaseBloc<EditTransactionEvent, EditTransaction
     EditTransactionAmountChanged event,
     Emitter<EditTransactionState> emit,
   ) {
-    // Check if the input is start with '0' and remove it
-    String newAmount = state.amountInput;
-    if (newAmount.startsWith('0')) {
-      newAmount = newAmount.substring(1);
+    final newAmount = TransactionAmountCalculator.appendNumber(
+      currentInput: state.amountInput,
+      number: event.number,
+    );
+    if (newAmount == null) {
+      return;
     }
-
-    // Block '0','00','000' if input is empty
-    if (newAmount.isEmpty) {
-      if (event.number.contains('0')) return;
-    }
-
-    newAmount += event.number;
-
-    // Block input if the length is greater than max length
-    if (newAmount.countAllNumbersLength() > AppConstants.maxTransactionAmountLength) return;
 
     emit(
       state.copyWith(
-        amountInput: newAmount.toFormattedNumberString(NumberFormatConstants.amountFormat),
+        amountInput: newAmount,
         amountError: '',
         confirmButtonEnable: _confirmButtonEnableCheck(
           amountInput: newAmount,
@@ -135,7 +127,6 @@ class EditTransactionBloc extends BaseBloc<EditTransactionEvent, EditTransaction
       ),
     );
 
-    // Update converted amount if currency is selected and different from wallet currency
     _updateConvertAmount(emit);
   }
 
@@ -143,104 +134,56 @@ class EditTransactionBloc extends BaseBloc<EditTransactionEvent, EditTransaction
     EditTransactionEqualButtonPressed event,
     Emitter<EditTransactionState> emit,
   ) {
-    // Validate the current input for calculating the final amount
-    // Emit an error if the input is invalid
-    // If the input is valid, calculate the final amount
+    final result = TransactionAmountCalculator.evaluate(
+      currentInput: state.amountInput,
+      currentOperation: state.currentOperation,
+    );
 
-    // 1. Check if the input is empty
-    if (state.amountInput.isEmpty) {
-      emit(state.copyWith(amountError: S.current.emptyField));
-
+    if (result.error != null) {
+      emit(state.copyWith(amountError: _amountErrorMessage(result.error!)));
       return;
     }
 
-    // 2. Check if the input is containing operator at the end
-    if (AppUtils.isEndWithOperator(state.amountInput)) {
-      emit(state.copyWith(amountError: S.current.invalidFormat));
-
+    if (result.unchanged || result.formattedAmount == null) {
       return;
     }
 
-    // 3. Calculate the final amount
-    if (state.currentOperation != null) {
-      late final double amount;
-
-      switch (state.currentOperation!) {
-        case OperationType.addition:
-          amount = state.amountInput
-              .split(OperationType.addition.symbol)
-              .map((e) => e.toDouble())
-              .reduce((a, b) => a + b);
-          break;
-        case OperationType.subtraction:
-          amount = state.amountInput
-              .split(OperationType.subtraction.symbol)
-              .map((e) => e.toDouble())
-              .reduce((a, b) => a - b);
-          break;
-        case OperationType.multiplication:
-          amount =
-              state.amountInput
-                  .split(OperationType.multiplication.symbol)
-                  .map((e) => e.toDouble())
-                  .reduce((a, b) => a * b)
-                  .roundTo2Digits();
-          break;
-        case OperationType.division:
-          amount =
-              state.amountInput
-                  .split(OperationType.division.symbol)
-                  .map((e) => e.toDouble())
-                  .reduce((a, b) => a / b)
-                  .roundTo2Digits();
-          break;
-      }
-
-      // 4. Check the amount's length
-      if (amount.toString().countAllNumbersLength() > AppConstants.maxTransactionAmountLength) {
-        emit(state.copyWith(amountError: S.current.amountTooLarge));
-
-        return;
-      }
-
-      emit(
-        state.copyWith(
-          amountInput: amount.toStringWithFormat(NumberFormatConstants.amountFormat),
-          currentOperation: null,
-          confirmButtonEnable: _confirmButtonEnableCheck(
-            amountInput: amount.toStringWithFormat(NumberFormatConstants.amountFormat),
-            selectedCategory: state.selectedCategory,
-            selectedDate: state.selectedDate,
-            amountError: state.amountError,
-          ),
+    final formattedAmount = result.formattedAmount!;
+    emit(
+      state.copyWith(
+        amountInput: formattedAmount,
+        currentOperation: null,
+        confirmButtonEnable: _confirmButtonEnableCheck(
+          amountInput: formattedAmount,
+          selectedCategory: state.selectedCategory,
+          selectedDate: state.selectedDate,
+          amountError: state.amountError,
         ),
-      );
+      ),
+    );
 
-      // Update converted amount if currency is selected and different from wallet currency
-      _updateConvertAmount(emit);
-    }
+    _updateConvertAmount(emit);
   }
 
   void _onEditTransactionOperationChanged(
     EditTransactionOperationChanged event,
     Emitter<EditTransactionState> emit,
   ) {
-    // If currently having an operation, do not allow to add more operation
-    if (state.currentOperation != null) return;
+    final result = TransactionAmountCalculator.appendOperator(
+      currentInput: state.amountInput,
+      operationSymbol: event.operation,
+      currentOperation: state.currentOperation,
+    );
+    if (result == null) {
+      return;
+    }
 
-    // Does not allow to add operation if the input is empty or only contain '0
-    if (state.amountInput.isEmpty || state.amountInput == '0') return;
-
-    // Update the input with the new operation
-    String newAmount = state.amountInput + event.operation;
-
-    final operation = OperationTypeExtension.fromString(event.operation);
     emit(
       state.copyWith(
-        currentOperation: operation,
-        amountInput: newAmount,
+        currentOperation: result.operation,
+        amountInput: result.amountInput,
         confirmButtonEnable: _confirmButtonEnableCheck(
-          amountInput: newAmount,
+          amountInput: result.amountInput,
           selectedCategory: state.selectedCategory,
           selectedDate: state.selectedDate,
           amountError: state.amountError,
@@ -253,30 +196,34 @@ class EditTransactionBloc extends BaseBloc<EditTransactionEvent, EditTransaction
     EditTransactionBackspacePressed event,
     Emitter<EditTransactionState> emit,
   ) {
-    if (state.amountInput.isNotEmpty) {
-      // Remove the last character from the input
-      // If the last character is an operator, also reset the current operation
-      final newAmount = state.amountInput.substring(0, state.amountInput.length - 1);
-      if (AppUtils.isEndWithOperator(state.amountInput)) {
-        emit(state.copyWith(currentOperation: null));
-      }
-
-      emit(
-        state.copyWith(
-          amountInput: newAmount.toFormattedNumberString(NumberFormatConstants.amountFormat),
-          amountError: '',
-          confirmButtonEnable: _confirmButtonEnableCheck(
-            amountInput: newAmount,
-            selectedCategory: state.selectedCategory,
-            selectedDate: state.selectedDate,
-            amountError: '',
-          ),
-        ),
-      );
-
-      // Update converted amount if currency is selected and different from wallet currency
-      _updateConvertAmount(emit);
+    final result = TransactionAmountCalculator.backspace(state.amountInput);
+    if (result == null) {
+      return;
     }
+
+    emit(
+      state.copyWith(
+        currentOperation: result.clearedOperator ? null : state.currentOperation,
+        amountInput: result.amountInput,
+        amountError: '',
+        confirmButtonEnable: _confirmButtonEnableCheck(
+          amountInput: result.amountInput,
+          selectedCategory: state.selectedCategory,
+          selectedDate: state.selectedDate,
+          amountError: '',
+        ),
+      ),
+    );
+
+    _updateConvertAmount(emit);
+  }
+
+  String _amountErrorMessage(TransactionAmountEvaluateError error) {
+    return switch (error) {
+      TransactionAmountEvaluateError.empty => S.current.emptyField,
+      TransactionAmountEvaluateError.invalidFormat => S.current.invalidFormat,
+      TransactionAmountEvaluateError.tooLarge => S.current.amountTooLarge,
+    };
   }
 
   void _onEditTransactionClearPressed(
