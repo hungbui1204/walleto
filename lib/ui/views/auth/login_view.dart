@@ -69,19 +69,17 @@ class _LoginViewState extends BasePageState<LoginView, LoginBloc>
                     children: [
                       Text(
                         'WALLETO',
-                        style: AppThemes.display(
-                          fontSize: Dimens.d12.responsive(),
-                          fontWeight: FontWeight.w600,
+                        style: AppTextStyles.s12wBoldWhite().copyWith(
                           color: primaryColor,
-                          letterSpacing: 3,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: Dimens.d3.responsive(),
                         ),
                       ),
                       SizedBox(height: Dimens.d20.responsive()),
                       Text(
                         S.current.welcomeToApp,
-                        style: AppThemes.display(
+                        style: AppTextStyles.s28wBoldBlack().copyWith(
                           fontSize: Dimens.d32.responsive(),
-                          fontWeight: FontWeight.w700,
                         ),
                       ),
                       SizedBox(height: Dimens.d12.responsive()),
@@ -91,22 +89,16 @@ class _LoginViewState extends BasePageState<LoginView, LoginBloc>
                 ),
                 SizedBox(height: Dimens.d16.responsive()),
                 Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: Dimens.d24.responsive(),
-                  ),
+                  padding: EdgeInsets.symmetric(horizontal: Dimens.d24.responsive()),
                   child: TabBar(
                     controller: _tabController,
                     tabs: [
                       Padding(
-                        padding: EdgeInsets.symmetric(
-                          vertical: Dimens.d12.responsive(),
-                        ),
+                        padding: EdgeInsets.symmetric(vertical: Dimens.d12.responsive()),
                         child: Text(S.current.login),
                       ),
                       Padding(
-                        padding: EdgeInsets.symmetric(
-                          vertical: Dimens.d12.responsive(),
-                        ),
+                        padding: EdgeInsets.symmetric(vertical: Dimens.d12.responsive()),
                         child: Text(S.current.signUp),
                       ),
                     ],
@@ -123,8 +115,7 @@ class _LoginViewState extends BasePageState<LoginView, LoginBloc>
                       SignUpTab(
                         emailSignUpController: _emailSignUpController,
                         passwordSignUpController: _passwordSignUpController,
-                        confirmPasswordSignUpController:
-                            _confirmPasswordSignUpController,
+                        confirmPasswordSignUpController: _confirmPasswordSignUpController,
                         otpSignUpController: _otpController,
                         tabController: _tabController,
                       ),

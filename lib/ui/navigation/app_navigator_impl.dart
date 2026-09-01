@@ -243,7 +243,7 @@ class AppNavigatorImpl extends AppNavigator with LogMixin {
     bool barrierDismissible = true,
     bool useSafeArea = false,
     bool useRootNavigator = true,
-    m.Color barrierColor = const m.Color(0xB3000000),
+    m.Color barrierColor = backgroundOverlayColor,
   }) {
     if (_shownPopups.containsKey(appPopupInfo)) {
       logD('Dialog $appPopupInfo already shown');
@@ -276,7 +276,7 @@ class AppNavigatorImpl extends AppNavigator with LogMixin {
     Duration transitionDuration = DurationConstants.defaultGeneralDialogTransitionDuration,
     m.Widget Function(m.BuildContext, m.Animation<double>, m.Animation<double>, m.Widget)?
     transitionBuilder,
-    m.Color barrierColor = const m.Color(0xB3000000),
+    m.Color barrierColor = backgroundOverlayColor,
     bool barrierDismissible = true,
     bool useRootNavigator = true,
   }) {
@@ -313,7 +313,7 @@ class AppNavigatorImpl extends AppNavigator with LogMixin {
     bool useRootNavigator = false,
     bool isDismissible = true,
     bool enableDrag = true,
-    m.Color barrierColor = const m.Color(0xB3000000),
+    m.Color barrierColor = backgroundOverlayColor,
     m.Color backgroundColor = surfaceColor,
   }) {
     if (LogConfig.enableNavigatorObserverLog) {
@@ -349,7 +349,7 @@ class AppNavigatorImpl extends AppNavigator with LogMixin {
     required DateTime lastDate,
     DateTime? currentDate,
     bool useRootNavigator = false,
-    m.Color barrierColor = Colors.black54,
+    m.Color barrierColor = backgroundOverlayColor,
     m.Color? backgroundColor,
   }) async {
     if (LogConfig.enableNavigatorObserverLog) {
