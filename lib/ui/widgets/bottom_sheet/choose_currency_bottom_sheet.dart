@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:walleto/di/di.dart';
 import 'package:walleto/domain/domain.dart';
 import 'package:walleto/resources/resources.dart';
 import 'package:walleto/ui/ui.dart';
@@ -86,7 +85,7 @@ class _ChooseCurrencyBottomSheetState extends State<ChooseCurrencyBottomSheet> {
                       widget.onCurrencySelected.call(selectedCurrencyNotifier.value!);
                     }
 
-                    getIt.get<AppNavigator>().pop();
+                    context.read<AppNavigator>().pop();
                   },
                 ),
                 SizedBox(width: Dimens.d8.responsive()),
@@ -95,7 +94,7 @@ class _ChooseCurrencyBottomSheetState extends State<ChooseCurrencyBottomSheet> {
                   text: S.current.cancel,
                   backgroundColor: surfaceColor,
                   textColor: blackColor,
-                  onTap: () => getIt.get<AppNavigator>().pop(),
+                  onTap: () => context.read<AppNavigator>().pop(),
                 ),
               ],
             ),

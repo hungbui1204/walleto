@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:walleto/di/di.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:walleto/domain/domain.dart';
 import 'package:walleto/resources/resources.dart';
 
@@ -34,7 +34,7 @@ class ResetPasswordCompleteStepWidget extends StatelessWidget {
         ),
         SizedBox(height: Dimens.d24.responsive()),
         InkWell(
-          onTap: () => getIt.get<AppNavigator>().pop(),
+          onTap: () => context.read<AppNavigator>().pop(),
           child: Row(
             children: [
               Icon(

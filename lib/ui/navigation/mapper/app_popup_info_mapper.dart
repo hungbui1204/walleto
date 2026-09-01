@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:walleto/domain/domain.dart';
 import 'package:walleto/ui/ui.dart';
@@ -7,7 +8,7 @@ import 'package:walleto/ui/ui.dart';
 class AppPopupInfoMapper extends BasePopupInfoMapper {
   @override
   Widget map(AppPopupInfo appRouteInfo, AppNavigator navigator) {
-    return switch (appRouteInfo) {
+    final popup = switch (appRouteInfo) {
       Confirm(:final message, :final showCancel, :final actions, :final onPressed) => ConfirmPopup(
         message: message,
         showCancel: showCancel,
@@ -70,5 +71,7 @@ class AppPopupInfoMapper extends BasePopupInfoMapper {
         transaction: transaction,
       ),
     };
+
+    return RepositoryProvider.value(value: navigator, child: popup);
   }
 }

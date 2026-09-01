@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:walleto/di/di.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:walleto/domain/domain.dart';
 import 'package:walleto/resources/resources.dart';
 import 'package:walleto/ui/ui.dart';
@@ -18,7 +18,7 @@ class CategoryWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(Dimens.d16.responsive()),
         onTap: () {
           onCategorySelected.call(category);
-          getIt.get<AppNavigator>().pop(useRootNavigator: true);
+          context.read<AppNavigator>().pop(useRootNavigator: true);
         },
         child: Row(
           children: [

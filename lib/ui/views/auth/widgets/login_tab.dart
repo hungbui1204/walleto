@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:walleto/di/di.dart';
 import 'package:walleto/domain/domain.dart';
 import 'package:walleto/resources/resources.dart';
 import 'package:walleto/shared/shared.dart';
@@ -93,7 +92,7 @@ class LoginTab extends StatelessWidget {
               children: [
                 GestureDetector(
                   onTap: () {
-                    getIt.get<AppNavigator>().push(
+                    context.read<AppNavigator>().push(
                       const AppRouteInfo.resetPassword(),
                     );
                   },

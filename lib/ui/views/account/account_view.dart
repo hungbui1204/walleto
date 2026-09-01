@@ -1,7 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:walleto/di/di.dart';
 import 'package:walleto/domain/domain.dart';
 import 'package:walleto/resources/resources.dart';
 import 'package:walleto/shared/shared.dart';
@@ -50,7 +49,7 @@ class _AccountViewState extends BasePageState<AccountView, AccountBloc> {
                       backgroundColor: surfaceColor,
                       textColor: redColor,
                       onTap: () {
-                        getIt.get<AppNavigator>().showDialog(
+                        navigator.showDialog(
                           AppPopupInfo.confirm(
                             message: S.current.areYouSureYouWantToSignOut,
                             showCancel: true,
@@ -184,7 +183,7 @@ class _UtilitiesWidget extends StatelessWidget {
               topRight: Radius.circular(Dimens.d16.responsive()),
             ),
             onTap: () {
-              getIt.get<AppNavigator>().push(const AppRouteInfo.wallets());
+              context.read<AppNavigator>().push(const AppRouteInfo.wallets());
             },
           ),
           CommonLine(
@@ -203,7 +202,7 @@ class _UtilitiesWidget extends StatelessWidget {
               bottomRight: Radius.circular(Dimens.d16.responsive()),
             ),
             onTap: () {
-              getIt.get<AppNavigator>().push(const AppRouteInfo.categories());
+              context.read<AppNavigator>().push(const AppRouteInfo.categories());
             },
           ),
         ],

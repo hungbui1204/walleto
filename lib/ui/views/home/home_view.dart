@@ -1,7 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:walleto/di/di.dart';
 import 'package:walleto/domain/domain.dart';
 import 'package:walleto/resources/resources.dart';
 import 'package:walleto/shared/shared.dart';
@@ -263,7 +262,7 @@ class _AllWalletsWidget extends StatelessWidget {
           GestureDetector(
             behavior: HitTestBehavior.opaque,
             onTap: () {
-              getIt.get<AppNavigator>().push(const AppRouteInfo.wallets());
+              context.read<AppNavigator>().push(const AppRouteInfo.wallets());
             },
             child: Padding(
               padding: EdgeInsets.symmetric(
@@ -287,7 +286,7 @@ class _AllWalletsWidget extends StatelessWidget {
               message: S.current.createYourFirstWallet,
               actionLabel: S.current.createWallet,
               onAction: () {
-                getIt.get<AppNavigator>().push(
+                context.read<AppNavigator>().push(
                   const AppRouteInfo.createWallet(),
                 );
               },
@@ -322,7 +321,7 @@ class _WalletInfoWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Pressable(
       onTap: () {
-        getIt.get<AppNavigator>().push(AppRouteInfo.editWallet(wallet: wallet));
+        context.read<AppNavigator>().push(AppRouteInfo.editWallet(wallet: wallet));
       },
       semanticLabel: wallet.name,
       child: ConstrainedBox(
@@ -378,7 +377,7 @@ class _RecentTransactionsWidget extends StatelessWidget {
               message: S.current.noRecentTransactions,
               actionLabel: S.current.addTransaction,
               onAction: () {
-                getIt.get<AppNavigator>().push(
+                context.read<AppNavigator>().push(
                   const AppRouteInfo.createTransaction(),
                 );
               },
@@ -414,7 +413,7 @@ class _RecentTransactionWidget extends StatelessWidget {
       child: GestureDetector(
         behavior: HitTestBehavior.translucent,
         onTap: () {
-          getIt.get<AppNavigator>().push(
+          context.read<AppNavigator>().push(
             AppRouteInfo.transactionDetail(transaction: transaction),
           );
         },

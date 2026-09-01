@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:walleto/di/di.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:walleto/domain/domain.dart';
 import 'package:walleto/resources/resources.dart';
 import 'package:walleto/shared/shared.dart';
@@ -50,14 +50,15 @@ class _ErrorButton extends StatelessWidget {
         CommonButton(
           text: S.current.retry,
           onTap:
-              onRetryPressed?.call ?? () => getIt.get<AppNavigator>().pop(useRootNavigator: true),
+              onRetryPressed?.call ??
+              () => context.read<AppNavigator>().pop(useRootNavigator: true),
         ),
         SizedBox(height: Dimens.d18.responsive()),
         CommonButton(
           text: S.current.cancel,
           backgroundColor: surfaceColor,
           textColor: blackColor,
-          onTap: () => getIt.get<AppNavigator>().pop(useRootNavigator: true),
+          onTap: () => context.read<AppNavigator>().pop(useRootNavigator: true),
         ),
       ],
     );
