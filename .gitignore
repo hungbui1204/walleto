@@ -54,7 +54,7 @@ app.*.map.json
 *.gen.dart
 *.mocks.dart
 **/generated
-**/resource/gen
+lib/resources/gen/
 pubspec_overrides.yaml
 devtools_options.yaml
 
