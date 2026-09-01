@@ -18,6 +18,7 @@ class AppNavigatorImpl extends AppNavigator with LogMixin {
   final BaseRouteInfoMapper _appRouteInfoMapper;
   final _shownPopups = <AppPopupInfo, Completer<dynamic>>{};
 
+  @override
   final List<PageRouteInfo> tabRoutes = const [
     BottomTabHomeRouter(),
     BottomTabTransactionsRouter(),
@@ -25,6 +26,7 @@ class AppNavigatorImpl extends AppNavigator with LogMixin {
     BottomTabAccountRouter(),
   ];
 
+  @override
   TabsRouter? tabsRouter;
 
   StackRouter? get _currentTabRouter => tabsRouter?.stackRouterOfIndex(currentBottomTab);

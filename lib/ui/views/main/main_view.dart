@@ -55,7 +55,7 @@ class _MainViewState extends BasePageState<MainView, MainBloc> {
     final hideBottomNav = context.topRouteMatch.meta['hideBottomNav'] == true;
 
     return AutoTabsScaffold(
-      routes: (navigator as AppNavigatorImpl).tabRoutes,
+      routes: navigator.tabRoutes,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton:
           hideBottomNav
@@ -75,7 +75,7 @@ class _MainViewState extends BasePageState<MainView, MainBloc> {
                 ),
               ),
       bottomNavigationBuilder: (_, tabsRouter) {
-        (navigator as AppNavigatorImpl).tabsRouter = tabsRouter;
+        navigator.tabsRouter = tabsRouter;
 
         if (hideBottomNav) return const SizedBox.shrink();
 

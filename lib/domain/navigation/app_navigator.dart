@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:walleto/domain/domain.dart';
 import 'package:walleto/resources/styles/app_colors.dart';
@@ -9,6 +10,10 @@ abstract class AppNavigator {
   bool get canPopSelfOrChildren;
 
   int get currentBottomTab;
+
+  List<PageRouteInfo> get tabRoutes;
+
+  set tabsRouter(TabsRouter? tabsRouter);
 
   List<String?> getCurrentRouteNames({bool useRootNavigator = false});
 
