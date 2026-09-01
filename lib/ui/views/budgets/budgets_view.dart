@@ -11,9 +11,11 @@ class BudgetsView extends StatefulWidget {
   State<BudgetsView> createState() => _BudgetsViewState();
 }
 
-class _BudgetsViewState extends State<BudgetsView> {
+/// Placeholder tab until budgets has a product requirement. Uses [BudgetsBloc]
+/// only because [BasePageState] requires a bloc — not a real budgets feature.
+class _BudgetsViewState extends BasePageState<BudgetsView, BudgetsBloc> {
   @override
-  Widget build(BuildContext context) {
+  Widget buildPage(BuildContext context) {
     return Scaffold(
       appBar: CommonAppBar(title: S.current.budgets),
       body: NoirScaffoldBody(

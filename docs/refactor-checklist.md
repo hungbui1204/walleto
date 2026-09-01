@@ -66,9 +66,14 @@ Hiện `ExceptionHandler` gọi `AppPopupInfo.errorWithRetry` (timeout / mất m
 
 ### 3.2 `BudgetsView` (placeholder)
 
-- [ ] `lib/ui/views/budgets/budgets_view.dart` — `BasePageState` + `BudgetsBloc` stub `@injectable` **hoặc** giữ placeholder nhưng ghi chú “làm khi code feature budgets”
+- [x] `lib/ui/views/budgets/budgets_view.dart` — `_BudgetsViewState extends BasePageState<BudgetsView, BudgetsBloc>`
+- [x] Quyết định: **stub** `BudgetsBloc` `@injectable` (0 handler, cùng kiểu `MainBloc`) — **không** chỉ ghi chú rồi để `State` thường
+- [x] UI giữ placeholder `CommonEmptyPanel` + `S.current.budgets`; feature budgets làm sau khi có requirement (không bịa CRUD/API)
+- [x] Export `lib/ui/views/budgets/bloc/budgets_bloc.dart` vào `lib/ui/ui.dart`
 
-Làm sau 3.1; có thể gộp nếu diff vẫn nhỏ.
+**Xong khi:** `BudgetsView` là `BasePageState`; `BudgetsBloc` injectable; UI vẫn placeholder.
+
+Không làm trong PR 3.2: 3.4 `MainView` / `AppNavigatorImpl` / `tabRoutes` / FCM / Phase 10 TODO product.
 
 ### 3.3 Bỏ `getIt.get<AppNavigator>()` trên page đã có `BasePageState`
 
@@ -262,4 +267,4 @@ Làm khi có requirement, không nhét vào PR refactor.
 | 12 | Redact logs | 8 |
 | 13 | Seed unit test | 9 |
 
-`MainView` / `BudgetsView` / FCM / TODO product: xen sau mục 4–5 khi đụng đúng file.
+`MainView` / FCM / TODO product: xen sau mục 4–5 khi đụng đúng file. `BudgetsView` xong 3.2 (stub `BasePageState` + `BudgetsBloc`).
