@@ -6,17 +6,15 @@ part 'sign_out_use_case.freezed.dart';
 
 @injectable
 class SignOutUseCase extends BaseFutureUseCase<SignOutInput, SignOutOutput> {
-  const SignOutUseCase(this._repository, this._navigator);
+  const SignOutUseCase(this._repository);
 
   final Repository _repository;
-  final AppNavigator _navigator;
 
   @protected
   @override
   Future<SignOutOutput> buildUseCase(SignOutInput input) async {
     if (await _repository.isLoggedIn) {
       await _repository.signOut();
-      await _navigator.replace(const AppRouteInfo.login());
     }
 
     return const SignOutOutput();

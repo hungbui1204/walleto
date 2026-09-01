@@ -49,6 +49,7 @@ class CommonBloc extends BaseBloc<CommonEvent, CommonState> {
     return runBlocCatching(
       action: () async {
         await _signOutUseCase.execute(const SignOutInput());
+        await navigator.replace(const AppRouteInfo.login());
       },
     );
   }
