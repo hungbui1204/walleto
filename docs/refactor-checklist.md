@@ -102,11 +102,11 @@ Làm sau 3.1; có thể gộp nếu diff vẫn nhỏ.
 
 Domain **không** import `flutter/`, `flutter_svg`, `resources`, không trả `Widget`, không gọi `S.current`.
 
-- [ ] `BottomTab.icon()` / `title` → extension UI (`lib/ui/` hoặc `lib/shared/extensions/`)
-- [ ] `TargetMonth.displayName` → UI / shared
-- [ ] `SignUpStep` / `ResetPasswordStep` / `BottomTab` → chuyển sang UI (enum màn hình, không phải entity)
-- [ ] `OperationType.symbol` / `fromString` **không** so với `S.current` — dùng hằng `+` `-` `×` `÷` ở UI (`numeric_keyboard.dart` + create/edit transaction bloc)
-- [ ] `CategoryType.name` / `TargetMonth.name` (string API `expense` / `this_month`) giữ ở mapper data, không gắn i18n
+- [x] `BottomTab.icon()` / `title` → extension UI (`lib/ui/` hoặc `lib/shared/extensions/`)
+- [x] `TargetMonth.displayName` → UI / shared
+- [x] `SignUpStep` / `ResetPasswordStep` / `BottomTab` → chuyển sang UI (enum màn hình, không phải entity)
+- [x] `OperationType.symbol` / `fromString` **không** so với `S.current` — dùng hằng `+` `-` `×` `÷` ở UI (`numeric_keyboard.dart` + create/edit transaction bloc)
+- [x] `CategoryType.name` / `TargetMonth.name` (string API `expense` / `this_month`) giữ ở mapper data, không gắn i18n
 
 **Xong khi:** `lib/domain/entities/enum/enum.dart` (hoặc file enum domain mới) không import Flutter/resources.
 

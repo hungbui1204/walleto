@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:walleto/domain/entities/enum/enum.dart';
+import 'package:walleto/domain/domain.dart';
 import 'package:walleto/resources/resources.dart';
+import 'package:walleto/ui/extensions/operation_type_extension.dart';
 
 class NumericKeyboard extends StatelessWidget {
   const NumericKeyboard({
@@ -26,19 +27,19 @@ class NumericKeyboard extends StatelessWidget {
       '7',
       '8',
       '9',
-      S.current.division,
+      OperationType.division.symbol,
       '4',
       '5',
       '6',
-      S.current.multiplication,
+      OperationType.multiplication.symbol,
       '1',
       '2',
       '3',
-      S.current.subtraction,
+      OperationType.subtraction.symbol,
       '00',
       '0',
       '000',
-      S.current.addition,
+      OperationType.addition.symbol,
       S.current.clear,
       S.current.equal,
       S.current.backspace,
@@ -66,11 +67,9 @@ class NumericKeyboard extends StatelessWidget {
         ),
         itemBuilder: (context, index) {
           final key = keys[index];
-          final isClearOrBackspace =
-              key == S.current.clear || key == S.current.backspace;
+          final isClearOrBackspace = key == S.current.clear || key == S.current.backspace;
           final isDone = key == S.current.done;
-          final isOperator =
-              operatorSymbols.contains(key) || key == S.current.equal;
+          final isOperator = operatorSymbols.contains(key) || key == S.current.equal;
 
           final Color backgroundColor;
           final Color foregroundColor;
@@ -91,17 +90,12 @@ class NumericKeyboard extends StatelessWidget {
           return ElevatedButton(
             style: ElevatedButton.styleFrom(
               padding: EdgeInsets.zero,
-              side: BorderSide(
-                color: isDone ? primaryColor : glassHairlineColor,
-              ),
+              side: BorderSide(color: isDone ? primaryColor : glassHairlineColor),
               shadowColor: transParentColor,
               elevation: 0,
               backgroundColor: backgroundColor,
               foregroundColor: foregroundColor,
-              minimumSize: Size(
-                Dimens.d44.responsive(),
-                Dimens.d44.responsive(),
-              ),
+              minimumSize: Size(Dimens.d44.responsive(), Dimens.d44.responsive()),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(Dimens.d12.responsive()),
               ),

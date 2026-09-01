@@ -1,6 +1,7 @@
 import 'package:walleto/domain/domain.dart';
 import 'package:walleto/resources/resources.dart';
 import 'package:walleto/shared/shared.dart';
+import 'package:walleto/ui/extensions/operation_type_extension.dart';
 
 class AppUtils {
   const AppUtils._();

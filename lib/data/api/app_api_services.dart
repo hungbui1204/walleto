@@ -148,7 +148,7 @@ class AppApiServices {
       body: {
         'target_month': targetMonth,
         'target_year': targetYear,
-        'target_type': categoryType.name,
+        'target_type': const CategoryTypeDataMapper().mapToData(categoryType),
       },
       decoder: (data) => WalletStatData.fromJson(data as Map<String, dynamic>),
       successResponseMapperType: SuccessResponseMapperType.jsonArray,
@@ -166,7 +166,7 @@ class AppApiServices {
       body: {
         'target_month': targetMonth,
         'target_year': targetYear,
-        'target_type': categoryType.name,
+        'target_type': const CategoryTypeDataMapper().mapToData(categoryType),
       },
       decoder: (data) => WalletStatData.fromJson(data as Map<String, dynamic>),
     );
