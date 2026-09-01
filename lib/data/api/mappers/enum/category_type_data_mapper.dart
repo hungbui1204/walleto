@@ -1,4 +1,3 @@
-import 'package:dartx/dartx.dart';
 import 'package:injectable/injectable.dart';
 import 'package:walleto/data/data.dart';
 import 'package:walleto/domain/domain.dart';
@@ -9,10 +8,18 @@ class CategoryTypeDataMapper extends BaseDataMapper<String, CategoryType> with D
 
   @override
   CategoryType mapToEntity(String? data) {
-    return CategoryType.values.firstOrNullWhere((element) => element.name == data) ??
-        CategoryType.expense;
+    return switch (data) {
+      'expense' => CategoryType.expense,
+      'income' => CategoryType.income,
+      _ => CategoryType.expense,
+    };
   }
 
   @override
-  String mapToData(CategoryType entity) => entity.name;
+  String mapToData(CategoryType entity) {
+    return switch (entity) {
+      CategoryType.expense => 'expense',
+      CategoryType.income => 'income',
+    };
+  }
 }

@@ -227,7 +227,7 @@ class CreateTransactionBloc extends BaseBloc<CreateTransactionEvent, CreateTrans
     // Update the input with the new operation
     String newAmount = state.amountInput + event.operation;
 
-    final operation = OperationType.fromString(event.operation);
+    final operation = OperationTypeExtension.fromString(event.operation);
     emit(
       state.copyWith(
         currentOperation: operation,

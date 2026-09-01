@@ -1,4 +1,3 @@
-import 'package:dartx/dartx.dart';
 import 'package:injectable/injectable.dart';
 import 'package:walleto/data/data.dart';
 import 'package:walleto/domain/domain.dart';
@@ -9,7 +8,10 @@ class TargetMonthDataMapper extends BaseDataMapper<String, TargetMonth> {
 
   @override
   TargetMonth mapToEntity(String? data) {
-    return TargetMonth.values.firstOrNullWhere((element) => element.name == data) ??
-        TargetMonth.current;
+    return switch (data) {
+      'this_month' => TargetMonth.current,
+      'last_month' => TargetMonth.previous,
+      _ => TargetMonth.current,
+    };
   }
 }

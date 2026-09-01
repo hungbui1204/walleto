@@ -2,7 +2,6 @@ import 'dart:ui';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:walleto/domain/domain.dart';
 import 'package:walleto/resources/resources.dart';
 import 'package:walleto/ui/ui.dart';
 
@@ -35,8 +34,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
                   }
 
                   final tab = BottomTab.values[index];
-                  final selected =
-                      tabsRouter.activeIndex == indexWithout3rdIcon;
+                  final selected = tabsRouter.activeIndex == indexWithout3rdIcon;
 
                   return Expanded(
                     child: BottomBarIconButton(
