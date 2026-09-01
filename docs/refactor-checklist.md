@@ -140,9 +140,9 @@ Bottom nav blur (`custom_bottom_navigation_bar.dart`) để riêng — chrome đ
 
 ### 5.3 Magic number / duration (chỉ khi đụng file)
 
-- [ ] `lib/ui/views/main/main_view.dart` — `elevation: 4` → `Dimens`
-- [ ] `lib/ui/views/main/widget/custom_bottom_navigation_bar.dart` — `sigmaX/Y: 20` → `Dimens` (và đổi folder `widget/` → `widgets/` nếu cùng PR rename)
-- [ ] Duration `milliseconds: 300/500` — dùng `DurationConstants` nếu đã có hằng tương đương
+- [x] `lib/ui/views/main/main_view.dart` — `elevation: 4` → `Dimens`
+- [x] `lib/ui/views/main/widgets/custom_bottom_navigation_bar.dart` — `sigmaX/Y: 20` → `Dimens` (đã đổi folder `widget/` → `widgets/`)
+- [x] Duration `milliseconds: 300/500` — dùng `DurationConstants` nếu đã có hằng tương đương
 
 ---
 
@@ -188,7 +188,7 @@ Cập nhật mọi call site + barrel.
 ### 7.2 Typo / folder / gitignore
 
 - [ ] `lib/domain/usecases/duplicate_transaction_use_case.dart` — `respone` → `response`
-- [ ] `lib/ui/views/main/widget/` → `widgets/` (đổi mọi import)
+- [x] `lib/ui/views/main/widget/` → `widgets/` (đổi mọi import)
 - [ ] `.gitignore`: `**/resource/gen` → khớp `lib/resources/gen/` (đừng ignore nhầm path)
 
 ### 7.3 Barrel import (nice-to-have, PR riêng nếu đụng file)
