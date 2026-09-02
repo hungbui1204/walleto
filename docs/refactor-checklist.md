@@ -97,9 +97,11 @@ Không làm trong PR 3.2: 3.4 `MainView` / `AppNavigatorImpl` / `tabRoutes` / FC
 
 - [x] `lib/ui/views/main/main_view.dart` — bỏ `(navigator as AppNavigatorImpl).tabRoutes` / `tabsRouter =`
 - [x] Đưa `tabRoutes` / set `tabsRouter` vào `AppNavigator` port (hoặc helper UI), không leak impl vào view
-- [ ] (Tuỳ chọn cùng PR) chuyển đăng ký FCM từ `initState` sang `MainBloc` / service — **không** copy-paste thêm TODO iOS
+- [x] Chuyển đăng ký FCM từ `initState` sang `MainBloc` / service — **không** copy-paste thêm TODO iOS
 
-**PR 3.4:** view không còn cast `AppNavigatorImpl`; `tabRoutes` (get) + set `tabsRouter` trên `AppNavigator` (Flutter/`PageRouteInfo` giữ ở `domain/navigation/` theo CODING_RULES). `AppNavigatorImpl` vẫn sở hữu list tab + `TabsRouter`. FCM giữ `initState` (skip). Không làm Phase 10 / budgets feature / FCM iOS.
+**PR 3.4 (cast + port, #27):** view không còn cast `AppNavigatorImpl`; `tabRoutes` (get) + set `tabsRouter` trên `AppNavigator` (Flutter/`PageRouteInfo` giữ ở `domain/navigation/` theo CODING_RULES). `AppNavigatorImpl` vẫn sở hữu list tab + `TabsRouter`. FCM skip trong #27.
+
+**PR 3.4 leftover (FCM):** Android listeners rời `MainView.initState` → `MainBloc` (`MainViewInitiated`) + `LocalNotificationService.registerAndroidPushListeners()`. View không còn `FirebaseMessaging` / `dart:io`. `DataFetched` vẫn `initState`. `handleNavigate` vẫn no-op. iOS / Phase 10 chưa làm (TODO còn ở `main.dart`, `app_config`, `walleto_application`, `login_bloc`; không gom, không implement push iOS).
 
 ---
 
@@ -247,7 +249,7 @@ Làm khi có requirement, không nhét vào PR refactor.
 - [ ] `home_bloc.dart` — đổi currency phải reload month summary (TODO hiện bỏ qua)
 - [ ] `app_bloc.dart` — update user default currency API
 - [ ] `categories_view.dart` — navigate edit category
-- [ ] Push notification iOS — **một** chỗ (không 5 file TODO giống nhau): `main.dart`, `app_config`, `main_view`, `login_bloc`, `walleto_application`
+- [ ] Push notification iOS — **một** chỗ (không gom TODO rải): `main.dart`, `app_config`, `login_bloc`, `walleto_application` (`main_view` listeners đã chuyển 3.4 leftover; không còn TODO iOS trên view)
 
 ---
 
