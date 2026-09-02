@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,7 @@ class LocalNotificationService with LogMixin {
   const LocalNotificationService();
 
   static final _notificationsPlugin = FlutterLocalNotificationsPlugin();
+  static bool _androidPushListenersRegistered = false;
 
   static const _channelId = 'Default';
   static const _channelName = 'Default';
@@ -47,6 +49,34 @@ class LocalNotificationService with LogMixin {
             importance: Importance.high,
           ),
         );
+  }
+
+  /// Android FCM listeners. Idempotent: [MainBloc] is a factory so Main can be
+  /// rebuilt without stacking duplicate subscriptions. iOS push is Phase 10.
+  static void registerAndroidPushListeners() {
+    if (!Platform.isAndroid || _androidPushListenersRegistered) {
+      return;
+    }
+    _androidPushListenersRegistered = true;
+
+    /// Give message on which user taps and it opened the app from terminated state (app closed)
+    FirebaseMessaging.instance.getInitialMessage().then((message) {
+      if (message != null) {
+        /// Waiting for app to initialize
+        Future.delayed(
+          DurationConstants.durationUntilAppInitialized,
+          () => handleNavigate(message: message),
+        );
+      }
+    });
+
+    /// Just in foreground (app must open)
+    FirebaseMessaging.onMessage.listen(notify);
+
+    /// This just work when app in background (app not open) and user taps on the notification
+    FirebaseMessaging.onMessageOpenedApp.listen((message) {
+      handleNavigate(message: message);
+    });
   }
 
   static void handleNavigate({RemoteMessage? message}) {
