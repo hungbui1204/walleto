@@ -41,8 +41,9 @@ class HomeBloc extends BaseBloc<HomeEvent, HomeState> {
 
         appBloc.add(UserDefaultCurrencyUpdated(newCurrency: userDefaultCurrencyOutput.currency));
 
-        /// Default currency is current user base currency from app state, which is used to get month summary stats.
-        add(HomeCurrencySelected(currencyCode: appBloc.state.userDefaultCurrency.code));
+        /// Stamp HomeState with the currency we just fetched summary for (not
+        /// appBloc.state — UserDefaultCurrencyUpdated is processed asynchronously).
+        add(HomeCurrencySelected(currencyCode: userDefaultCurrencyOutput.currency.code));
 
         final monthSummaryStatsOutput = await _getMonthSummaryStatsUseCase.execute(
           GetMonthSummaryStatsInput(baseCurrency: userDefaultCurrencyOutput.currency.code),
@@ -102,13 +103,30 @@ class HomeBloc extends BaseBloc<HomeEvent, HomeState> {
     );
   }
 
-  void _onHomeCurrencySelected(HomeCurrencySelected event, Emitter<HomeState> emit) {
+  Future<void> _onHomeCurrencySelected(HomeCurrencySelected event, Emitter<HomeState> emit) async {
     if (event.currencyCode == state.defaultCurrencyCode) {
       return;
     }
 
-    /// TODO: update month summary stats
+    /// Init already loaded summary; this event only stamps the currency code.
+    if (state.defaultCurrencyCode.isEmpty) {
+      emit(state.copyWith(defaultCurrencyCode: event.currencyCode));
+      return;
+    }
 
-    emit(state.copyWith(defaultCurrencyCode: event.currencyCode));
+    await runBlocCatching(
+      action: () async {
+        final monthSummaryStatsOutput = await _getMonthSummaryStatsUseCase.execute(
+          GetMonthSummaryStatsInput(baseCurrency: event.currencyCode),
+        );
+
+        emit(
+          state.copyWith(
+            defaultCurrencyCode: event.currencyCode,
+            monthSummaryStats: monthSummaryStatsOutput.monthSummaryStats.reversed.toList(),
+          ),
+        );
+      },
+    );
   }
 }

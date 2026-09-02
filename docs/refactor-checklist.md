@@ -246,10 +246,14 @@ Không viết test giả (assert luôn true). Không cover 32 use case trong m�
 
 Làm khi có requirement, không nhét vào PR refactor.
 
-- [ ] `home_bloc.dart` — đổi currency phải reload month summary (TODO hiện bỏ qua)
+- [x] `home_bloc.dart` — đổi currency phải reload month summary (TODO hiện bỏ qua) — **PR 10.1**
 - [ ] `app_bloc.dart` — update user default currency API
 - [ ] `categories_view.dart` — navigate edit category
 - [ ] Push notification iOS — **một** chỗ (không gom TODO rải): `main.dart`, `app_config`, `login_bloc`, `walleto_application` (`main_view` listeners đã chuyển 3.4 leftover; không còn TODO iOS trên view)
+
+**PR 10.1:** `_onHomeCurrencySelected` gọi `GetMonthSummaryStatsUseCase` khi user chọn currency khác; emit `monthSummaryStats` + `defaultCurrencyCode`. Init không double-fetch (`HomeCurrencySelected` lúc mở Home chỉ stamp code). Không persist default currency lên API.
+
+Chưa làm: 10.2 (`app_bloc` update user default currency API) / 10.3 navigate edit category / 10.4 gom push iOS / budgets CRUD.
 
 ---
 
