@@ -311,7 +311,7 @@ class AppNavigatorImpl extends AppNavigator with LogMixin {
   @override
   Future<T?> showModalBottomSheet<T extends Object?>(
     AppPopupInfo appPopupInfo, {
-    bool isScrollControlled = false,
+    bool isScrollControlled = true,
     bool useRootNavigator = false,
     bool isDismissible = true,
     bool enableDrag = true,

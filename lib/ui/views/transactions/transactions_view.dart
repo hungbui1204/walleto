@@ -268,7 +268,7 @@ class _DatePickerDropDownWidget extends StatelessWidget {
                               showBorder: false,
                               borderRadius: BorderRadius.zero,
                               onTap: () {
-                                context.read<AppNavigator>().showDialog(
+                                context.read<AppNavigator>().showModalBottomSheet(
                                   AppPopupInfo.selectMonth(
                                     firstYear: AppConstants.firstYear,
                                     lastYear: AppConstants.lastYear,
@@ -347,10 +347,11 @@ class _SelectedWalletWidget extends StatelessWidget {
                   ),
 
           onTap: () {
-            context.read<AppNavigator>().showDialog(
-              AppPopupInfo.selectWallet(
+            context.read<AppNavigator>().showModalBottomSheet(
+              AppPopupInfo.chooseWallet(
                 wallets: state.wallets,
-                selectedWallet: state.selectedWallet,
+                currentWallet: state.selectedWallet,
+                includeTotalWallet: true,
                 onWalletSelected: (wallet) {
                   context.read<TransactionsBloc>().add(
                     TransactionsWalletSelected(selectedWallet: wallet),

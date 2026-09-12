@@ -2,93 +2,82 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:walleto/domain/domain.dart';
 import 'package:walleto/resources/resources.dart';
+import 'package:walleto/shared/shared.dart';
 import 'package:walleto/ui/ui.dart';
 
-class ChooseWalletBottomSheet extends StatefulWidget {
+class ChooseWalletBottomSheet extends StatelessWidget {
   const ChooseWalletBottomSheet({
     super.key,
     required this.onWalletSelected,
-    required this.currentWallet,
+    this.currentWallet,
+    this.wallets,
+    this.includeTotalWallet = false,
   });
 
   final void Function(Wallet) onWalletSelected;
   final Wallet? currentWallet;
-
-  @override
-  State<ChooseWalletBottomSheet> createState() => _ChooseWalletBottomSheetState();
-}
-
-class _ChooseWalletBottomSheetState extends State<ChooseWalletBottomSheet> {
-  late Wallet? selectedWallet;
-
-  @override
-  void initState() {
-    selectedWallet = widget.currentWallet;
-    super.initState();
-  }
+  final List<Wallet>? wallets;
+  final bool includeTotalWallet;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(Dimens.d16.responsive()),
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(S.current.chooseWallet, style: AppTextStyles.s18wBoldBlack()),
-            SizedBox(height: Dimens.d20.responsive()),
-            BlocBuilder<AppBloc, AppState>(
-              buildWhen: (previous, current) => previous.wallets != current.wallets,
-              builder: (context, state) {
-                return ListView.separated(
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: state.wallets.length,
-                  itemBuilder: (context, index) {
-                    return _WalletWidget(
-                      wallet: state.wallets[index],
-                      isSelected: selectedWallet?.id == state.wallets[index].id,
-                      onTap: () {
-                        setState(() {
-                          selectedWallet = state.wallets[index];
-                        });
-                      },
-                    );
-                  },
-                  separatorBuilder: (context, index) {
-                    return const CommonLine(margin: EdgeInsets.zero);
-                  },
-                );
-              },
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                CommonButton(
-                  compact: true,
-                  text: S.current.save,
-                  onTap: () {
-                    if (selectedWallet != null) {
-                      widget.onWalletSelected.call(selectedWallet!);
-                    }
+    return CommonPickerSheet(
+      title: S.current.chooseWallet,
+      child:
+          wallets != null
+              ? _WalletList(
+                wallets: _visibleWallets(wallets!),
+                currentWallet: currentWallet,
+                onWalletSelected: onWalletSelected,
+              )
+              : BlocBuilder<AppBloc, AppState>(
+                buildWhen: (previous, current) => previous.wallets != current.wallets,
+                builder: (context, state) {
+                  return _WalletList(
+                    wallets: _visibleWallets(state.wallets),
+                    currentWallet: currentWallet,
+                    onWalletSelected: onWalletSelected,
+                  );
+                },
+              ),
+    );
+  }
 
-                    context.read<AppNavigator>().pop();
-                  },
-                ),
-                SizedBox(width: Dimens.d8.responsive()),
-                CommonButton(
-                  compact: true,
-                  text: S.current.cancel,
-                  backgroundColor: surfaceColor,
-                  textColor: blackColor,
-                  onTap: () => context.read<AppNavigator>().pop(),
-                ),
-              ],
-            ),
-            SizedBox(height: Dimens.d32.responsive()),
-          ],
-        ),
-      ),
+  List<Wallet> _visibleWallets(List<Wallet> source) {
+    if (includeTotalWallet) return source;
+
+    return source.where((wallet) => wallet.id != AppConstants.totalWalletId).toList();
+  }
+}
+
+class _WalletList extends StatelessWidget {
+  const _WalletList({
+    required this.wallets,
+    required this.currentWallet,
+    required this.onWalletSelected,
+  });
+
+  final List<Wallet> wallets;
+  final Wallet? currentWallet;
+  final void Function(Wallet) onWalletSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        for (final (index, wallet) in wallets.indexed) ...[
+          if (index > 0) const CommonLine(margin: EdgeInsets.zero),
+          _WalletWidget(
+            wallet: wallet,
+            isSelected: currentWallet?.id == wallet.id,
+            onTap: () {
+              onWalletSelected(wallet);
+              context.read<AppNavigator>().pop();
+            },
+          ),
+        ],
+      ],
     );
   }
 }
@@ -104,16 +93,39 @@ class _WalletWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return CommonListRow(
       onTap: onTap,
-      leading: CommonCircleNetworkImage(
-        imageUrl: wallet.iconUrl,
-        placeHolderType: ImagePlaceHolderType.wallet,
-      ),
+      leading: _WalletLeading(wallet: wallet),
       title: Text(wallet.name, style: AppTextStyles.s14wNormalBlack()),
       backgroundColor: isSelected ? primaryShade1Color : surfaceColor,
       trailing:
           isSelected
               ? Icon(Icons.check_rounded, color: primaryColor, size: Dimens.d20.responsive())
               : null,
+    );
+  }
+}
+
+class _WalletLeading extends StatelessWidget {
+  const _WalletLeading({required this.wallet});
+
+  final Wallet wallet;
+
+  @override
+  Widget build(BuildContext context) {
+    if (wallet.id == AppConstants.totalWalletId) {
+      return ClipOval(
+        child: DecoratedBox(
+          decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: frameColor)),
+          child: Assets.icons.summation.svg(
+            width: Dimens.d32.responsive(),
+            height: Dimens.d32.responsive(),
+          ),
+        ),
+      );
+    }
+
+    return CommonCircleNetworkImage(
+      imageUrl: wallet.iconUrl,
+      placeHolderType: ImagePlaceHolderType.wallet,
     );
   }
 }

@@ -34,7 +34,7 @@ class AppPopupInfoMapper extends BasePopupInfoMapper {
         ),
 
       SelectMonth(:final firstYear, :final lastYear, :final onMonthSelected, :final initialDate) =>
-        SelectMonthPopup(
+        SelectMonthBottomSheet(
           firstYear: firstYear,
           lastYear: lastYear,
           onMonthSelected: onMonthSelected,
@@ -44,15 +44,17 @@ class AppPopupInfoMapper extends BasePopupInfoMapper {
         currentNote: currentNote,
         onNoteChanged: onNoteChanged,
       ),
-      ChooseWallet(:final onWalletSelected, :final currentWallet) => ChooseWalletBottomSheet(
-        onWalletSelected: onWalletSelected,
-        currentWallet: currentWallet,
-      ),
-      SelectWallet(:final wallets, :final onWalletSelected, :final selectedWallet) =>
-        SelectWalletPopup(
-          wallets: wallets,
+      ChooseWallet(
+        :final onWalletSelected,
+        :final currentWallet,
+        :final wallets,
+        :final includeTotalWallet,
+      ) =>
+        ChooseWalletBottomSheet(
           onWalletSelected: onWalletSelected,
-          selectedWallet: selectedWallet,
+          currentWallet: currentWallet,
+          wallets: wallets,
+          includeTotalWallet: includeTotalWallet,
         ),
       SelectIcon(:final iconType, :final onIconSelected) => SelectIconPopup(
         iconType: iconType,
