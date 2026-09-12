@@ -1,5 +1,6 @@
 import 'package:walleto/di/di.dart';
 import 'package:walleto/domain/domain.dart';
+import 'package:walleto/resources/resources.dart';
 import 'package:walleto/shared/shared.dart';
 
 class ExceptionHandler {
@@ -44,7 +45,8 @@ class ExceptionHandler {
         await _showErrorDialog(message: message);
         return;
       case AppExceptionType.uncaught:
-        return;
+        await _showErrorDialog(message: message);
+        break;
     }
   }
 
@@ -112,6 +114,10 @@ class ExceptionHandler {
           message: message,
           onPressed: Func0(() => navigator.pop(useRootNavigator: true)),
         );
+        break;
+
+      case InvalidTokenHandlerStatus.refreshFailed:
+        await _showErrorDialog(message: S.current.unknownError);
         break;
     }
   }

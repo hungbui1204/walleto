@@ -39,12 +39,6 @@ sealed class ConfirmOtpSignUpButtonPressed extends LoginEvent with _$ConfirmOtpS
 }
 
 @freezed
-sealed class SignUpButtonPressed extends LoginEvent with _$SignUpButtonPressed {
-  const SignUpButtonPressed._();
-  const factory SignUpButtonPressed() = _SignUpButtonPressed;
-}
-
-@freezed
 sealed class SignUpEmailInputChanged extends LoginEvent with _$SignUpEmailInputChanged {
   const SignUpEmailInputChanged._();
   const factory SignUpEmailInputChanged({required String email}) = _SignUpEmailInputChanged;
@@ -76,6 +70,9 @@ sealed class SignUpConfirmPasswordInputChanged extends LoginEvent
 sealed class SignUpOtpInputChanged extends LoginEvent with _$SignUpOtpInputChanged {
   const SignUpOtpInputChanged._();
   const factory SignUpOtpInputChanged({required String otp}) = _SignUpOtpInputChanged;
+
+  @override
+  String toString() => 'SignUpOtpInputChanged(otp: ${LogRedactor.placeholder})';
 }
 
 @freezed

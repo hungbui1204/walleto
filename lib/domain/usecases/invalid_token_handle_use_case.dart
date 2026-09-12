@@ -43,9 +43,11 @@ class InvalidTokenHandleUseCase
           status: InvalidTokenHandlerStatus.refreshTokenExpired,
         );
       }
-    }
 
-    return const InvalidTokenHandleOutput();
+      return const InvalidTokenHandleOutput(status: InvalidTokenHandlerStatus.refreshFailed);
+    } catch (_) {
+      return const InvalidTokenHandleOutput(status: InvalidTokenHandlerStatus.refreshFailed);
+    }
   }
 }
 

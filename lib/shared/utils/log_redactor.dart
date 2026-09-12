@@ -9,6 +9,8 @@ class LogRedactor {
   static const _prettyIndent = '    ';
 
   static const _sensitiveKeys = {
+    'otp',
+    'code',
     'authorization',
     'password',
     'confirmpassword',

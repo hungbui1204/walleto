@@ -25,4 +25,18 @@ sealed class LoginState extends BaseBlocState with _$LoginState {
     @Default(0) int remainingSecondsForReSendOtp,
     @Default(false) bool isCheckedAcceptTerms,
   }) = _LoginState;
+
+  @override
+  String toString() {
+    return 'LoginState('
+        'email: $email, '
+        'password: ${LogRedactor.placeholder}, '
+        'otp: ${LogRedactor.placeholder}, '
+        'signUpEmail: $signUpEmail, '
+        'signUpPassword: ${LogRedactor.placeholder}, '
+        'signUpConfirmPassword: ${LogRedactor.placeholder}, '
+        'signUpStep: $signUpStep, '
+        'isCheckedAcceptTerms: $isCheckedAcceptTerms'
+        ')';
+  }
 }
