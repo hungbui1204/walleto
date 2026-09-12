@@ -14,6 +14,11 @@ class AppDecorations {
     return BorderRadius.circular(radius ?? Dimens.d12.responsive());
   }
 
+  /// Icon wells and tooltips (`d8`).
+  static BorderRadius tinyRadius({double? radius}) {
+    return BorderRadius.circular(radius ?? Dimens.d8.responsive());
+  }
+
   static BoxDecoration glassPanel({Color? color, double? radius}) {
     return BoxDecoration(
       borderRadius: panelRadius(radius: radius),

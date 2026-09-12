@@ -16,8 +16,7 @@ class CreateWalletView extends StatefulWidget {
   State<CreateWalletView> createState() => _CreateWalletViewState();
 }
 
-class _CreateWalletViewState
-    extends BasePageState<CreateWalletView, CreateWalletBloc> {
+class _CreateWalletViewState extends BasePageState<CreateWalletView, CreateWalletBloc> {
   late final TextEditingController _walletNameController;
   late final TextEditingController _initialBalanceController;
 
@@ -39,15 +38,13 @@ class _CreateWalletViewState
 
   @override
   Widget buildPage(BuildContext context) {
+    // Keyboard dismiss overlay — Pressable exception.
     return GestureDetector(
-      behavior: HitTestBehavior.translucent,
+      behavior: HitTestBehavior.opaque,
       onTap: () => ViewUtils.hideKeyboard(context),
       child: Scaffold(
         appBar: CommonAppBar(
-          title:
-              widget.isFromSignUp
-                  ? S.current.createYourFirstWallet
-                  : S.current.createWallet,
+          title: widget.isFromSignUp ? S.current.createYourFirstWallet : S.current.createWallet,
         ),
         body: NoirScaffoldBody(
           child: Padding(
@@ -63,24 +60,19 @@ class _CreateWalletViewState
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          GestureDetector(
-                            behavior: HitTestBehavior.translucent,
+                          Pressable(
                             onTap: () {
                               navigator.showDialog(
                                 AppPopupInfo.selectIcon(
                                   iconType: IconType.wallet,
                                   onIconSelected: (url) {
-                                    bloc.add(
-                                      CreateWalletIconChanged(iconUrl: url),
-                                    );
+                                    bloc.add(CreateWalletIconChanged(iconUrl: url));
                                   },
                                 ),
                               );
                             },
-                            child: BlocBuilder<
-                              CreateWalletBloc,
-                              CreateWalletState
-                            >(
+                            borderRadius: BorderRadius.circular(Dimens.d36.responsive()),
+                            child: BlocBuilder<CreateWalletBloc, CreateWalletState>(
                               buildWhen: (previous, current) {
                                 return previous.iconUrl != current.iconUrl;
                               },
@@ -100,11 +92,7 @@ class _CreateWalletViewState
                               controller: _walletNameController,
                               hintText: S.current.nameYourWalletHere,
                               onChanged: (name) {
-                                bloc.add(
-                                  CreateWalletNameInputChanged(
-                                    walletName: name,
-                                  ),
-                                );
+                                bloc.add(CreateWalletNameInputChanged(walletName: name));
                               },
                             ),
                           ),
@@ -113,14 +101,11 @@ class _CreateWalletViewState
                       const CommonLine(),
                       BlocBuilder<CreateWalletBloc, CreateWalletState>(
                         buildWhen: (previous, current) {
-                          return previous.selectedCurrency !=
-                              current.selectedCurrency;
+                          return previous.selectedCurrency != current.selectedCurrency;
                         },
                         builder: (context, state) {
                           return CommonForwardButton(
-                            padding: EdgeInsets.symmetric(
-                              vertical: Dimens.d8.responsive(),
-                            ),
+                            padding: EdgeInsets.symmetric(vertical: Dimens.d8.responsive()),
                             title: S.current.currency,
                             color: surfaceColor,
                             showBorder: false,
@@ -129,9 +114,7 @@ class _CreateWalletViewState
                                 AppPopupInfo.chooseCurrency(
                                   onCurrencySelected: (selectedCurrency) {
                                     context.read<CreateWalletBloc>().add(
-                                      CreateWalletCurrencyChanged(
-                                        currency: selectedCurrency,
-                                      ),
+                                      CreateWalletCurrencyChanged(currency: selectedCurrency),
                                     );
                                   },
                                   currentCurrency: state.selectedCurrency,
@@ -151,11 +134,7 @@ class _CreateWalletViewState
                         inputType: TextInputType.number,
                         maxLength: 24,
                         onChanged: (balance) {
-                          bloc.add(
-                            CreateWalletInitialBalanceInputChanged(
-                              initialBalance: balance,
-                            ),
-                          );
+                          bloc.add(CreateWalletInitialBalanceInputChanged(initialBalance: balance));
                         },
                       ),
                     ],
@@ -164,8 +143,7 @@ class _CreateWalletViewState
                 SizedBox(height: Dimens.d30.responsive()),
                 BlocBuilder<CreateWalletBloc, CreateWalletState>(
                   buildWhen: (previous, current) {
-                    return previous.isConfirmButtonEnabled !=
-                        current.isConfirmButtonEnabled;
+                    return previous.isConfirmButtonEnabled != current.isConfirmButtonEnabled;
                   },
                   builder: (context, state) {
                     return CommonButton(

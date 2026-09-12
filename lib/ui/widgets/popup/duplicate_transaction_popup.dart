@@ -106,8 +106,7 @@ class _DuplicateTransactionPopupState extends State<DuplicateTransactionPopup> {
                   horizontal: Dimens.d8.responsive(),
                   vertical: Dimens.d4.responsive(),
                 ),
-                child: GestureDetector(
-                  behavior: HitTestBehavior.translucent,
+                child: Pressable(
                   onTap: _dateTimeSelect,
                   child: Row(
                     children: [

@@ -77,7 +77,7 @@ export 'views/reset_password/widgets/reset_password_confirm_email_step_widget.da
 export 'views/reset_password/widgets/reset_password_confirm_otp_step_widget.dart';
 export 'views/reset_password/widgets/reset_password_resetting_password_step_widget.dart';
 export 'views/select_category/bloc/select_category_bloc.dart';
-export 'views/select_category/select_category_popup.dart';
+export 'views/select_category/select_category_bottom_sheet.dart';
 export 'views/select_category/widgets/category_tree_widget.dart';
 export 'views/select_category/widgets/category_widget.dart';
 export 'views/select_category/widgets/parent_category_widget.dart';

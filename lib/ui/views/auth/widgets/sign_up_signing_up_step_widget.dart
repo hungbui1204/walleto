@@ -207,8 +207,7 @@ class _AcceptTermCheckbox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.translucent,
+    return Pressable(
       onTap: () {
         context.read<LoginBloc>().add(const SignUpAcceptTermsCheckboxToggled());
       },
@@ -219,18 +218,18 @@ class _AcceptTermCheckbox extends StatelessWidget {
               return previous.isCheckedAcceptTerms != current.isCheckedAcceptTerms;
             },
             builder: (context, state) {
-              return Checkbox(
-                visualDensity: VisualDensity.comfortable,
-                fillColor:
-                    state.isCheckedAcceptTerms
-                        ? WidgetStateProperty.all(primaryColor)
-                        : WidgetStateProperty.all(fieldFillColor),
-                checkColor: onPrimaryColor,
-                side: const BorderSide(color: frameColor),
-                value: state.isCheckedAcceptTerms,
-                onChanged: (_) {
-                  context.read<LoginBloc>().add(const SignUpAcceptTermsCheckboxToggled());
-                },
+              return IgnorePointer(
+                child: Checkbox(
+                  visualDensity: VisualDensity.comfortable,
+                  fillColor:
+                      state.isCheckedAcceptTerms
+                          ? WidgetStateProperty.all(primaryColor)
+                          : WidgetStateProperty.all(fieldFillColor),
+                  checkColor: onPrimaryColor,
+                  side: const BorderSide(color: frameColor),
+                  value: state.isCheckedAcceptTerms,
+                  onChanged: (_) {},
+                ),
               );
             },
           ),

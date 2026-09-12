@@ -488,7 +488,7 @@ backgroundColor: const Color(0xFF050506),
 **Interaction:**
 - Tap: mọi control Walleto đi qua `Pressable` (không `InkWell` / `GestureDetector` trần / `TextButton` / `ElevatedButton`). Ngoại lệ: overlay dismiss keyboard; `IconButton` trong `InputDecoration`.
 - Hàng list (ví, giao dịch, category, form): `CommonListRow`.
-- Picker danh sách (ví, currency, tháng): bottom sheet; dialog chỉ confirm / error / complete / warning.
+- Picker danh sách (ví, currency, tháng, category): bottom sheet; dialog chỉ confirm / error / complete / warning.
 - Cấm `TabBarView` nằm trong vertical `SingleChildScrollView`.
 
 ---

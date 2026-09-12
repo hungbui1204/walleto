@@ -48,7 +48,9 @@ class _LoginViewState extends BasePageState<LoginView, LoginBloc>
 
   @override
   Widget buildPage(BuildContext context) {
+    // Keyboard dismiss overlay — Pressable exception.
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onTap: () => ViewUtils.hideKeyboard(context),
       child: Scaffold(
         backgroundColor: scaffoldBackgroundColor,

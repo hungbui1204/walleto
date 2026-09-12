@@ -60,6 +60,7 @@ class _PressableState extends State<Pressable> {
       label: widget.semanticLabel,
       child: MouseRegion(
         cursor: enabled ? SystemMouseCursors.click : SystemMouseCursors.basic,
+        // Primitive detector for Pressable — not a product control.
         child: GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: enabled ? _handleTap : null,

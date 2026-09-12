@@ -388,7 +388,7 @@ class _RecentTransactionWidget extends StatelessWidget {
           CommonCircleNetworkImage(imageUrl: transaction.category.iconUrl),
           Positioned(
             bottom: 0,
-            right: -6,
+            right: -Dimens.d6.responsive(),
             child: CommonCircleNetworkImage(
               imageUrl: transaction.wallet.iconUrl,
               placeHolderType: ImagePlaceHolderType.wallet,

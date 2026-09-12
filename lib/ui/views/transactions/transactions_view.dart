@@ -231,12 +231,13 @@ class _DatePickerDropDownWidget extends StatelessWidget {
           decoration: AppDecorations.glassPanel(),
           child: Column(
             children: [
-              GestureDetector(
+              Pressable(
                 onTap: () {
                   context.read<TransactionsBloc>().add(
                     const TransactionsDatePickerMethodExpandTriggered(),
                   );
                 },
+                borderRadius: AppDecorations.panelRadius(),
                 child: Container(
                   constraints: BoxConstraints(minHeight: Dimens.d44.responsive()),
                   padding: EdgeInsets.all(Dimens.d10.responsive()),

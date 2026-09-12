@@ -56,4 +56,20 @@ void main() {
     expect(find.byType(CommonButton), findsOneWidget);
     expect(find.text('Save'), findsOneWidget);
   });
+
+  testWidgets('expandChild gives the child a bounded height', (tester) async {
+    await pumpSheet(
+      tester,
+      sheet: const CommonPickerSheet(
+        title: 'Select category',
+        expandChild: true,
+        child: Column(children: [Text('Header'), Expanded(child: Text('Body'))]),
+      ),
+    );
+
+    expect(find.text('Select category'), findsOneWidget);
+    expect(find.text('Header'), findsOneWidget);
+    expect(find.text('Body'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
 }

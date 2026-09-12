@@ -113,7 +113,49 @@ class AppThemes {
           side: const WidgetStatePropertyAll(BorderSide(color: frameColor)),
         ),
       ),
+      datePickerTheme: datePicker,
       splashFactory: InkRipple.splashFactory,
+    );
+  }
+
+  static DatePickerThemeData get datePicker {
+    const shape = RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(Radius.circular(Dimens.d16)),
+      side: BorderSide(color: glassHairlineColor),
+    );
+
+    return DatePickerThemeData(
+      backgroundColor: surfaceColor,
+      elevation: 0,
+      shape: shape,
+      headerBackgroundColor: primaryShadeColor,
+      headerForegroundColor: blackColor,
+      headerHeadlineStyle: display(),
+      dividerColor: glassHairlineColor,
+      dayForegroundColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) return onPrimaryColor;
+        if (states.contains(WidgetState.disabled)) return darkGreyColor;
+        return blackColor;
+      }),
+      dayBackgroundColor: WidgetStateColor.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) return primaryColor;
+        return transParentColor;
+      }),
+      dayShape: WidgetStateOutlinedBorder.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return const LinearBorder(side: BorderSide(color: primaryColor));
+        }
+
+        return const LinearBorder(side: BorderSide(color: transParentColor));
+      }),
+      todayForegroundColor: const WidgetStatePropertyAll(primaryColor),
+      todayBorder: const BorderSide(color: primaryColor),
+      rangePickerElevation: 0,
+      rangePickerBackgroundColor: surfaceColor,
+      rangePickerHeaderBackgroundColor: primaryShadeColor,
+      rangePickerHeaderForegroundColor: blackColor,
+      rangePickerHeaderHeadlineStyle: display(),
+      rangeSelectionBackgroundColor: primaryShade1Color,
     );
   }
 

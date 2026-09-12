@@ -7,6 +7,7 @@ import 'package:walleto/ui/widgets/common_circle_network_image.dart';
 import 'package:walleto/ui/widgets/common_currency_container.dart';
 import 'package:walleto/ui/widgets/common_line.dart';
 import 'package:walleto/ui/widgets/common_list_row.dart';
+import 'package:walleto/ui/widgets/pressable.dart';
 import 'package:walleto/ui/widgets/transaction_amount_input.dart';
 
 class TransactionFormPanel extends StatelessWidget {
@@ -148,7 +149,7 @@ class _AmountSection extends StatelessWidget {
                 onTap: onAmountTap,
               ),
             ),
-            GestureDetector(
+            Pressable(
               onTap: () {
                 context.read<AppNavigator>().showModalBottomSheet(
                   AppPopupInfo.chooseCurrency(
@@ -157,6 +158,7 @@ class _AmountSection extends StatelessWidget {
                   ),
                 );
               },
+              borderRadius: AppDecorations.chipRadius(),
               child: CommonCurrencyContainer(currentCurrencyCode: selectedCurrency?.code),
             ),
           ],
@@ -193,8 +195,8 @@ class _ConvertedAmountHint extends StatelessWidget {
       textStyle: AppTextStyles.s14wNormalBlack(),
       decoration: BoxDecoration(
         color: surfaceColor,
-        borderRadius: BorderRadius.circular(Dimens.d8.responsive()),
-        border: Border.all(color: frameColor),
+        borderRadius: AppDecorations.tinyRadius(),
+        border: Border.all(color: glassHairlineColor),
       ),
       enableFeedback: true,
       child: Row(
@@ -227,8 +229,9 @@ class _CategoryRow extends StatelessWidget {
 
     return CommonListRow(
       onTap: () {
-        context.read<AppNavigator>().showDialog(
+        context.read<AppNavigator>().showModalBottomSheet(
           AppPopupInfo.selectCategory(onCategorySelected: onSelected),
+          useRootNavigator: true,
         );
       },
       leading: CommonCircleNetworkImage(

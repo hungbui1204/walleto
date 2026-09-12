@@ -16,23 +16,21 @@ class EditWalletView extends StatefulWidget {
   State<EditWalletView> createState() => _EditWalletViewState();
 }
 
-class _EditWalletViewState
-    extends BasePageState<EditWalletView, EditWalletBloc> {
+class _EditWalletViewState extends BasePageState<EditWalletView, EditWalletBloc> {
   late final TextEditingController _amountController;
 
   @override
   void initState() {
     bloc.add(EditWalletViewInitialized(widget.wallet));
-    _amountController = TextEditingController(
-      text: widget.wallet.amount.toStringAsFixedNoZero(1),
-    );
+    _amountController = TextEditingController(text: widget.wallet.amount.toStringAsFixedNoZero(1));
     super.initState();
   }
 
   @override
   Widget buildPage(BuildContext context) {
+    // Keyboard dismiss overlay — Pressable exception.
     return GestureDetector(
-      behavior: HitTestBehavior.translucent,
+      behavior: HitTestBehavior.opaque,
       onTap: () => ViewUtils.hideKeyboard(context),
       child: Scaffold(
         appBar: CommonAppBar(title: S.current.editWallet),
@@ -58,10 +56,7 @@ class _EditWalletViewState
                           ),
                           SizedBox(width: Dimens.d10.responsive()),
                           Expanded(
-                            child: Text(
-                              widget.wallet.name,
-                              style: AppTextStyles.s18wNormalBlack(),
-                            ),
+                            child: Text(widget.wallet.name, style: AppTextStyles.s18wNormalBlack()),
                           ),
                         ],
                       ),
@@ -79,9 +74,7 @@ class _EditWalletViewState
                               },
                             ),
                           ),
-                          CommonCurrencyContainer(
-                            currentCurrencyCode: widget.wallet.currencyCode,
-                          ),
+                          CommonCurrencyContainer(currentCurrencyCode: widget.wallet.currencyCode),
                         ],
                       ),
                     ],
@@ -90,8 +83,7 @@ class _EditWalletViewState
                 SizedBox(height: Dimens.d30.responsive()),
                 BlocBuilder<EditWalletBloc, EditWalletState>(
                   buildWhen: (previous, current) {
-                    return previous.isConfirmButtonEnabled !=
-                        current.isConfirmButtonEnabled;
+                    return previous.isConfirmButtonEnabled != current.isConfirmButtonEnabled;
                   },
                   builder: (context, state) {
                     return CommonButton(

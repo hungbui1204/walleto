@@ -32,8 +32,9 @@ class _NoteInputBottomSheetState extends State<NoteInputBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
+    // Keyboard dismiss overlay — Pressable exception.
     return GestureDetector(
-      behavior: HitTestBehavior.translucent,
+      behavior: HitTestBehavior.opaque,
       onTap: () => ViewUtils.hideKeyboard(context),
       child: CommonPickerSheet(
         title: S.current.editNote,
