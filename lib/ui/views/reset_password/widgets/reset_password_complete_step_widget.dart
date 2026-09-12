@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:walleto/domain/domain.dart';
 import 'package:walleto/resources/resources.dart';
+import 'package:walleto/ui/ui.dart';
 
 class ResetPasswordCompleteStepWidget extends StatelessWidget {
   const ResetPasswordCompleteStepWidget({super.key});
@@ -15,33 +16,20 @@ class ResetPasswordCompleteStepWidget extends StatelessWidget {
         Container(
           alignment: Alignment.center,
           padding: EdgeInsets.all(Dimens.d16.responsive()),
-          decoration: const BoxDecoration(
-            shape: BoxShape.circle,
-            color: primaryColor,
-          ),
-          child: Icon(
-            Icons.check,
-            color: onPrimaryColor,
-            size: Dimens.d48.responsive(),
-          ),
+          decoration: const BoxDecoration(shape: BoxShape.circle, color: primaryColor),
+          child: Icon(Icons.check, color: onPrimaryColor, size: Dimens.d48.responsive()),
         ),
         SizedBox(height: Dimens.d24.responsive()),
         Center(
-          child: Text(
-            S.current.passwordResetSuccessfully,
-            style: AppTextStyles.s15wNormalBlack(),
-          ),
+          child: Text(S.current.passwordResetSuccessfully, style: AppTextStyles.s15wNormalBlack()),
         ),
         SizedBox(height: Dimens.d24.responsive()),
-        InkWell(
+        Pressable(
           onTap: () => context.read<AppNavigator>().pop(),
+          semanticLabel: S.current.loginNow,
           child: Row(
             children: [
-              Icon(
-                Icons.arrow_back_rounded,
-                size: Dimens.d56.responsive(),
-                color: primaryColor,
-              ),
+              Icon(Icons.arrow_back_rounded, size: Dimens.d56.responsive(), color: primaryColor),
               SizedBox(width: Dimens.d8.responsive()),
               Text(S.current.loginNow, style: AppTextStyles.s16wBoldBlack()),
             ],

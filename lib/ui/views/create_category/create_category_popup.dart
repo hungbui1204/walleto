@@ -63,8 +63,7 @@ class _CreateCategoryPopupState extends BasePageState<CreateCategoryPopup, Creat
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
-                              GestureDetector(
-                                behavior: HitTestBehavior.translucent,
+                              Pressable(
                                 onTap: () {
                                   navigator.showDialog(
                                     AppPopupInfo.selectIcon(
@@ -75,6 +74,7 @@ class _CreateCategoryPopupState extends BasePageState<CreateCategoryPopup, Creat
                                     ),
                                   );
                                 },
+                                borderRadius: BorderRadius.circular(Dimens.d36.responsive()),
                                 child: BlocBuilder<CreateCategoryBloc, CreateCategoryState>(
                                   buildWhen: (previous, current) => previous.icon != current.icon,
                                   builder: (context, state) {
@@ -153,7 +153,7 @@ class _CreateCategoryPopupState extends BasePageState<CreateCategoryPopup, Creat
                                     previous.parent != current.parent ||
                                     previous.categoryType != current.categoryType,
                             builder: (context, state) {
-                              return InkWell(
+                              return Pressable(
                                 onTap: () {
                                   navigator.showDialog(
                                     AppPopupInfo.selectCategory(
@@ -205,14 +205,16 @@ class _CreateCategoryPopupState extends BasePageState<CreateCategoryPopup, Creat
                                           ),
                                           if (state.parent == null)
                                             Icon(
-                                              Icons.arrow_forward_ios,
+                                              Icons.arrow_forward_ios_rounded,
                                               size: Dimens.d14.responsive(),
+                                              color: darkGreyColor,
                                             )
                                           else
-                                            GestureDetector(
+                                            Pressable(
                                               onTap: () {
                                                 bloc.add(const CreateCategoryParentRemoved());
                                               },
+                                              borderRadius: AppDecorations.chipRadius(),
                                               child: Icon(
                                                 Icons.close,
                                                 size: Dimens.d20.responsive(),

@@ -54,11 +54,12 @@ class _SelectIconPopupState extends BasePageState<SelectIconPopup, SelectIconBlo
                       ),
                       itemCount: state.icons.length,
                       itemBuilder: (context, index) {
-                        return GestureDetector(
+                        return Pressable(
                           onTap: () {
                             widget.onIconSelected?.call(state.icons[index].url!);
                             navigator.pop(useRootNavigator: true);
                           },
+                          borderRadius: BorderRadius.circular(Dimens.d36.responsive()),
                           child: CommonCircleNetworkImage(imageUrl: state.icons[index].url),
                         );
                       },

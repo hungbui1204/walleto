@@ -113,6 +113,37 @@ void main() {
     expect(scaleOf(tester).scale, 1.0);
   });
 
+  AnimatedOpacity opacityOf(WidgetTester tester) {
+    return tester.widget<AnimatedOpacity>(
+      find.descendant(of: find.byType(Pressable), matching: find.byType(AnimatedOpacity)),
+    );
+  }
+
+  testWidgets('opacity feedback reduces opacity while pressed and does not scale', (tester) async {
+    await pumpPressable(
+      tester,
+      pressable: Pressable(
+        onTap: () {},
+        feedback: PressableFeedback.opacity,
+        child: const Text('Tap me'),
+      ),
+    );
+
+    expect(opacityOf(tester).opacity, 1.0);
+    expect(scaleOf(tester).scale, 1.0);
+
+    final gesture = await tester.startGesture(tester.getCenter(find.text('Tap me')));
+    await tester.pump();
+
+    expect(opacityOf(tester).opacity, Pressable.pressedOpacity);
+    expect(scaleOf(tester).scale, 1.0);
+
+    await gesture.up();
+    await tester.pump();
+
+    expect(opacityOf(tester).opacity, 1.0);
+  });
+
   testWidgets('ClipRRect uses the given borderRadius', (tester) async {
     const radius = BorderRadius.all(Radius.circular(8));
 

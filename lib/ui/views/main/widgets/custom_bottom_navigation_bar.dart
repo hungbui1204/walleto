@@ -51,7 +51,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
                         child: SizedBox(
                           width: Dimens.d24.responsive(),
                           height: Dimens.d24.responsive(),
-                          child: FittedBox(child: tab.icon(selected: selected)),
+                          child: tab.icon(selected: selected),
                         ),
                       ),
                     ),

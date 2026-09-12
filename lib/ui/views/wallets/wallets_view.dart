@@ -42,16 +42,23 @@ class _WalletsViewState extends BasePageState<WalletsView, WalletsBloc> {
                   SizedBox(height: Dimens.d10.responsive()),
                   Align(
                     alignment: Alignment.centerRight,
-                    child: IconButton(
-                      tooltip: S.current.createWallet,
-                      onPressed: () {
+                    child: Pressable(
+                      onTap: () {
                         navigator.push(const AppRouteInfo.createWallet());
                       },
-                      icon: Assets.icons.plus.svg(
-                        width: Dimens.d24.responsive(),
-                        height: Dimens.d24.responsive(),
-                        fit: BoxFit.cover,
-                        colorFilter: const ColorFilter.mode(primaryColor, BlendMode.srcIn),
+                      semanticLabel: S.current.createWallet,
+                      borderRadius: AppDecorations.chipRadius(),
+                      child: SizedBox(
+                        width: Dimens.d44.responsive(),
+                        height: Dimens.d44.responsive(),
+                        child: Center(
+                          child: Assets.icons.plus.svg(
+                            width: Dimens.d24.responsive(),
+                            height: Dimens.d24.responsive(),
+                            fit: BoxFit.cover,
+                            colorFilter: const ColorFilter.mode(primaryColor, BlendMode.srcIn),
+                          ),
+                        ),
                       ),
                     ),
                   ),
