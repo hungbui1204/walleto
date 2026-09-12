@@ -367,4 +367,33 @@ class AppApiServices {
       decoder: (data) => CurrencyData.fromJson(data as Map<String, dynamic>),
     );
   }
+
+  Future<AiChatResponseData?> sendAiChatMessage({required String message}) {
+    return _serverApiFunctionsClient.request(
+      method: RequestMethod.post,
+      path: '/ai_chat',
+      body: {'message': message},
+      options: Options(receiveTimeout: ServerTimeoutConstants.aiChatReceiveTimeout),
+      decoder: (data) => AiChatResponseData.fromJson(data as Map<String, dynamic>),
+      successResponseMapperType: SuccessResponseMapperType.jsonObject,
+    );
+  }
+
+  Future<List<AiChatHistoryMessageData>?> getAiChatHistory({
+    required int offset,
+    required int limit,
+  }) {
+    return _serverApiClientRest.request(
+      method: RequestMethod.get,
+      path: 'ai_chat_messages',
+      queryParameters: {
+        'select': '*',
+        'order': PostgrestQueryConstants.aiChatMessagesOrder,
+        'offset': offset,
+        'limit': limit,
+      },
+      decoder: (data) => AiChatHistoryMessageData.fromJson(data as Map<String, dynamic>),
+      successResponseMapperType: SuccessResponseMapperType.jsonArray,
+    );
+  }
 }
