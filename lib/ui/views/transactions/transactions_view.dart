@@ -177,34 +177,24 @@ class _TransactionInfoWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.translucent,
+    return CommonListRow(
       onTap: () {
         context.read<AppNavigator>().push(AppRouteInfo.transactionDetail(transaction: transaction));
       },
-      child: ConstrainedBox(
-        constraints: BoxConstraints(minHeight: Dimens.d44.responsive()),
-        child: Row(
-          children: [
-            CommonCircleNetworkImage(
-              imageUrl: transaction.category.iconUrl,
-              backgroundColor: primaryShadeColor,
-            ),
-            SizedBox(width: Dimens.d10.responsive()),
-            Expanded(
-              child: Text(transaction.category.name, style: AppTextStyles.s14wNormalBlack()),
-            ),
-            CommonAmountWithSymbol(
-              amount: transaction.amount,
-              currencyCode: transaction.currencyCode,
-              textStyle: AppThemes.amount(
-                fontSize: Dimens.d14.responsive(),
-                color: transaction.type == CategoryType.expense ? redColor : greenColor,
-              ),
-            ),
-          ],
+      leading: CommonCircleNetworkImage(
+        imageUrl: transaction.category.iconUrl,
+        backgroundColor: primaryShadeColor,
+      ),
+      title: Text(transaction.category.name, style: AppTextStyles.s14wNormalBlack()),
+      trailing: CommonAmountWithSymbol(
+        amount: transaction.amount,
+        currencyCode: transaction.currencyCode,
+        textStyle: AppThemes.amount(
+          fontSize: Dimens.d14.responsive(),
+          color: transaction.type == CategoryType.expense ? redColor : greenColor,
         ),
       ),
+      showChevron: true,
     );
   }
 }

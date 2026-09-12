@@ -15,8 +15,7 @@ class ChooseWalletBottomSheet extends StatefulWidget {
   final Wallet? currentWallet;
 
   @override
-  State<ChooseWalletBottomSheet> createState() =>
-      _ChooseWalletBottomSheetState();
+  State<ChooseWalletBottomSheet> createState() => _ChooseWalletBottomSheetState();
 }
 
 class _ChooseWalletBottomSheetState extends State<ChooseWalletBottomSheet> {
@@ -39,8 +38,7 @@ class _ChooseWalletBottomSheetState extends State<ChooseWalletBottomSheet> {
             Text(S.current.chooseWallet, style: AppTextStyles.s18wBoldBlack()),
             SizedBox(height: Dimens.d20.responsive()),
             BlocBuilder<AppBloc, AppState>(
-              buildWhen:
-                  (previous, current) => previous.wallets != current.wallets,
+              buildWhen: (previous, current) => previous.wallets != current.wallets,
               builder: (context, state) {
                 return ListView.separated(
                   physics: const NeverScrollableScrollPhysics(),
@@ -96,11 +94,7 @@ class _ChooseWalletBottomSheetState extends State<ChooseWalletBottomSheet> {
 }
 
 class _WalletWidget extends StatelessWidget {
-  const _WalletWidget({
-    required this.isSelected,
-    required this.wallet,
-    required this.onTap,
-  });
+  const _WalletWidget({required this.isSelected, required this.wallet, required this.onTap});
 
   final bool isSelected;
   final Wallet wallet;
@@ -108,24 +102,18 @@ class _WalletWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return CommonListRow(
       onTap: onTap,
-      child: ColoredBox(
-        color: isSelected ? primaryShade1Color : surfaceColor,
-        child: Padding(
-          padding: EdgeInsets.all(Dimens.d12.responsive()),
-          child: Row(
-            children: [
-              CommonCircleNetworkImage(
-                imageUrl: wallet.iconUrl,
-                placeHolderType: ImagePlaceHolderType.wallet,
-              ),
-              SizedBox(width: Dimens.d8.responsive()),
-              Text(wallet.name, style: AppTextStyles.s14wNormalBlack()),
-            ],
-          ),
-        ),
+      leading: CommonCircleNetworkImage(
+        imageUrl: wallet.iconUrl,
+        placeHolderType: ImagePlaceHolderType.wallet,
       ),
+      title: Text(wallet.name, style: AppTextStyles.s14wNormalBlack()),
+      backgroundColor: isSelected ? primaryShade1Color : surfaceColor,
+      trailing:
+          isSelected
+              ? Icon(Icons.check_rounded, color: primaryColor, size: Dimens.d20.responsive())
+              : null,
     );
   }
 }

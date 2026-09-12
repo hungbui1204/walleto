@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:walleto/domain/domain.dart';
 import 'package:walleto/resources/resources.dart';
-import 'package:walleto/shared/shared.dart';
 import 'package:walleto/ui/ui.dart';
 
 @RoutePage()
@@ -85,9 +84,9 @@ class _WalletsViewState extends BasePageState<WalletsView, WalletsBloc> {
                                 );
                               },
                               title: state.wallets[index].name,
-                              content: state.wallets[index].amount.toStringWithFormat(
-                                NumberFormatConstants.amountFormat,
-                              ),
+                              amount: state.wallets[index].amount,
+                              currencyCode: state.wallets[index].currencyCode,
+                              showChevron: true,
                               prefix: CommonCircleNetworkImage(
                                 imageUrl: state.wallets[index].iconUrl,
                                 placeHolderType: ImagePlaceHolderType.wallet,

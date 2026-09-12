@@ -6,6 +6,7 @@ import 'package:walleto/shared/shared.dart';
 import 'package:walleto/ui/widgets/common_circle_network_image.dart';
 import 'package:walleto/ui/widgets/common_currency_container.dart';
 import 'package:walleto/ui/widgets/common_line.dart';
+import 'package:walleto/ui/widgets/common_list_row.dart';
 import 'package:walleto/ui/widgets/transaction_amount_input.dart';
 
 class TransactionFormPanel extends StatelessWidget {
@@ -89,7 +90,7 @@ class _WalletRow extends StatelessWidget {
     final selectedWallet = wallet;
     if (selectedWallet == null) return const SizedBox.shrink();
 
-    return _TransactionFormRow(
+    return CommonListRow(
       onTap: () {
         context.read<AppNavigator>().showModalBottomSheet(
           AppPopupInfo.chooseWallet(onWalletSelected: onSelected, currentWallet: selectedWallet),
@@ -101,7 +102,8 @@ class _WalletRow extends StatelessWidget {
         placeHolderType: ImagePlaceHolderType.wallet,
         backgroundColor: primaryShadeColor,
       ),
-      label: Text(selectedWallet.name, style: AppTextStyles.s14wNormalBlack()),
+      title: Text(selectedWallet.name, style: AppTextStyles.s14wNormalBlack()),
+      showChevron: true,
     );
   }
 }
@@ -223,7 +225,7 @@ class _CategoryRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final selectedCategory = category;
 
-    return _TransactionFormRow(
+    return CommonListRow(
       onTap: () {
         context.read<AppNavigator>().showDialog(
           AppPopupInfo.selectCategory(onCategorySelected: onSelected),
@@ -234,10 +236,11 @@ class _CategoryRow extends StatelessWidget {
         size: Dimens.d30.responsive(),
         backgroundColor: primaryShadeColor,
       ),
-      label:
+      title:
           selectedCategory != null
               ? Text(selectedCategory.name, style: AppTextStyles.s14wNormalBlack())
               : Text(S.current.selectCategory, style: AppTextStyles.s14wNormalGrey()),
+      showChevron: true,
     );
   }
 }
@@ -250,7 +253,7 @@ class _NoteRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _TransactionFormRow(
+    return CommonListRow(
       onTap: () {
         context.read<AppNavigator>().showModalBottomSheet(
           AppPopupInfo.noteInput(currentNote: note, onNoteChanged: onChanged),
@@ -260,10 +263,11 @@ class _NoteRow extends StatelessWidget {
         width: Dimens.d30.responsive(),
         height: Dimens.d30.responsive(),
       ),
-      label:
+      title:
           note.isNotEmpty
               ? Text(note, style: AppTextStyles.s14wNormalBlack(), overflow: TextOverflow.ellipsis)
               : Text(S.current.note, style: AppTextStyles.s14wNormalGrey()),
+      showChevron: true,
     );
   }
 }
@@ -278,7 +282,7 @@ class _DateRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final selectedDate = date;
 
-    return _TransactionFormRow(
+    return CommonListRow(
       onTap: () async {
         final navigator = context.read<AppNavigator>();
         final now = DateTime.now();
@@ -296,41 +300,14 @@ class _DateRow extends StatelessWidget {
         width: Dimens.d30.responsive(),
         height: Dimens.d30.responsive(),
       ),
-      label:
+      title:
           selectedDate != null
               ? Text(
                 selectedDate.toStringWithFormat(DateTimeFormatConstants.commonDateFormat),
                 style: AppTextStyles.s14wNormalBlack(),
               )
               : const SizedBox.shrink(),
-    );
-  }
-}
-
-class _TransactionFormRow extends StatelessWidget {
-  const _TransactionFormRow({required this.leading, required this.label, required this.onTap});
-
-  final Widget leading;
-  final Widget label;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.translucent,
-      onTap: onTap,
-      child: Row(
-        children: [
-          leading,
-          SizedBox(width: Dimens.d16.responsive()),
-          Expanded(child: label),
-          Icon(
-            Icons.arrow_forward_ios_rounded,
-            color: darkGreyColor,
-            size: Dimens.d18.responsive(),
-          ),
-        ],
-      ),
+      showChevron: true,
     );
   }
 }

@@ -115,29 +115,22 @@ class _CurrencyWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.translucent,
+    return CommonListRow(
       onTap: onTap,
-      child: ColoredBox(
-        color: isSelected ? primaryShade1Color : surfaceColor,
-        child: Padding(
-          padding: EdgeInsets.all(Dimens.d12.responsive()),
-          child: Row(
-            children: [
-              CommonRectangleNetworkImage(
-                imageUrl: currency.iconUrl,
-                height: Dimens.d30.responsive(),
-                width: Dimens.d40.responsive(),
-                placeHolderType: ImagePlaceHolderType.currency,
-                hasBorder: false,
-                backgroundColor: transParentColor,
-              ),
-              SizedBox(width: Dimens.d8.responsive()),
-              Text(currency.name, style: AppTextStyles.s14wNormalBlack()),
-            ],
-          ),
-        ),
+      leading: CommonRectangleNetworkImage(
+        imageUrl: currency.iconUrl,
+        height: Dimens.d30.responsive(),
+        width: Dimens.d40.responsive(),
+        placeHolderType: ImagePlaceHolderType.currency,
+        hasBorder: false,
+        backgroundColor: transParentColor,
       ),
+      title: Text(currency.name, style: AppTextStyles.s14wNormalBlack()),
+      backgroundColor: isSelected ? primaryShade1Color : surfaceColor,
+      trailing:
+          isSelected
+              ? Icon(Icons.check_rounded, color: primaryColor, size: Dimens.d20.responsive())
+              : null,
     );
   }
 }

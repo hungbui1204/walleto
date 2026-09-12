@@ -12,10 +12,11 @@ class CategoryWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: transParentColor,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(Dimens.d16.responsive()),
+    return Padding(
+      padding: EdgeInsets.only(left: Dimens.d20.responsive()),
+      child: CommonListRow(
+        leading: CommonCircleNetworkImage(imageUrl: category.iconUrl),
+        title: Text(category.name, style: AppTextStyles.s14wNormalBlack()),
         onTap:
             onCategorySelected == null
                 ? null
@@ -23,14 +24,6 @@ class CategoryWidget extends StatelessWidget {
                   onCategorySelected!.call(category);
                   context.read<AppNavigator>().pop(useRootNavigator: true);
                 },
-        child: Row(
-          children: [
-            SizedBox(width: Dimens.d20.responsive()),
-            CommonCircleNetworkImage(imageUrl: category.iconUrl),
-            SizedBox(width: Dimens.d20.responsive()),
-            Text(category.name, style: AppTextStyles.s14wNormalBlack()),
-          ],
-        ),
       ),
     );
   }
