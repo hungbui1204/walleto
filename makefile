@@ -101,12 +101,12 @@ build_prod_bundle:
 build_dev_ios:
 	cd tools && chmod +x ./build_and_run_app.sh && $(BUILD_CMD) development build ios
 build_staging_ios:
-	cd tools && chmod +x ./build_and_run_app.sh && $(BUILD_CMD) staging build ios --obfuscate --split-debug-info=./debug
+	@echo "iOS staging scheme is not configured. Use development or production." >&2; exit 1
 build_prod_ios:
 	cd tools && chmod +x ./build_and_run_app.sh && $(BUILD_CMD) production build ios --obfuscate --split-debug-info=./debug
 build_dev_ipa:
 	cd tools && chmod +x ./build_and_run_app.sh && $(BUILD_CMD) development build ipa --export-options-plist=ios/ExportOptions.plist
 build_staging_ipa:
-	cd tools && chmod +x ./build_and_run_app.sh && $(BUILD_CMD) staging build ipa --obfuscate --split-debug-info=./debug --export-options-plist=ios/ExportOptions.plist
+	@echo "iOS staging scheme is not configured. Use development or production." >&2; exit 1
 build_prod_ipa:
 	cd tools && chmod +x ./build_and_run_app.sh && $(BUILD_CMD) production build ipa --obfuscate --split-debug-info=./debug --export-options-plist=ios/ExportOptions.plist

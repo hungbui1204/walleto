@@ -14,11 +14,20 @@ class LoadInitialResourceUseCase
   @protected
   @override
   Future<LoadInitialResourceOutput> buildUseCase(LoadInitialResourceInput input) async {
-    final initialRoutes = [
-      await _repository.isLoggedIn ? InitialAppRoute.main : InitialAppRoute.login,
-    ];
+    if (!await _repository.isLoggedIn) {
+      return const LoadInitialResourceOutput(initialRoutes: [InitialAppRoute.login]);
+    }
 
-    return LoadInitialResourceOutput(initialRoutes: initialRoutes);
+    try {
+      final wallets = await _repository.getWallets();
+      if (wallets.isEmpty) {
+        return const LoadInitialResourceOutput(initialRoutes: [InitialAppRoute.createWallet]);
+      }
+    } catch (_) {
+      /// Network/auth errors should not block Main; UI still guards empty wallets.
+    }
+
+    return const LoadInitialResourceOutput();
   }
 }
 

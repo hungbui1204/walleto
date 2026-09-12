@@ -39,6 +39,8 @@ class TransactionDetailBloc extends BaseBloc<TransactionDetailEvent, Transaction
         );
 
         appBloc.add(const TransactionsReloaded(needReloadTransactions: true));
+        appBloc.add(const StatisticalChartsReloaded(needReloadStatisticalCharts: true));
+        appBloc.add(const DataFetched(walletsFetched: true));
 
         await navigator.pop();
       },
@@ -56,6 +58,8 @@ class TransactionDetailBloc extends BaseBloc<TransactionDetailEvent, Transaction
         );
 
         appBloc.add(const TransactionsReloaded(needReloadTransactions: true));
+        appBloc.add(const StatisticalChartsReloaded(needReloadStatisticalCharts: true));
+        appBloc.add(const DataFetched(walletsFetched: true));
 
         await navigator.pop();
       },

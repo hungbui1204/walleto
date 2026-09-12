@@ -22,8 +22,7 @@ class _TransactionDetailViewState
   @override
   void initState() {
     isAdjustTransaction =
-        widget.transaction.category.id ==
-        AppConstants.updateWalletBalanceCategoryId;
+        widget.transaction.category.id == AppConstants.updateWalletBalanceCategoryId;
     super.initState();
   }
 
@@ -70,14 +69,11 @@ class _TransactionDetailViewState
                         currencyCode: widget.transaction.currencyCode,
                         textStyle: AppThemes.amount(
                           fontSize: Dimens.d32.responsive(),
-                          fontWeight: FontWeight.w600,
                           color: isIncome ? greenColor : redColor,
                         ),
                       ),
                     ),
-                    CommonLine(
-                      margin: EdgeInsets.only(bottom: Dimens.d12.responsive()),
-                    ),
+                    CommonLine(margin: EdgeInsets.only(bottom: Dimens.d12.responsive())),
                     if (widget.transaction.note.isNotEmpty) ...[
                       Row(
                         children: [
@@ -94,11 +90,7 @@ class _TransactionDetailViewState
                           ),
                         ],
                       ),
-                      CommonLine(
-                        margin: EdgeInsets.symmetric(
-                          vertical: Dimens.d12.responsive(),
-                        ),
-                      ),
+                      CommonLine(margin: EdgeInsets.symmetric(vertical: Dimens.d12.responsive())),
                     ],
                     Row(
                       children: [
@@ -108,10 +100,9 @@ class _TransactionDetailViewState
                         ),
                         SizedBox(width: Dimens.d16.responsive()),
                         Text(
-                          widget.transaction.transactionDate!
-                              .toStringWithFormat(
-                                DateTimeFormatConstants.commonDateFormat,
-                              ),
+                          widget.transaction.transactionDate!.toStringWithFormat(
+                            DateTimeFormatConstants.commonDateFormat,
+                          ),
                           style: AppTextStyles.s14wNormalBlack(),
                         ),
                         const Spacer(),
@@ -147,9 +138,7 @@ class _TransactionDetailViewState
                         ? null
                         : () {
                           navigator.push(
-                            AppRouteInfo.editTransaction(
-                              transaction: widget.transaction,
-                            ),
+                            AppRouteInfo.editTransaction(transaction: widget.transaction),
                           );
                         },
               ),
@@ -188,10 +177,7 @@ class _TransactionDetailViewState
                         : () {
                           navigator.showDialog(
                             AppPopupInfo.confirm(
-                              message:
-                                  S
-                                      .current
-                                      .areYouSureYouWantToDeleteThisTransaction,
+                              message: S.current.areYouSureYouWantToDeleteThisTransaction,
                               showCancel: true,
                               onPressed: Func0(() {
                                 bloc.add(

@@ -56,7 +56,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyC7kgIJfEiAGYFj3fqoYpcgb-sldKWhlkM',
-    appId: '1:496961452545:ios:0e91dbcfc2b361d8c75e00',
+    appId: '1:496961452545:ios:cbe08f78dab79694c75e00',
     messagingSenderId: '496961452545',
     projectId: 'walleto-hungthe4869',
     storageBucket: 'walleto-hungthe4869.firebasestorage.app',

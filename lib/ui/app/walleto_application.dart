@@ -91,6 +91,7 @@ class _WalletoApplicationState extends BasePageState<WalletoApplication, AppBloc
           return switch (e) {
             InitialAppRoute.login => const LoginRoute(),
             InitialAppRoute.main => const MainRoute(),
+            InitialAppRoute.createWallet => CreateWalletRoute(isFromSignUp: true),
           };
         })
         .toList(growable: false);

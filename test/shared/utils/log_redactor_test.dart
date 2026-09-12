@@ -33,6 +33,8 @@ void main() {
                 'refresh_token': 'refresh-secret',
                 'access_token': 'access-secret',
                 'apiKey': 'env-api-key',
+                'otp': '123456',
+                'code': '654321',
                 'grant_type': 'password',
                 'nested': {'refreshToken': 'nested-secret', 'id': 1},
               })
@@ -44,6 +46,8 @@ void main() {
       expect(redacted['refresh_token'], LogRedactor.placeholder);
       expect(redacted['access_token'], LogRedactor.placeholder);
       expect(redacted['apiKey'], LogRedactor.placeholder);
+      expect(redacted['otp'], LogRedactor.placeholder);
+      expect(redacted['code'], LogRedactor.placeholder);
       expect(redacted['grant_type'], 'password');
       expect((redacted['nested'] as Map<String, dynamic>)['refreshToken'], LogRedactor.placeholder);
       expect((redacted['nested'] as Map<String, dynamic>)['id'], 1);

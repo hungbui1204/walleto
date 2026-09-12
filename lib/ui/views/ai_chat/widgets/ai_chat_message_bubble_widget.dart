@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:walleto/domain/domain.dart';
 import 'package:walleto/resources/resources.dart';
 
@@ -44,8 +45,8 @@ class AiChatMessageBubbleWidget extends StatelessWidget {
   }
 
   Widget _body({required bool isUser, required TextStyle style}) {
-    if (!isUser && !isStreaming) {
-      return SelectableText(message.content, style: style);
+    if (!isUser) {
+      return HtmlWidget(message.content, textStyle: style);
     }
 
     return SelectableText(message.content, style: style);

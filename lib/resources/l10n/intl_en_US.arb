@@ -41,7 +41,7 @@
     "audioAccessRestricted": "Audio access restricted",
     "//" : "Login view",
     "welcomeToApp": "Welcome to\nWalleto",
-    "loginOrSignUp":"Sign up or login bellow to manage your wallets and transactions easily",
+    "loginOrSignUp":"Sign up or login below to manage your wallets and transactions easily",
     "login" : "Login",
     "signUp" : "Sign Up",
     "hintEmail": "Enter your email here",
@@ -192,5 +192,11 @@
     "aiChatSuggestedWallets": "How are my wallets looking?",
     "@aiChatSuggestedWallets": { "description": "Suggested AI chat prompt about wallet balances" },
     "aiChatSuggestedSaving": "Any saving tips for me?",
-    "@aiChatSuggestedSaving": { "description": "Suggested AI chat prompt about saving advice" }
+    "@aiChatSuggestedSaving": { "description": "Suggested AI chat prompt about saving advice" },
+    "notificationChannelName": "General",
+    "@notificationChannelName": { "description": "Android notification channel name" },
+    "notificationChannelDescription": "General notifications",
+    "@notificationChannelDescription": { "description": "Android notification channel description" },
+    "noCategories": "No categories yet",
+    "@noCategories": { "description": "Empty state on the categories screen" }
 }

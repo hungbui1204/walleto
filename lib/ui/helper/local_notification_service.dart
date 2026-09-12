@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app_badge/flutter_app_badge.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:injectable/injectable.dart';
+import 'package:walleto/resources/resources.dart';
 import 'package:walleto/shared/shared.dart';
 
 @lazySingleton
@@ -16,8 +17,6 @@ class LocalNotificationService with LogMixin {
   static bool _androidPushListenersRegistered = false;
 
   static const _channelId = 'Default';
-  static const _channelName = 'Default';
-  static const _channelDescription = 'Default Channel';
   static const _androidDefaultIcon = '@drawable/notification_icon';
 
   static Future<void> init() async {
@@ -38,14 +37,16 @@ class LocalNotificationService with LogMixin {
         }
       },
     );
+  }
 
+  static Future<void> _ensureAndroidChannel() async {
     await FlutterLocalNotificationsPlugin()
         .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(
-          const AndroidNotificationChannel(
+          AndroidNotificationChannel(
             _channelId,
-            _channelName,
-            description: _channelDescription,
+            S.current.notificationChannelName,
+            description: S.current.notificationChannelDescription,
             importance: Importance.high,
           ),
         );
@@ -86,20 +87,29 @@ class LocalNotificationService with LogMixin {
   }
 
   static Future<void> notify(RemoteMessage message) async {
-    FlutterAppBadge.count(message.notification?.android?.count ?? 0);
+    final notification = message.notification;
+    final title = notification?.title ?? message.data['title'] as String?;
+    final body = notification?.body ?? message.data['body'] as String?;
+    if (title == null && body == null) {
+      return;
+    }
+
+    await _ensureAndroidChannel();
+
+    FlutterAppBadge.count(notification?.android?.count ?? 0);
 
     final androidNotificationDetails = AndroidNotificationDetails(
       _channelId,
-      _channelName,
+      S.current.notificationChannelName,
       colorized: true,
       color: Colors.white,
       priority: Priority.high,
       importance: Importance.max,
-      channelDescription: _channelDescription,
-      number: message.notification?.android?.count,
+      channelDescription: S.current.notificationChannelDescription,
+      number: notification?.android?.count,
     );
     final iOSNotificationDetails = DarwinNotificationDetails(
-      badgeNumber: message.notification?.android?.count,
+      badgeNumber: notification?.android?.count,
     );
 
     final notificationDetails = NotificationDetails(
@@ -111,8 +121,8 @@ class LocalNotificationService with LogMixin {
 
     await FlutterLocalNotificationsPlugin().show(
       id,
-      message.notification!.title,
-      message.notification!.body,
+      title,
+      body,
       notificationDetails,
       payload: jsonEncode(message.data),
     );

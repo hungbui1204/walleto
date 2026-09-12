@@ -79,7 +79,7 @@ class AppRouter extends RootStackRouter {
           ],
         ),
         AutoRoute(
-          path: 'budgets',
+          path: 'ai-chat',
           page: BottomTabBudgetsRouter.page,
           children: [
             AutoRoute(initial: true, page: AiChatRoute.page),

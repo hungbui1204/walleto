@@ -9,6 +9,9 @@ import 'package:walleto/ui/ui.dart';
 
 class _MockGetTransactionsUseCase extends Mock implements GetTransactionsUseCase {}
 
+class _MockConvertAmountsToCurrencyUseCase extends Mock
+    implements ConvertAmountsToCurrencyUseCase {}
+
 class _MockAppNavigator extends Mock implements AppNavigator {}
 
 class _MockAppBloc extends Mock implements AppBloc {}
@@ -24,13 +27,14 @@ void main() {
   final otherMonth = DateTime(2026, 2);
 
   late _MockGetTransactionsUseCase getTransactionsUseCase;
+  late _MockConvertAmountsToCurrencyUseCase convertAmountsToCurrencyUseCase;
   late _MockAppNavigator navigator;
   late _MockAppBloc appBloc;
   late _MockCommonBloc commonBloc;
   late _MockExceptionHandler exceptionHandler;
 
   TransactionsBloc buildBloc() {
-    return TransactionsBloc(getTransactionsUseCase)
+    return TransactionsBloc(getTransactionsUseCase, convertAmountsToCurrencyUseCase)
       ..navigator = navigator
       ..disposeBag = DisposeBag()
       ..appBloc = appBloc
@@ -42,14 +46,19 @@ void main() {
   setUpAll(() async {
     await S.load(const Locale('en', 'US'));
     registerFallbackValue(const GetTransactionsInput());
+    registerFallbackValue(
+      const ConvertAmountsToCurrencyInput(amounts: [], targetCurrencyCode: 'USD'),
+    );
     registerFallbackValue(const AppRouteInfo.main());
     registerFallbackValue(const DataFetched());
     registerFallbackValue(const LoadingVisibilityEmitted(isLoading: false));
     registerFallbackValue(DateTime(2026));
+    registerFallbackValue(DateTimeRange(start: DateTime(2026), end: DateTime(2026, 1, 2)));
   });
 
   setUp(() {
     getTransactionsUseCase = _MockGetTransactionsUseCase();
+    convertAmountsToCurrencyUseCase = _MockConvertAmountsToCurrencyUseCase();
     navigator = _MockAppNavigator();
     appBloc = _MockAppBloc();
     commonBloc = _MockCommonBloc();
@@ -64,6 +73,9 @@ void main() {
         event.appExceptionWrapper.exceptionCompleter?.complete();
       }
     });
+    when(
+      () => convertAmountsToCurrencyUseCase.execute(any()),
+    ).thenAnswer((_) async => const ConvertAmountsToCurrencyOutput(total: 100));
     when(() => navigator.getCurrentRouteNames()).thenReturn(const <String?>[]);
     when(
       () => getTransactionsUseCase.execute(any()),
@@ -72,6 +84,7 @@ void main() {
       () => navigator.showDateRangePicker(
         firstDate: any(named: 'firstDate'),
         lastDate: any(named: 'lastDate'),
+        initialDateRange: any(named: 'initialDateRange'),
         useRootNavigator: true,
       ),
     ).thenAnswer((_) async => DateTimeRange(start: DateTime(2026, 2), end: DateTime(2026, 2, 10)));
@@ -164,6 +177,37 @@ void main() {
         ),
       ).called(1);
       verifyNever(() => commonBloc.add(const LoadingVisibilityEmitted(isLoading: true)));
+    },
+  );
+
+  blocTest<TransactionsBloc, TransactionsState>(
+    'fetches a new range when start and end change even if duration matches',
+    seed:
+        () => TransactionsState(
+          selectedWallet: totalWallet,
+          wallets: const [totalWallet, cashWallet],
+          selectedDateRange: DateTimeRange(start: DateTime(2026), end: DateTime(2026, 1, 10)),
+        ),
+    build: buildBloc,
+    act: (bloc) => bloc.add(const TransactionsDateRangePicked()),
+    verify: (_) {
+      verify(
+        () => getTransactionsUseCase.execute(
+          GetTransactionsInput(fromDate: DateTime(2026, 2), toDate: DateTime(2026, 2, 11)),
+        ),
+      ).called(1);
+    },
+  );
+
+  blocTest<TransactionsBloc, TransactionsState>(
+    'does not crash when initialized with no wallets',
+    setUp: () {
+      when(() => appBloc.state).thenReturn(const AppState());
+    },
+    build: buildBloc,
+    act: (bloc) => bloc.add(const TransactionsViewInitialized()),
+    verify: (_) {
+      verifyNever(() => getTransactionsUseCase.execute(any()));
     },
   );
 }

@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:walleto/domain/domain.dart';
 import 'package:walleto/resources/resources.dart';
 import 'package:walleto/ui/ui.dart';
@@ -31,19 +32,29 @@ class _MainViewState extends BasePageState<MainView, MainBloc> {
       floatingActionButton:
           hideBottomNav
               ? null
-              : FloatingActionButton(
-                shape: const CircleBorder(),
-                elevation: Dimens.d4.responsive(),
-                tooltip: S.current.addTransaction,
-                onPressed: () async => await navigator.push(const AppRouteInfo.createTransaction()),
-                backgroundColor: primaryColor,
-                foregroundColor: onPrimaryColor,
-                splashColor: primaryShadeColor,
-                child: Assets.icons.plus.svg(
-                  width: Dimens.d24.responsive(),
-                  height: Dimens.d24.responsive(),
-                  colorFilter: const ColorFilter.mode(onPrimaryColor, BlendMode.srcIn),
-                ),
+              : BlocBuilder<AppBloc, AppState>(
+                buildWhen: (previous, current) => previous.wallets != current.wallets,
+                builder: (context, state) {
+                  if (state.wallets.isEmpty) {
+                    return const SizedBox.shrink();
+                  }
+
+                  return FloatingActionButton(
+                    shape: const CircleBorder(),
+                    elevation: Dimens.d4.responsive(),
+                    tooltip: S.current.addTransaction,
+                    onPressed:
+                        () async => await navigator.push(const AppRouteInfo.createTransaction()),
+                    backgroundColor: primaryColor,
+                    foregroundColor: onPrimaryColor,
+                    splashColor: primaryShadeColor,
+                    child: Assets.icons.plus.svg(
+                      width: Dimens.d24.responsive(),
+                      height: Dimens.d24.responsive(),
+                      colorFilter: const ColorFilter.mode(onPrimaryColor, BlendMode.srcIn),
+                    ),
+                  );
+                },
               ),
       bottomNavigationBuilder: (_, tabsRouter) {
         navigator.tabsRouter = tabsRouter;

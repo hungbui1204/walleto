@@ -28,3 +28,9 @@ sealed class HomeCurrencySelected extends HomeEvent with _$HomeCurrencySelected 
   const HomeCurrencySelected._();
   const factory HomeCurrencySelected({required String currencyCode}) = _HomeCurrencySelected;
 }
+
+@freezed
+sealed class HomeBalanceRecalculated extends HomeEvent with _$HomeBalanceRecalculated {
+  const HomeBalanceRecalculated._();
+  const factory HomeBalanceRecalculated() = _HomeBalanceRecalculated;
+}

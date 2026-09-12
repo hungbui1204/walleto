@@ -370,6 +370,15 @@ class AppApiServices {
     );
   }
 
+  Future<void> updateUserDefaultCurrency({required String userId, required String currencyCode}) {
+    return _serverApiClientRest.request(
+      method: RequestMethod.patch,
+      path: 'profiles',
+      queryParameters: {'id': 'eq.$userId'},
+      body: {'base_currency': currencyCode},
+    );
+  }
+
   Stream<AiChatStreamEventData> sendAiChatMessage({
     required String message,
     AppCancelToken? cancelToken,
