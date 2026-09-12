@@ -171,5 +171,22 @@
     "hintConfirmNewPassword": "Enter your new password again",
     "passwordResetSuccessfully": "Password reset successfully!",
     "//": "Edit wallet view",
-    "editWallet" : "Edit Wallet"
+    "editWallet" : "Edit Wallet",
+    "//": "AI chat view",
+    "aiAssistant": "AI Assistant",
+    "@aiAssistant": { "description": "Bottom tab label and AI chat screen title" },
+    "aiChatEmptyMessage": "Ask about your spending, wallets, or how to save this month.",
+    "@aiChatEmptyMessage": { "description": "Empty state copy on the AI chat screen" },
+    "aiChatInputHint": "Ask Walleto AI...",
+    "@aiChatInputHint": { "description": "Placeholder for the AI chat message field" },
+    "aiChatSend": "Send",
+    "@aiChatSend": { "description": "Semantic label for the AI chat send button" },
+    "aiChatTyping": "Thinking...",
+    "@aiChatTyping": { "description": "Typing indicator while the assistant is generating a reply" },
+    "aiChatSuggestedSpending": "How much did I spend this month?",
+    "@aiChatSuggestedSpending": { "description": "Suggested AI chat prompt about monthly spending" },
+    "aiChatSuggestedWallets": "How are my wallets looking?",
+    "@aiChatSuggestedWallets": { "description": "Suggested AI chat prompt about wallet balances" },
+    "aiChatSuggestedSaving": "Any saving tips for me?",
+    "@aiChatSuggestedSaving": { "description": "Suggested AI chat prompt about saving advice" }
 }

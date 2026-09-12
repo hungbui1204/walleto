@@ -19,9 +19,10 @@ extension BottomTabUi on BottomTab {
                 : Assets.icons.transactionsHistoryInactive.path,
       ),
       BottomTab.createTrans => _buildIcon(iconPath: Assets.icons.plus.path),
-      BottomTab.budgets => _buildIcon(
-        iconPath: selected ? Assets.icons.currencyActive.path : Assets.icons.currencyInactive.path,
-        height: Dimens.d38.responsive(),
+      BottomTab.budgets => Icon(
+        Icons.auto_awesome_rounded,
+        size: Dimens.d28.responsive(),
+        color: blackColor,
       ),
       BottomTab.account => _buildIcon(
         iconPath: selected ? Assets.icons.accountActive.path : Assets.icons.accountInactive.path,
@@ -38,7 +39,7 @@ extension BottomTabUi on BottomTab {
       BottomTab.home => S.current.home,
       BottomTab.transactions => S.current.transactions,
       BottomTab.account => S.current.account,
-      BottomTab.budgets => S.current.budgets,
+      BottomTab.budgets => S.current.aiAssistant,
       BottomTab.createTrans => '',
     };
   }
