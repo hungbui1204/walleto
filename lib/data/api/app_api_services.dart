@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:walleto/data/data.dart';
@@ -368,15 +370,30 @@ class AppApiServices {
     );
   }
 
-  Future<AiChatResponseData?> sendAiChatMessage({required String message}) {
-    return _serverApiFunctionsClient.request(
-      method: RequestMethod.post,
+  Stream<AiChatStreamEventData> sendAiChatMessage({
+    required String message,
+    AppCancelToken? cancelToken,
+  }) async* {
+    final dioCancelToken = CancelToken();
+    cancelToken?.whenCancel(() {
+      if (!dioCancelToken.isCancelled) {
+        dioCancelToken.cancel();
+      }
+    });
+
+    final response = await _serverApiFunctionsClient.requestStream(
       path: '/ai_chat',
       body: {'message': message},
+      cancelToken: dioCancelToken,
       options: Options(receiveTimeout: ServerTimeoutConstants.aiChatReceiveTimeout),
-      decoder: (data) => AiChatResponseData.fromJson(data as Map<String, dynamic>),
-      successResponseMapperType: SuccessResponseMapperType.jsonObject,
     );
+
+    final body = response.data;
+    if (body == null) {
+      throw const RemoteException(kind: RemoteExceptionKind.serverUndefined);
+    }
+
+    yield* const AiChatSseParser().parse(body.stream);
   }
 
   Future<List<AiChatHistoryMessageData>?> getAiChatHistory({

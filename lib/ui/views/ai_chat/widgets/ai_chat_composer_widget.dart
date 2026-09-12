@@ -7,16 +7,22 @@ class AiChatComposerWidget extends StatelessWidget {
   const AiChatComposerWidget({
     super.key,
     required this.controller,
-    required this.enabled,
+    required this.isSending,
     required this.onSubmit,
+    required this.onStop,
+    this.enabled = true,
   });
 
   final TextEditingController controller;
-  final bool enabled;
+  final bool isSending;
   final ValueChanged<String> onSubmit;
+  final VoidCallback onStop;
+  final bool enabled;
 
   @override
   Widget build(BuildContext context) {
+    final radius = BorderRadius.circular(Dimens.d16.responsive());
+
     return SafeArea(
       top: false,
       child: Padding(
@@ -37,24 +43,30 @@ class AiChatComposerWidget extends StatelessWidget {
                 maxLines: 4,
                 maxLength: AppConstants.maxAiChatMessageLength,
                 textInputAction: TextInputAction.send,
-                onSubmitted: enabled ? onSubmit : null,
+                onSubmitted: (!enabled || isSending) ? null : onSubmit,
               ),
             ),
             SizedBox(width: Dimens.d8.responsive()),
             Pressable(
-              onTap: enabled ? () => onSubmit(controller.text) : null,
-              semanticLabel: S.current.aiChatSend,
-              borderRadius: BorderRadius.circular(Dimens.d16.responsive()),
+              onTap:
+                  !enabled
+                      ? null
+                      : isSending
+                      ? onStop
+                      : () => onSubmit(controller.text),
+              semanticLabel: isSending ? S.current.aiChatStop : S.current.aiChatSend,
+              borderRadius: radius,
               child: Container(
                 width: Dimens.d48.responsive(),
                 height: Dimens.d48.responsive(),
                 alignment: Alignment.center,
-                decoration: AppDecorations.primaryCta(
-                  radius: BorderRadius.circular(Dimens.d16.responsive()),
-                ),
+                decoration:
+                    isSending
+                        ? AppDecorations.secondaryCta(radius: radius, borderColor: alertColor)
+                        : AppDecorations.primaryCta(radius: radius),
                 child: Icon(
-                  Icons.send_rounded,
-                  color: onPrimaryColor,
+                  isSending ? Icons.stop_rounded : Icons.send_rounded,
+                  color: isSending ? alertColor : onPrimaryColor,
                   size: Dimens.d20.responsive(),
                 ),
               ),

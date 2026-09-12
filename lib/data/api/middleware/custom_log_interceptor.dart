@@ -58,7 +58,7 @@ class CustomLogInterceptor extends BaseInterceptor {
     log.add('🎉 ${response.requestOptions.method} ${response.requestOptions.uri}');
     log.add('🎉 Request Body: ${_prettyBody(response.requestOptions.data)}');
     log.add('🎉 Success Code: ${response.statusCode}');
-    log.add('🎉 ${_prettyBody(response.data)}');
+    log.add(response.data is ResponseBody ? '🎉 [stream]' : '🎉 ${_prettyBody(response.data)}');
 
     Log.d(log.join('\n'));
     handler.next(response);

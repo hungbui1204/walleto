@@ -24,3 +24,11 @@ sealed class AiChatMessageSubmitted extends AiChatEvent with _$AiChatMessageSubm
 
   const factory AiChatMessageSubmitted({required String message}) = _AiChatMessageSubmitted;
 }
+
+@freezed
+sealed class AiChatGenerationStopRequested extends AiChatEvent
+    with _$AiChatGenerationStopRequested {
+  const AiChatGenerationStopRequested._();
+
+  const factory AiChatGenerationStopRequested() = _AiChatGenerationStopRequested;
+}

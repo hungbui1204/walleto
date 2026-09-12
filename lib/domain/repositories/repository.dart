@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:walleto/domain/domain.dart';
+import 'package:walleto/shared/shared.dart';
 
 abstract class Repository {
   Future<bool> get isLoggedIn;
@@ -96,7 +99,10 @@ abstract class Repository {
 
   Future<Currency> getUserDefaultCurrency();
 
-  Future<AiChatSendResult> sendAiChatMessage({required String message});
+  Stream<AiChatStreamEvent> sendAiChatMessage({
+    required String message,
+    AppCancelToken? cancelToken,
+  });
 
   Future<List<AiChatMessage>> getAiChatHistory({required int offset, required int limit});
 }
