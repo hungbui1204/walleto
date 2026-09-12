@@ -118,11 +118,7 @@ class NumericKeyboard extends StatelessWidget {
             },
             child: Text(
               key,
-              style: AppThemes.amount(
-                fontSize: Dimens.d18.responsive(),
-                fontWeight: FontWeight.w600,
-                color: foregroundColor,
-              ),
+              style: AppThemes.amount(fontSize: Dimens.d18.responsive(), color: foregroundColor),
             ),
           );
         },

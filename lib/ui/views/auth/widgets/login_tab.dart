@@ -6,11 +6,7 @@ import 'package:walleto/shared/shared.dart';
 import 'package:walleto/ui/ui.dart';
 
 class LoginTab extends StatelessWidget {
-  const LoginTab({
-    super.key,
-    required this.emailController,
-    required this.passwordController,
-  });
+  const LoginTab({super.key, required this.emailController, required this.passwordController});
 
   final TextEditingController emailController;
   final TextEditingController passwordController;
@@ -29,8 +25,7 @@ class LoginTab extends StatelessWidget {
             SizedBox(height: Dimens.d30.responsive()),
             BlocBuilder<LoginBloc, LoginState>(
               buildWhen: (previous, current) {
-                return previous.isEnableLoginButton !=
-                    current.isEnableLoginButton;
+                return previous.isEnableLoginButton != current.isEnableLoginButton;
               },
               builder: (context, state) {
                 return SizedBox(
@@ -41,73 +36,23 @@ class LoginTab extends StatelessWidget {
                         state.isEnableLoginButton
                             ? () {
                               ViewUtils.hideKeyboard(context);
-                              context.read<LoginBloc>().add(
-                                const SignInButtonPressed(),
-                              );
+                              context.read<LoginBloc>().add(const SignInButtonPressed());
                             }
                             : null,
                   ),
                 );
               },
             ),
-            SizedBox(height: Dimens.d8.responsive()),
-            Text(S.current.or, style: AppTextStyles.s14wNormalBlack()),
-            SizedBox(height: Dimens.d8.responsive()),
-            SizedBox(
-              width: double.infinity,
-              child: CommonButton(
-                text: S.current.continueWithGoogle,
-                backgroundColor: surfaceColor,
-                textColor: blackColor,
-                icon: Assets.icons.google.svg(
-                  height: Dimens.d30.responsive(),
-                  width: Dimens.d30.responsive(),
-                ),
-                onTap: () {
-                  ViewUtils.hideKeyboard(context);
-                  //TODO: Implement Google Sign-In
-                },
-              ),
-            ),
-            SizedBox(height: Dimens.d10.responsive()),
-            SizedBox(
-              width: double.infinity,
-              child: CommonButton(
-                text: S.current.continueWithFacebook,
-                backgroundColor: surfaceColor,
-                textColor: blackColor,
-                icon: Assets.icons.facebook.svg(
-                  height: Dimens.d30.responsive(),
-                  width: Dimens.d30.responsive(),
-                ),
-                onTap: () {
-                  ViewUtils.hideKeyboard(context);
-                  //TODO: Implement Facebook Sign-In
-                },
-              ),
-            ),
             SizedBox(height: Dimens.d20.responsive()),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 GestureDetector(
                   onTap: () {
-                    context.read<AppNavigator>().push(
-                      const AppRouteInfo.resetPassword(),
-                    );
+                    context.read<AppNavigator>().push(const AppRouteInfo.resetPassword());
                   },
                   child: Text(
                     S.current.forgetPassword,
                     style: AppTextStyles.s14wNormalUnderlinePrimary(),
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    // TODO: Navigate to Terms and Conditions page
-                  },
-                  child: Text(
-                    S.current.termsAndConditions,
-                    style: AppTextStyles.s14wNormalUnderlineBlack(),
                   ),
                 ),
               ],
@@ -132,8 +77,7 @@ class _EmailForm extends StatelessWidget {
       children: [
         BlocBuilder<LoginBloc, LoginState>(
           buildWhen: (previous, current) {
-            return previous.email != current.email ||
-                previous.emailError != current.emailError;
+            return previous.email != current.email || previous.emailError != current.emailError;
           },
           builder: (context, state) {
             return Column(
@@ -147,18 +91,13 @@ class _EmailForm extends StatelessWidget {
                   hintText: S.current.hintEmail,
                   controller: emailController,
                   onChanged: (email) {
-                    context.read<LoginBloc>().add(
-                      LoginEmailInputChanged(email: email),
-                    );
+                    context.read<LoginBloc>().add(LoginEmailInputChanged(email: email));
                   },
                 ),
                 if (state.emailError.isNotEmpty)
                   Padding(
                     padding: EdgeInsets.only(top: Dimens.d8.responsive()),
-                    child: Text(
-                      state.emailError,
-                      style: AppTextStyles.s14wNormalRed(),
-                    ),
+                    child: Text(state.emailError, style: AppTextStyles.s14wNormalRed()),
                   ),
               ],
             );
@@ -195,9 +134,7 @@ class _PasswordForm extends StatelessWidget {
                   ),
                   hintText: S.current.hintPassword,
                   onChanged: (password) {
-                    context.read<LoginBloc>().add(
-                      LoginPasswordInputChanged(password: password),
-                    );
+                    context.read<LoginBloc>().add(LoginPasswordInputChanged(password: password));
                   },
                   controller: passwordController,
                   isPasswordField: true,
@@ -205,10 +142,7 @@ class _PasswordForm extends StatelessWidget {
                 if (state.passwordError.isNotEmpty)
                   Padding(
                     padding: EdgeInsets.only(top: Dimens.d8.responsive()),
-                    child: Text(
-                      state.passwordError,
-                      style: AppTextStyles.s14wNormalRed(),
-                    ),
+                    child: Text(state.passwordError, style: AppTextStyles.s14wNormalRed()),
                   ),
               ],
             );

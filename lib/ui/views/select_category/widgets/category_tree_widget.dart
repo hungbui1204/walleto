@@ -7,14 +7,14 @@ class CategoryTreeWidget extends StatelessWidget {
   const CategoryTreeWidget({
     super.key,
     required this.parentCategory,
-    required this.onCategorySelected,
-    required this.onParentCategorySelected,
+    this.onCategorySelected,
+    this.onParentCategorySelected,
     this.isSelectingParent = false,
   });
 
   final Category parentCategory;
-  final void Function(Category) onCategorySelected;
-  final void Function(Category) onParentCategorySelected;
+  final void Function(Category)? onCategorySelected;
+  final void Function(Category)? onParentCategorySelected;
   final bool isSelectingParent;
 
   @override

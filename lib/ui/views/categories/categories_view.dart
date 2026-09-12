@@ -25,6 +25,12 @@ class _CategoriesViewState extends BasePageState<CategoriesView, CategoriesBloc>
   }
 
   @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget buildPage(BuildContext context) {
     return Scaffold(
       appBar: CommonAppBar(title: S.current.categories),
@@ -52,10 +58,8 @@ class _CategoriesViewState extends BasePageState<CategoriesView, CategoriesBloc>
               SizedBox(height: Dimens.d20.responsive()),
               BlocBuilder<CategoriesBloc, CategoriesState>(
                 buildWhen: (previous, current) {
-                  return previous.parentIncomeCategories !=
-                          current.parentIncomeCategories ||
-                      previous.parentExpenseCategories !=
-                          current.parentExpenseCategories;
+                  return previous.parentIncomeCategories != current.parentIncomeCategories ||
+                      previous.parentExpenseCategories != current.parentExpenseCategories;
                 },
                 builder: (context, state) {
                   return CommonButton(
@@ -72,9 +76,7 @@ class _CategoriesViewState extends BasePageState<CategoriesView, CategoriesBloc>
                       size: Dimens.d20.responsive(),
                       color: onPrimaryColor,
                     ),
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(Dimens.d16.responsive()),
-                    ),
+                    borderRadius: BorderRadius.all(Radius.circular(Dimens.d16.responsive())),
                   );
                 },
               ),
@@ -85,30 +87,24 @@ class _CategoriesViewState extends BasePageState<CategoriesView, CategoriesBloc>
                   children: [
                     BlocBuilder<CategoriesBloc, CategoriesState>(
                       buildWhen: (previous, current) {
-                        return previous.parentExpenseCategories !=
-                            current.parentExpenseCategories;
+                        return previous.parentExpenseCategories != current.parentExpenseCategories;
                       },
                       builder: (context, state) {
+                        if (state.parentExpenseCategories.isEmpty) {
+                          return CommonEmptyPanel(
+                            icon: Icons.category_outlined,
+                            message: S.current.noCategories,
+                          );
+                        }
+
                         return Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: Dimens.d8.responsive(),
-                          ),
+                          padding: EdgeInsets.symmetric(horizontal: Dimens.d8.responsive()),
                           child: ListView.separated(
                             padding: EdgeInsets.zero,
                             itemCount: state.parentExpenseCategories.length,
-                            shrinkWrap: true,
                             itemBuilder: (context, index) {
-                              return SingleChildScrollView(
-                                child: CategoryTreeWidget(
-                                  parentCategory:
-                                      state.parentExpenseCategories[index],
-                                  onCategorySelected: (category) {
-                                    // TODO: Navigate to category edit page
-                                  },
-                                  onParentCategorySelected: (category) {
-                                    // TODO: Navigate to category edit page
-                                  },
-                                ),
+                              return CategoryTreeWidget(
+                                parentCategory: state.parentExpenseCategories[index],
                               );
                             },
                             separatorBuilder: (context, index) {
@@ -120,29 +116,23 @@ class _CategoriesViewState extends BasePageState<CategoriesView, CategoriesBloc>
                     ),
                     BlocBuilder<CategoriesBloc, CategoriesState>(
                       buildWhen: (previous, current) {
-                        return previous.parentIncomeCategories !=
-                            current.parentIncomeCategories;
+                        return previous.parentIncomeCategories != current.parentIncomeCategories;
                       },
                       builder: (context, state) {
+                        if (state.parentIncomeCategories.isEmpty) {
+                          return CommonEmptyPanel(
+                            icon: Icons.category_outlined,
+                            message: S.current.noCategories,
+                          );
+                        }
+
                         return Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: Dimens.d8.responsive(),
-                          ),
+                          padding: EdgeInsets.symmetric(horizontal: Dimens.d8.responsive()),
                           child: ListView.separated(
                             itemCount: state.parentIncomeCategories.length,
-                            shrinkWrap: true,
                             itemBuilder: (context, index) {
-                              return SingleChildScrollView(
-                                child: CategoryTreeWidget(
-                                  parentCategory:
-                                      state.parentIncomeCategories[index],
-                                  onCategorySelected: (category) {
-                                    // TODO: Navigate to category edit page
-                                  },
-                                  onParentCategorySelected: (category) {
-                                    // TODO: Navigate to category edit page
-                                  },
-                                ),
+                              return CategoryTreeWidget(
+                                parentCategory: state.parentIncomeCategories[index],
                               );
                             },
                             separatorBuilder: (context, index) {

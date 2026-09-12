@@ -5,10 +5,10 @@ import 'package:walleto/resources/resources.dart';
 import 'package:walleto/ui/ui.dart';
 
 class CategoryWidget extends StatelessWidget {
-  const CategoryWidget({super.key, required this.category, required this.onCategorySelected});
+  const CategoryWidget({super.key, required this.category, this.onCategorySelected});
 
   final Category category;
-  final void Function(Category) onCategorySelected;
+  final void Function(Category)? onCategorySelected;
 
   @override
   Widget build(BuildContext context) {
@@ -16,10 +16,13 @@ class CategoryWidget extends StatelessWidget {
       color: transParentColor,
       child: InkWell(
         borderRadius: BorderRadius.circular(Dimens.d16.responsive()),
-        onTap: () {
-          onCategorySelected.call(category);
-          context.read<AppNavigator>().pop(useRootNavigator: true);
-        },
+        onTap:
+            onCategorySelected == null
+                ? null
+                : () {
+                  onCategorySelected!.call(category);
+                  context.read<AppNavigator>().pop(useRootNavigator: true);
+                },
         child: Row(
           children: [
             SizedBox(width: Dimens.d20.responsive()),

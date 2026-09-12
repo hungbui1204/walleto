@@ -45,8 +45,6 @@ class _AccountViewState extends BasePageState<AccountView, AccountBloc> {
                       SizedBox(height: Dimens.d20.responsive()),
                       const _UtilitiesWidget(),
                       SizedBox(height: Dimens.d20.responsive()),
-                      const _SupportiveWidget(),
-                      SizedBox(height: Dimens.d20.responsive()),
                       CommonButton(
                         text: S.current.signOut,
                         backgroundColor: surfaceColor,
@@ -84,19 +82,13 @@ class _UserCircleAvatarWidget extends StatelessWidget {
     return BlocBuilder<AccountBloc, AccountState>(
       buildWhen: (previous, current) => previous.user.avatarUrl != current.user.avatarUrl,
       builder: (context, state) {
-        return GestureDetector(
-          behavior: HitTestBehavior.translucent,
-          onTap: () {
-            // TODO: Implement change avatar functionality
-          },
-          child: SizedBox(
-            width: double.infinity,
-            child: CommonCircleNetworkImage(
-              imageUrl: state.user.avatarUrl,
-              enablePadding: false,
-              size: Dimens.d80.responsive(),
-              placeHolderType: ImagePlaceHolderType.user,
-            ),
+        return SizedBox(
+          width: double.infinity,
+          child: CommonCircleNetworkImage(
+            imageUrl: state.user.avatarUrl,
+            enablePadding: false,
+            size: Dimens.d80.responsive(),
+            placeHolderType: ImagePlaceHolderType.user,
           ),
         );
       },
@@ -145,7 +137,7 @@ class _AccountInfoWidget extends StatelessWidget {
               bottomRight: Radius.circular(Dimens.d16.responsive()),
             ),
             onTap: () {
-              //TODO: Implement change password functionality
+              context.read<AppNavigator>().push(const AppRouteInfo.resetPassword());
             },
           ),
         ],
@@ -193,65 +185,6 @@ class _UtilitiesWidget extends StatelessWidget {
             ),
             onTap: () {
               context.read<AppNavigator>().push(const AppRouteInfo.categories());
-            },
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _SupportiveWidget extends StatelessWidget {
-  const _SupportiveWidget();
-
-  @override
-  Widget build(BuildContext context) {
-    return CommonGlassPanel(
-      child: Column(
-        children: [
-          CommonForwardButton(
-            title: S.current.settings,
-            showBorder: false,
-            color: surfaceColor,
-            leadingIcon: Icon(Icons.settings, size: Dimens.d24.responsive(), color: darkGreyColor),
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(Dimens.d16.responsive()),
-              topRight: Radius.circular(Dimens.d16.responsive()),
-            ),
-            onTap: () {
-              // TODO: Implement settings functionality
-            },
-          ),
-          CommonLine(margin: EdgeInsets.symmetric(horizontal: Dimens.d16.responsive())),
-          CommonForwardButton(
-            title: S.current.help,
-            showBorder: false,
-            color: surfaceColor,
-            leadingIcon: Icon(
-              Icons.help_outline_rounded,
-              size: Dimens.d24.responsive(),
-              color: darkGreyColor,
-            ),
-            onTap: () {
-              // TODO: Implement help functionality
-            },
-          ),
-          CommonLine(margin: EdgeInsets.symmetric(horizontal: Dimens.d16.responsive())),
-          CommonForwardButton(
-            title: S.current.about,
-            showBorder: false,
-            color: surfaceColor,
-            leadingIcon: Icon(
-              Icons.info_outline_rounded,
-              size: Dimens.d24.responsive(),
-              color: darkGreyColor,
-            ),
-            borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(Dimens.d16.responsive()),
-              bottomRight: Radius.circular(Dimens.d16.responsive()),
-            ),
-            onTap: () {
-              // TODO: Implement about functionality
             },
           ),
         ],
