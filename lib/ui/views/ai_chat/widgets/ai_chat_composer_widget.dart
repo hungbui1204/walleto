@@ -10,12 +10,14 @@ class AiChatComposerWidget extends StatelessWidget {
     required this.isSending,
     required this.onSubmit,
     required this.onStop,
+    this.enabled = true,
   });
 
   final TextEditingController controller;
   final bool isSending;
   final ValueChanged<String> onSubmit;
   final VoidCallback onStop;
+  final bool enabled;
 
   @override
   Widget build(BuildContext context) {
@@ -36,16 +38,22 @@ class AiChatComposerWidget extends StatelessWidget {
             Expanded(
               child: CommonTextField(
                 controller: controller,
+                enabled: enabled,
                 hintText: S.current.aiChatInputHint,
                 maxLines: 4,
                 maxLength: AppConstants.maxAiChatMessageLength,
                 textInputAction: TextInputAction.send,
-                onSubmitted: isSending ? null : onSubmit,
+                onSubmitted: (!enabled || isSending) ? null : onSubmit,
               ),
             ),
             SizedBox(width: Dimens.d8.responsive()),
             Pressable(
-              onTap: isSending ? onStop : () => onSubmit(controller.text),
+              onTap:
+                  !enabled
+                      ? null
+                      : isSending
+                      ? onStop
+                      : () => onSubmit(controller.text),
               semanticLabel: isSending ? S.current.aiChatStop : S.current.aiChatSend,
               borderRadius: radius,
               child: Container(

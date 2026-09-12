@@ -38,6 +38,10 @@ abstract class BasePageStateDelegate<T extends StatefulWidget, B extends BaseBlo
 
   bool get isAppWidget => false;
 
+  /// When true, [CommonBloc.isLoading] replaces the page body with a skeleton
+  /// instead of overlaying [AppLoadingWidget] on the whole [Scaffold].
+  bool get useSkeletonLoading => false;
+
   @override
   void dispose() {
     super.dispose();
@@ -64,30 +68,46 @@ abstract class BasePageStateDelegate<T extends StatefulWidget, B extends BaseBlo
                 current.appExceptionWrapper != null;
           },
           listener: (context, state) => handleException(state.appExceptionWrapper!),
-          child: buildPageListeners(
-            child:
-                isAppWidget
-                    ? buildPage(context)
-                    : Stack(
-                      children: [
-                        buildPage(context),
-                        BlocBuilder<CommonBloc, CommonState>(
-                          buildWhen: (previous, current) => previous.isLoading != current.isLoading,
-                          builder: (context, state) {
-                            return Visibility(visible: state.isLoading, child: buildPageLoading());
-                          },
-                        ),
-                      ],
-                    ),
-          ),
+          child: buildPageListeners(child: _buildPageContent(context)),
         ),
       ),
+    );
+  }
+
+  Widget _buildPageContent(BuildContext context) {
+    if (isAppWidget || useSkeletonLoading) {
+      return buildPage(context);
+    }
+
+    return Stack(
+      children: [
+        buildPage(context),
+        BlocBuilder<CommonBloc, CommonState>(
+          buildWhen: (previous, current) => previous.isLoading != current.isLoading,
+          builder: (context, state) {
+            return Visibility(visible: state.isLoading, child: buildPageLoading());
+          },
+        ),
+      ],
     );
   }
 
   Widget buildPageListeners({required Widget child}) => child;
 
   Widget buildPageLoading() => const AppLoadingWidget();
+
+  Widget buildSkeletonOrContent({required Widget skeleton, required Widget content}) {
+    return BlocBuilder<CommonBloc, CommonState>(
+      buildWhen: (previous, current) => previous.isLoading != current.isLoading,
+      builder: (context, state) {
+        if (state.isLoading) {
+          return skeleton;
+        }
+
+        return content;
+      },
+    );
+  }
 
   Widget buildPage(BuildContext context);
 

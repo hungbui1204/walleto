@@ -11,6 +11,12 @@ sealed class HomeViewInitialized extends HomeEvent with _$HomeViewInitialized {
 }
 
 @freezed
+sealed class HomeDataRefreshed extends HomeEvent with _$HomeDataRefreshed {
+  const HomeDataRefreshed._();
+  const factory HomeDataRefreshed() = _HomeDataRefreshed;
+}
+
+@freezed
 sealed class HomeCategoryTypeSelected extends HomeEvent with _$HomeCategoryTypeSelected {
   const HomeCategoryTypeSelected._();
   const factory HomeCategoryTypeSelected({required CategoryType categoryType}) =
