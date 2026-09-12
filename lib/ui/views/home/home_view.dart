@@ -66,24 +66,21 @@ class _HomeViewState extends BasePageState<HomeView, HomeBloc> {
                 bloc.add(const HomeDataRefreshed());
                 await next;
               },
-              child: SingleChildScrollView(
+              child: CustomScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    SizedBox(height: Dimens.d8.responsive()),
-                    const _NoirBalanceHero(),
-                    SizedBox(height: Dimens.d16.responsive()),
-                    const _GlassFlowRow(),
-                    SizedBox(height: Dimens.d16.responsive()),
-                    const _AllWalletsWidget(),
-                    SizedBox(height: Dimens.d16.responsive()),
-                    const StatisticWidget(),
-                    SizedBox(height: Dimens.d16.responsive()),
-                    const _RecentTransactionsWidget(),
-                    SizedBox(height: Dimens.d28.responsive()),
-                  ],
-                ),
+                slivers: [
+                  SliverToBoxAdapter(child: SizedBox(height: Dimens.d8.responsive())),
+                  const SliverToBoxAdapter(child: _NoirBalanceHero()),
+                  SliverToBoxAdapter(child: SizedBox(height: Dimens.d16.responsive())),
+                  const SliverToBoxAdapter(child: _GlassFlowRow()),
+                  SliverToBoxAdapter(child: SizedBox(height: Dimens.d16.responsive())),
+                  const SliverToBoxAdapter(child: _AllWalletsWidget()),
+                  SliverToBoxAdapter(child: SizedBox(height: Dimens.d16.responsive())),
+                  const SliverToBoxAdapter(child: StatisticWidget()),
+                  SliverToBoxAdapter(child: SizedBox(height: Dimens.d16.responsive())),
+                  const SliverToBoxAdapter(child: _RecentTransactionsWidget()),
+                  SliverToBoxAdapter(child: SizedBox(height: Dimens.d28.responsive())),
+                ],
               ),
             ),
           ),
@@ -290,16 +287,14 @@ class _AllWalletsWidget extends StatelessWidget {
 
           final count = state.wallets.length.clamp(0, 3);
 
-          return ListView.separated(
-            itemCount: count,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemBuilder: (context, index) {
-              return _WalletInfoWidget(state.wallets[index]);
-            },
-            separatorBuilder: (context, index) {
-              return const CommonLine();
-            },
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              for (var index = 0; index < count; index++) ...[
+                if (index > 0) const CommonLine(),
+                _WalletInfoWidget(state.wallets[index]),
+              ],
+            ],
           );
         },
       ),
@@ -361,16 +356,14 @@ class _RecentTransactionsWidget extends StatelessWidget {
             );
           }
 
-          return ListView.separated(
-            physics: const NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            itemCount: state.recentTransactions.length,
-            itemBuilder: (context, index) {
-              return _RecentTransactionWidget(state.recentTransactions[index]);
-            },
-            separatorBuilder: (context, index) {
-              return const CommonLine();
-            },
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              for (var index = 0; index < state.recentTransactions.length; index++) ...[
+                if (index > 0) const CommonLine(),
+                _RecentTransactionWidget(state.recentTransactions[index]),
+              ],
+            ],
           );
         },
       ),
