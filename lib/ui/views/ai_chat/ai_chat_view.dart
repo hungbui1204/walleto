@@ -53,6 +53,10 @@ class _AiChatViewState extends BasePageState<AiChatView, AiChatBloc> {
       return;
     }
 
+    if (bloc.state.isSending) {
+      return;
+    }
+
     ViewUtils.hideKeyboard(context);
     _pendingMessage = message;
     _messageController.clear();
@@ -70,20 +74,16 @@ class _AiChatViewState extends BasePageState<AiChatView, AiChatBloc> {
           child: Column(
             children: [
               Expanded(
-                child: BlocConsumer<AiChatBloc, AiChatState>(
+                child: BlocListener<AiChatBloc, AiChatState>(
                   listenWhen:
                       (previous, current) =>
-                          (previous.isSending && !current.isSending) ||
-                          (current.isSending &&
-                              current.messages.length == previous.messages.length + 1),
+                          previous.isSending != current.isSending ||
+                          previous.messages.length != current.messages.length,
                   listener: (context, state) {
                     final pending = _pendingMessage;
                     if (!state.isSending && pending != null) {
                       final pendingStillVisible = state.messages.any(
-                        (message) =>
-                            message.role == AiChatRole.user &&
-                            message.content == pending &&
-                            message.id == 0,
+                        (message) => message.role == AiChatRole.user && message.content == pending,
                       );
                       if (!pendingStillVisible) {
                         _messageController.text = pending;
@@ -105,37 +105,10 @@ class _AiChatViewState extends BasePageState<AiChatView, AiChatBloc> {
                       );
                     });
                   },
-                  buildWhen:
-                      (previous, current) =>
-                          previous.messages != current.messages ||
-                          previous.isSending != current.isSending ||
-                          previous.isLoadingMore != current.isLoadingMore,
-                  builder: (context, state) {
-                    if (state.isEmpty) {
-                      return AiChatEmptyStateWidget(onPromptSelected: _submit);
-                    }
-
-                    final itemCount = state.messages.length + (state.isSending ? 1 : 0);
-
-                    return ListView.builder(
-                      controller: _scrollController,
-                      reverse: true,
-                      padding: EdgeInsets.symmetric(horizontal: Dimens.d16.responsive()),
-                      itemCount: itemCount,
-                      itemBuilder: (context, index) {
-                        if (state.isSending && index == 0) {
-                          return const AiChatTypingIndicatorWidget();
-                        }
-
-                        final messageIndex =
-                            state.isSending
-                                ? state.messages.length - index
-                                : state.messages.length - 1 - index;
-
-                        return AiChatMessageBubbleWidget(message: state.messages[messageIndex]);
-                      },
-                    );
-                  },
+                  child: AiChatMessageListWidget(
+                    scrollController: _scrollController,
+                    onPromptSelected: _submit,
+                  ),
                 ),
               ),
               BlocBuilder<AiChatBloc, AiChatState>(
@@ -143,8 +116,9 @@ class _AiChatViewState extends BasePageState<AiChatView, AiChatBloc> {
                 builder: (context, state) {
                   return AiChatComposerWidget(
                     controller: _messageController,
-                    enabled: !state.isSending,
+                    isSending: state.isSending,
                     onSubmit: _submit,
+                    onStop: () => bloc.add(const AiChatGenerationStopRequested()),
                   );
                 },
               ),

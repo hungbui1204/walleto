@@ -11,6 +11,7 @@ class DurationConstants {
   static const defaultAnimationScrollDuration = Duration(milliseconds: 400);
   static const defaultAnimationDuration = Duration(milliseconds: 300);
   static const microInteraction = Duration(milliseconds: 180);
+  static const aiChatStreamUiThrottle = Duration(milliseconds: 32);
   static const defaultChartAnimationDuration = Duration(milliseconds: 500);
   static const defaultReSendOtpDuration = Duration(seconds: 30);
   static const defaultTooltipShowDuration = Duration(seconds: 5);

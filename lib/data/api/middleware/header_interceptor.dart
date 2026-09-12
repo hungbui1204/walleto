@@ -20,6 +20,9 @@ class HeaderInterceptor extends BaseInterceptor {
         options.extra[ServerRequestResponseConstants.revokeRefreshToken] == true;
 
     final headers = await getHeaders(isRevokeRefeshToken);
+    if (options.headers.containsKey(ServerRequestResponseConstants.acceptHeader)) {
+      headers.remove(ServerRequestResponseConstants.acceptHeader);
+    }
 
     options.headers.addAll(headers);
 
@@ -29,7 +32,7 @@ class HeaderInterceptor extends BaseInterceptor {
   Future<Map<String, dynamic>> getHeaders(bool isRevokeRefeshToken) async {
     Map<String, dynamic> headers = {
       'Content-Type': 'application/json',
-      'Accept': '*/*',
+      ServerRequestResponseConstants.acceptHeader: '*/*',
       'apiKey': UrlConstants.apiKey,
     };
 

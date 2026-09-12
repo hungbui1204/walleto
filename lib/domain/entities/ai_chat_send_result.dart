@@ -9,5 +9,6 @@ sealed class AiChatSendResult with _$AiChatSendResult {
     @Default(AiChatMessage()) AiChatMessage message,
     @Default(AiChatUsage()) AiChatUsage usage,
     @Default(AiChatDebugContext()) AiChatDebugContext debugContext,
+    @Default(0) int userMessageId,
   }) = _AiChatSendResult;
 }
