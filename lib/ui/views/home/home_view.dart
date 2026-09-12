@@ -28,16 +28,32 @@ class _HomeViewState extends BasePageState<HomeView, HomeBloc> with SingleTicker
   }
 
   @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget buildPageListeners({required Widget child}) {
-    return BlocListener<AppBloc, AppState>(
-      listenWhen: (previous, current) {
-        return previous.needReloadStatisticalCharts != current.needReloadStatisticalCharts &&
-            current.needReloadStatisticalCharts;
-      },
-      listener: (context, state) {
-        bloc.add(const HomeDataRefreshed());
-        appBloc.add(const StatisticalChartsReloaded(needReloadStatisticalCharts: false));
-      },
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<AppBloc, AppState>(
+          listenWhen: (previous, current) {
+            return previous.needReloadStatisticalCharts != current.needReloadStatisticalCharts &&
+                current.needReloadStatisticalCharts;
+          },
+          listener: (context, state) {
+            bloc.add(const HomeDataRefreshed());
+            appBloc.add(const StatisticalChartsReloaded(needReloadStatisticalCharts: false));
+          },
+        ),
+        BlocListener<AppBloc, AppState>(
+          listenWhen: (previous, current) => previous.wallets != current.wallets,
+          listener: (context, state) {
+            bloc.add(const HomeBalanceRecalculated());
+          },
+        ),
+      ],
       child: child,
     );
   }
@@ -52,22 +68,31 @@ class _HomeViewState extends BasePageState<HomeView, HomeBloc> with SingleTicker
           skeleton: const HomeLoadingSkeletonWidget(),
           content: Padding(
             padding: EdgeInsets.symmetric(horizontal: Dimens.d16.responsive()),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  SizedBox(height: Dimens.d8.responsive()),
-                  const _NoirBalanceHero(),
-                  SizedBox(height: Dimens.d16.responsive()),
-                  const _GlassFlowRow(),
-                  SizedBox(height: Dimens.d16.responsive()),
-                  const _AllWalletsWidget(),
-                  SizedBox(height: Dimens.d16.responsive()),
-                  StatisticWidget(tabController: _tabController),
-                  SizedBox(height: Dimens.d16.responsive()),
-                  const _RecentTransactionsWidget(),
-                  SizedBox(height: Dimens.d28.responsive()),
-                ],
+            child: RefreshIndicator(
+              color: primaryColor,
+              onRefresh: () async {
+                final next = bloc.stream.first;
+                bloc.add(const HomeDataRefreshed());
+                await next;
+              },
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    SizedBox(height: Dimens.d8.responsive()),
+                    const _NoirBalanceHero(),
+                    SizedBox(height: Dimens.d16.responsive()),
+                    const _GlassFlowRow(),
+                    SizedBox(height: Dimens.d16.responsive()),
+                    const _AllWalletsWidget(),
+                    SizedBox(height: Dimens.d16.responsive()),
+                    StatisticWidget(tabController: _tabController),
+                    SizedBox(height: Dimens.d16.responsive()),
+                    const _RecentTransactionsWidget(),
+                    SizedBox(height: Dimens.d28.responsive()),
+                  ],
+                ),
               ),
             ),
           ),
@@ -82,13 +107,12 @@ class _NoirBalanceHero extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AppBloc, AppState>(
-      buildWhen: (previous, current) => previous.wallets != current.wallets,
+    return BlocBuilder<HomeBloc, HomeState>(
+      buildWhen:
+          (previous, current) =>
+              previous.totalBalance != current.totalBalance ||
+              previous.defaultCurrencyCode != current.defaultCurrencyCode,
       builder: (context, state) {
-        final wallets = state.wallets;
-        final total = wallets.fold<double>(0, (sum, w) => sum + w.amount);
-        final currencyCode = wallets.isNotEmpty ? wallets.first.currencyCode : '';
-
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -102,12 +126,11 @@ class _NoirBalanceHero extends StatelessWidget {
             ),
             SizedBox(height: Dimens.d10.responsive()),
             CommonAmountWithSymbol(
-              amount: total,
-              currencyCode: currencyCode,
+              amount: state.totalBalance,
+              currencyCode: state.defaultCurrencyCode,
               textStyle: AppThemes.amount(
                 fontSize: Dimens.d40.responsive(),
                 fontWeight: FontWeight.w700,
-                color: blackColor,
               ),
             ),
             SizedBox(height: Dimens.d8.responsive()),
@@ -284,7 +307,7 @@ class _AllWalletsWidget extends StatelessWidget {
               return _WalletInfoWidget(state.wallets[index]);
             },
             separatorBuilder: (context, index) {
-              return const CommonLine(color: frameColor);
+              return const CommonLine();
             },
           );
         },
@@ -346,7 +369,12 @@ class _RecentTransactionsWidget extends StatelessWidget {
               message: S.current.noRecentTransactions,
               actionLabel: S.current.addTransaction,
               onAction: () {
-                context.read<AppNavigator>().push(const AppRouteInfo.createTransaction());
+                final hasWallets = context.read<AppBloc>().state.wallets.isNotEmpty;
+                context.read<AppNavigator>().push(
+                  hasWallets
+                      ? const AppRouteInfo.createTransaction()
+                      : const AppRouteInfo.createWallet(),
+                );
               },
             );
           }
@@ -359,7 +387,7 @@ class _RecentTransactionsWidget extends StatelessWidget {
               return _RecentTransactionWidget(state.recentTransactions[index]);
             },
             separatorBuilder: (context, index) {
-              return const CommonLine(color: frameColor);
+              return const CommonLine();
             },
           );
         },

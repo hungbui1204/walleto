@@ -16,7 +16,8 @@ part 'transactions_bloc.freezed.dart';
 
 @injectable
 class TransactionsBloc extends BaseBloc<TransactionsEvent, TransactionsState> {
-  TransactionsBloc(this._getTransactionsUseCase) : super(const TransactionsState()) {
+  TransactionsBloc(this._getTransactionsUseCase, this._convertAmountsToCurrencyUseCase)
+    : super(const TransactionsState()) {
     on<TransactionsViewInitialized>(_onTransactionsViewInitialized, transformer: log());
     on<TransactionsMonthSelected>(_onTransactionsMonthSelected, transformer: log());
     on<TransactionsDatePickerMethodExpandTriggered>(
@@ -30,6 +31,7 @@ class TransactionsBloc extends BaseBloc<TransactionsEvent, TransactionsState> {
   }
 
   final GetTransactionsUseCase _getTransactionsUseCase;
+  final ConvertAmountsToCurrencyUseCase _convertAmountsToCurrencyUseCase;
   StreamSubscription<AppState>? _appBlocSubscription;
 
   @override
@@ -39,11 +41,21 @@ class TransactionsBloc extends BaseBloc<TransactionsEvent, TransactionsState> {
     return super.close();
   }
 
-  void _onTransactionsWalletsUpdated(
+  Future<void> _onTransactionsWalletsUpdated(
     TransactionsWalletsUpdated event,
     Emitter<TransactionsState> emit,
-  ) {
-    emit(state.copyWith(wallets: event.wallets));
+  ) async {
+    final wallets = await _buildWallets();
+    if (_hasSameWalletBalances(state.wallets, wallets)) {
+      return;
+    }
+
+    final selectedWallet = wallets.firstWhere(
+      (wallet) => wallet.id == state.selectedWallet.id,
+      orElse: () => wallets.firstOrNull ?? const Wallet(),
+    );
+
+    emit(state.copyWith(wallets: wallets, selectedWallet: selectedWallet));
   }
 
   Future<void> _onTransactionsViewInitialized(
@@ -53,37 +65,31 @@ class TransactionsBloc extends BaseBloc<TransactionsEvent, TransactionsState> {
     await runBlocCatching(
       action: () async {
         final now = DateTime.now();
-        final wallets = _getWallets();
-
-        // Handle refresh wallets from AppBloc
-        // Depend on the wallets amount
-        _appBlocSubscription = appBloc.stream.listen((appState) {
-          final currentWalletsAmount = wallets.first.amount;
-
-          final appBlocWalletsAmount = appState.wallets.fold<double>(0, (sum, wallet) {
-            return sum + wallet.amount;
-          });
-
-          if (appBlocWalletsAmount != currentWalletsAmount) {
-            add(TransactionsWalletsUpdated(wallets: _getWallets()));
-          }
+        await _appBlocSubscription?.cancel();
+        _appBlocSubscription = appBloc.stream.listen((_) {
+          add(const TransactionsWalletsUpdated());
         });
 
+        final wallets = await _buildWallets();
         emit(
           state.copyWith(
             selectedDate: now,
             selectedDateRange: null,
-            selectedWallet: wallets.first,
+            selectedWallet: wallets.firstOrNull ?? const Wallet(),
             wallets: wallets,
           ),
         );
 
-        // Fetch transactions for the current month and year
+        if (appBloc.state.wallets.isEmpty) {
+          emit(state.copyWith(allDayTransactions: const []));
+          return;
+        }
+
         final transactionsOutput = await _getTransactionsUseCase.execute(
           GetTransactionsInput(targetMonth: now.month, targetYear: now.year),
         );
 
-        final allDayTransactions = _getDayTransFromTrans(transactionsOutput.transactions);
+        final allDayTransactions = await _getDayTransFromTrans(transactionsOutput.transactions);
 
         emit(state.copyWith(allDayTransactions: allDayTransactions));
       },
@@ -97,7 +103,11 @@ class TransactionsBloc extends BaseBloc<TransactionsEvent, TransactionsState> {
     await runBlocCatching(
       handleLoading: false,
       action: () async {
-        // Fetch transactions for the month-year or date range based on current state
+        if (appBloc.state.wallets.isEmpty) {
+          emit(state.copyWith(allDayTransactions: const [], wallets: const []));
+          return;
+        }
+
         late final GetTransactionsInput transactionsInput;
 
         if (state.selectedDate != null) {
@@ -112,11 +122,13 @@ class TransactionsBloc extends BaseBloc<TransactionsEvent, TransactionsState> {
             toDate: state.selectedDateRange!.end.add(const Duration(days: 1)),
             walletId: _getWalletId(state.selectedWallet.id),
           );
+        } else {
+          return;
         }
 
         final transactionsOutput = await _getTransactionsUseCase.execute(transactionsInput);
 
-        final allDayTransactions = _getDayTransFromTrans(transactionsOutput.transactions);
+        final allDayTransactions = await _getDayTransFromTrans(transactionsOutput.transactions);
 
         emit(state.copyWith(allDayTransactions: allDayTransactions));
       },
@@ -124,7 +136,8 @@ class TransactionsBloc extends BaseBloc<TransactionsEvent, TransactionsState> {
   }
 
   /// Convert a list of [Transaction] to a list of [DayTransactions]
-  List<DayTransactions> _getDayTransFromTrans(List<Transaction> transactions) {
+  Future<List<DayTransactions>> _getDayTransFromTrans(List<Transaction> transactions) async {
+    final targetCurrencyCode = _targetCurrencyCode();
     final groupedTransactions = transactions.fold<Map<String, List<Transaction>>>({}, (
       acc,
       transaction,
@@ -142,27 +155,37 @@ class TransactionsBloc extends BaseBloc<TransactionsEvent, TransactionsState> {
       return acc;
     });
 
-    return groupedTransactions.entries
-        .map((e) {
-          final totalAmount = e.value.fold<double>(0, (sum, transaction) {
-            switch (transaction.type) {
-              case CategoryType.income:
-                return sum + transaction.amount;
-              case CategoryType.expense:
-                return sum - transaction.amount;
-            }
-          });
+    final dayTransactions = <DayTransactions>[];
+    for (final entry in groupedTransactions.entries) {
+      final converted = await _convertAmountsToCurrencyUseCase.execute(
+        ConvertAmountsToCurrencyInput(
+          targetCurrencyCode: targetCurrencyCode,
+          amounts:
+              entry.value
+                  .map(
+                    (transaction) => AmountInCurrency(
+                      amount: transaction.amount,
+                      currencyCode: transaction.currencyCode,
+                      sign: transaction.type == CategoryType.income ? 1 : -1,
+                    ),
+                  )
+                  .toList(),
+        ),
+      );
 
-          return DayTransactions(
-            date: e.key.toDateTime(format: DateTimeFormatConstants.commonDateFormat),
-            transactions: e.value.sortedWith((a, b) {
-              return b.transactionDate!.compareTo(a.transactionDate!);
-            }),
-            totalAmount: totalAmount,
-            currencyCode: e.value.first.currencyCode,
-          );
-        })
-        .sortedWith((a, b) => b.date!.compareTo(a.date!));
+      dayTransactions.add(
+        DayTransactions(
+          date: entry.key.toDateTime(format: DateTimeFormatConstants.commonDateFormat),
+          transactions: entry.value.sortedWith((a, b) {
+            return b.transactionDate!.compareTo(a.transactionDate!);
+          }),
+          totalAmount: converted.total,
+          currencyCode: targetCurrencyCode,
+        ),
+      );
+    }
+
+    return dayTransactions.sortedWith((a, b) => b.date!.compareTo(a.date!));
   }
 
   Future<void> _onTransactionsMonthSelected(
@@ -185,7 +208,7 @@ class TransactionsBloc extends BaseBloc<TransactionsEvent, TransactionsState> {
           ),
         );
 
-        final allDayTransactions = _getDayTransFromTrans(transactionsOutput.transactions);
+        final allDayTransactions = await _getDayTransFromTrans(transactionsOutput.transactions);
 
         emit(
           state.copyWith(
@@ -219,8 +242,7 @@ class TransactionsBloc extends BaseBloc<TransactionsEvent, TransactionsState> {
           initialDateRange: state.selectedDateRange,
         );
 
-        if (dateRangePicked == null ||
-            dateRangePicked.duration == state.selectedDateRange?.duration) {
+        if (dateRangePicked == null || _isSameDateRange(state.selectedDateRange, dateRangePicked)) {
           return;
         }
 
@@ -232,7 +254,7 @@ class TransactionsBloc extends BaseBloc<TransactionsEvent, TransactionsState> {
           ),
         );
 
-        final allDayTransactions = _getDayTransFromTrans(transactionsOutput.transactions);
+        final allDayTransactions = await _getDayTransFromTrans(transactionsOutput.transactions);
 
         emit(
           state.copyWith(
@@ -254,7 +276,6 @@ class TransactionsBloc extends BaseBloc<TransactionsEvent, TransactionsState> {
       action: () async {
         if (state.selectedWallet == event.selectedWallet) return;
 
-        // Filter transactions by selected wallet
         final transactionsOutput = await _getTransactionsUseCase.execute(
           GetTransactionsInput(
             walletId: _getWalletId(event.selectedWallet.id),
@@ -265,32 +286,85 @@ class TransactionsBloc extends BaseBloc<TransactionsEvent, TransactionsState> {
           ),
         );
 
-        final transactions = _getDayTransFromTrans(transactionsOutput.transactions);
+        emit(state.copyWith(selectedWallet: event.selectedWallet));
+        final transactions = await _getDayTransFromTrans(transactionsOutput.transactions);
 
-        emit(
-          state.copyWith(selectedWallet: event.selectedWallet, allDayTransactions: transactions),
-        );
+        emit(state.copyWith(allDayTransactions: transactions));
       },
     );
   }
 
-  // Include the 'Total Wallet' in the list of wallets (first item)
-  // 'Total Wallet' is a wallet that having total amount of all wallets
-  List<Wallet> _getWallets() {
-    final totalAmount = appBloc.state.wallets.fold<double>(0, (sum, wallet) => sum + wallet.amount);
+  Future<List<Wallet>> _buildWallets() async {
+    final realWallets = appBloc.state.wallets;
+    if (realWallets.isEmpty) {
+      return const [];
+    }
+
+    final targetCurrencyCode = _defaultCurrencyCode();
+    final totalOutput = await _convertAmountsToCurrencyUseCase.execute(
+      ConvertAmountsToCurrencyInput(
+        targetCurrencyCode: targetCurrencyCode,
+        amounts:
+            realWallets
+                .map(
+                  (wallet) =>
+                      AmountInCurrency(amount: wallet.amount, currencyCode: wallet.currencyCode),
+                )
+                .toList(),
+      ),
+    );
 
     final totalWallet = Wallet(
       name: S.current.total,
-      amount: totalAmount,
+      amount: totalOutput.total,
       id: AppConstants.totalWalletId,
+      currencyCode: targetCurrencyCode,
     );
 
-    return [totalWallet, ...appBloc.state.wallets];
+    return [totalWallet, ...realWallets];
+  }
+
+  String _targetCurrencyCode() {
+    if (state.selectedWallet.id == AppConstants.totalWalletId || state.selectedWallet.id == 0) {
+      return _defaultCurrencyCode();
+    }
+
+    return state.selectedWallet.currencyCode.isNotEmpty
+        ? state.selectedWallet.currencyCode
+        : _defaultCurrencyCode();
+  }
+
+  String _defaultCurrencyCode() {
+    if (appBloc.state.userDefaultCurrency.code.isNotEmpty) {
+      return appBloc.state.userDefaultCurrency.code;
+    }
+
+    return AppConstants.defaultCurrencyCode;
+  }
+
+  bool _isSameDateRange(DateTimeRange? current, DateTimeRange picked) {
+    return current != null && current.start == picked.start && current.end == picked.end;
+  }
+
+  bool _hasSameWalletBalances(List<Wallet> previous, List<Wallet> next) {
+    if (previous.length != next.length) {
+      return false;
+    }
+
+    for (var i = 0; i < previous.length; i++) {
+      if (previous[i].id != next[i].id ||
+          previous[i].amount != next[i].amount ||
+          previous[i].currencyCode != next[i].currencyCode) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   /// Get the wallet ID for the selected wallet.
   /// If the selected wallet is the 'Total', return null to indicate no filtering.
   int? _getWalletId(int id) {
-    return id == AppConstants.totalWalletId ? null : id;
+    return id == AppConstants.totalWalletId || id == 0 ? null : id;
   }
 }

@@ -48,6 +48,8 @@ sealed class StatisticalChartsReloaded extends AppEvent with _$StatisticalCharts
 sealed class UserDefaultCurrencyUpdated extends AppEvent with _$UserDefaultCurrencyUpdated {
   const UserDefaultCurrencyUpdated._();
 
-  const factory UserDefaultCurrencyUpdated({required Currency newCurrency}) =
-      _UserDefaultCurrencyUpdated;
+  const factory UserDefaultCurrencyUpdated({
+    required Currency newCurrency,
+    @Default(false) bool persist,
+  }) = _UserDefaultCurrencyUpdated;
 }

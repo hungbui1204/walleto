@@ -328,6 +328,12 @@ class RepositoryImpl implements Repository {
   }
 
   @override
+  Future<void> updateUserDefaultCurrency({required String currencyCode}) async {
+    final userId = await _appPreferences.userId ?? '';
+    await _appApiServices.updateUserDefaultCurrency(userId: userId, currencyCode: currencyCode);
+  }
+
+  @override
   Stream<AiChatStreamEvent> sendAiChatMessage({
     required String message,
     AppCancelToken? cancelToken,

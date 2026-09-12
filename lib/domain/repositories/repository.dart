@@ -99,6 +99,8 @@ abstract class Repository {
 
   Future<Currency> getUserDefaultCurrency();
 
+  Future<void> updateUserDefaultCurrency({required String currencyCode});
+
   Stream<AiChatStreamEvent> sendAiChatMessage({
     required String message,
     AppCancelToken? cancelToken,

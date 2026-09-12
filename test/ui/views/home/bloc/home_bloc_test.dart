@@ -7,13 +7,14 @@ import 'package:walleto/ui/ui.dart';
 
 class _MockGetMonthSummaryStatsUseCase extends Mock implements GetMonthSummaryStatsUseCase {}
 
-class _MockGetWalletStatsUseCase extends Mock implements GetWalletStatsUseCase {}
-
 class _MockGetTopWalletStatsUseCase extends Mock implements GetTopWalletStatsUseCase {}
 
 class _MockGetRecentTransactionsUseCase extends Mock implements GetRecentTransactionsUseCase {}
 
 class _MockGetUserDefaultCurrencyUseCase extends Mock implements GetUserDefaultCurrencyUseCase {}
+
+class _MockConvertAmountsToCurrencyUseCase extends Mock
+    implements ConvertAmountsToCurrencyUseCase {}
 
 class _MockAppNavigator extends Mock implements AppNavigator {}
 
@@ -39,10 +40,10 @@ void main() {
   const currentMonthVnd = MonthSummaryStat(totalIncome: 5_000_000, totalExpense: 1_500_000);
 
   late _MockGetMonthSummaryStatsUseCase getMonthSummaryStatsUseCase;
-  late _MockGetWalletStatsUseCase getWalletStatsUseCase;
   late _MockGetTopWalletStatsUseCase getTopWalletStatsUseCase;
   late _MockGetRecentTransactionsUseCase getRecentTransactionsUseCase;
   late _MockGetUserDefaultCurrencyUseCase getUserDefaultCurrencyUseCase;
+  late _MockConvertAmountsToCurrencyUseCase convertAmountsToCurrencyUseCase;
   late _MockAppNavigator navigator;
   late _MockAppBloc appBloc;
   late _MockCommonBloc commonBloc;
@@ -51,10 +52,10 @@ void main() {
   HomeBloc buildBloc() {
     return HomeBloc(
         getMonthSummaryStatsUseCase,
-        getWalletStatsUseCase,
         getRecentTransactionsUseCase,
         getTopWalletStatsUseCase,
         getUserDefaultCurrencyUseCase,
+        convertAmountsToCurrencyUseCase,
       )
       ..navigator = navigator
       ..disposeBag = DisposeBag()
@@ -75,6 +76,9 @@ void main() {
     );
     registerFallbackValue(const GetRecentTransactionsInput());
     registerFallbackValue(const GetUserDefaultCurrencyInput());
+    registerFallbackValue(
+      const ConvertAmountsToCurrencyInput(amounts: [], targetCurrencyCode: 'USD'),
+    );
     registerFallbackValue(const AppRouteInfo.main());
     registerFallbackValue(const DataFetched());
     registerFallbackValue(const LoadingVisibilityEmitted(isLoading: false));
@@ -83,10 +87,10 @@ void main() {
 
   setUp(() {
     getMonthSummaryStatsUseCase = _MockGetMonthSummaryStatsUseCase();
-    getWalletStatsUseCase = _MockGetWalletStatsUseCase();
     getTopWalletStatsUseCase = _MockGetTopWalletStatsUseCase();
     getRecentTransactionsUseCase = _MockGetRecentTransactionsUseCase();
     getUserDefaultCurrencyUseCase = _MockGetUserDefaultCurrencyUseCase();
+    convertAmountsToCurrencyUseCase = _MockConvertAmountsToCurrencyUseCase();
     navigator = _MockAppNavigator();
     appBloc = _MockAppBloc();
     commonBloc = _MockCommonBloc();
@@ -94,6 +98,9 @@ void main() {
 
     when(() => appBloc.state).thenReturn(const AppState(userDefaultCurrency: usd));
     when(() => appBloc.add(any())).thenReturn(null);
+    when(
+      () => convertAmountsToCurrencyUseCase.execute(any()),
+    ).thenAnswer((_) async => const ConvertAmountsToCurrencyOutput());
     when(() => commonBloc.add(any())).thenAnswer((invocation) {
       final event = invocation.positionalArguments.first;
       if (event is ExceptionEmitted) {

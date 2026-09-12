@@ -21,5 +21,8 @@ sealed class HomeState extends BaseBlocState with _$HomeState {
     /// This is used to display 5 recent transactions in the home view.
     @Default(<Transaction>[]) List<Transaction> recentTransactions,
     DateTime? selectedDateTime,
+
+    /// Wallet balances converted to [defaultCurrencyCode].
+    @Default(0) double totalBalance,
   }) = _HomeState;
 }

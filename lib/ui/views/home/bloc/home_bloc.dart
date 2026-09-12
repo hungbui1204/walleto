@@ -12,22 +12,23 @@ part 'home_bloc.freezed.dart';
 class HomeBloc extends BaseBloc<HomeEvent, HomeState> {
   HomeBloc(
     this._getMonthSummaryStatsUseCase,
-    this._getWalletStatsUseCase,
     this._getRecentTransactionsUseCase,
     this._getTopWalletStatsUseCase,
     this._getUserDefaultCurrencyUseCase,
+    this._convertAmountsToCurrencyUseCase,
   ) : super(const HomeState()) {
     on<HomeViewInitialized>(_onHomeViewInitialized, transformer: log());
     on<HomeDataRefreshed>(_onHomeDataRefreshed, transformer: log());
     on<HomeCategoryTypeSelected>(_onHomeCategoryTypeSelected, transformer: log());
     on<HomeCurrencySelected>(_onHomeCurrencySelected, transformer: log());
+    on<HomeBalanceRecalculated>(_onHomeBalanceRecalculated, transformer: log());
   }
 
   final GetMonthSummaryStatsUseCase _getMonthSummaryStatsUseCase;
-  final GetWalletStatsUseCase _getWalletStatsUseCase;
   final GetTopWalletStatsUseCase _getTopWalletStatsUseCase;
   final GetRecentTransactionsUseCase _getRecentTransactionsUseCase;
   final GetUserDefaultCurrencyUseCase _getUserDefaultCurrencyUseCase;
+  final ConvertAmountsToCurrencyUseCase _convertAmountsToCurrencyUseCase;
 
   Future<void> _onHomeViewInitialized(HomeViewInitialized event, Emitter<HomeState> emit) async {
     await runBlocCatching(action: () => _loadHomeData(emit));
@@ -39,7 +40,6 @@ class HomeBloc extends BaseBloc<HomeEvent, HomeState> {
 
   Future<void> _loadHomeData(Emitter<HomeState> emit) async {
     final now = DateTime.now();
-    emit(state.copyWith(selectedDateTime: now));
 
     /// Get user default currency and set to app state
     final userDefaultCurrencyOutput = await _getUserDefaultCurrencyUseCase.execute(
@@ -47,10 +47,6 @@ class HomeBloc extends BaseBloc<HomeEvent, HomeState> {
     );
 
     appBloc.add(UserDefaultCurrencyUpdated(newCurrency: userDefaultCurrencyOutput.currency));
-
-    /// Stamp HomeState with the currency we just fetched summary for (not
-    /// appBloc.state — UserDefaultCurrencyUpdated is processed asynchronously).
-    add(HomeCurrencySelected(currencyCode: userDefaultCurrencyOutput.currency.code));
 
     final monthSummaryStatsOutput = await _getMonthSummaryStatsUseCase.execute(
       GetMonthSummaryStatsInput(baseCurrency: userDefaultCurrencyOutput.currency.code),
@@ -68,12 +64,17 @@ class HomeBloc extends BaseBloc<HomeEvent, HomeState> {
       const GetRecentTransactionsInput(),
     );
 
+    final totalBalance = await _totalBalanceInCurrency(userDefaultCurrencyOutput.currency.code);
+
     emit(
       state.copyWith(
+        selectedDateTime: now,
+        defaultCurrencyCode: userDefaultCurrencyOutput.currency.code,
         monthSummaryStats: monthSummaryStatsOutput.monthSummaryStats.reversed.toList(),
         walletStat: walletStatsOutput.walletStat,
         recentTransactions: recentTransactionsOutput.transactions,
         selectedCategoryType: CategoryType.expense,
+        totalBalance: totalBalance,
       ),
     );
   }
@@ -126,14 +127,62 @@ class HomeBloc extends BaseBloc<HomeEvent, HomeState> {
         final monthSummaryStatsOutput = await _getMonthSummaryStatsUseCase.execute(
           GetMonthSummaryStatsInput(baseCurrency: event.currencyCode),
         );
+        final totalBalance = await _totalBalanceInCurrency(event.currencyCode);
+        final currency = appBloc.state.currencies.where((c) => c.code == event.currencyCode);
+        appBloc.add(
+          UserDefaultCurrencyUpdated(
+            newCurrency: currency.isNotEmpty ? currency.first : Currency(code: event.currencyCode),
+            persist: true,
+          ),
+        );
 
         emit(
           state.copyWith(
             defaultCurrencyCode: event.currencyCode,
             monthSummaryStats: monthSummaryStatsOutput.monthSummaryStats.reversed.toList(),
+            totalBalance: totalBalance,
           ),
         );
       },
     );
+  }
+
+  Future<void> _onHomeBalanceRecalculated(
+    HomeBalanceRecalculated event,
+    Emitter<HomeState> emit,
+  ) async {
+    await runBlocCatching(
+      handleLoading: false,
+      action: () async {
+        final currencyCode =
+            state.defaultCurrencyCode.isNotEmpty
+                ? state.defaultCurrencyCode
+                : appBloc.state.userDefaultCurrency.code;
+        final totalBalance = await _totalBalanceInCurrency(currencyCode);
+        emit(state.copyWith(totalBalance: totalBalance));
+      },
+    );
+  }
+
+  Future<double> _totalBalanceInCurrency(String currencyCode) async {
+    final wallets = appBloc.state.wallets;
+    if (wallets.isEmpty || currencyCode.isEmpty) {
+      return 0;
+    }
+
+    final output = await _convertAmountsToCurrencyUseCase.execute(
+      ConvertAmountsToCurrencyInput(
+        targetCurrencyCode: currencyCode,
+        amounts:
+            wallets
+                .map(
+                  (wallet) =>
+                      AmountInCurrency(amount: wallet.amount, currencyCode: wallet.currencyCode),
+                )
+                .toList(),
+      ),
+    );
+
+    return output.total;
   }
 }

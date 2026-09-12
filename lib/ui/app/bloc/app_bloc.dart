@@ -15,6 +15,7 @@ class AppBloc extends BaseBloc<AppEvent, AppState> {
     this._getWalletsUseCase,
     this._getCurrenciesUseCase,
     this._getUserDefaultCurrencyUseCase,
+    this._updateUserDefaultCurrencyUseCase,
   ) : super(const AppState()) {
     on<SignOutButtonPressed>(_onSignOutButtonPressed, transformer: log());
     on<DataFetched>(_onDataFetched, transformer: log());
@@ -28,6 +29,7 @@ class AppBloc extends BaseBloc<AppEvent, AppState> {
   final GetWalletsUseCase _getWalletsUseCase;
   final GetCurrenciesUseCase _getCurrenciesUseCase;
   final GetUserDefaultCurrencyUseCase _getUserDefaultCurrencyUseCase;
+  final UpdateUserDefaultCurrencyUseCase _updateUserDefaultCurrencyUseCase;
 
   Future<void> _onSignOutButtonPressed(SignOutButtonPressed event, Emitter<AppState> emit) async {
     await runBlocCatching(
@@ -50,6 +52,11 @@ class AppBloc extends BaseBloc<AppEvent, AppState> {
                 ..sort((a, b) => a.name.compareTo(b.name));
 
           emit(state.copyWith(wallets: sortedByNameWallets));
+
+          final defaultCurrencyOutput = await _getUserDefaultCurrencyUseCase.execute(
+            const GetUserDefaultCurrencyInput(),
+          );
+          emit(state.copyWith(userDefaultCurrency: defaultCurrencyOutput.currency));
         }
 
         // Fetch currencies
@@ -85,13 +92,26 @@ class AppBloc extends BaseBloc<AppEvent, AppState> {
     );
   }
 
-  void _onUserDefaultCurrencyUpdated(UserDefaultCurrencyUpdated event, Emitter<AppState> emit) {
+  Future<void> _onUserDefaultCurrencyUpdated(
+    UserDefaultCurrencyUpdated event,
+    Emitter<AppState> emit,
+  ) async {
     if (event.newCurrency.code == state.userDefaultCurrency.code) {
       return;
     }
 
-    /// TODO: update user default currency API
+    if (!event.persist) {
+      emit(state.copyWith(userDefaultCurrency: event.newCurrency));
+      return;
+    }
 
-    emit(state.copyWith(userDefaultCurrency: event.newCurrency));
+    await runBlocCatching(
+      action: () async {
+        await _updateUserDefaultCurrencyUseCase.execute(
+          UpdateUserDefaultCurrencyInput(currencyCode: event.newCurrency.code),
+        );
+        emit(state.copyWith(userDefaultCurrency: event.newCurrency));
+      },
+    );
   }
 }

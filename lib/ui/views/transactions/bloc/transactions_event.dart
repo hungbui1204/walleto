@@ -57,6 +57,5 @@ sealed class TransactionsWalletsUpdated extends TransactionsEvent
     with _$TransactionsWalletsUpdated {
   const TransactionsWalletsUpdated._();
 
-  const factory TransactionsWalletsUpdated({required List<Wallet> wallets}) =
-      _TransactionsWalletsUpdated;
+  const factory TransactionsWalletsUpdated() = _TransactionsWalletsUpdated;
 }

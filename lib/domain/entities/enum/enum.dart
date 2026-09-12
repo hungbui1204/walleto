@@ -1,6 +1,8 @@
 import 'package:walleto/shared/constants/locale_constants.dart';
 
-enum InitialAppRoute { login, main }
+enum InitialAppRoute { login, main, createWallet }
+
+enum InvalidTokenHandlerStatus { emptyToken, tokenRefreshed, refreshTokenExpired, refreshFailed }
 
 enum LanguageCode {
   en(value: 1, localeCode: LocaleConstants.en);
@@ -12,8 +14,6 @@ enum LanguageCode {
 
   static const defaultValue = en;
 }
-
-enum InvalidTokenHandlerStatus { emptyToken, tokenRefreshed, refreshTokenExpired }
 
 enum ImagePlaceHolderType { category, wallet, user, currency }
 

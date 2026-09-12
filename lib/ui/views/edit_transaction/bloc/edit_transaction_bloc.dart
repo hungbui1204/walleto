@@ -58,14 +58,20 @@ class EditTransactionBloc extends BaseBloc<EditTransactionEvent, EditTransaction
     EditTransactionViewInitiated event,
     Emitter<EditTransactionState> emit,
   ) {
-    final currentTransCurrency = appBloc.state.currencies.firstWhere(
+    final currencies = appBloc.state.currencies;
+    final wallets = appBloc.state.wallets;
+    if (currencies.isEmpty || wallets.isEmpty) {
+      return;
+    }
+
+    final currentTransCurrency = currencies.firstWhere(
       (currency) => currency.code == event.transaction.currencyCode,
-      orElse: () => appBloc.state.currencies.first,
+      orElse: () => currencies.first,
     );
 
-    final currentWallet = appBloc.state.wallets.firstWhere(
+    final currentWallet = wallets.firstWhere(
       (wallet) => wallet.id == event.transaction.wallet.id,
-      orElse: () => appBloc.state.wallets.first,
+      orElse: () => wallets.first,
     );
 
     emit(
@@ -311,10 +317,13 @@ class EditTransactionBloc extends BaseBloc<EditTransactionEvent, EditTransaction
     if (event.wallet.id == state.selectedWallet?.id) return;
 
     // Reset the selected currency to selected wallet's currency, exchange rate, and converted amount
-    final walletCurrency = appBloc.state.currencies.firstWhere(
-      (currency) => currency.code == event.wallet.currencyCode,
-      orElse: () => appBloc.state.currencies.first,
-    );
+    final walletCurrency =
+        appBloc.state.currencies.isEmpty
+            ? null
+            : appBloc.state.currencies.firstWhere(
+              (currency) => currency.code == event.wallet.currencyCode,
+              orElse: () => appBloc.state.currencies.first,
+            );
 
     emit(
       state.copyWith(
