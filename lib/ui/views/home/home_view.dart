@@ -14,9 +14,11 @@ class HomeView extends StatefulWidget {
   State<HomeView> createState() => _HomeViewState();
 }
 
-class _HomeViewState extends BasePageState<HomeView, HomeBloc>
-    with SingleTickerProviderStateMixin {
+class _HomeViewState extends BasePageState<HomeView, HomeBloc> with SingleTickerProviderStateMixin {
   late final TabController _tabController;
+
+  @override
+  bool get useSkeletonLoading => true;
 
   @override
   void initState() {
@@ -26,21 +28,15 @@ class _HomeViewState extends BasePageState<HomeView, HomeBloc>
   }
 
   @override
-  Widget buildPageLoading() => const HomeLoadingShimmer();
-
-  @override
   Widget buildPageListeners({required Widget child}) {
     return BlocListener<AppBloc, AppState>(
       listenWhen: (previous, current) {
-        return previous.needReloadStatisticalCharts !=
-                current.needReloadStatisticalCharts &&
+        return previous.needReloadStatisticalCharts != current.needReloadStatisticalCharts &&
             current.needReloadStatisticalCharts;
       },
       listener: (context, state) {
-        bloc.add(const HomeViewInitialized());
-        appBloc.add(
-          const StatisticalChartsReloaded(needReloadStatisticalCharts: false),
-        );
+        bloc.add(const HomeDataRefreshed());
+        appBloc.add(const StatisticalChartsReloaded(needReloadStatisticalCharts: false));
       },
       child: child,
     );
@@ -52,24 +48,27 @@ class _HomeViewState extends BasePageState<HomeView, HomeBloc>
       backgroundColor: scaffoldBackgroundColor,
       appBar: CommonAppBar(title: S.current.home),
       body: NoirScaffoldBody(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: Dimens.d16.responsive()),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                SizedBox(height: Dimens.d8.responsive()),
-                const _NoirBalanceHero(),
-                SizedBox(height: Dimens.d16.responsive()),
-                const _GlassFlowRow(),
-                SizedBox(height: Dimens.d16.responsive()),
-                const _AllWalletsWidget(),
-                SizedBox(height: Dimens.d16.responsive()),
-                StatisticWidget(tabController: _tabController),
-                SizedBox(height: Dimens.d16.responsive()),
-                const _RecentTransactionsWidget(),
-                SizedBox(height: Dimens.d28.responsive()),
-              ],
+        child: buildSkeletonOrContent(
+          skeleton: const HomeLoadingSkeletonWidget(),
+          content: Padding(
+            padding: EdgeInsets.symmetric(horizontal: Dimens.d16.responsive()),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  SizedBox(height: Dimens.d8.responsive()),
+                  const _NoirBalanceHero(),
+                  SizedBox(height: Dimens.d16.responsive()),
+                  const _GlassFlowRow(),
+                  SizedBox(height: Dimens.d16.responsive()),
+                  const _AllWalletsWidget(),
+                  SizedBox(height: Dimens.d16.responsive()),
+                  StatisticWidget(tabController: _tabController),
+                  SizedBox(height: Dimens.d16.responsive()),
+                  const _RecentTransactionsWidget(),
+                  SizedBox(height: Dimens.d28.responsive()),
+                ],
+              ),
             ),
           ),
         ),
@@ -88,8 +87,7 @@ class _NoirBalanceHero extends StatelessWidget {
       builder: (context, state) {
         final wallets = state.wallets;
         final total = wallets.fold<double>(0, (sum, w) => sum + w.amount);
-        final currencyCode =
-            wallets.isNotEmpty ? wallets.first.currencyCode : '';
+        final currencyCode = wallets.isNotEmpty ? wallets.first.currencyCode : '';
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -130,14 +128,10 @@ class _GlassFlowRow extends StatelessWidget {
       buildWhen: (previous, current) => previous.wallets != current.wallets,
       builder: (context, appState) {
         final fallbackCurrency =
-            appState.wallets.isNotEmpty
-                ? appState.wallets.first.currencyCode
-                : '';
+            appState.wallets.isNotEmpty ? appState.wallets.first.currencyCode : '';
 
         return BlocBuilder<HomeBloc, HomeState>(
-          buildWhen:
-              (previous, current) =>
-                  previous.monthSummaryStats != current.monthSummaryStats,
+          buildWhen: (previous, current) => previous.monthSummaryStats != current.monthSummaryStats,
           builder: (context, homeState) {
             final current =
                 homeState.monthSummaryStats.isNotEmpty
@@ -199,24 +193,16 @@ class _GlassChip extends StatelessWidget {
         children: [
           Row(
             children: [
-              _FlowIconCircle(
-                color: valueColor,
-                isIncome: valueColor == greenColor,
-              ),
+              _FlowIconCircle(color: valueColor, isIncome: valueColor == greenColor),
               SizedBox(width: Dimens.d10.responsive()),
-              Expanded(
-                child: Text(label, style: AppTextStyles.s12wNormalGrey()),
-              ),
+              Expanded(child: Text(label, style: AppTextStyles.s12wNormalGrey())),
             ],
           ),
           SizedBox(height: Dimens.d10.responsive()),
           CommonAmountWithSymbol(
             amount: amount,
             currencyCode: currencyCode,
-            textStyle: AppThemes.amount(
-              fontSize: Dimens.d16.responsive(),
-              color: valueColor,
-            ),
+            textStyle: AppThemes.amount(fontSize: Dimens.d16.responsive(), color: valueColor),
           ),
         ],
       ),
@@ -269,10 +255,7 @@ class _AllWalletsWidget extends StatelessWidget {
                 vertical: Dimens.d8.responsive(),
                 horizontal: Dimens.d4.responsive(),
               ),
-              child: Text(
-                S.current.seeAll,
-                style: AppTextStyles.s13wNormalGrey(),
-              ),
+              child: Text(S.current.seeAll, style: AppTextStyles.s13wNormalGrey()),
             ),
           ),
         ],
@@ -286,9 +269,7 @@ class _AllWalletsWidget extends StatelessWidget {
               message: S.current.createYourFirstWallet,
               actionLabel: S.current.createWallet,
               onAction: () {
-                context.read<AppNavigator>().push(
-                  const AppRouteInfo.createWallet(),
-                );
+                context.read<AppNavigator>().push(const AppRouteInfo.createWallet());
               },
             );
           }
@@ -333,19 +314,10 @@ class _WalletInfoWidget extends StatelessWidget {
               placeHolderType: ImagePlaceHolderType.wallet,
             ),
             SizedBox(width: Dimens.d10.responsive()),
-            Expanded(
-              child: Text(wallet.name, style: AppTextStyles.s16wNormalBlack()),
-            ),
-            CommonAmountWithSymbol(
-              amount: wallet.amount,
-              currencyCode: wallet.currencyCode,
-            ),
+            Expanded(child: Text(wallet.name, style: AppTextStyles.s16wNormalBlack())),
+            CommonAmountWithSymbol(amount: wallet.amount, currencyCode: wallet.currencyCode),
             SizedBox(width: Dimens.d4.responsive()),
-            Icon(
-              Icons.chevron_right,
-              size: Dimens.d20.responsive(),
-              color: darkGreyColor,
-            ),
+            Icon(Icons.chevron_right, size: Dimens.d20.responsive(), color: darkGreyColor),
           ],
         ),
       ),
@@ -361,10 +333,7 @@ class _RecentTransactionsWidget extends StatelessWidget {
     return CommonTitledPanel(
       titleWidget: Align(
         alignment: Alignment.centerLeft,
-        child: Text(
-          S.current.recentTransactions,
-          style: AppTextStyles.s16wBoldBlack(),
-        ),
+        child: Text(S.current.recentTransactions, style: AppTextStyles.s16wBoldBlack()),
       ),
       contentWidget: BlocBuilder<HomeBloc, HomeState>(
         buildWhen: (previous, current) {
@@ -377,9 +346,7 @@ class _RecentTransactionsWidget extends StatelessWidget {
               message: S.current.noRecentTransactions,
               actionLabel: S.current.addTransaction,
               onAction: () {
-                context.read<AppNavigator>().push(
-                  const AppRouteInfo.createTransaction(),
-                );
+                context.read<AppNavigator>().push(const AppRouteInfo.createTransaction());
               },
             );
           }
@@ -422,9 +389,7 @@ class _RecentTransactionWidget extends StatelessWidget {
             Stack(
               clipBehavior: Clip.none,
               children: [
-                CommonCircleNetworkImage(
-                  imageUrl: transaction.category.iconUrl,
-                ),
+                CommonCircleNetworkImage(imageUrl: transaction.category.iconUrl),
                 Positioned(
                   bottom: 0,
                   right: -6,
@@ -442,10 +407,7 @@ class _RecentTransactionWidget extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    transaction.category.name,
-                    style: AppTextStyles.s14wBoldBlack(),
-                  ),
+                  Text(transaction.category.name, style: AppTextStyles.s14wBoldBlack()),
                   Text(
                     transaction.transactionDate!.toStringWithFormat(
                       DateTimeFormatConstants.dayMonthYearFormat,
@@ -464,10 +426,7 @@ class _RecentTransactionWidget extends StatelessWidget {
               currencyCode: transaction.currencyCode,
               textStyle: AppThemes.amount(
                 fontSize: Dimens.d14.responsive(),
-                color:
-                    transaction.type == CategoryType.expense
-                        ? redColor
-                        : greenColor,
+                color: transaction.type == CategoryType.expense ? redColor : greenColor,
               ),
             ),
           ],

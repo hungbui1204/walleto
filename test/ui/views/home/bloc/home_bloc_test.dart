@@ -136,6 +136,7 @@ void main() {
           const GetMonthSummaryStatsInput(baseCurrency: 'VND'),
         ),
       ).called(1);
+      verifyNever(() => commonBloc.add(const LoadingVisibilityEmitted(isLoading: true)));
     },
   );
 
@@ -197,6 +198,54 @@ void main() {
           const GetMonthSummaryStatsInput(baseCurrency: 'USD'),
         ),
       ).called(1);
+      verify(() => commonBloc.add(const LoadingVisibilityEmitted(isLoading: true))).called(1);
+      verify(() => commonBloc.add(const LoadingVisibilityEmitted(isLoading: false))).called(1);
+    },
+  );
+
+  blocTest<HomeBloc, HomeState>(
+    'reloads home data without showing loading',
+    setUp: () {
+      when(
+        () => getUserDefaultCurrencyUseCase.execute(any()),
+      ).thenAnswer((_) async => const GetUserDefaultCurrencyOutput(currency: usd));
+      when(() => getMonthSummaryStatsUseCase.execute(any())).thenAnswer(
+        (_) async => const GetMonthSummaryStatsOutput(
+          monthSummaryStats: [previousMonthUsd, currentMonthUsd],
+        ),
+      );
+      when(
+        () => getTopWalletStatsUseCase.execute(any()),
+      ).thenAnswer((_) async => const GetTopWalletStatsOutput(walletStat: WalletStat()));
+      when(
+        () => getRecentTransactionsUseCase.execute(any()),
+      ).thenAnswer((_) async => const GetRecentTransactionsOutput(transactions: []));
+    },
+    build: buildBloc,
+    act: (bloc) => bloc.add(const HomeDataRefreshed()),
+    verify: (_) {
+      verify(
+        () => getMonthSummaryStatsUseCase.execute(
+          const GetMonthSummaryStatsInput(baseCurrency: 'USD'),
+        ),
+      ).called(1);
+      verifyNever(() => commonBloc.add(const LoadingVisibilityEmitted(isLoading: true)));
+    },
+  );
+
+  blocTest<HomeBloc, HomeState>(
+    'does not show loading when category type is selected',
+    setUp: () {
+      when(
+        () => getTopWalletStatsUseCase.execute(any()),
+      ).thenAnswer((_) async => const GetTopWalletStatsOutput(walletStat: WalletStat()));
+    },
+    build: buildBloc,
+    seed: () => const HomeState(defaultCurrencyCode: 'USD'),
+    act: (bloc) => bloc.add(const HomeCategoryTypeSelected(categoryType: CategoryType.income)),
+    verify: (_) {
+      verify(() => getTopWalletStatsUseCase.execute(any())).called(1);
+      verifyNever(() => commonBloc.add(const LoadingVisibilityEmitted(isLoading: true)));
     },
   );
 }

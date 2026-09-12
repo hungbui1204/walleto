@@ -95,6 +95,7 @@ class TransactionsBloc extends BaseBloc<TransactionsEvent, TransactionsState> {
     Emitter<TransactionsState> emit,
   ) async {
     await runBlocCatching(
+      handleLoading: false,
       action: () async {
         // Fetch transactions for the month-year or date range based on current state
         late final GetTransactionsInput transactionsInput;
@@ -169,6 +170,7 @@ class TransactionsBloc extends BaseBloc<TransactionsEvent, TransactionsState> {
     Emitter<TransactionsState> emit,
   ) async {
     await runBlocCatching(
+      handleLoading: false,
       action: () async {
         if (event.selectedDate.month == state.selectedDate?.month &&
             event.selectedDate.year == state.selectedDate?.year) {
@@ -208,6 +210,7 @@ class TransactionsBloc extends BaseBloc<TransactionsEvent, TransactionsState> {
     Emitter<TransactionsState> emit,
   ) async {
     await runBlocCatching(
+      handleLoading: false,
       action: () async {
         final dateRangePicked = await navigator.showDateRangePicker(
           useRootNavigator: true,
@@ -247,6 +250,7 @@ class TransactionsBloc extends BaseBloc<TransactionsEvent, TransactionsState> {
     Emitter<TransactionsState> emit,
   ) async {
     await runBlocCatching(
+      handleLoading: false,
       action: () async {
         if (state.selectedWallet == event.selectedWallet) return;
 

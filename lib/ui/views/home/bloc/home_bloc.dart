@@ -18,6 +18,7 @@ class HomeBloc extends BaseBloc<HomeEvent, HomeState> {
     this._getUserDefaultCurrencyUseCase,
   ) : super(const HomeState()) {
     on<HomeViewInitialized>(_onHomeViewInitialized, transformer: log());
+    on<HomeDataRefreshed>(_onHomeDataRefreshed, transformer: log());
     on<HomeCategoryTypeSelected>(_onHomeCategoryTypeSelected, transformer: log());
     on<HomeCurrencySelected>(_onHomeCurrencySelected, transformer: log());
   }
@@ -29,47 +30,51 @@ class HomeBloc extends BaseBloc<HomeEvent, HomeState> {
   final GetUserDefaultCurrencyUseCase _getUserDefaultCurrencyUseCase;
 
   Future<void> _onHomeViewInitialized(HomeViewInitialized event, Emitter<HomeState> emit) async {
-    await runBlocCatching(
-      action: () async {
-        final now = DateTime.now();
-        emit(state.copyWith(selectedDateTime: now));
+    await runBlocCatching(action: () => _loadHomeData(emit));
+  }
 
-        /// Get user default currency and set to app state
-        final userDefaultCurrencyOutput = await _getUserDefaultCurrencyUseCase.execute(
-          const GetUserDefaultCurrencyInput(),
-        );
+  Future<void> _onHomeDataRefreshed(HomeDataRefreshed event, Emitter<HomeState> emit) async {
+    await runBlocCatching(handleLoading: false, action: () => _loadHomeData(emit));
+  }
 
-        appBloc.add(UserDefaultCurrencyUpdated(newCurrency: userDefaultCurrencyOutput.currency));
+  Future<void> _loadHomeData(Emitter<HomeState> emit) async {
+    final now = DateTime.now();
+    emit(state.copyWith(selectedDateTime: now));
 
-        /// Stamp HomeState with the currency we just fetched summary for (not
-        /// appBloc.state — UserDefaultCurrencyUpdated is processed asynchronously).
-        add(HomeCurrencySelected(currencyCode: userDefaultCurrencyOutput.currency.code));
+    /// Get user default currency and set to app state
+    final userDefaultCurrencyOutput = await _getUserDefaultCurrencyUseCase.execute(
+      const GetUserDefaultCurrencyInput(),
+    );
 
-        final monthSummaryStatsOutput = await _getMonthSummaryStatsUseCase.execute(
-          GetMonthSummaryStatsInput(baseCurrency: userDefaultCurrencyOutput.currency.code),
-        );
+    appBloc.add(UserDefaultCurrencyUpdated(newCurrency: userDefaultCurrencyOutput.currency));
 
-        final walletStatsOutput = await _getTopWalletStatsUseCase.execute(
-          GetTopWalletStatsInput(
-            targetMonth: now.month,
-            targetYear: now.year,
-            categoryType: CategoryType.expense,
-          ),
-        );
+    /// Stamp HomeState with the currency we just fetched summary for (not
+    /// appBloc.state — UserDefaultCurrencyUpdated is processed asynchronously).
+    add(HomeCurrencySelected(currencyCode: userDefaultCurrencyOutput.currency.code));
 
-        final recentTransactionsOutput = await _getRecentTransactionsUseCase.execute(
-          const GetRecentTransactionsInput(),
-        );
+    final monthSummaryStatsOutput = await _getMonthSummaryStatsUseCase.execute(
+      GetMonthSummaryStatsInput(baseCurrency: userDefaultCurrencyOutput.currency.code),
+    );
 
-        emit(
-          state.copyWith(
-            monthSummaryStats: monthSummaryStatsOutput.monthSummaryStats.reversed.toList(),
-            walletStat: walletStatsOutput.walletStat,
-            recentTransactions: recentTransactionsOutput.transactions,
-            selectedCategoryType: CategoryType.expense,
-          ),
-        );
-      },
+    final walletStatsOutput = await _getTopWalletStatsUseCase.execute(
+      GetTopWalletStatsInput(
+        targetMonth: now.month,
+        targetYear: now.year,
+        categoryType: CategoryType.expense,
+      ),
+    );
+
+    final recentTransactionsOutput = await _getRecentTransactionsUseCase.execute(
+      const GetRecentTransactionsInput(),
+    );
+
+    emit(
+      state.copyWith(
+        monthSummaryStats: monthSummaryStatsOutput.monthSummaryStats.reversed.toList(),
+        walletStat: walletStatsOutput.walletStat,
+        recentTransactions: recentTransactionsOutput.transactions,
+        selectedCategoryType: CategoryType.expense,
+      ),
     );
   }
 
@@ -78,6 +83,7 @@ class HomeBloc extends BaseBloc<HomeEvent, HomeState> {
     Emitter<HomeState> emit,
   ) async {
     await runBlocCatching(
+      handleLoading: false,
       action: () async {
         if (event.categoryType == state.selectedCategoryType) {
           return;
@@ -115,6 +121,7 @@ class HomeBloc extends BaseBloc<HomeEvent, HomeState> {
     }
 
     await runBlocCatching(
+      handleLoading: false,
       action: () async {
         final monthSummaryStatsOutput = await _getMonthSummaryStatsUseCase.execute(
           GetMonthSummaryStatsInput(baseCurrency: event.currencyCode),

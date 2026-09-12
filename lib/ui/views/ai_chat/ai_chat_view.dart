@@ -20,6 +20,9 @@ class _AiChatViewState extends BasePageState<AiChatView, AiChatBloc> {
   String? _pendingMessage;
 
   @override
+  bool get useSkeletonLoading => true;
+
+  @override
   void initState() {
     super.initState();
     _messageController = TextEditingController();
@@ -70,81 +73,89 @@ class _AiChatViewState extends BasePageState<AiChatView, AiChatBloc> {
           child: Column(
             children: [
               Expanded(
-                child: BlocConsumer<AiChatBloc, AiChatState>(
-                  listenWhen:
-                      (previous, current) =>
-                          (previous.isSending && !current.isSending) ||
-                          (current.isSending &&
-                              current.messages.length == previous.messages.length + 1),
-                  listener: (context, state) {
-                    final pending = _pendingMessage;
-                    if (!state.isSending && pending != null) {
-                      final pendingStillVisible = state.messages.any(
-                        (message) =>
-                            message.role == AiChatRole.user &&
-                            message.content == pending &&
-                            message.id == 0,
-                      );
-                      if (!pendingStillVisible) {
-                        _messageController.text = pending;
+                child: buildSkeletonOrContent(
+                  skeleton: const AiChatLoadingSkeletonWidget(),
+                  content: BlocConsumer<AiChatBloc, AiChatState>(
+                    listenWhen:
+                        (previous, current) =>
+                            (previous.isSending && !current.isSending) ||
+                            (current.isSending &&
+                                current.messages.length == previous.messages.length + 1),
+                    listener: (context, state) {
+                      final pending = _pendingMessage;
+                      if (!state.isSending && pending != null) {
+                        final pendingStillVisible = state.messages.any(
+                          (message) =>
+                              message.role == AiChatRole.user &&
+                              message.content == pending &&
+                              message.id == 0,
+                        );
+                        if (!pendingStillVisible) {
+                          _messageController.text = pending;
+                        }
+                        _pendingMessage = null;
                       }
-                      _pendingMessage = null;
-                    }
 
-                    if (!_scrollController.hasClients) {
-                      return;
-                    }
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
                       if (!_scrollController.hasClients) {
                         return;
                       }
-                      _scrollController.animateTo(
-                        0,
-                        duration: DurationConstants.defaultAnimationScrollDuration,
-                        curve: Curves.easeOut,
-                      );
-                    });
-                  },
-                  buildWhen:
-                      (previous, current) =>
-                          previous.messages != current.messages ||
-                          previous.isSending != current.isSending ||
-                          previous.isLoadingMore != current.isLoadingMore,
-                  builder: (context, state) {
-                    if (state.isEmpty) {
-                      return AiChatEmptyStateWidget(onPromptSelected: _submit);
-                    }
-
-                    final itemCount = state.messages.length + (state.isSending ? 1 : 0);
-
-                    return ListView.builder(
-                      controller: _scrollController,
-                      reverse: true,
-                      padding: EdgeInsets.symmetric(horizontal: Dimens.d16.responsive()),
-                      itemCount: itemCount,
-                      itemBuilder: (context, index) {
-                        if (state.isSending && index == 0) {
-                          return const AiChatTypingIndicatorWidget();
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        if (!_scrollController.hasClients) {
+                          return;
                         }
+                        _scrollController.animateTo(
+                          0,
+                          duration: DurationConstants.defaultAnimationScrollDuration,
+                          curve: Curves.easeOut,
+                        );
+                      });
+                    },
+                    buildWhen:
+                        (previous, current) =>
+                            previous.messages != current.messages ||
+                            previous.isSending != current.isSending ||
+                            previous.isLoadingMore != current.isLoadingMore,
+                    builder: (context, state) {
+                      if (state.isEmpty) {
+                        return AiChatEmptyStateWidget(onPromptSelected: _submit);
+                      }
 
-                        final messageIndex =
-                            state.isSending
-                                ? state.messages.length - index
-                                : state.messages.length - 1 - index;
+                      final itemCount = state.messages.length + (state.isSending ? 1 : 0);
 
-                        return AiChatMessageBubbleWidget(message: state.messages[messageIndex]);
-                      },
-                    );
-                  },
+                      return ListView.builder(
+                        controller: _scrollController,
+                        reverse: true,
+                        padding: EdgeInsets.symmetric(horizontal: Dimens.d16.responsive()),
+                        itemCount: itemCount,
+                        itemBuilder: (context, index) {
+                          if (state.isSending && index == 0) {
+                            return const AiChatTypingIndicatorWidget();
+                          }
+
+                          final messageIndex =
+                              state.isSending
+                                  ? state.messages.length - index
+                                  : state.messages.length - 1 - index;
+
+                          return AiChatMessageBubbleWidget(message: state.messages[messageIndex]);
+                        },
+                      );
+                    },
+                  ),
                 ),
               ),
-              BlocBuilder<AiChatBloc, AiChatState>(
-                buildWhen: (previous, current) => previous.isSending != current.isSending,
-                builder: (context, state) {
-                  return AiChatComposerWidget(
-                    controller: _messageController,
-                    enabled: !state.isSending,
-                    onSubmit: _submit,
+              BlocBuilder<CommonBloc, CommonState>(
+                buildWhen: (previous, current) => previous.isLoading != current.isLoading,
+                builder: (context, commonState) {
+                  return BlocBuilder<AiChatBloc, AiChatState>(
+                    buildWhen: (previous, current) => previous.isSending != current.isSending,
+                    builder: (context, state) {
+                      return AiChatComposerWidget(
+                        controller: _messageController,
+                        enabled: !state.isSending && !commonState.isLoading,
+                        onSubmit: _submit,
+                      );
+                    },
                   );
                 },
               ),

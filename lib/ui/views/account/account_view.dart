@@ -16,6 +16,9 @@ class AccountView extends StatefulWidget {
 
 class _AccountViewState extends BasePageState<AccountView, AccountBloc> {
   @override
+  bool get useSkeletonLoading => true;
+
+  @override
   void initState() {
     bloc.add(const AccountViewInitiated());
     super.initState();
@@ -26,45 +29,46 @@ class _AccountViewState extends BasePageState<AccountView, AccountBloc> {
     return Scaffold(
       appBar: CommonAppBar(title: S.current.account),
       body: NoirScaffoldBody(
-        child: Padding(
-          padding: EdgeInsets.only(top: Dimens.d30.responsive()),
-          child: Stack(
-            alignment: Alignment.topCenter,
-            children: [
-              Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: Dimens.d16.responsive(),
+        child: buildSkeletonOrContent(
+          skeleton: const AccountLoadingSkeletonWidget(),
+          content: Padding(
+            padding: EdgeInsets.only(top: Dimens.d30.responsive()),
+            child: Stack(
+              alignment: Alignment.topCenter,
+              children: [
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: Dimens.d16.responsive()),
+                  child: Column(
+                    children: [
+                      SizedBox(height: Dimens.d40.responsive()),
+                      const _AccountInfoWidget(),
+                      SizedBox(height: Dimens.d20.responsive()),
+                      const _UtilitiesWidget(),
+                      SizedBox(height: Dimens.d20.responsive()),
+                      const _SupportiveWidget(),
+                      SizedBox(height: Dimens.d20.responsive()),
+                      CommonButton(
+                        text: S.current.signOut,
+                        backgroundColor: surfaceColor,
+                        textColor: redColor,
+                        onTap: () {
+                          navigator.showDialog(
+                            AppPopupInfo.confirm(
+                              message: S.current.areYouSureYouWantToSignOut,
+                              showCancel: true,
+                              onPressed: Func0(() {
+                                appBloc.add(const SignOutButtonPressed());
+                              }),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 ),
-                child: Column(
-                  children: [
-                    SizedBox(height: Dimens.d40.responsive()),
-                    const _AccountInfoWidget(),
-                    SizedBox(height: Dimens.d20.responsive()),
-                    const _UtilitiesWidget(),
-                    SizedBox(height: Dimens.d20.responsive()),
-                    const _SupportiveWidget(),
-                    SizedBox(height: Dimens.d20.responsive()),
-                    CommonButton(
-                      text: S.current.signOut,
-                      backgroundColor: surfaceColor,
-                      textColor: redColor,
-                      onTap: () {
-                        navigator.showDialog(
-                          AppPopupInfo.confirm(
-                            message: S.current.areYouSureYouWantToSignOut,
-                            showCancel: true,
-                            onPressed: Func0(() {
-                              appBloc.add(const SignOutButtonPressed());
-                            }),
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              const _UserCircleAvatarWidget(),
-            ],
+                const _UserCircleAvatarWidget(),
+              ],
+            ),
           ),
         ),
       ),
@@ -78,9 +82,7 @@ class _UserCircleAvatarWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AccountBloc, AccountState>(
-      buildWhen:
-          (previous, current) =>
-              previous.user.avatarUrl != current.user.avatarUrl,
+      buildWhen: (previous, current) => previous.user.avatarUrl != current.user.avatarUrl,
       builder: (context, state) {
         return GestureDetector(
           behavior: HitTestBehavior.translucent,
@@ -112,25 +114,15 @@ class _AccountInfoWidget extends StatelessWidget {
         children: [
           SizedBox(height: Dimens.d40.responsive()),
           BlocBuilder<AccountBloc, AccountState>(
-            buildWhen:
-                (previous, current) =>
-                    previous.user.fullName != current.user.fullName,
+            buildWhen: (previous, current) => previous.user.fullName != current.user.fullName,
             builder: (context, state) {
-              return Text(
-                state.user.fullName,
-                style: AppTextStyles.s18wBoldBlack(),
-              );
+              return Text(state.user.fullName, style: AppTextStyles.s18wBoldBlack());
             },
           ),
           BlocBuilder<AccountBloc, AccountState>(
-            buildWhen:
-                (previous, current) =>
-                    previous.user.email != current.user.email,
+            buildWhen: (previous, current) => previous.user.email != current.user.email,
             builder: (context, state) {
-              return Text(
-                state.user.email,
-                style: AppTextStyles.s14wNormalBlack(),
-              );
+              return Text(state.user.email, style: AppTextStyles.s14wNormalBlack());
             },
           ),
           CommonLine(
@@ -186,9 +178,7 @@ class _UtilitiesWidget extends StatelessWidget {
               context.read<AppNavigator>().push(const AppRouteInfo.wallets());
             },
           ),
-          CommonLine(
-            margin: EdgeInsets.symmetric(horizontal: Dimens.d16.responsive()),
-          ),
+          CommonLine(margin: EdgeInsets.symmetric(horizontal: Dimens.d16.responsive())),
           CommonForwardButton(
             title: S.current.categories,
             showBorder: false,
@@ -223,11 +213,7 @@ class _SupportiveWidget extends StatelessWidget {
             title: S.current.settings,
             showBorder: false,
             color: surfaceColor,
-            leadingIcon: Icon(
-              Icons.settings,
-              size: Dimens.d24.responsive(),
-              color: darkGreyColor,
-            ),
+            leadingIcon: Icon(Icons.settings, size: Dimens.d24.responsive(), color: darkGreyColor),
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(Dimens.d16.responsive()),
               topRight: Radius.circular(Dimens.d16.responsive()),
@@ -236,9 +222,7 @@ class _SupportiveWidget extends StatelessWidget {
               // TODO: Implement settings functionality
             },
           ),
-          CommonLine(
-            margin: EdgeInsets.symmetric(horizontal: Dimens.d16.responsive()),
-          ),
+          CommonLine(margin: EdgeInsets.symmetric(horizontal: Dimens.d16.responsive())),
           CommonForwardButton(
             title: S.current.help,
             showBorder: false,
@@ -252,9 +236,7 @@ class _SupportiveWidget extends StatelessWidget {
               // TODO: Implement help functionality
             },
           ),
-          CommonLine(
-            margin: EdgeInsets.symmetric(horizontal: Dimens.d16.responsive()),
-          ),
+          CommonLine(margin: EdgeInsets.symmetric(horizontal: Dimens.d16.responsive())),
           CommonForwardButton(
             title: S.current.about,
             showBorder: false,
