@@ -42,18 +42,18 @@ class _CategoriesViewState extends BasePageState<CategoriesView, CategoriesBloc>
           ),
           child: Column(
             children: [
-              TabBar(
-                controller: _tabController,
-                tabs: [
-                  Padding(
-                    padding: EdgeInsets.all(Dimens.d12.responsive()),
-                    child: Text(S.current.expense),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(Dimens.d12.responsive()),
-                    child: Text(S.current.income),
-                  ),
-                ],
+              AnimatedBuilder(
+                animation: _tabController,
+                builder: (context, _) {
+                  return CommonSegmentedControl<int>(
+                    segments: [
+                      (value: 0, label: S.current.expense),
+                      (value: 1, label: S.current.income),
+                    ],
+                    selected: _tabController.index,
+                    onSelected: (index) => _tabController.animateTo(index),
+                  );
+                },
               ),
               SizedBox(height: Dimens.d20.responsive()),
               BlocBuilder<CategoriesBloc, CategoriesState>(

@@ -14,23 +14,14 @@ class HomeView extends StatefulWidget {
   State<HomeView> createState() => _HomeViewState();
 }
 
-class _HomeViewState extends BasePageState<HomeView, HomeBloc> with SingleTickerProviderStateMixin {
-  late final TabController _tabController;
-
+class _HomeViewState extends BasePageState<HomeView, HomeBloc> {
   @override
   bool get useSkeletonLoading => true;
 
   @override
   void initState() {
-    _tabController = TabController(length: 2, vsync: this);
     bloc.add(const HomeViewInitialized());
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
   }
 
   @override
@@ -87,7 +78,7 @@ class _HomeViewState extends BasePageState<HomeView, HomeBloc> with SingleTicker
                     SizedBox(height: Dimens.d16.responsive()),
                     const _AllWalletsWidget(),
                     SizedBox(height: Dimens.d16.responsive()),
-                    StatisticWidget(tabController: _tabController),
+                    const StatisticWidget(),
                     SizedBox(height: Dimens.d16.responsive()),
                     const _RecentTransactionsWidget(),
                     SizedBox(height: Dimens.d28.responsive()),
