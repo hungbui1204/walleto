@@ -97,16 +97,7 @@ abstract class BasePageStateDelegate<T extends StatefulWidget, B extends BaseBlo
   Widget buildPageLoading() => const AppLoadingWidget();
 
   Widget buildSkeletonOrContent({required Widget skeleton, required Widget content}) {
-    return BlocBuilder<CommonBloc, CommonState>(
-      buildWhen: (previous, current) => previous.isLoading != current.isLoading,
-      builder: (context, state) {
-        if (state.isLoading) {
-          return skeleton;
-        }
-
-        return content;
-      },
-    );
+    return _SkeletonOrContent(skeleton: skeleton, content: content);
   }
 
   Widget buildPage(BuildContext context);
@@ -126,4 +117,40 @@ abstract class BasePageStateDelegate<T extends StatefulWidget, B extends BaseBlo
 
   @override
   void onInvalidToken() => commonBloc.add(const ForceLogoutButtonPressed());
+}
+
+/// Keeps skeleton on screen for the first paint, before [CommonBloc.isLoading]
+/// flips true, so empty states do not flash on tab open.
+class _SkeletonOrContent extends StatefulWidget {
+  const _SkeletonOrContent({required this.skeleton, required this.content});
+
+  final Widget skeleton;
+  final Widget content;
+
+  @override
+  State<_SkeletonOrContent> createState() => _SkeletonOrContentState();
+}
+
+class _SkeletonOrContentState extends State<_SkeletonOrContent> {
+  bool _hasCompletedInitialLoad = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocConsumer<CommonBloc, CommonState>(
+      listenWhen: (previous, current) => previous.isLoading && !current.isLoading,
+      listener: (context, state) {
+        if (!_hasCompletedInitialLoad) {
+          setState(() => _hasCompletedInitialLoad = true);
+        }
+      },
+      buildWhen: (previous, current) => previous.isLoading != current.isLoading,
+      builder: (context, state) {
+        if (state.isLoading || !_hasCompletedInitialLoad) {
+          return widget.skeleton;
+        }
+
+        return widget.content;
+      },
+    );
+  }
 }
