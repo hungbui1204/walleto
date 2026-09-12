@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:injectable/injectable.dart';
 import 'package:walleto/data/data.dart';
 import 'package:walleto/domain/domain.dart';
+import 'package:walleto/shared/shared.dart';
 
 @LazySingleton(as: Repository)
 class RepositoryImpl implements Repository {
@@ -15,7 +18,7 @@ class RepositoryImpl implements Repository {
     this._monthSummaryStatDataMapper,
     this._walletStatDataMapper,
     this._userDataMapper,
-    this._aiChatResponseDataMapper,
+    this._aiChatStreamEventDataMapper,
     this._aiChatHistoryMessageDataMapper,
     this._supabaseImageDataMapper,
     this._currencyDataMapper,
@@ -31,7 +34,7 @@ class RepositoryImpl implements Repository {
   final DailyStatDataMapper _dailyStatDataMapper;
   final MonthSummaryStatDataMapper _monthSummaryStatDataMapper;
   final UserDataMapper _userDataMapper;
-  final AiChatResponseDataMapper _aiChatResponseDataMapper;
+  final AiChatStreamEventDataMapper _aiChatStreamEventDataMapper;
   final AiChatHistoryMessageDataMapper _aiChatHistoryMessageDataMapper;
   final SupabaseImageDataMapper _supabaseImageDataMapper;
   final CurrencyDataMapper _currencyDataMapper;
@@ -325,10 +328,13 @@ class RepositoryImpl implements Repository {
   }
 
   @override
-  Future<AiChatSendResult> sendAiChatMessage({required String message}) async {
-    final response = await _appApiServices.sendAiChatMessage(message: message);
-
-    return _aiChatResponseDataMapper.mapToEntity(response);
+  Stream<AiChatStreamEvent> sendAiChatMessage({
+    required String message,
+    AppCancelToken? cancelToken,
+  }) {
+    return _appApiServices
+        .sendAiChatMessage(message: message, cancelToken: cancelToken)
+        .map(_aiChatStreamEventDataMapper.mapToEntity);
   }
 
   @override

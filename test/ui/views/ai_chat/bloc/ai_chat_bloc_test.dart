@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -24,6 +26,11 @@ void main() {
   const oldestUser = AiChatMessage(id: 3, content: 'First hello');
   const assistantReply = AiChatMessage(role: AiChatRole.assistant, content: 'You spent 50.');
   const sendResult = AiChatSendResult(message: assistantReply);
+  const persistedAssistantReply = AiChatMessage(
+    id: 102,
+    role: AiChatRole.assistant,
+    content: 'You spent 50.',
+  );
 
   late _MockGetAiChatHistoryUseCase getAiChatHistoryUseCase;
   late _MockSendAiChatMessageUseCase sendAiChatMessageUseCase;
@@ -70,9 +77,11 @@ void main() {
     when(
       () => getAiChatHistoryUseCase.execute(any()),
     ).thenAnswer((_) async => const GetAiChatHistoryOutput());
-    when(
-      () => sendAiChatMessageUseCase.execute(any()),
-    ).thenAnswer((_) async => const SendAiChatMessageOutput(result: sendResult));
+    when(() => sendAiChatMessageUseCase.execute(any())).thenAnswer(
+      (_) => Stream<SendAiChatMessageOutput>.fromIterable([
+        const SendAiChatMessageOutput(event: AiChatStreamEvent.completed(result: sendResult)),
+      ]),
+    );
   });
 
   blocTest<AiChatBloc, AiChatState>(
@@ -91,26 +100,321 @@ void main() {
   );
 
   blocTest<AiChatBloc, AiChatState>(
-    'appends the user bubble then the assistant reply when sending succeeds',
+    'appends a placeholder then the assistant reply when sending succeeds',
     build: buildBloc,
     act: (bloc) => bloc.add(const AiChatMessageSubmitted(message: '  How much?  ')),
     expect:
         () => const [
-          AiChatState(isSending: true, messages: [AiChatMessage(content: 'How much?')]),
           AiChatState(
-            messages: [AiChatMessage(content: 'How much?'), assistantReply],
-            historyLoadedCount: 2,
+            isSending: true,
+            messages: [
+              AiChatMessage(content: 'How much?'),
+              AiChatMessage(role: AiChatRole.assistant),
+            ],
           ),
+          AiChatState(messages: [AiChatMessage(content: 'How much?'), assistantReply]),
         ],
     verify: (_) {
       verify(
-        () => sendAiChatMessageUseCase.execute(const SendAiChatMessageInput(message: 'How much?')),
+        () => sendAiChatMessageUseCase.execute(
+          any(
+            that: isA<SendAiChatMessageInput>().having(
+              (input) => input.message,
+              'message',
+              'How much?',
+            ),
+          ),
+        ),
       ).called(1);
     },
   );
 
   blocTest<AiChatBloc, AiChatState>(
-    'restores messages and does not keep an assistant bubble when sending fails',
+    'does not advance historyLoadedCount on done',
+    setUp: () {
+      when(() => sendAiChatMessageUseCase.execute(any())).thenAnswer(
+        (_) => Stream<SendAiChatMessageOutput>.fromIterable([
+          const SendAiChatMessageOutput(
+            event: AiChatStreamEvent.completed(
+              result: AiChatSendResult(userMessageId: 101, message: persistedAssistantReply),
+            ),
+          ),
+        ]),
+      );
+    },
+    build: buildBloc,
+    act: (bloc) => bloc.add(const AiChatMessageSubmitted(message: 'How much?')),
+    expect:
+        () => const [
+          AiChatState(
+            isSending: true,
+            messages: [
+              AiChatMessage(content: 'How much?'),
+              AiChatMessage(role: AiChatRole.assistant),
+            ],
+          ),
+          AiChatState(messages: [AiChatMessage(content: 'How much?'), assistantReply]),
+        ],
+  );
+
+  blocTest<AiChatBloc, AiChatState>(
+    'copies persisted ids onto the last turn and advances historyLoadedCount by one turn',
+    setUp: () {
+      when(() => sendAiChatMessageUseCase.execute(any())).thenAnswer(
+        (_) => Stream<SendAiChatMessageOutput>.fromIterable([
+          const SendAiChatMessageOutput(event: AiChatStreamEvent.completed(result: sendResult)),
+          const SendAiChatMessageOutput(
+            event: AiChatStreamEvent.persisted(userMessageId: 101, assistantMessageId: 102),
+          ),
+        ]),
+      );
+    },
+    build: buildBloc,
+    act: (bloc) => bloc.add(const AiChatMessageSubmitted(message: 'How much?')),
+    expect:
+        () => const [
+          AiChatState(
+            isSending: true,
+            messages: [
+              AiChatMessage(content: 'How much?'),
+              AiChatMessage(role: AiChatRole.assistant),
+            ],
+          ),
+          AiChatState(messages: [AiChatMessage(content: 'How much?'), assistantReply]),
+          AiChatState(
+            messages: [AiChatMessage(id: 101, content: 'How much?'), persistedAssistantReply],
+            historyLoadedCount: 2,
+          ),
+        ],
+    verify: (bloc) {
+      expect(bloc.state.streamingPhase, AiChatStreamingPhase.idle);
+      expect(bloc.state.historyLoadedCount, 2);
+    },
+  );
+
+  blocTest<AiChatBloc, AiChatState>(
+    'moves to loadingContext before the first delta and returns to idle on done',
+    setUp: () {
+      when(() => sendAiChatMessageUseCase.execute(any())).thenAnswer(
+        (_) => Stream<SendAiChatMessageOutput>.fromIterable([
+          const SendAiChatMessageOutput(
+            event: AiChatStreamEvent.status(status: AiChatSseConstants.statusLoadingContext),
+          ),
+          const SendAiChatMessageOutput(event: AiChatStreamEvent.delta(content: 'You spent 50.')),
+          const SendAiChatMessageOutput(event: AiChatStreamEvent.completed(result: sendResult)),
+        ]),
+      );
+    },
+    build: buildBloc,
+    act: (bloc) => bloc.add(const AiChatMessageSubmitted(message: 'How much?')),
+    expect:
+        () => const [
+          AiChatState(
+            isSending: true,
+            messages: [
+              AiChatMessage(content: 'How much?'),
+              AiChatMessage(role: AiChatRole.assistant),
+            ],
+          ),
+          AiChatState(
+            isSending: true,
+            streamingPhase: AiChatStreamingPhase.loadingContext,
+            messages: [
+              AiChatMessage(content: 'How much?'),
+              AiChatMessage(role: AiChatRole.assistant),
+            ],
+          ),
+          AiChatState(
+            isSending: true,
+            streamingPhase: AiChatStreamingPhase.generating,
+            messages: [
+              AiChatMessage(content: 'How much?'),
+              AiChatMessage(role: AiChatRole.assistant, content: 'You spent 50.'),
+            ],
+          ),
+          AiChatState(messages: [AiChatMessage(content: 'How much?'), assistantReply]),
+        ],
+  );
+
+  blocTest<AiChatBloc, AiChatState>(
+    'returns to idle and keeps the user plus partial assistant text when stopped after loadingContext',
+    setUp: () {
+      when(() => sendAiChatMessageUseCase.execute(any())).thenAnswer((invocation) {
+        final input = invocation.positionalArguments.first as SendAiChatMessageInput;
+        final controller = StreamController<SendAiChatMessageOutput>();
+        input.cancelToken?.whenCancel(() {
+          if (!controller.isClosed) {
+            controller
+              ..addError(const RemoteException(kind: RemoteExceptionKind.cancellation))
+              ..close();
+          }
+        });
+        scheduleMicrotask(() {
+          if (!controller.isClosed) {
+            controller.add(
+              const SendAiChatMessageOutput(
+                event: AiChatStreamEvent.status(status: AiChatSseConstants.statusLoadingContext),
+              ),
+            );
+            controller.add(
+              const SendAiChatMessageOutput(event: AiChatStreamEvent.delta(content: 'You ')),
+            );
+          }
+        });
+        return controller.stream;
+      });
+    },
+    build: buildBloc,
+    act: (bloc) async {
+      bloc.add(const AiChatMessageSubmitted(message: 'How much?'));
+      await Future<void>.delayed(const Duration(milliseconds: 10));
+      bloc.add(const AiChatGenerationStopRequested());
+    },
+    wait: const Duration(milliseconds: 20),
+    expect:
+        () => const [
+          AiChatState(
+            isSending: true,
+            messages: [
+              AiChatMessage(content: 'How much?'),
+              AiChatMessage(role: AiChatRole.assistant),
+            ],
+          ),
+          AiChatState(
+            isSending: true,
+            streamingPhase: AiChatStreamingPhase.loadingContext,
+            messages: [
+              AiChatMessage(content: 'How much?'),
+              AiChatMessage(role: AiChatRole.assistant),
+            ],
+          ),
+          AiChatState(
+            isSending: true,
+            streamingPhase: AiChatStreamingPhase.generating,
+            messages: [
+              AiChatMessage(content: 'How much?'),
+              AiChatMessage(role: AiChatRole.assistant, content: 'You '),
+            ],
+          ),
+          AiChatState(
+            messages: [
+              AiChatMessage(content: 'How much?'),
+              AiChatMessage(role: AiChatRole.assistant, content: 'You '),
+            ],
+          ),
+        ],
+    verify: (bloc) {
+      expect(bloc.state.streamingPhase, AiChatStreamingPhase.idle);
+      expect(bloc.state.messages, [
+        const AiChatMessage(content: 'How much?'),
+        const AiChatMessage(role: AiChatRole.assistant, content: 'You '),
+      ]);
+    },
+  );
+
+  blocTest<AiChatBloc, AiChatState>(
+    'streams assistant deltas into the placeholder bubble',
+    setUp: () {
+      when(() => sendAiChatMessageUseCase.execute(any())).thenAnswer((_) async* {
+        yield const SendAiChatMessageOutput(event: AiChatStreamEvent.delta(content: 'You '));
+        await Future<void>.delayed(DurationConstants.aiChatStreamUiThrottle);
+        yield const SendAiChatMessageOutput(event: AiChatStreamEvent.delta(content: 'spent 50.'));
+        yield const SendAiChatMessageOutput(event: AiChatStreamEvent.completed(result: sendResult));
+      });
+    },
+    build: buildBloc,
+    act: (bloc) => bloc.add(const AiChatMessageSubmitted(message: 'How much?')),
+    wait: DurationConstants.aiChatStreamUiThrottle + const Duration(milliseconds: 20),
+    expect:
+        () => const [
+          AiChatState(
+            isSending: true,
+            messages: [
+              AiChatMessage(content: 'How much?'),
+              AiChatMessage(role: AiChatRole.assistant),
+            ],
+          ),
+          AiChatState(
+            isSending: true,
+            streamingPhase: AiChatStreamingPhase.generating,
+            messages: [
+              AiChatMessage(content: 'How much?'),
+              AiChatMessage(role: AiChatRole.assistant, content: 'You '),
+            ],
+          ),
+          AiChatState(
+            isSending: true,
+            streamingPhase: AiChatStreamingPhase.generating,
+            messages: [
+              AiChatMessage(content: 'How much?'),
+              AiChatMessage(role: AiChatRole.assistant, content: 'You spent 50.'),
+            ],
+          ),
+          AiChatState(messages: [AiChatMessage(content: 'How much?'), assistantReply]),
+        ],
+  );
+
+  blocTest<AiChatBloc, AiChatState>(
+    'keeps throttled trailing deltas when completed arrives',
+    setUp: () {
+      when(() => sendAiChatMessageUseCase.execute(any())).thenAnswer(
+        (_) => Stream<SendAiChatMessageOutput>.fromIterable([
+          const SendAiChatMessageOutput(event: AiChatStreamEvent.delta(content: 'You ')),
+          const SendAiChatMessageOutput(event: AiChatStreamEvent.delta(content: 'spent 50.')),
+          const SendAiChatMessageOutput(event: AiChatStreamEvent.completed(result: sendResult)),
+        ]),
+      );
+    },
+    build: buildBloc,
+    act: (bloc) => bloc.add(const AiChatMessageSubmitted(message: 'How much?')),
+    verify: (bloc) {
+      expect(bloc.state.isSending, isFalse);
+      expect(bloc.state.streamingPhase, AiChatStreamingPhase.idle);
+      expect(bloc.state.messages, [const AiChatMessage(content: 'How much?'), assistantReply]);
+    },
+  );
+
+  blocTest<AiChatBloc, AiChatState>(
+    'does not overwrite streamed assistant text with a different done reply',
+    setUp: () {
+      when(() => sendAiChatMessageUseCase.execute(any())).thenAnswer(
+        (_) => Stream<SendAiChatMessageOutput>.fromIterable([
+          const SendAiChatMessageOutput(event: AiChatStreamEvent.delta(content: 'You spent 50.')),
+          const SendAiChatMessageOutput(
+            event: AiChatStreamEvent.completed(
+              result: AiChatSendResult(
+                message: AiChatMessage(role: AiChatRole.assistant, content: 'TOTAL OVERRIDE'),
+              ),
+            ),
+          ),
+        ]),
+      );
+    },
+    build: buildBloc,
+    act: (bloc) => bloc.add(const AiChatMessageSubmitted(message: 'How much?')),
+    expect:
+        () => const [
+          AiChatState(
+            isSending: true,
+            messages: [
+              AiChatMessage(content: 'How much?'),
+              AiChatMessage(role: AiChatRole.assistant),
+            ],
+          ),
+          AiChatState(
+            isSending: true,
+            streamingPhase: AiChatStreamingPhase.generating,
+            messages: [
+              AiChatMessage(content: 'How much?'),
+              AiChatMessage(role: AiChatRole.assistant, content: 'You spent 50.'),
+            ],
+          ),
+          AiChatState(messages: [AiChatMessage(content: 'How much?'), assistantReply]),
+        ],
+  );
+
+  blocTest<AiChatBloc, AiChatState>(
+    'keeps the user message and removes the empty assistant bubble when sending fails before deltas',
     setUp: () {
       when(
         () => sendAiChatMessageUseCase.execute(any()),
@@ -121,9 +425,136 @@ void main() {
     act: (bloc) => bloc.add(const AiChatMessageSubmitted(message: 'Again')),
     expect:
         () => const [
-          AiChatState(isSending: true, messages: [olderUser, AiChatMessage(content: 'Again')]),
-          AiChatState(messages: [olderUser]),
+          AiChatState(
+            isSending: true,
+            messages: [
+              olderUser,
+              AiChatMessage(content: 'Again'),
+              AiChatMessage(role: AiChatRole.assistant),
+            ],
+          ),
+          AiChatState(messages: [olderUser, AiChatMessage(content: 'Again')]),
         ],
+    verify: (_) {
+      verify(
+        () => commonBloc.add(
+          any(
+            that: isA<ExceptionEmitted>().having(
+              (event) => event.appExceptionWrapper.doOnRetry,
+              'doOnRetry',
+              isNull,
+            ),
+          ),
+        ),
+      ).called(1);
+    },
+  );
+
+  blocTest<AiChatBloc, AiChatState>(
+    'keeps streamed assistant text when sending fails after a delta',
+    setUp: () {
+      when(() => sendAiChatMessageUseCase.execute(any())).thenAnswer((_) {
+        return Stream<SendAiChatMessageOutput>.fromIterable([
+          const SendAiChatMessageOutput(event: AiChatStreamEvent.delta(content: 'You ')),
+        ]).asyncExpand((output) async* {
+          yield output;
+          throw const RemoteException(kind: RemoteExceptionKind.network);
+        });
+      });
+    },
+    build: buildBloc,
+    act: (bloc) => bloc.add(const AiChatMessageSubmitted(message: 'How much?')),
+    expect:
+        () => const [
+          AiChatState(
+            isSending: true,
+            messages: [
+              AiChatMessage(content: 'How much?'),
+              AiChatMessage(role: AiChatRole.assistant),
+            ],
+          ),
+          AiChatState(
+            isSending: true,
+            streamingPhase: AiChatStreamingPhase.generating,
+            messages: [
+              AiChatMessage(content: 'How much?'),
+              AiChatMessage(role: AiChatRole.assistant, content: 'You '),
+            ],
+          ),
+          AiChatState(
+            messages: [
+              AiChatMessage(content: 'How much?'),
+              AiChatMessage(role: AiChatRole.assistant, content: 'You '),
+            ],
+          ),
+        ],
+    verify: (bloc) {
+      expect(bloc.state.streamingPhase, AiChatStreamingPhase.idle);
+    },
+  );
+
+  blocTest<AiChatBloc, AiChatState>(
+    'cancels the in-flight token and keeps the user message plus streamed assistant text',
+    setUp: () {
+      when(() => sendAiChatMessageUseCase.execute(any())).thenAnswer((invocation) {
+        final input = invocation.positionalArguments.first as SendAiChatMessageInput;
+        final controller = StreamController<SendAiChatMessageOutput>();
+        input.cancelToken?.whenCancel(() {
+          if (!controller.isClosed) {
+            controller
+              ..addError(const RemoteException(kind: RemoteExceptionKind.cancellation))
+              ..close();
+          }
+        });
+        scheduleMicrotask(() {
+          if (!controller.isClosed) {
+            controller.add(
+              const SendAiChatMessageOutput(event: AiChatStreamEvent.delta(content: 'You ')),
+            );
+          }
+        });
+        return controller.stream;
+      });
+    },
+    build: buildBloc,
+    act: (bloc) async {
+      bloc.add(const AiChatMessageSubmitted(message: 'How much?'));
+      await Future<void>.delayed(const Duration(milliseconds: 10));
+      bloc.add(const AiChatGenerationStopRequested());
+    },
+    wait: const Duration(milliseconds: 20),
+    expect:
+        () => const [
+          AiChatState(
+            isSending: true,
+            messages: [
+              AiChatMessage(content: 'How much?'),
+              AiChatMessage(role: AiChatRole.assistant),
+            ],
+          ),
+          AiChatState(
+            isSending: true,
+            streamingPhase: AiChatStreamingPhase.generating,
+            messages: [
+              AiChatMessage(content: 'How much?'),
+              AiChatMessage(role: AiChatRole.assistant, content: 'You '),
+            ],
+          ),
+          AiChatState(
+            messages: [
+              AiChatMessage(content: 'How much?'),
+              AiChatMessage(role: AiChatRole.assistant, content: 'You '),
+            ],
+          ),
+        ],
+    verify: (bloc) {
+      final captured =
+          verify(() => sendAiChatMessageUseCase.execute(captureAny())).captured.single
+              as SendAiChatMessageInput;
+      expect(captured.cancelToken?.isCancelled, isTrue);
+      expect(bloc.state.streamingPhase, AiChatStreamingPhase.idle);
+      verifyNever(() => commonBloc.add(any(that: isA<ExceptionEmitted>())));
+    },
   );
 
   blocTest<AiChatBloc, AiChatState>(

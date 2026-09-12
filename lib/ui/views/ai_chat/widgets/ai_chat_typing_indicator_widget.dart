@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:walleto/resources/resources.dart';
 
 class AiChatTypingIndicatorWidget extends StatelessWidget {
-  const AiChatTypingIndicatorWidget({super.key});
+  const AiChatTypingIndicatorWidget({super.key, required this.label});
+
+  final String label;
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +17,7 @@ class AiChatTypingIndicatorWidget extends StatelessWidget {
           vertical: Dimens.d12.responsive(),
         ),
         decoration: AppDecorations.glassPanel(),
-        child: Text(S.current.aiChatTyping, style: AppTextStyles.s14wNormalGrey()),
+        child: Text(label, style: AppTextStyles.s14wNormalGrey()),
       ),
     );
   }

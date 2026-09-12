@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:walleto/data/data.dart';
 import 'package:walleto/shared/shared.dart';
@@ -74,5 +76,70 @@ class ApiClient {
       case RequestMethod.delete:
         return dio.delete(path, data: body, queryParameters: queryParameters, options: options);
     }
+  }
+
+  Future<Response<ResponseBody>> requestStream({
+    required String path,
+    Object? body,
+    Options? options,
+    CancelToken? cancelToken,
+  }) async {
+    try {
+      return await dio.post<ResponseBody>(
+        path,
+        data: body,
+        cancelToken: cancelToken,
+        options: Options(
+          extra: options?.extra,
+          headers: {
+            ...?options?.headers,
+            ServerRequestResponseConstants.acceptHeader:
+                ServerRequestResponseConstants.acceptTextEventStream,
+          },
+          contentType: options?.contentType,
+          responseType: ResponseType.stream,
+          sendTimeout: options?.sendTimeout,
+          receiveTimeout: options?.receiveTimeout,
+          validateStatus: options?.validateStatus,
+        ),
+      );
+    } on DioException catch (error) {
+      throw await _mapStreamingDioException(error);
+    } catch (error) {
+      throw DioExceptionMapper(
+        BaseErrorResponseMapper.fromType(errorResponseMapperType),
+      ).map(error);
+    }
+  }
+
+  Future<RemoteException> _mapStreamingDioException(DioException error) async {
+    final mapper = DioExceptionMapper(BaseErrorResponseMapper.fromType(errorResponseMapperType));
+    final data = error.response?.data;
+
+    if (data is ResponseBody) {
+      final raw = await utf8.decoder.bind(data.stream).join();
+      Object? parsed = raw;
+      try {
+        parsed = jsonDecode(raw);
+      } on FormatException {
+        parsed = raw;
+      }
+
+      return mapper.map(
+        DioException(
+          requestOptions: error.requestOptions,
+          response: Response<dynamic>(
+            requestOptions: error.requestOptions,
+            statusCode: error.response?.statusCode,
+            headers: error.response?.headers,
+            data: parsed,
+          ),
+          type: error.type,
+          error: error.error,
+        ),
+      );
+    }
+
+    return mapper.map(error);
   }
 }

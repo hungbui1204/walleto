@@ -3,14 +3,19 @@ import 'package:walleto/domain/domain.dart';
 import 'package:walleto/resources/resources.dart';
 
 class AiChatMessageBubbleWidget extends StatelessWidget {
-  const AiChatMessageBubbleWidget({super.key, required this.message});
+  const AiChatMessageBubbleWidget({super.key, required this.message, this.isStreaming = false});
 
   final AiChatMessage message;
+  final bool isStreaming;
 
   @override
   Widget build(BuildContext context) {
     final isUser = message.role == AiChatRole.user;
     final radius = Dimens.d16.responsive();
+    final style =
+        isUser
+            ? AppTextStyles.s14wNormalBlack().copyWith(color: onPrimaryColor)
+            : AppTextStyles.s14wNormalBlack();
 
     return Align(
       alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
@@ -32,15 +37,17 @@ class AiChatMessageBubbleWidget extends StatelessWidget {
                     ),
                   )
                   : AppDecorations.glassPanel(radius: radius),
-          child: Text(
-            message.content,
-            style:
-                isUser
-                    ? AppTextStyles.s14wNormalBlack().copyWith(color: onPrimaryColor)
-                    : AppTextStyles.s14wNormalBlack(),
-          ),
+          child: _body(isUser: isUser, style: style),
         ),
       ),
     );
+  }
+
+  Widget _body({required bool isUser, required TextStyle style}) {
+    if (!isUser && !isStreaming) {
+      return SelectableText(message.content, style: style);
+    }
+
+    return SelectableText(message.content, style: style);
   }
 }

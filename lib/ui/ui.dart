@@ -29,6 +29,8 @@ export 'views/ai_chat/bloc/ai_chat_bloc.dart';
 export 'views/ai_chat/widgets/ai_chat_composer_widget.dart';
 export 'views/ai_chat/widgets/ai_chat_empty_state_widget.dart';
 export 'views/ai_chat/widgets/ai_chat_message_bubble_widget.dart';
+export 'views/ai_chat/widgets/ai_chat_message_list_widget.dart';
+export 'views/ai_chat/widgets/ai_chat_streaming_message_widget.dart';
 export 'views/ai_chat/widgets/ai_chat_typing_indicator_widget.dart';
 export 'views/auth/bloc/login_bloc.dart';
 export 'views/auth/login_view.dart';

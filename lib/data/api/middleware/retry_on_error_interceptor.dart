@@ -46,6 +46,10 @@ class RetryOnErrorInterceptor extends BaseInterceptor {
   }
 
   bool _shouldRetry(DioException error) {
+    if (error.requestOptions.responseType == ResponseType.stream) {
+      return false;
+    }
+
     return error.type != DioExceptionType.cancel && error.type != DioExceptionType.badResponse;
   }
 }
