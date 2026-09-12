@@ -54,26 +54,23 @@ class AppThemes {
         foregroundColor: onPrimaryColor,
         elevation: 4,
       ),
-      dividerTheme: const DividerThemeData(
-        color: frameColor,
-        thickness: 1,
-        space: 1,
-      ),
+      dividerTheme: const DividerThemeData(color: frameColor, thickness: 1, space: 1),
       bottomSheetTheme: const BottomSheetThemeData(
         backgroundColor: surfaceColor,
         modalBackgroundColor: surfaceColor,
         surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-          side: BorderSide(color: frameColor),
+          // Matches panel radius token (d16). ThemeData is built once at app start.
+          borderRadius: BorderRadius.vertical(top: Radius.circular(Dimens.d16)),
+          side: BorderSide(color: glassHairlineColor),
         ),
       ),
       dialogTheme: const DialogThemeData(
         backgroundColor: surfaceColor,
         surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(16)),
-          side: BorderSide(color: frameColor),
+          borderRadius: BorderRadius.all(Radius.circular(Dimens.d16)),
+          side: BorderSide(color: glassHairlineColor),
         ),
       ),
       textSelectionTheme: TextSelectionThemeData(
@@ -96,11 +93,7 @@ class AppThemes {
         dividerColor: frameColor,
         indicatorSize: TabBarIndicatorSize.label,
         overlayColor: WidgetStatePropertyAll(primaryShade1Color),
-        labelStyle: TextStyle(
-          fontFamily: bodyFont,
-          fontWeight: FontWeight.w700,
-          fontSize: 15,
-        ),
+        labelStyle: TextStyle(fontFamily: bodyFont, fontWeight: FontWeight.w700, fontSize: 15),
         unselectedLabelStyle: TextStyle(
           fontFamily: bodyFont,
           fontWeight: FontWeight.w500,

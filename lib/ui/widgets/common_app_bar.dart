@@ -16,7 +16,7 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: transParentColor,
       elevation: 0,
       scrolledUnderElevation: 0,
-      title: Text(title, style: AppTextStyles.s20wBoldBlack()),
+      title: Text(title, style: AppThemes.display(fontSize: Dimens.d22.responsive())),
       actions: actions,
     );
   }

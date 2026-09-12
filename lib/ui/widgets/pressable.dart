@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:walleto/resources/resources.dart';
 import 'package:walleto/shared/shared.dart';
+
+enum PressableFeedback { scale, opacity, none }
 
 class Pressable extends StatefulWidget {
   const Pressable({
@@ -8,12 +12,17 @@ class Pressable extends StatefulWidget {
     this.onTap,
     this.borderRadius,
     this.semanticLabel,
+    this.feedback = PressableFeedback.scale,
   });
+
+  static const double pressedScale = 0.97;
+  static const double pressedOpacity = 0.72;
 
   final Widget child;
   final VoidCallback? onTap;
   final BorderRadius? borderRadius;
   final String? semanticLabel;
+  final PressableFeedback feedback;
 
   @override
   State<Pressable> createState() => _PressableState();
@@ -27,11 +36,23 @@ class _PressableState extends State<Pressable> {
     setState(() => _pressed = value);
   }
 
+  void _handleTap() {
+    final onTap = widget.onTap;
+    if (onTap == null) return;
+    HapticFeedback.selectionClick();
+    onTap();
+  }
+
   @override
   Widget build(BuildContext context) {
     final enabled = widget.onTap != null;
+    final feedback = enabled ? widget.feedback : PressableFeedback.none;
     final reduceMotion = MediaQuery.disableAnimationsOf(context);
-    final scale = !enabled || !_pressed ? 1.0 : 0.97;
+    final duration = reduceMotion ? Duration.zero : DurationConstants.microInteraction;
+    final radius = widget.borderRadius ?? AppDecorations.panelRadius();
+    final scale = feedback == PressableFeedback.scale && _pressed ? Pressable.pressedScale : 1.0;
+    final opacity =
+        feedback == PressableFeedback.opacity && _pressed ? Pressable.pressedOpacity : 1.0;
 
     return Semantics(
       button: enabled,
@@ -41,18 +62,23 @@ class _PressableState extends State<Pressable> {
         cursor: enabled ? SystemMouseCursors.click : SystemMouseCursors.basic,
         child: GestureDetector(
           behavior: HitTestBehavior.opaque,
-          onTap: widget.onTap,
+          onTap: enabled ? _handleTap : null,
           onTapDown: enabled ? (_) => _setPressed(true) : null,
           onTapUp: enabled ? (_) => _setPressed(false) : null,
           onTapCancel: enabled ? () => _setPressed(false) : null,
-          child: AnimatedScale(
-            scale: scale,
-            duration:
-                reduceMotion
-                    ? Duration.zero
-                    : DurationConstants.microInteraction,
-            curve: Curves.easeOut,
-            child: widget.child,
+          child: ClipRRect(
+            borderRadius: radius,
+            child: AnimatedScale(
+              scale: scale,
+              duration: duration,
+              curve: Curves.easeOut,
+              child: AnimatedOpacity(
+                opacity: opacity,
+                duration: duration,
+                curve: Curves.easeOut,
+                child: widget.child,
+              ),
+            ),
           ),
         ),
       ),
