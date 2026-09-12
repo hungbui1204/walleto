@@ -97,6 +97,10 @@ void main() {
         () => const [
           AiChatState(messages: [olderUser, olderAssistant], historyLoadedCount: 2),
         ],
+    verify: (_) {
+      verify(() => commonBloc.add(const LoadingVisibilityEmitted(isLoading: true))).called(1);
+      verify(() => commonBloc.add(const LoadingVisibilityEmitted(isLoading: false))).called(1);
+    },
   );
 
   blocTest<AiChatBloc, AiChatState>(
@@ -126,6 +130,7 @@ void main() {
           ),
         ),
       ).called(1);
+      verifyNever(() => commonBloc.add(const LoadingVisibilityEmitted(isLoading: true)));
     },
   );
 
@@ -599,6 +604,7 @@ void main() {
       verify(
         () => getAiChatHistoryUseCase.execute(const GetAiChatHistoryInput(offset: 20)),
       ).called(1);
+      verifyNever(() => commonBloc.add(const LoadingVisibilityEmitted(isLoading: true)));
     },
   );
 
