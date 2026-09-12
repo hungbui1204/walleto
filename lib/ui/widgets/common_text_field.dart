@@ -15,6 +15,9 @@ class CommonTextField extends StatefulWidget {
     this.prefixBackgroundColor,
     this.maxLength = 100,
     this.keyboardType = TextInputType.text,
+    this.enabled = true,
+    this.onSubmitted,
+    this.textInputAction,
   });
 
   final void Function(String)? onChanged;
@@ -27,6 +30,9 @@ class CommonTextField extends StatefulWidget {
   final int maxLines;
   final int maxLength;
   final TextInputType keyboardType;
+  final bool enabled;
+  final ValueChanged<String>? onSubmitted;
+  final TextInputAction? textInputAction;
 
   @override
   State<CommonTextField> createState() => _CommonTextFieldState();
@@ -47,6 +53,9 @@ class _CommonTextFieldState extends State<CommonTextField> {
     return TextFormField(
       onChanged: widget.onChanged,
       controller: widget.controller,
+      enabled: widget.enabled,
+      onFieldSubmitted: widget.onSubmitted,
+      textInputAction: widget.textInputAction,
       style: AppTextStyles.s14wNormalBlack(),
       obscureText: widget.isPasswordField ? isVisible : false,
       maxLines: widget.maxLines,
@@ -73,9 +82,7 @@ class _CommonTextFieldState extends State<CommonTextField> {
         prefixIcon:
             widget.prefixIcon != null
                 ? Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: Dimens.d12.responsive(),
-                  ),
+                  padding: EdgeInsets.symmetric(horizontal: Dimens.d12.responsive()),
                   child: ColorFiltered(
                     colorFilter: ColorFilter.mode(
                       widget.prefixBackgroundColor ?? darkGreyColor,
@@ -98,9 +105,7 @@ class _CommonTextFieldState extends State<CommonTextField> {
                     });
                   },
                   icon: Icon(
-                    isVisible
-                        ? Icons.visibility_outlined
-                        : Icons.visibility_off_outlined,
+                    isVisible ? Icons.visibility_outlined : Icons.visibility_off_outlined,
                     color: darkGreyColor,
                   ),
                 )

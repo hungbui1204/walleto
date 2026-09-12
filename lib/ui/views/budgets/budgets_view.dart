@@ -11,8 +11,8 @@ class BudgetsView extends StatefulWidget {
   State<BudgetsView> createState() => _BudgetsViewState();
 }
 
-/// Placeholder tab until budgets has a product requirement. Uses [BudgetsBloc]
-/// only because [BasePageState] requires a bloc — not a real budgets feature.
+/// Placeholder kept for future budgets product work. The budgets bottom tab
+/// currently opens [AiChatView] as its initial route.
 class _BudgetsViewState extends BasePageState<BudgetsView, BudgetsBloc> {
   @override
   Widget buildPage(BuildContext context) {

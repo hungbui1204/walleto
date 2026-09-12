@@ -95,4 +95,8 @@ abstract class Repository {
   Future<void> editWallet({required Wallet wallet});
 
   Future<Currency> getUserDefaultCurrency();
+
+  Future<AiChatSendResult> sendAiChatMessage({required String message});
+
+  Future<List<AiChatMessage>> getAiChatHistory({required int offset, required int limit});
 }

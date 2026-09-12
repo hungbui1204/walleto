@@ -82,7 +82,8 @@ class AppRouter extends RootStackRouter {
           path: 'budgets',
           page: BottomTabBudgetsRouter.page,
           children: [
-            AutoRoute(initial: true, page: BudgetsRoute.page),
+            AutoRoute(initial: true, page: AiChatRoute.page),
+            AutoRoute(page: BudgetsRoute.page, path: 'overview'),
             AutoRoute(
               page: CreateTransactionRoute.page,
               path: 'create-transaction',

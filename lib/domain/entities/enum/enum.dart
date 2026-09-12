@@ -24,3 +24,5 @@ enum CategoryType { expense, income }
 enum TargetMonth { current, previous }
 
 enum IconType { category, wallet }
+
+enum AiChatRole { user, assistant }

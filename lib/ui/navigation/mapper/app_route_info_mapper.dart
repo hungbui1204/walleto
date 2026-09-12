@@ -22,6 +22,7 @@ class AppRouteInfoMapper extends BaseRouteInfoMapper {
       ResetPassword() => const ResetPasswordRoute(),
       EditTransaction(:final transaction) => EditTransactionRoute(transaction: transaction),
       EditWallet(:final wallet) => EditWalletRoute(wallet: wallet),
+      AiChat() => const AiChatRoute(),
     };
   }
 }
