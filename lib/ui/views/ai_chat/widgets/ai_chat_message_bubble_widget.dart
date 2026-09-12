@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:walleto/domain/domain.dart';
 import 'package:walleto/resources/resources.dart';
+import 'package:walleto/ui/ui.dart';
 
 class AiChatMessageBubbleWidget extends StatelessWidget {
   const AiChatMessageBubbleWidget({super.key, required this.message, this.isStreaming = false});
@@ -45,7 +46,7 @@ class AiChatMessageBubbleWidget extends StatelessWidget {
 
   Widget _body({required bool isUser, required TextStyle style}) {
     if (!isUser && !isStreaming) {
-      return SelectableText(message.content, style: style);
+      return AiChatAssistantMarkdownWidget(content: message.content);
     }
 
     return SelectableText(message.content, style: style);

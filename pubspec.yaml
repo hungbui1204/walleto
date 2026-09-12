@@ -59,6 +59,7 @@ dependencies:
   local_auth_android: 1.0.49
   local_auth_darwin: 1.4.3
   flutter_widget_from_html: 0.16.0
+  markdown_widget: 2.3.2+8
   timezone: 0.10.1
   media_scanner: 2.2.0
 
