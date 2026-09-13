@@ -1,67 +1,40 @@
 import { serve } from "https://deno.land/std@0.178.0/http/server.ts";
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+import {
+  isValidOtpCode,
+  jsonResponse,
+  normalizeEmail,
+  peekValidOtp,
+} from "../_shared/otp.ts";
 
 const supabaseAdmin = createClient(
   Deno.env.get("SUPABASE_URL")!,
-  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
 );
 
 serve(async (req) => {
   try {
-    const { email, code } = await req.json();
-
-    // Get unused and unexpired OTP
-    const { data: otpRow, error } = await supabaseAdmin
-      .from("otp_codes")
-      .select("*")
-      .eq("email", email)
-      .eq("code", code)
-      .eq("used", false)
-      .gte("expires_at", new Date().toISOString())
-      .maybeSingle();
-
-      if (error) {
-      console.error("Supabase error:", error);
+    const { email: rawEmail, code } = await req.json();
+    const email = normalizeEmail(rawEmail);
+    if (!email || !isValidOtpCode(code)) {
+      return jsonResponse({
+        msg: "Invalid or expired OTP",
+        code: 400,
+        error_code: "invalid_or_expired_otp",
+      }, 400);
     }
 
-      console.log("Verifying OTP for:", email, code);
+    const valid = await peekValidOtp(supabaseAdmin, email, code, "signup");
+    if (!valid) {
+      return jsonResponse({
+        msg: "Invalid or expired OTP",
+        code: 400,
+        error_code: "invalid_or_expired_otp",
+      }, 400);
+    }
 
-
-    if (!otpRow) return new Response(JSON.stringify({ 
-      msg: "Invalid or expired OTP",
-      code: 400,
-      error_code: "invalid_or_expired_otp",
-    }), { 
-      status: 400,
-      headers: {
-          "Content-Type": "application/json"
-        }
-    });
-
-    // Mark OTP as used
-    await supabaseAdmin
-      .from("otp_codes")
-      .update({ used: true })
-      .eq("id", otpRow.id);
-
-    return new Response(JSON.stringify({ 
-      msg: "Email confirmed successfully"
-    }), {
-      status: 200,
-      headers: {
-        "Content-Type": "application/json"
-      }
-    });
-
+    return jsonResponse({ msg: "Email confirmed successfully" });
   } catch (err) {
-    return new Response(JSON.stringify({ 
-      msg: err.message,
-      code: 500,
-    }), { 
-      status: 500,
-      headers: {
-        "Content-Type": "application/json"
-      }
-    });
+    return jsonResponse({ msg: err.message, code: 500 }, 500);
   }
 });
