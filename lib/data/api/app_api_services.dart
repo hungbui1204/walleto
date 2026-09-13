@@ -210,11 +210,15 @@ class AppApiServices {
     );
   }
 
-  Future<void> createUserByEmail({required String email, required String password}) {
+  Future<void> createUserByEmail({
+    required String email,
+    required String password,
+    required String code,
+  }) {
     return _serverApiFunctionsClient.request(
       method: RequestMethod.post,
       path: '/create_user',
-      body: {'email': email, 'password': password},
+      body: {'email': email, 'password': password, 'code': code},
     );
   }
 
@@ -304,11 +308,15 @@ class AppApiServices {
     );
   }
 
-  Future<void> resetUserPassword({required String email, required String password}) {
+  Future<void> resetUserPassword({
+    required String email,
+    required String password,
+    required String code,
+  }) {
     return _serverApiFunctionsClient.request(
       method: RequestMethod.post,
       path: '/reset_user_password',
-      body: {'email': email, 'password': password},
+      body: {'email': email, 'password': password, 'code': code},
     );
   }
 

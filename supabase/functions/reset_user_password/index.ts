@@ -1,50 +1,59 @@
 import { serve } from "https://deno.land/std@0.178.0/http/server.ts";
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+import {
+  consumeValidOtp,
+  isValidOtpCode,
+  jsonResponse,
+  normalizeEmail,
+} from "../_shared/otp.ts";
 
 const supabaseAdmin = createClient(
   Deno.env.get("SUPABASE_URL")!,
-  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
 );
 
 serve(async (req) => {
   try {
-    const { email, password } = await req.json();
+    const { email: rawEmail, password, code } = await req.json();
+    const email = normalizeEmail(rawEmail);
 
-    // 1. Validate + check user exists (RPC của bạn)
-    const { data: exists } = await supabaseAdmin.rpc("check_user_exists", { target_email: email });
-    if (exists !== true) {
-      return new Response(JSON.stringify({ 
-        msg: "User not found", 
-        code: 404 
-      }), { status: 404 });
+    if (!email || typeof password !== "string" || !password || !isValidOtpCode(code)) {
+      return jsonResponse({
+        msg: "Invalid or expired OTP",
+        code: 400,
+        error_code: "invalid_or_expired_otp",
+      }, 400);
     }
 
-    // 2. Lấy user ID siêu nhanh (1 query)
+    const consumed = await consumeValidOtp(supabaseAdmin, email, code, "reset");
+    if (!consumed) {
+      return jsonResponse({
+        msg: "Invalid or expired OTP",
+        code: 400,
+        error_code: "invalid_or_expired_otp",
+      }, 400);
+    }
+
     const { data: userId, error: idError } = await supabaseAdmin.rpc(
-      "get_user_id_by_email", 
-      { p_email: email }
+      "get_user_id_by_email",
+      { p_email: email },
     );
+    if (idError || !userId) {
+      return jsonResponse({
+        msg: "Unable to reset password",
+        code: 400,
+        error_code: "unable_to_reset_password",
+      }, 400);
+    }
 
-    if (idError || !userId) throw new Error("User ID not found");
-
-    // 3. Update password (1 query)
-    const { data: updatedUser, error: updateError } = await supabaseAdmin.auth.admin.updateUserById(
-      userId, 
-      { password }
+    const { error: updateError } = await supabaseAdmin.auth.admin.updateUserById(
+      userId,
+      { password },
     );
-
     if (updateError) throw updateError;
 
-    return new Response(JSON.stringify({ 
-      msg: "Password reset successfully", 
-      user_id: updatedUser.user.id 
-    }), { status: 200 });
-
+    return jsonResponse({ msg: "Password reset successfully" });
   } catch (err) {
-    return new Response(JSON.stringify({ 
-      msg: err.message, 
-      code: 500 
-    }), { status: 500 });
+    return jsonResponse({ msg: err.message, code: 500 }, 500);
   }
 });
-

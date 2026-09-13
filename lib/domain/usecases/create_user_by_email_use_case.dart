@@ -15,7 +15,11 @@ class CreateUserByEmailUseCase
   @protected
   @override
   Future<CreateUserByEmailOutput> buildUseCase(CreateUserByEmailInput input) async {
-    await _repository.createUserByEmail(email: input.email, password: input.password);
+    await _repository.createUserByEmail(
+      email: input.email,
+      password: input.password,
+      code: input.code,
+    );
 
     return const CreateUserByEmailOutput();
   }
@@ -25,12 +29,15 @@ class CreateUserByEmailUseCase
 sealed class CreateUserByEmailInput extends BaseInput with _$CreateUserByEmailInput {
   const CreateUserByEmailInput._();
 
-  const factory CreateUserByEmailInput({required String email, required String password}) =
-      _CreateUserByEmailInput;
+  const factory CreateUserByEmailInput({
+    required String email,
+    required String password,
+    required String code,
+  }) = _CreateUserByEmailInput;
 
   @override
   String toString() =>
-      'CreateUserByEmailInput(email: $email, password: ${LogRedactor.placeholder})';
+      'CreateUserByEmailInput(email: $email, password: ${LogRedactor.placeholder}, code: ${LogRedactor.placeholder})';
 }
 
 @freezed

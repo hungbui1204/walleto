@@ -1,18 +1,18 @@
 import { serve } from "https://deno.land/std@0.178.0/http/server.ts";
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+import {
+  cleanupExpiredOtps,
+  issueOtpIfAllowed,
+  jsonResponse,
+  normalizeEmail,
+  OTP_SENT_MSG,
+} from "../_shared/otp.ts";
 
-// Supabase Admin client
 const supabaseAdmin = createClient(
   Deno.env.get("SUPABASE_URL")!,
-  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
 );
 
-// Create 6-digit OTP function
-function generateOtp() {
-  return Math.floor(100000 + Math.random() * 900000).toString();
-}
-
-// Function to send email via Brevo
 async function sendEmail(email: string, otp: string) {
   const res = await fetch("https://api.brevo.com/v3/smtp/email", {
     method: "POST",
@@ -33,62 +33,27 @@ async function sendEmail(email: string, otp: string) {
   }
 }
 
-// Edge function
 serve(async (req) => {
   try {
-    const { email } = await req.json();
-
-    // Check if email already exists
-    const { data: exists, error: sqlError } = await supabaseAdmin.rpc("check_user_exists", {
-      target_email: email
-    });
-
-    if (sqlError) throw sqlError;
-
-    if (exists === true) {
-      return new Response(JSON.stringify({ 
-        msg: "Email already exists",
-        code: 400,
-        error_code: "email_already_exists",
-      }), {
-        status: 400,
-        headers: {
-          "Content-Type": "application/json"
-        }
-      });
+    const { email: rawEmail } = await req.json();
+    const email = normalizeEmail(rawEmail);
+    if (!email) {
+      return jsonResponse({ msg: "Email is required", code: 400, error_code: "missing_email" }, 400);
     }
 
-    // Create OTP
-    const otp = generateOtp();
-    const expires_at = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+    await cleanupExpiredOtps(supabaseAdmin);
 
-    // Save OTP to table
-    const { error: dbError } = await supabaseAdmin
-      .from("otp_codes")
-      .insert([{ email, code: otp, expires_at }]);
-
-    if (dbError) throw dbError;
-
-    // Send email
-    await sendEmail(email, otp);
-
-    return new Response(JSON.stringify({ 
-      msg: "OTP sent",
-    }), {
-      status: 200,
-      headers: {
-        "Content-Type": "application/json"
-      }
+    const { data: exists, error: sqlError } = await supabaseAdmin.rpc("check_user_exists", {
+      target_email: email,
     });
+    if (sqlError) throw sqlError;
+
+    if (exists !== true) {
+      await issueOtpIfAllowed(supabaseAdmin, email, "signup", (otp) => sendEmail(email, otp));
+    }
+
+    return jsonResponse({ msg: OTP_SENT_MSG });
   } catch (err) {
-    return new Response(JSON.stringify({ 
-      msg: err.message,
-      code: 500,
-    }), {
-      status: 500,
-      headers: {
-        "Content-Type": "application/json"
-      }
-    });
+    return jsonResponse({ msg: err.message, code: 500 }, 500);
   }
 });

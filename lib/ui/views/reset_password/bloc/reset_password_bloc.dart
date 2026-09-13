@@ -270,7 +270,7 @@ class ResetPasswordBloc extends BaseBloc<ResetPasswordEvent, ResetPasswordState>
     await runBlocCatching(
       action: () async {
         await _resetUserPasswordUseCase.execute(
-          ResetUserPasswordInput(email: state.email, password: state.password),
+          ResetUserPasswordInput(email: state.email, password: state.password, code: state.otp),
         );
 
         emit(state.copyWith(resetPasswordStep: ResetPasswordStep.resetPasswordComplete));
