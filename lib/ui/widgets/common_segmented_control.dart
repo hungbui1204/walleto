@@ -26,7 +26,7 @@ class CommonSegmentedControl<T> extends StatelessWidget {
             child: _Segment(
               label: segments[i].label,
               selected: segments[i].value == selected,
-              onTap: () => onSelected(segments[i].value),
+              onTap: segments[i].value == selected ? null : () => onSelected(segments[i].value),
             ),
           ),
         ],
@@ -40,7 +40,7 @@ class _Segment extends StatelessWidget {
 
   final String label;
   final bool selected;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {

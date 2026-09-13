@@ -87,11 +87,10 @@ class _DuplicateTransactionPopupState extends State<DuplicateTransactionPopup> {
                       ],
                     ),
                     const Spacer(),
-                    Text(
-                      widget.transaction.amount.toStringWithFormat(
-                        NumberFormatConstants.amountFormat,
-                      ),
-                      style:
+                    CommonAmountWithSymbol(
+                      amount: widget.transaction.amount,
+                      currencyCode: widget.transaction.currencyCode,
+                      textStyle:
                           widget.transaction.category.type == CategoryType.income
                               ? AppTextStyles.s16wNormalGreen()
                               : AppTextStyles.s16wNormalRed(),

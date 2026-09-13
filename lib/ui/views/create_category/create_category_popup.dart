@@ -67,13 +67,14 @@ class _CreateCategoryPopupState extends BasePageState<CreateCategoryPopup, Creat
                             children: [
                               Pressable(
                                 onTap: () {
-                                  navigator.showDialog(
+                                  navigator.showModalBottomSheet(
                                     AppPopupInfo.selectIcon(
                                       iconType: IconType.category,
                                       onIconSelected: (iconUrl) {
                                         bloc.add(CreateCategoryIconChanged(icon: iconUrl));
                                       },
                                     ),
+                                    useRootNavigator: true,
                                   );
                                 },
                                 borderRadius: BorderRadius.circular(Dimens.d36.responsive()),
@@ -200,6 +201,7 @@ class _CreateCategoryPopupState extends BasePageState<CreateCategoryPopup, Creat
                                                 bloc.add(const CreateCategoryParentRemoved());
                                               },
                                               borderRadius: AppDecorations.chipRadius(),
+                                              semanticLabel: S.current.removeParentCategory,
                                               child: Icon(
                                                 Icons.close,
                                                 size: Dimens.d20.responsive(),

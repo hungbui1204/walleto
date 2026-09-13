@@ -62,4 +62,22 @@ void main() {
 
     expect(selected, 1);
   });
+
+  testWidgets('tapping the selected segment does not call onSelected', (tester) async {
+    var calls = 0;
+
+    await pumpControl(
+      tester,
+      control: CommonSegmentedControl<int>(
+        segments: const [(value: 0, label: 'Month summary'), (value: 1, label: 'Spent stats')],
+        selected: 0,
+        onSelected: (_) => calls++,
+      ),
+    );
+
+    await tester.tap(find.text('Month summary'));
+    await tester.pump();
+
+    expect(calls, 0);
+  });
 }

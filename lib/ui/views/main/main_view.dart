@@ -46,9 +46,10 @@ class _MainViewState extends BasePageState<MainView, MainBloc> {
                     onTap: () async {
                       await navigator.push(const AppRouteInfo.createTransaction());
                     },
+                    clip: false,
                     borderRadius: fabRadius,
                     semanticLabel: S.current.addTransaction,
-                    child: DecoratedBox(
+                    child: Pressable.clippedFill(
                       decoration: AppDecorations.primaryCta(radius: fabRadius),
                       child: SizedBox(
                         width: fabSize,

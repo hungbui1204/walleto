@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:walleto/resources/resources.dart';
+import 'package:walleto/shared/shared.dart';
 
 class CommonPickerSheet extends StatelessWidget {
   const CommonPickerSheet({
@@ -10,25 +11,20 @@ class CommonPickerSheet extends StatelessWidget {
     this.expandChild = false,
   });
 
-  static const double _maxHeightFactor = 0.7;
-
   final String title;
   final Widget child;
   final Widget? actions;
 
-  /// When true, [child] gets a bounded height (for `Expanded` / `TabBarView`).
+  /// When true, [child] gets a bounded height (for `Expanded` / inner list).
   final bool expandChild;
 
   @override
   Widget build(BuildContext context) {
-    final maxHeight = MediaQuery.sizeOf(context).height * _maxHeightFactor;
+    final maxHeight = MediaQuery.sizeOf(context).height * AppConstants.pickerSheetMaxHeightFactor;
     final body =
         expandChild
             ? Expanded(child: child)
-            : ConstrainedBox(
-              constraints: BoxConstraints(maxHeight: maxHeight),
-              child: ListView(shrinkWrap: true, padding: EdgeInsets.zero, children: [child]),
-            );
+            : ConstrainedBox(constraints: BoxConstraints(maxHeight: maxHeight), child: child);
 
     final content = Column(
       mainAxisSize: expandChild ? MainAxisSize.max : MainAxisSize.min,

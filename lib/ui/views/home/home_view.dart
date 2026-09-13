@@ -78,7 +78,7 @@ class _HomeViewState extends BasePageState<HomeView, HomeBloc> {
                   SliverToBoxAdapter(child: SizedBox(height: Dimens.d16.responsive())),
                   const SliverToBoxAdapter(child: StatisticWidget()),
                   SliverToBoxAdapter(child: SizedBox(height: Dimens.d16.responsive())),
-                  const SliverToBoxAdapter(child: _RecentTransactionsWidget()),
+                  const _RecentTransactionsSliver(),
                   SliverToBoxAdapter(child: SizedBox(height: Dimens.d28.responsive())),
                 ],
               ),
@@ -325,48 +325,50 @@ class _WalletInfoWidget extends StatelessWidget {
   }
 }
 
-class _RecentTransactionsWidget extends StatelessWidget {
-  const _RecentTransactionsWidget();
+class _RecentTransactionsSliver extends StatelessWidget {
+  const _RecentTransactionsSliver();
 
   @override
   Widget build(BuildContext context) {
-    return CommonTitledPanel(
-      titleWidget: Align(
-        alignment: Alignment.centerLeft,
-        child: Text(S.current.recentTransactions, style: AppTextStyles.s16wBoldBlack()),
-      ),
-      contentWidget: BlocBuilder<HomeBloc, HomeState>(
-        buildWhen: (previous, current) {
-          return previous.recentTransactions != current.recentTransactions;
-        },
-        builder: (context, state) {
-          if (state.recentTransactions.isEmpty) {
-            return CommonEmptyPanel(
-              icon: Icons.receipt_long_outlined,
-              message: S.current.noRecentTransactions,
-              actionLabel: S.current.addTransaction,
-              onAction: () {
-                final hasWallets = context.read<AppBloc>().state.wallets.isNotEmpty;
-                context.read<AppNavigator>().push(
-                  hasWallets
-                      ? const AppRouteInfo.createTransaction()
-                      : const AppRouteInfo.createWallet(),
-                );
-              },
-            );
-          }
+    return BlocBuilder<HomeBloc, HomeState>(
+      buildWhen: (previous, current) {
+        return previous.recentTransactions != current.recentTransactions;
+      },
+      builder: (context, state) {
+        final title = Align(
+          alignment: Alignment.centerLeft,
+          child: Text(S.current.recentTransactions, style: AppTextStyles.s16wBoldBlack()),
+        );
 
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              for (var index = 0; index < state.recentTransactions.length; index++) ...[
-                if (index > 0) const CommonLine(),
-                _RecentTransactionWidget(state.recentTransactions[index]),
-              ],
-            ],
+        if (state.recentTransactions.isEmpty) {
+          return SliverToBoxAdapter(
+            child: CommonTitledPanel(
+              titleWidget: title,
+              contentWidget: CommonEmptyPanel(
+                icon: Icons.receipt_long_outlined,
+                message: S.current.noRecentTransactions,
+                actionLabel: S.current.addTransaction,
+                onAction: () {
+                  final hasWallets = context.read<AppBloc>().state.wallets.isNotEmpty;
+                  context.read<AppNavigator>().push(
+                    hasWallets
+                        ? const AppRouteInfo.createTransaction()
+                        : const AppRouteInfo.createWallet(),
+                  );
+                },
+              ),
+            ),
           );
-        },
-      ),
+        }
+
+        return CommonTitledPanelSliver(
+          titleWidget: title,
+          itemCount: state.recentTransactions.length,
+          itemBuilder: (context, index) {
+            return _RecentTransactionWidget(state.recentTransactions[index]);
+          },
+        );
+      },
     );
   }
 }

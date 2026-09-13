@@ -53,8 +53,8 @@ class _SelectMonthBottomSheetState extends State<SelectMonthBottomSheet> {
 
     return CommonPickerSheet(
       title: S.current.selectMonthTitle,
+      expandChild: true,
       child: Column(
-        mainAxisSize: MainAxisSize.min,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -62,6 +62,7 @@ class _SelectMonthBottomSheetState extends State<SelectMonthBottomSheet> {
               Pressable(
                 onTap:
                     selectedYear > widget.firstYear ? () => setState(() => selectedYear--) : null,
+                semanticLabel: S.current.previousYear,
                 child: Padding(
                   padding: EdgeInsets.all(Dimens.d8.responsive()),
                   child: Icon(
@@ -74,6 +75,7 @@ class _SelectMonthBottomSheetState extends State<SelectMonthBottomSheet> {
               Text('$selectedYear', style: AppTextStyles.s18wNormalBlack()),
               Pressable(
                 onTap: selectedYear < widget.lastYear ? () => setState(() => selectedYear++) : null,
+                semanticLabel: S.current.nextYear,
                 child: Padding(
                   padding: EdgeInsets.all(Dimens.d8.responsive()),
                   child: Icon(
@@ -86,44 +88,44 @@ class _SelectMonthBottomSheetState extends State<SelectMonthBottomSheet> {
             ],
           ),
           SizedBox(height: Dimens.d12.responsive()),
-          GridView.count(
-            padding: EdgeInsets.zero,
-            physics: const NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            crossAxisCount: 3,
-            childAspectRatio: 2.4,
-            mainAxisSpacing: Dimens.d8.responsive(),
-            crossAxisSpacing: Dimens.d8.responsive(),
-            children: List.generate(months.length, (index) {
-              final month = index + 1;
-              final isSelected = selectedMonth == month;
+          Expanded(
+            child: GridView.count(
+              padding: EdgeInsets.zero,
+              crossAxisCount: 3,
+              childAspectRatio: 2.4,
+              mainAxisSpacing: Dimens.d8.responsive(),
+              crossAxisSpacing: Dimens.d8.responsive(),
+              children: List.generate(months.length, (index) {
+                final month = index + 1;
+                final isSelected = selectedMonth == month;
 
-              return Pressable(
-                onTap: () {
-                  widget.onMonthSelected(DateTime(selectedYear, month));
-                  context.read<AppNavigator>().pop();
-                },
-                borderRadius: AppDecorations.chipRadius(),
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: isSelected ? primaryColor : fieldFillColor,
-                    borderRadius: AppDecorations.chipRadius(),
-                    border: Border.all(color: isSelected ? primaryColor : glassHairlineColor),
-                  ),
-                  child: SizedBox.expand(
-                    child: Center(
-                      child: Text(
-                        '${months[month]}',
-                        style:
-                            isSelected
-                                ? AppTextStyles.s14wBoldBlack().copyWith(color: onPrimaryColor)
-                                : AppTextStyles.s14wNormalBlack(),
+                return Pressable(
+                  onTap: () {
+                    widget.onMonthSelected(DateTime(selectedYear, month));
+                    context.read<AppNavigator>().pop();
+                  },
+                  borderRadius: AppDecorations.chipRadius(),
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: isSelected ? primaryColor : fieldFillColor,
+                      borderRadius: AppDecorations.chipRadius(),
+                      border: Border.all(color: isSelected ? primaryColor : glassHairlineColor),
+                    ),
+                    child: SizedBox.expand(
+                      child: Center(
+                        child: Text(
+                          '${months[month]}',
+                          style:
+                              isSelected
+                                  ? AppTextStyles.s14wBoldBlack().copyWith(color: onPrimaryColor)
+                                  : AppTextStyles.s14wNormalBlack(),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              );
-            }),
+                );
+              }),
+            ),
           ),
         ],
       ),

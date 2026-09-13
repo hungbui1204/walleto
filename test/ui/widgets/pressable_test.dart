@@ -157,4 +157,64 @@ void main() {
     );
     expect(clip.borderRadius, radius);
   });
+
+  testWidgets('clip: false does not wrap the child in ClipRRect', (tester) async {
+    await pumpPressable(
+      tester,
+      pressable: Pressable(clip: false, onTap: () {}, child: const Text('Tap me')),
+    );
+
+    expect(
+      find.descendant(of: find.byType(Pressable), matching: find.byType(ClipRRect)),
+      findsNothing,
+    );
+  });
+
+  testWidgets('CTA glow decoration is not a descendant of ClipRRect', (tester) async {
+    await pumpPressable(tester, pressable: CommonButton(text: 'Go', onTap: () {}));
+
+    final glowBox = find.byWidgetPredicate((widget) {
+      if (widget is! DecoratedBox) return false;
+      final decoration = widget.decoration;
+      return decoration is BoxDecoration &&
+          decoration.boxShadow != null &&
+          decoration.boxShadow!.isNotEmpty;
+    });
+
+    expect(glowBox, findsOneWidget);
+    expect(find.ancestor(of: glowBox, matching: find.byType(ClipRRect)), findsNothing);
+  });
+
+  testWidgets('disableAnimations uses Duration.zero for press motion', (tester) async {
+    await tester.pumpWidget(
+      ScreenUtilInit(
+        designSize: const Size(
+          DeviceConstants.designDeviceWidth,
+          DeviceConstants.designDeviceHeight,
+        ),
+        builder: (context, child) {
+          return MaterialApp(
+            builder: (context, child) {
+              return MediaQuery(
+                data: MediaQuery.of(context).copyWith(disableAnimations: true),
+                child: child!,
+              );
+            },
+            home: Builder(
+              builder: (context) {
+                AppDimen.of(context);
+                return Scaffold(
+                  body: Center(child: Pressable(onTap: () {}, child: const Text('Tap me'))),
+                );
+              },
+            ),
+          );
+        },
+      ),
+    );
+    await tester.pump();
+
+    expect(scaleOf(tester).duration, Duration.zero);
+    expect(opacityOf(tester).duration, Duration.zero);
+  });
 }

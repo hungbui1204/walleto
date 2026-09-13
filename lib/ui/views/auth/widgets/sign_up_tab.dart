@@ -53,7 +53,11 @@ class SignUpTab extends StatelessWidget {
                       borderRadius: AppDecorations.chipRadius(),
                       semanticLabel: S.current.backToFirstStep,
                       child: Padding(
-                        padding: EdgeInsets.all(Dimens.d8.responsive()).copyWith(left: 0),
+                        padding: EdgeInsets.only(
+                          top: Dimens.d8.responsive(),
+                          right: Dimens.d8.responsive(),
+                          bottom: Dimens.d8.responsive(),
+                        ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [

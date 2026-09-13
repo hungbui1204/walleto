@@ -72,4 +72,14 @@ void main() {
     expect(find.text('Body'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('non-expand child is the scroll body, not wrapped in ListView', (tester) async {
+    await pumpSheet(
+      tester,
+      sheet: const CommonPickerSheet(title: 'Choose wallet', child: Text('Cash')),
+    );
+
+    expect(find.byType(ListView), findsNothing);
+    expect(find.text('Cash'), findsOneWidget);
+  });
 }

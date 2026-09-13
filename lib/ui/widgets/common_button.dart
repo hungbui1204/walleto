@@ -47,7 +47,7 @@ class CommonButton extends StatelessWidget {
     final child = AnimatedOpacity(
       opacity: enabled ? 1 : 0.45,
       duration: DurationConstants.microInteraction,
-      child: DecoratedBox(
+      child: Pressable.clippedFill(
         decoration: decoration,
         child: ConstrainedBox(
           constraints: BoxConstraints(
@@ -87,6 +87,12 @@ class CommonButton extends StatelessWidget {
       ),
     );
 
-    return Pressable(onTap: onTap, borderRadius: radius, semanticLabel: text, child: child);
+    return Pressable(
+      onTap: onTap,
+      clip: false,
+      borderRadius: radius,
+      semanticLabel: text,
+      child: child,
+    );
   }
 }

@@ -62,13 +62,14 @@ class _CreateWalletViewState extends BasePageState<CreateWalletView, CreateWalle
                         children: [
                           Pressable(
                             onTap: () {
-                              navigator.showDialog(
+                              navigator.showModalBottomSheet(
                                 AppPopupInfo.selectIcon(
                                   iconType: IconType.wallet,
                                   onIconSelected: (url) {
                                     bloc.add(CreateWalletIconChanged(iconUrl: url));
                                   },
                                 ),
+                                useRootNavigator: true,
                               );
                             },
                             borderRadius: BorderRadius.circular(Dimens.d36.responsive()),

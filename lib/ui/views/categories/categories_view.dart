@@ -76,7 +76,7 @@ class _CategoriesViewState extends BasePageState<CategoriesView, CategoriesBloc>
                       size: Dimens.d20.responsive(),
                       color: onPrimaryColor,
                     ),
-                    borderRadius: BorderRadius.all(Radius.circular(Dimens.d16.responsive())),
+                    borderRadius: AppDecorations.panelRadius(),
                   );
                 },
               ),

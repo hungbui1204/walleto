@@ -21,21 +21,23 @@ class ChooseCurrencyBottomSheet extends StatelessWidget {
       child: BlocBuilder<AppBloc, AppState>(
         buildWhen: (previous, current) => previous.currencies != current.currencies,
         builder: (context, state) {
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              for (final (index, currency) in state.currencies.indexed) ...[
-                if (index > 0) const CommonLine(margin: EdgeInsets.zero),
-                _CurrencyWidget(
-                  currency: currency,
-                  isSelected: currentCurrency?.code == currency.code,
-                  onTap: () {
-                    onCurrencySelected(currency);
-                    context.read<AppNavigator>().pop();
-                  },
-                ),
-              ],
-            ],
+          return ListView.separated(
+            shrinkWrap: true,
+            padding: EdgeInsets.zero,
+            itemCount: state.currencies.length,
+            itemBuilder: (context, index) {
+              final currency = state.currencies[index];
+
+              return _CurrencyWidget(
+                currency: currency,
+                isSelected: currentCurrency?.code == currency.code,
+                onTap: () {
+                  onCurrencySelected(currency);
+                  context.read<AppNavigator>().pop();
+                },
+              );
+            },
+            separatorBuilder: (context, index) => const CommonLine(margin: EdgeInsets.zero),
           );
         },
       ),

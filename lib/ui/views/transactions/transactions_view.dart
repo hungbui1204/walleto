@@ -119,30 +119,28 @@ class _DayTransactionsSliver extends StatelessWidget {
 
         final days = state.allDayTransactions;
 
-        return SliverList.builder(
-          itemCount: days.length,
-          itemBuilder: (context, index) {
-            final panel = _DayTransactionsWidget(days[index]);
-            if (index == days.length - 1) {
-              return panel;
-            }
-
-            return Padding(padding: EdgeInsets.only(bottom: Dimens.d20.responsive()), child: panel);
-          },
+        return SliverMainAxisGroup(
+          slivers: [
+            for (var index = 0; index < days.length; index++) ...[
+              _DayTransactionsGroupSliver(days[index]),
+              if (index != days.length - 1)
+                SliverToBoxAdapter(child: SizedBox(height: Dimens.d20.responsive())),
+            ],
+          ],
         );
       },
     );
   }
 }
 
-class _DayTransactionsWidget extends StatelessWidget {
-  const _DayTransactionsWidget(this.dayTransactions);
+class _DayTransactionsGroupSliver extends StatelessWidget {
+  const _DayTransactionsGroupSliver(this.dayTransactions);
 
   final DayTransactions dayTransactions;
 
   @override
   Widget build(BuildContext context) {
-    return CommonTitledPanel(
+    return CommonTitledPanelSliver(
       titleWidget:
           dayTransactions.date == null
               ? null
@@ -170,18 +168,10 @@ class _DayTransactionsWidget extends StatelessWidget {
                   ),
                 ],
               ),
-      contentWidget:
-          dayTransactions.transactions.isEmpty
-              ? null
-              : Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  for (var index = 0; index < dayTransactions.transactions.length; index++) ...[
-                    if (index > 0) const CommonLine(),
-                    _TransactionInfoWidget(dayTransactions.transactions[index]),
-                  ],
-                ],
-              ),
+      itemCount: dayTransactions.transactions.length,
+      itemBuilder: (context, index) {
+        return _TransactionInfoWidget(dayTransactions.transactions[index]);
+      },
     );
   }
 }
@@ -308,8 +298,8 @@ class _DatePickerDropDownWidget extends StatelessWidget {
                               color: surfaceColor,
                               showBorder: false,
                               borderRadius: BorderRadius.only(
-                                bottomLeft: Radius.circular(Dimens.d16.responsive()),
-                                bottomRight: Radius.circular(Dimens.d16.responsive()),
+                                bottomLeft: AppDecorations.panelRadius().bottomLeft,
+                                bottomRight: AppDecorations.panelRadius().bottomRight,
                               ),
                               onTap: () {
                                 context.read<TransactionsBloc>().add(

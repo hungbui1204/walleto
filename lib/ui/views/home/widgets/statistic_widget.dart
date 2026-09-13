@@ -141,10 +141,8 @@ class _SpentStatsDateChip extends StatelessWidget {
         );
         final radius = AppDecorations.chipRadius();
 
-        return Pressable(
-          onTap: () {},
-          borderRadius: radius,
-          semanticLabel: label,
+        return Semantics(
+          label: label,
           child: DecoratedBox(
             decoration: BoxDecoration(
               borderRadius: radius,

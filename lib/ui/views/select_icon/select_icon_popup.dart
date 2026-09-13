@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:walleto/domain/domain.dart';
 import 'package:walleto/resources/resources.dart';
-import 'package:walleto/shared/shared.dart';
 import 'package:walleto/ui/ui.dart';
 
 class SelectIconPopup extends StatefulWidget {
@@ -24,52 +23,32 @@ class _SelectIconPopupState extends BasePageState<SelectIconPopup, SelectIconBlo
 
   @override
   Widget buildPage(BuildContext context) {
-    return Material(
-      type: MaterialType.transparency,
-      child: Center(
-        child: Container(
-          constraints: BoxConstraints(maxHeight: context.mediaQuery.size.height * 0.7),
-          margin: EdgeInsets.symmetric(horizontal: Dimens.d16.responsive()),
-          padding: EdgeInsets.symmetric(
-            horizontal: Dimens.d16.responsive(),
-            vertical: Dimens.d20.responsive(),
-          ),
-          decoration: AppDecorations.glassPanel(),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(S.current.selectIcon, style: AppTextStyles.s20wNormalBlack()),
-                SizedBox(height: Dimens.d20.responsive()),
-                BlocBuilder<SelectIconBloc, SelectIconState>(
-                  buildWhen: (previous, current) => previous.icons != current.icons,
-                  builder: (context, state) {
-                    return GridView.builder(
-                      shrinkWrap: true,
-                      padding: EdgeInsets.zero,
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 4,
-                        mainAxisSpacing: Dimens.d30.responsive(),
-                        crossAxisSpacing: Dimens.d30.responsive(),
-                      ),
-                      itemCount: state.icons.length,
-                      itemBuilder: (context, index) {
-                        return Pressable(
-                          onTap: () {
-                            widget.onIconSelected?.call(state.icons[index].url!);
-                            navigator.pop(useRootNavigator: true);
-                          },
-                          borderRadius: BorderRadius.circular(Dimens.d36.responsive()),
-                          child: CommonCircleNetworkImage(imageUrl: state.icons[index].url),
-                        );
-                      },
-                    );
-                  },
-                ),
-              ],
+    return CommonPickerSheet(
+      title: S.current.selectIcon,
+      expandChild: true,
+      child: BlocBuilder<SelectIconBloc, SelectIconState>(
+        buildWhen: (previous, current) => previous.icons != current.icons,
+        builder: (context, state) {
+          return GridView.builder(
+            padding: EdgeInsets.zero,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 4,
+              mainAxisSpacing: Dimens.d30.responsive(),
+              crossAxisSpacing: Dimens.d30.responsive(),
             ),
-          ),
-        ),
+            itemCount: state.icons.length,
+            itemBuilder: (context, index) {
+              return Pressable(
+                onTap: () {
+                  widget.onIconSelected?.call(state.icons[index].url!);
+                  navigator.pop(useRootNavigator: true);
+                },
+                borderRadius: BorderRadius.circular(Dimens.d36.responsive()),
+                child: CommonCircleNetworkImage(imageUrl: state.icons[index].url),
+              );
+            },
+          );
+        },
       ),
     );
   }

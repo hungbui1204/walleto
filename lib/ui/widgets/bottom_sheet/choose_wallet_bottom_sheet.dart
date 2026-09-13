@@ -63,21 +63,23 @@ class _WalletList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        for (final (index, wallet) in wallets.indexed) ...[
-          if (index > 0) const CommonLine(margin: EdgeInsets.zero),
-          _WalletWidget(
-            wallet: wallet,
-            isSelected: currentWallet?.id == wallet.id,
-            onTap: () {
-              onWalletSelected(wallet);
-              context.read<AppNavigator>().pop();
-            },
-          ),
-        ],
-      ],
+    return ListView.separated(
+      shrinkWrap: true,
+      padding: EdgeInsets.zero,
+      itemCount: wallets.length,
+      itemBuilder: (context, index) {
+        final wallet = wallets[index];
+
+        return _WalletWidget(
+          wallet: wallet,
+          isSelected: currentWallet?.id == wallet.id,
+          onTap: () {
+            onWalletSelected(wallet);
+            context.read<AppNavigator>().pop();
+          },
+        );
+      },
+      separatorBuilder: (context, index) => const CommonLine(margin: EdgeInsets.zero),
     );
   }
 }

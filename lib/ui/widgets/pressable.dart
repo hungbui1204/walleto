@@ -13,6 +13,7 @@ class Pressable extends StatefulWidget {
     this.borderRadius,
     this.semanticLabel,
     this.feedback = PressableFeedback.scale,
+    this.clip = true,
   });
 
   static const double pressedScale = 0.97;
@@ -23,6 +24,24 @@ class Pressable extends StatefulWidget {
   final BorderRadius? borderRadius;
   final String? semanticLabel;
   final PressableFeedback feedback;
+
+  /// When false, [child] is not wrapped in [ClipRRect] so box shadows (CTA glow)
+  /// can paint outside the rounded fill. Clip the fill with [clippedFill] instead.
+  final bool clip;
+
+  /// Clips the fill/gradient of [decoration] while leaving [BoxDecoration.boxShadow]
+  /// as a sibling outside [ClipRRect].
+  static Widget clippedFill({required BoxDecoration decoration, required Widget child}) {
+    final radius = decoration.borderRadius?.resolve(TextDirection.ltr) ?? BorderRadius.zero;
+
+    return DecoratedBox(
+      decoration: BoxDecoration(borderRadius: radius, boxShadow: decoration.boxShadow),
+      child: ClipRRect(
+        borderRadius: radius,
+        child: DecoratedBox(decoration: decoration.copyWith(boxShadow: const []), child: child),
+      ),
+    );
+  }
 
   @override
   State<Pressable> createState() => _PressableState();
@@ -53,6 +72,17 @@ class _PressableState extends State<Pressable> {
     final scale = feedback == PressableFeedback.scale && _pressed ? Pressable.pressedScale : 1.0;
     final opacity =
         feedback == PressableFeedback.opacity && _pressed ? Pressable.pressedOpacity : 1.0;
+    final scaledChild = AnimatedScale(
+      scale: scale,
+      duration: duration,
+      curve: Curves.easeOut,
+      child: AnimatedOpacity(
+        opacity: opacity,
+        duration: duration,
+        curve: Curves.easeOut,
+        child: widget.child,
+      ),
+    );
 
     return Semantics(
       button: enabled,
@@ -67,20 +97,7 @@ class _PressableState extends State<Pressable> {
           onTapDown: enabled ? (_) => _setPressed(true) : null,
           onTapUp: enabled ? (_) => _setPressed(false) : null,
           onTapCancel: enabled ? () => _setPressed(false) : null,
-          child: ClipRRect(
-            borderRadius: radius,
-            child: AnimatedScale(
-              scale: scale,
-              duration: duration,
-              curve: Curves.easeOut,
-              child: AnimatedOpacity(
-                opacity: opacity,
-                duration: duration,
-                curve: Curves.easeOut,
-                child: widget.child,
-              ),
-            ),
-          ),
+          child: widget.clip ? ClipRRect(borderRadius: radius, child: scaledChild) : scaledChild,
         ),
       ),
     );
