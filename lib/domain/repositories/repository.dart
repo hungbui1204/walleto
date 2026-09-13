@@ -63,7 +63,11 @@ abstract class Repository {
 
   Future<void> verifyOtpForEmail({required String email, required String otp});
 
-  Future<void> createUserByEmail({required String email, required String password});
+  Future<void> createUserByEmail({
+    required String email,
+    required String password,
+    required String code,
+  });
 
   Future<void> createWallet(Wallet wallet);
 
@@ -84,7 +88,11 @@ abstract class Repository {
 
   Future<void> verifyOtpForResetPassword({required String email, required String code});
 
-  Future<void> resetUserPassword({required String email, required String password});
+  Future<void> resetUserPassword({
+    required String email,
+    required String password,
+    required String code,
+  });
 
   Future<Transaction> updateTransaction({required Transaction transaction});
 

@@ -200,8 +200,12 @@ class RepositoryImpl implements Repository {
   }
 
   @override
-  Future<void> createUserByEmail({required String email, required String password}) async {
-    await _appApiServices.createUserByEmail(email: email, password: password);
+  Future<void> createUserByEmail({
+    required String email,
+    required String password,
+    required String code,
+  }) async {
+    await _appApiServices.createUserByEmail(email: email, password: password, code: code);
   }
 
   @override
@@ -268,8 +272,12 @@ class RepositoryImpl implements Repository {
   }
 
   @override
-  Future<void> resetUserPassword({required String email, required String password}) async {
-    await _appApiServices.resetUserPassword(email: email, password: password);
+  Future<void> resetUserPassword({
+    required String email,
+    required String password,
+    required String code,
+  }) async {
+    await _appApiServices.resetUserPassword(email: email, password: password, code: code);
   }
 
   @override

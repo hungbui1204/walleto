@@ -15,7 +15,11 @@ class ResetUserPasswordUseCase
   @protected
   @override
   Future<ResetUserPasswordOutput> buildUseCase(ResetUserPasswordInput input) async {
-    await _repository.resetUserPassword(email: input.email, password: input.password);
+    await _repository.resetUserPassword(
+      email: input.email,
+      password: input.password,
+      code: input.code,
+    );
 
     return const ResetUserPasswordOutput();
   }
@@ -25,12 +29,15 @@ class ResetUserPasswordUseCase
 sealed class ResetUserPasswordInput extends BaseInput with _$ResetUserPasswordInput {
   const ResetUserPasswordInput._();
 
-  const factory ResetUserPasswordInput({required String email, required String password}) =
-      _ResetUserPasswordInput;
+  const factory ResetUserPasswordInput({
+    required String email,
+    required String password,
+    required String code,
+  }) = _ResetUserPasswordInput;
 
   @override
   String toString() =>
-      'ResetUserPasswordInput(email: $email, password: ${LogRedactor.placeholder})';
+      'ResetUserPasswordInput(email: $email, password: ${LogRedactor.placeholder}, code: ${LogRedactor.placeholder})';
 }
 
 @freezed

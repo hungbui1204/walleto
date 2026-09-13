@@ -351,7 +351,11 @@ class LoginBloc extends BaseBloc<LoginEvent, LoginState> {
     await runBlocCatching(
       action: () async {
         await _createUserByEmailUseCase.execute(
-          CreateUserByEmailInput(email: state.signUpEmail, password: state.signUpPassword),
+          CreateUserByEmailInput(
+            email: state.signUpEmail,
+            password: state.signUpPassword,
+            code: state.otp,
+          ),
         );
 
         emit(state.copyWith(signUpStep: SignUpStep.signUpComplete));
