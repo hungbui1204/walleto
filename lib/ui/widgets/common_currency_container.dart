@@ -17,15 +17,12 @@ class CommonCurrencyContainer extends StatelessWidget {
       decoration: BoxDecoration(
         color: primaryShadeColor,
         border: Border.all(color: glassHairlineColor),
-        borderRadius: BorderRadius.circular(Dimens.d12.responsive()),
+        borderRadius: AppDecorations.chipRadius(),
       ),
       alignment: Alignment.center,
       child: Text(
         currentCurrencyCode ?? '',
-        style: AppThemes.amount(
-          fontSize: Dimens.d14.responsive(),
-          color: primaryColor,
-        ),
+        style: AppThemes.amount(fontSize: Dimens.d14.responsive(), color: primaryColor),
       ),
     );
   }

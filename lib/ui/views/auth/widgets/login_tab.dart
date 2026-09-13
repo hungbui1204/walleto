@@ -46,7 +46,7 @@ class LoginTab extends StatelessWidget {
             SizedBox(height: Dimens.d20.responsive()),
             Row(
               children: [
-                GestureDetector(
+                Pressable(
                   onTap: () {
                     context.read<AppNavigator>().push(const AppRouteInfo.resetPassword());
                   },

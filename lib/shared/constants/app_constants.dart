@@ -10,6 +10,8 @@ class AppConstants {
   static const int firstYear = 2020;
   static const int lastYear = 2030;
 
+  static const double pickerSheetMaxHeightFactor = 0.7;
+
   static const List<Color> pieChartColors = [
     primaryColor,
     secondaryColor,

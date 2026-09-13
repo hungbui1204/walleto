@@ -485,6 +485,12 @@ backgroundColor: const Color(0xFF050506),
 
 **Responsive:** mọi giá trị từ `Dimens` phải gọi `.responsive()` (tuỳ chọn `tablet:`, `ultraTablet:`). Layout co giãn ưu tiên `Expanded`/`Flexible`/`Wrap`.
 
+**Interaction:**
+- Tap: mọi control Walleto đi qua `Pressable` (không `InkWell` / `GestureDetector` trần / `TextButton` / `ElevatedButton`). Ngoại lệ: overlay dismiss keyboard; `IconButton` trong `InputDecoration`.
+- Hàng list (ví, giao dịch, category, form): `CommonListRow`.
+- Picker danh sách (ví, currency, tháng, category): bottom sheet; dialog chỉ confirm / error / complete / warning.
+- Cấm `TabBarView` nằm trong vertical `SingleChildScrollView`.
+
 ---
 
 ## 9. Localization (i18n)

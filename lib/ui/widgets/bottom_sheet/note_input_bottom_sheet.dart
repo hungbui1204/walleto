@@ -6,11 +6,7 @@ import 'package:walleto/shared/shared.dart';
 import 'package:walleto/ui/ui.dart';
 
 class NoteInputBottomSheet extends StatefulWidget {
-  const NoteInputBottomSheet({
-    super.key,
-    required this.currentNote,
-    required this.onNoteChanged,
-  });
+  const NoteInputBottomSheet({super.key, required this.currentNote, required this.onNoteChanged});
 
   final String currentNote;
   final void Function(String) onNoteChanged;
@@ -29,53 +25,48 @@ class _NoteInputBottomSheetState extends State<NoteInputBottomSheet> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.translucent,
-      onTap: () => ViewUtils.hideKeyboard(context),
-      child: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(Dimens.d16.responsive()),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(S.current.editNote, style: AppTextStyles.s18wBoldBlack()),
-              SizedBox(height: Dimens.d20.responsive()),
-              CommonTextField(
-                controller: _controller,
-                maxLines: 8,
-                contentPadding: EdgeInsets.symmetric(
-                  vertical: Dimens.d12.responsive(),
-                  horizontal: Dimens.d12.responsive(),
-                ),
-                hintText: S.current.createNoteHere,
-              ),
-              SizedBox(height: Dimens.d40.responsive()),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  CommonButton(
-                    compact: true,
-                    text: S.current.save,
-                    onTap: () {
-                      widget.onNoteChanged.call(_controller.text);
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
-                      context.read<AppNavigator>().pop();
-                    },
-                  ),
-                  SizedBox(width: Dimens.d8.responsive()),
-                  CommonButton(
-                    compact: true,
-                    text: S.current.cancel,
-                    backgroundColor: surfaceColor,
-                    textColor: blackColor,
-                    onTap: () => context.read<AppNavigator>().pop(),
-                  ),
-                ],
-              ),
-              SizedBox(height: Dimens.d32.responsive()),
-            ],
+  @override
+  Widget build(BuildContext context) {
+    // Keyboard dismiss overlay — Pressable exception.
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () => ViewUtils.hideKeyboard(context),
+      child: CommonPickerSheet(
+        title: S.current.editNote,
+        actions: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            CommonButton(
+              compact: true,
+              text: S.current.save,
+              onTap: () {
+                widget.onNoteChanged(_controller.text);
+                context.read<AppNavigator>().pop();
+              },
+            ),
+            SizedBox(width: Dimens.d8.responsive()),
+            CommonButton(
+              compact: true,
+              text: S.current.cancel,
+              backgroundColor: surfaceColor,
+              textColor: blackColor,
+              onTap: () => context.read<AppNavigator>().pop(),
+            ),
+          ],
+        ),
+        child: CommonTextField(
+          controller: _controller,
+          maxLines: 8,
+          contentPadding: EdgeInsets.symmetric(
+            vertical: Dimens.d12.responsive(),
+            horizontal: Dimens.d12.responsive(),
           ),
+          hintText: S.current.createNoteHere,
         ),
       ),
     );

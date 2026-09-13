@@ -54,26 +54,23 @@ class AppThemes {
         foregroundColor: onPrimaryColor,
         elevation: 4,
       ),
-      dividerTheme: const DividerThemeData(
-        color: frameColor,
-        thickness: 1,
-        space: 1,
-      ),
+      dividerTheme: const DividerThemeData(color: frameColor, thickness: 1, space: 1),
       bottomSheetTheme: const BottomSheetThemeData(
         backgroundColor: surfaceColor,
         modalBackgroundColor: surfaceColor,
         surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-          side: BorderSide(color: frameColor),
+          // Matches panel radius token (d16). ThemeData is built once at app start.
+          borderRadius: BorderRadius.vertical(top: Radius.circular(Dimens.d16)),
+          side: BorderSide(color: glassHairlineColor),
         ),
       ),
       dialogTheme: const DialogThemeData(
         backgroundColor: surfaceColor,
         surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(16)),
-          side: BorderSide(color: frameColor),
+          borderRadius: BorderRadius.all(Radius.circular(Dimens.d16)),
+          side: BorderSide(color: glassHairlineColor),
         ),
       ),
       textSelectionTheme: TextSelectionThemeData(
@@ -96,11 +93,7 @@ class AppThemes {
         dividerColor: frameColor,
         indicatorSize: TabBarIndicatorSize.label,
         overlayColor: WidgetStatePropertyAll(primaryShade1Color),
-        labelStyle: TextStyle(
-          fontFamily: bodyFont,
-          fontWeight: FontWeight.w700,
-          fontSize: 15,
-        ),
+        labelStyle: TextStyle(fontFamily: bodyFont, fontWeight: FontWeight.w700, fontSize: 15),
         unselectedLabelStyle: TextStyle(
           fontFamily: bodyFont,
           fontWeight: FontWeight.w500,
@@ -120,7 +113,49 @@ class AppThemes {
           side: const WidgetStatePropertyAll(BorderSide(color: frameColor)),
         ),
       ),
+      datePickerTheme: datePicker,
       splashFactory: InkRipple.splashFactory,
+    );
+  }
+
+  static DatePickerThemeData get datePicker {
+    const shape = RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(Radius.circular(Dimens.d16)),
+      side: BorderSide(color: glassHairlineColor),
+    );
+
+    return DatePickerThemeData(
+      backgroundColor: surfaceColor,
+      elevation: 0,
+      shape: shape,
+      headerBackgroundColor: primaryShadeColor,
+      headerForegroundColor: blackColor,
+      headerHeadlineStyle: display(),
+      dividerColor: glassHairlineColor,
+      dayForegroundColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) return onPrimaryColor;
+        if (states.contains(WidgetState.disabled)) return darkGreyColor;
+        return blackColor;
+      }),
+      dayBackgroundColor: WidgetStateColor.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) return primaryColor;
+        return transParentColor;
+      }),
+      dayShape: WidgetStateOutlinedBorder.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return const LinearBorder(side: BorderSide(color: primaryColor));
+        }
+
+        return const LinearBorder(side: BorderSide(color: transParentColor));
+      }),
+      todayForegroundColor: const WidgetStatePropertyAll(primaryColor),
+      todayBorder: const BorderSide(color: primaryColor),
+      rangePickerElevation: 0,
+      rangePickerBackgroundColor: surfaceColor,
+      rangePickerHeaderBackgroundColor: primaryShadeColor,
+      rangePickerHeaderForegroundColor: blackColor,
+      rangePickerHeaderHeadlineStyle: display(),
+      rangeSelectionBackgroundColor: primaryShade1Color,
     );
   }
 

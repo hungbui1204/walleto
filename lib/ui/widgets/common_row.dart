@@ -1,31 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:walleto/resources/resources.dart';
 
-import 'pressable.dart';
+import 'common_amount_with_symbol.dart';
+import 'common_list_row.dart';
 
 class CommonRow extends StatelessWidget {
-  const CommonRow({super.key, this.prefix, required this.title, required this.content, this.onTap});
+  const CommonRow({
+    super.key,
+    this.prefix,
+    required this.title,
+    required this.amount,
+    required this.currencyCode,
+    this.onTap,
+    this.showChevron = false,
+  });
 
   final Widget? prefix;
   final String title;
-  final String content;
+  final double amount;
+  final String currencyCode;
   final VoidCallback? onTap;
+  final bool showChevron;
 
   @override
   Widget build(BuildContext context) {
-    return Pressable(
+    return CommonListRow(
+      leading: prefix,
+      title: Text(title),
+      trailing: CommonAmountWithSymbol(amount: amount, currencyCode: currencyCode),
       onTap: onTap,
-      semanticLabel: '$title $content',
-      child: ConstrainedBox(
-        constraints: BoxConstraints(minHeight: Dimens.d44.responsive()),
-        child: Row(
-          children: [
-            if (prefix != null) ...[prefix!, SizedBox(width: Dimens.d10.responsive())],
-            Expanded(child: Text(title, style: AppTextStyles.s16wNormalBlack())),
-            Text(content, style: AppThemes.amount(fontSize: Dimens.d16.responsive())),
-          ],
-        ),
-      ),
+      showChevron: showChevron,
+      semanticLabel: title,
     );
   }
 }

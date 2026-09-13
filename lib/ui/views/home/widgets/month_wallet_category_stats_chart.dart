@@ -12,12 +12,10 @@ class MonthWalletCategoryStatsChart extends StatefulWidget {
   final WalletStat walletStat;
 
   @override
-  State<MonthWalletCategoryStatsChart> createState() =>
-      _MonthWalletCategoryStatsChartState();
+  State<MonthWalletCategoryStatsChart> createState() => _MonthWalletCategoryStatsChartState();
 }
 
-class _MonthWalletCategoryStatsChartState
-    extends State<MonthWalletCategoryStatsChart> {
+class _MonthWalletCategoryStatsChartState extends State<MonthWalletCategoryStatsChart> {
   int _touchedIndex = -1;
 
   void _handleTap(int index) {
@@ -36,8 +34,7 @@ class _MonthWalletCategoryStatsChartState
 
     if (categoryStats.isEmpty) {
       return ChartEmptyPanel(
-        onRetry:
-            () => context.read<HomeBloc>().add(const HomeViewInitialized()),
+        onRetry: () => context.read<HomeBloc>().add(const HomeViewInitialized()),
       );
     }
 
@@ -67,11 +64,8 @@ class _MonthWalletCategoryStatsChartState
                     borderData: FlBorderData(show: false),
                     pieTouchData: PieTouchData(
                       touchCallback: (event, response) {
-                        if (response?.touchedSection != null &&
-                            event is FlTapUpEvent) {
-                          _handleTap(
-                            response!.touchedSection!.touchedSectionIndex,
-                          );
+                        if (response?.touchedSection != null && event is FlTapUpEvent) {
+                          _handleTap(response!.touchedSection!.touchedSectionIndex);
                         }
                       },
                     ),
@@ -79,31 +73,30 @@ class _MonthWalletCategoryStatsChartState
                 ),
               ),
               Expanded(
-                child: ListView.builder(
-                  itemCount: categoryStats.length,
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemBuilder: (context, index) {
-                    return Row(
-                      children: [
-                        Container(
-                          width: Dimens.d12.responsive(),
-                          height: Dimens.d12.responsive(),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: _getColorForIndex(index),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    for (var index = 0; index < categoryStats.length; index++)
+                      Row(
+                        children: [
+                          Container(
+                            width: Dimens.d12.responsive(),
+                            height: Dimens.d12.responsive(),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: _getColorForIndex(index),
+                            ),
                           ),
-                        ),
-                        SizedBox(width: Dimens.d8.responsive()),
-                        Expanded(
-                          child: Text(
-                            categoryStats[index].categoryName,
-                            style: AppTextStyles.s14wNormalBlack(),
+                          SizedBox(width: Dimens.d8.responsive()),
+                          Expanded(
+                            child: Text(
+                              categoryStats[index].categoryName,
+                              style: AppTextStyles.s14wNormalBlack(),
+                            ),
                           ),
-                        ),
-                      ],
-                    );
-                  },
+                        ],
+                      ),
+                  ],
                 ),
               ),
             ],
@@ -118,8 +111,7 @@ class _MonthWalletCategoryStatsChartState
       final stat = stats[index];
       final isTouched = index == _touchedIndex;
       final total = stats.fold<double>(0, (sum, e) => sum + e.totalAmount);
-      final double radius =
-          isTouched ? Dimens.d60.responsive() : Dimens.d50.responsive();
+      final double radius = isTouched ? Dimens.d60.responsive() : Dimens.d50.responsive();
       final title =
           isTouched
               ? stat.totalAmount.round().toCompactString()

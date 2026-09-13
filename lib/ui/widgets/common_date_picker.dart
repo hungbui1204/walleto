@@ -3,12 +3,7 @@ import 'package:walleto/resources/resources.dart';
 import 'package:walleto/shared/shared.dart';
 
 class CommonDatePicker extends StatelessWidget {
-  const CommonDatePicker({
-    super.key,
-    this.initialDate,
-    this.currentDate,
-    required this.child,
-  });
+  const CommonDatePicker({super.key, this.initialDate, this.currentDate, required this.child});
 
   final DateTime? initialDate;
   final DateTime? currentDate;
@@ -24,32 +19,7 @@ class CommonDatePicker extends StatelessWidget {
           surface: surfaceColor,
           onSurface: blackColor,
         ),
-        datePickerTheme: DatePickerThemeData(
-          backgroundColor: surfaceColor,
-          headerBackgroundColor: primaryShadeColor,
-          headerForegroundColor: blackColor,
-          dayForegroundColor: WidgetStateProperty.resolveWith((states) {
-            if (states.contains(WidgetState.selected)) return onPrimaryColor;
-            if (states.contains(WidgetState.disabled)) return darkGreyColor;
-            return blackColor;
-          }),
-          dayShape: WidgetStateOutlinedBorder.resolveWith((states) {
-            if (states.contains(WidgetState.selected)) {
-              return const LinearBorder(side: BorderSide(color: primaryColor));
-            }
-
-            return const LinearBorder(
-              side: BorderSide(color: Colors.transparent),
-            );
-          }),
-          elevation: 0,
-          dayBackgroundColor: WidgetStateColor.resolveWith((states) {
-            if (states.contains(WidgetState.selected)) return primaryColor;
-            return Colors.transparent;
-          }),
-          todayForegroundColor: const WidgetStatePropertyAll(primaryColor),
-          todayBorder: const BorderSide(color: primaryColor),
-        ),
+        datePickerTheme: AppThemes.datePicker,
       ),
       child: child,
     );

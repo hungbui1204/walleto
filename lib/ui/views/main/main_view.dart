@@ -39,19 +39,29 @@ class _MainViewState extends BasePageState<MainView, MainBloc> {
                     return const SizedBox.shrink();
                   }
 
-                  return FloatingActionButton(
-                    shape: const CircleBorder(),
-                    elevation: Dimens.d4.responsive(),
-                    tooltip: S.current.addTransaction,
-                    onPressed:
-                        () async => await navigator.push(const AppRouteInfo.createTransaction()),
-                    backgroundColor: primaryColor,
-                    foregroundColor: onPrimaryColor,
-                    splashColor: primaryShadeColor,
-                    child: Assets.icons.plus.svg(
-                      width: Dimens.d24.responsive(),
-                      height: Dimens.d24.responsive(),
-                      colorFilter: const ColorFilter.mode(onPrimaryColor, BlendMode.srcIn),
+                  final fabSize = Dimens.d56.responsive();
+                  final fabRadius = BorderRadius.circular(fabSize / 2);
+
+                  return Pressable(
+                    onTap: () async {
+                      await navigator.push(const AppRouteInfo.createTransaction());
+                    },
+                    clip: false,
+                    borderRadius: fabRadius,
+                    semanticLabel: S.current.addTransaction,
+                    child: Pressable.clippedFill(
+                      decoration: AppDecorations.primaryCta(radius: fabRadius),
+                      child: SizedBox(
+                        width: fabSize,
+                        height: fabSize,
+                        child: Center(
+                          child: Assets.icons.plus.svg(
+                            width: Dimens.d24.responsive(),
+                            height: Dimens.d24.responsive(),
+                            colorFilter: const ColorFilter.mode(onPrimaryColor, BlendMode.srcIn),
+                          ),
+                        ),
+                      ),
                     ),
                   );
                 },

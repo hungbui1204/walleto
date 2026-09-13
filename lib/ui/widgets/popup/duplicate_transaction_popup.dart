@@ -87,11 +87,10 @@ class _DuplicateTransactionPopupState extends State<DuplicateTransactionPopup> {
                       ],
                     ),
                     const Spacer(),
-                    Text(
-                      widget.transaction.amount.toStringWithFormat(
-                        NumberFormatConstants.amountFormat,
-                      ),
-                      style:
+                    CommonAmountWithSymbol(
+                      amount: widget.transaction.amount,
+                      currencyCode: widget.transaction.currencyCode,
+                      textStyle:
                           widget.transaction.category.type == CategoryType.income
                               ? AppTextStyles.s16wNormalGreen()
                               : AppTextStyles.s16wNormalRed(),
@@ -106,8 +105,7 @@ class _DuplicateTransactionPopupState extends State<DuplicateTransactionPopup> {
                   horizontal: Dimens.d8.responsive(),
                   vertical: Dimens.d4.responsive(),
                 ),
-                child: GestureDetector(
-                  behavior: HitTestBehavior.translucent,
+                child: Pressable(
                   onTap: _dateTimeSelect,
                   child: Row(
                     children: [

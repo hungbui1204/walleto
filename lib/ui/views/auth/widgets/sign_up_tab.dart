@@ -29,9 +29,7 @@ class SignUpTab extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             BlocBuilder<LoginBloc, LoginState>(
-              buildWhen:
-                  (previous, current) =>
-                      previous.signUpStep != current.signUpStep,
+              buildWhen: (previous, current) => previous.signUpStep != current.signUpStep,
               builder: (context, state) {
                 if (state.signUpStep == SignUpStep.emailConfirm ||
                     state.signUpStep == SignUpStep.signUpComplete) {
@@ -41,42 +39,32 @@ class SignUpTab extends StatelessWidget {
                 return Column(
                   children: [
                     SizedBox(height: Dimens.d10.responsive()),
-                    Material(
-                      color: transParentColor,
-                      child: InkWell(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(Dimens.d8.responsive()),
-                        ),
-                        onTap: () {
-                          // Clear all inputs
-                          emailSignUpController.clear();
-                          passwordSignUpController.clear();
-                          otpSignUpController.clear();
-                          confirmPasswordSignUpController.clear();
+                    Pressable(
+                      onTap: () {
+                        emailSignUpController.clear();
+                        passwordSignUpController.clear();
+                        otpSignUpController.clear();
+                        confirmPasswordSignUpController.clear();
 
-                          // Go back to the first step
-                          context.read<LoginBloc>().add(
-                            const SignUpBackToPreviousStepButtonPressed(),
-                          );
-                        },
-                        child: Padding(
-                          padding: EdgeInsets.all(
-                            Dimens.d8.responsive(),
-                          ).copyWith(left: 0),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.arrow_back_ios_sharp,
-                                size: Dimens.d14.responsive(),
-                              ),
-                              SizedBox(width: Dimens.d8.responsive()),
-                              Text(
-                                S.current.backToFirstStep,
-                                style: AppTextStyles.s16wNormalBlack(),
-                              ),
-                            ],
-                          ),
+                        context.read<LoginBloc>().add(
+                          const SignUpBackToPreviousStepButtonPressed(),
+                        );
+                      },
+                      borderRadius: AppDecorations.chipRadius(),
+                      semanticLabel: S.current.backToFirstStep,
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                          top: Dimens.d8.responsive(),
+                          right: Dimens.d8.responsive(),
+                          bottom: Dimens.d8.responsive(),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.arrow_back_ios_sharp, size: Dimens.d14.responsive()),
+                            SizedBox(width: Dimens.d8.responsive()),
+                            Text(S.current.backToFirstStep, style: AppTextStyles.s16wNormalBlack()),
+                          ],
                         ),
                       ),
                     ),
@@ -86,9 +74,7 @@ class SignUpTab extends StatelessWidget {
             ),
             SizedBox(height: Dimens.d10.responsive()),
             BlocBuilder<LoginBloc, LoginState>(
-              buildWhen:
-                  (previous, current) =>
-                      previous.signUpStep != current.signUpStep,
+              buildWhen: (previous, current) => previous.signUpStep != current.signUpStep,
               builder: (context, state) {
                 return AnimatedSwitcher(
                   duration: DurationConstants.defaultAnimationDuration,
@@ -98,10 +84,7 @@ class SignUpTab extends StatelessWidget {
                     final tween = Tween<Offset>(begin: begin, end: end);
                     final offsetAnimation = animation.drive(tween);
 
-                    return SlideTransition(
-                      position: offsetAnimation,
-                      child: child,
-                    );
+                    return SlideTransition(position: offsetAnimation, child: child);
                   },
                   child: KeyedSubtree(
                     key: ValueKey(state.signUpStep),
@@ -114,8 +97,7 @@ class SignUpTab extends StatelessWidget {
                       ),
                       SignUpStep.signingUp => SignUpSigningUpStepWidget(
                         passwordSignUpController: passwordSignUpController,
-                        confirmPasswordSignUpController:
-                            confirmPasswordSignUpController,
+                        confirmPasswordSignUpController: confirmPasswordSignUpController,
                       ),
                       SignUpStep.signUpComplete => SignUpCompleteStepWidget(
                         tabController: tabController,

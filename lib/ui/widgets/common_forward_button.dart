@@ -25,28 +25,35 @@ class CommonForwardButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final radius = borderRadius ?? BorderRadius.circular(Dimens.d16.responsive());
+    final radius = borderRadius ?? AppDecorations.panelRadius();
 
-    return Pressable(
-      onTap: onTap,
-      borderRadius: radius,
-      semanticLabel: title,
-      child: Container(
-        constraints: BoxConstraints(minHeight: Dimens.d44.responsive()),
+    Widget content = ConstrainedBox(
+      constraints: BoxConstraints(minHeight: Dimens.d44.responsive()),
+      child: Padding(
         padding: padding ?? EdgeInsets.all(Dimens.d12.responsive()),
-        decoration: BoxDecoration(
-          color: color ?? transParentColor,
-          borderRadius: radius,
-          border: showBorder ? Border.all(color: glassHairlineColor) : null,
-        ),
         child: Row(
           children: [
             if (leadingIcon != null) ...[leadingIcon!, SizedBox(width: Dimens.d8.responsive())],
             Expanded(child: Text(title, style: AppTextStyles.s14wNormalBlack())),
-            Icon(Icons.arrow_forward_ios, size: Dimens.d14.responsive(), color: darkGreyColor),
+            Icon(
+              Icons.arrow_forward_ios_rounded,
+              size: Dimens.d14.responsive(),
+              color: darkGreyColor,
+            ),
           ],
         ),
       ),
     );
+
+    if (showBorder) {
+      content = DecoratedBox(
+        decoration: AppDecorations.secondaryCta(radius: radius, color: color ?? transParentColor),
+        child: content,
+      );
+    } else if (color != null) {
+      content = ColoredBox(color: color!, child: content);
+    }
+
+    return Pressable(onTap: onTap, borderRadius: radius, semanticLabel: title, child: content);
   }
 }

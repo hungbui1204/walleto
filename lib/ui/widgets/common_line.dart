@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:walleto/resources/resources.dart';
 
+/// Hairline divider between list rows and form fields. Do not merge with [AccentRule].
 class CommonLine extends StatelessWidget {
   const CommonLine({
     super.key,
@@ -22,9 +23,7 @@ class CommonLine extends StatelessWidget {
       margin: margin ?? EdgeInsets.symmetric(vertical: Dimens.d12.responsive()),
       height: thickness,
       width: double.infinity,
-      child: CustomPaint(
-        painter: CustomLinePainter(color: color, thickness: thickness),
-      ),
+      child: CustomPaint(painter: CustomLinePainter(color: color, thickness: thickness)),
     );
   }
 }

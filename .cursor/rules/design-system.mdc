@@ -26,3 +26,8 @@ EdgeInsets.all(16), TextStyle(...), Color(0xFF...), Text('Create wallet')
 ```
 
 Every `Dimens` value must call `.responsive()`. Scaffold body: `NoirScaffoldBody`.
+
+- Tap: every Walleto control goes through `Pressable` (no raw `InkWell` / `GestureDetector` / `TextButton` / `ElevatedButton`). Exceptions: keyboard-dismiss overlay; `IconButton` inside `InputDecoration`.
+- List rows (wallet, transaction, category, form): `CommonListRow`.
+- List pickers (wallet, currency, month, category): bottom sheet. Dialogs stay for confirm / error / complete / warning.
+- Do not put `TabBarView` inside a vertical `SingleChildScrollView`.

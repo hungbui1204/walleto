@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:walleto/domain/domain.dart';
 import 'package:walleto/resources/resources.dart';
-import 'package:walleto/shared/shared.dart';
 import 'package:walleto/ui/ui.dart';
 
 @RoutePage()
@@ -43,16 +42,23 @@ class _WalletsViewState extends BasePageState<WalletsView, WalletsBloc> {
                   SizedBox(height: Dimens.d10.responsive()),
                   Align(
                     alignment: Alignment.centerRight,
-                    child: IconButton(
-                      tooltip: S.current.createWallet,
-                      onPressed: () {
+                    child: Pressable(
+                      onTap: () {
                         navigator.push(const AppRouteInfo.createWallet());
                       },
-                      icon: Assets.icons.plus.svg(
-                        width: Dimens.d24.responsive(),
-                        height: Dimens.d24.responsive(),
-                        fit: BoxFit.cover,
-                        colorFilter: const ColorFilter.mode(primaryColor, BlendMode.srcIn),
+                      semanticLabel: S.current.createWallet,
+                      borderRadius: AppDecorations.chipRadius(),
+                      child: SizedBox(
+                        width: Dimens.d44.responsive(),
+                        height: Dimens.d44.responsive(),
+                        child: Center(
+                          child: Assets.icons.plus.svg(
+                            width: Dimens.d24.responsive(),
+                            height: Dimens.d24.responsive(),
+                            fit: BoxFit.cover,
+                            colorFilter: const ColorFilter.mode(primaryColor, BlendMode.srcIn),
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -85,9 +91,9 @@ class _WalletsViewState extends BasePageState<WalletsView, WalletsBloc> {
                                 );
                               },
                               title: state.wallets[index].name,
-                              content: state.wallets[index].amount.toStringWithFormat(
-                                NumberFormatConstants.amountFormat,
-                              ),
+                              amount: state.wallets[index].amount,
+                              currencyCode: state.wallets[index].currencyCode,
+                              showChevron: true,
                               prefix: CommonCircleNetworkImage(
                                 imageUrl: state.wallets[index].iconUrl,
                                 placeHolderType: ImagePlaceHolderType.wallet,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:walleto/resources/resources.dart';
+import 'package:walleto/ui/ui.dart';
 
 class BottomBarIconButton extends StatelessWidget {
   const BottomBarIconButton({
@@ -17,10 +18,11 @@ class BottomBarIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    return Pressable(
       onTap: onTap,
-      splashColor: primaryShade1Color,
-      highlightColor: primaryShade1Color,
+      feedback: PressableFeedback.opacity,
+      borderRadius: AppDecorations.chipRadius(),
+      semanticLabel: label,
       child: ConstrainedBox(
         constraints: BoxConstraints(minHeight: Dimens.d44.responsive()),
         child: Column(
@@ -32,9 +34,7 @@ class BottomBarIconButton extends StatelessWidget {
               label,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: (selected
-                      ? AppTextStyles.s10wBoldBlack()
-                      : AppTextStyles.s10wNormalGrey())
+              style: (selected ? AppTextStyles.s10wBoldBlack() : AppTextStyles.s10wNormalGrey())
                   .copyWith(color: selected ? primaryColor : darkGreyColor),
             ),
           ],

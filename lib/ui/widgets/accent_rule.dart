@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:walleto/resources/resources.dart';
 
+/// Short teal rule under hero titles. Do not merge with [CommonLine].
 class AccentRule extends StatelessWidget {
   const AccentRule({super.key, this.width});
 

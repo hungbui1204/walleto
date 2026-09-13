@@ -31,7 +31,9 @@ class _CreateCategoryPopupState extends BasePageState<CreateCategoryPopup, Creat
 
   @override
   Widget buildPage(BuildContext context) {
+    // Keyboard dismiss overlay — Pressable exception.
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onTap: () => ViewUtils.hideKeyboard(context),
       child: Material(
         type: MaterialType.transparency,
@@ -63,18 +65,19 @@ class _CreateCategoryPopupState extends BasePageState<CreateCategoryPopup, Creat
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
-                              GestureDetector(
-                                behavior: HitTestBehavior.translucent,
+                              Pressable(
                                 onTap: () {
-                                  navigator.showDialog(
+                                  navigator.showModalBottomSheet(
                                     AppPopupInfo.selectIcon(
                                       iconType: IconType.category,
                                       onIconSelected: (iconUrl) {
                                         bloc.add(CreateCategoryIconChanged(icon: iconUrl));
                                       },
                                     ),
+                                    useRootNavigator: true,
                                   );
                                 },
+                                borderRadius: BorderRadius.circular(Dimens.d36.responsive()),
                                 child: BlocBuilder<CreateCategoryBloc, CreateCategoryState>(
                                   buildWhen: (previous, current) => previous.icon != current.icon,
                                   builder: (context, state) {
@@ -107,42 +110,24 @@ class _CreateCategoryPopupState extends BasePageState<CreateCategoryPopup, Creat
                                 size: Dimens.d28.responsive(),
                               ),
                               SizedBox(width: Dimens.d8.responsive()),
-                              BlocBuilder<CreateCategoryBloc, CreateCategoryState>(
-                                buildWhen: (previous, current) {
-                                  return previous.categoryType != current.categoryType;
-                                },
-                                builder: (context, state) {
-                                  return SegmentedButton<CategoryType>(
-                                    style: SegmentedButton.styleFrom(
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: Dimens.d12.responsive(),
-                                      ),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(Dimens.d8.responsive()),
-                                      ),
-                                      backgroundColor: surfaceColor,
-                                      selectedBackgroundColor: primaryShadeColor,
-                                      selectedForegroundColor: primaryColor,
-                                      foregroundColor: darkGreyColor,
-                                      side: const BorderSide(color: frameColor),
-                                    ),
-                                    segments: [
-                                      ButtonSegment(
-                                        value: CategoryType.expense,
-                                        label: Text(S.current.expense),
-                                      ),
-                                      ButtonSegment(
-                                        value: CategoryType.income,
-                                        label: Text(S.current.income),
-                                      ),
-                                    ],
-                                    selected: {state.categoryType},
-                                    showSelectedIcon: false,
-                                    onSelectionChanged: (type) {
-                                      bloc.add(CreateCategoryTypeChanged(categoryType: type.first));
-                                    },
-                                  );
-                                },
+                              Expanded(
+                                child: BlocBuilder<CreateCategoryBloc, CreateCategoryState>(
+                                  buildWhen: (previous, current) {
+                                    return previous.categoryType != current.categoryType;
+                                  },
+                                  builder: (context, state) {
+                                    return CommonSegmentedControl<CategoryType>(
+                                      segments: [
+                                        (value: CategoryType.expense, label: S.current.expense),
+                                        (value: CategoryType.income, label: S.current.income),
+                                      ],
+                                      selected: state.categoryType,
+                                      onSelected: (type) {
+                                        bloc.add(CreateCategoryTypeChanged(categoryType: type));
+                                      },
+                                    );
+                                  },
+                                ),
                               ),
                             ],
                           ),
@@ -153,9 +138,9 @@ class _CreateCategoryPopupState extends BasePageState<CreateCategoryPopup, Creat
                                     previous.parent != current.parent ||
                                     previous.categoryType != current.categoryType,
                             builder: (context, state) {
-                              return InkWell(
+                              return Pressable(
                                 onTap: () {
-                                  navigator.showDialog(
+                                  navigator.showModalBottomSheet(
                                     AppPopupInfo.selectCategory(
                                       isSelectingParent: true,
                                       categoryType: state.categoryType,
@@ -163,6 +148,7 @@ class _CreateCategoryPopupState extends BasePageState<CreateCategoryPopup, Creat
                                         bloc.add(CreateCategoryParentChanged(parent: category));
                                       },
                                     ),
+                                    useRootNavigator: true,
                                   );
                                 },
                                 child: Stack(
@@ -205,14 +191,17 @@ class _CreateCategoryPopupState extends BasePageState<CreateCategoryPopup, Creat
                                           ),
                                           if (state.parent == null)
                                             Icon(
-                                              Icons.arrow_forward_ios,
+                                              Icons.arrow_forward_ios_rounded,
                                               size: Dimens.d14.responsive(),
+                                              color: darkGreyColor,
                                             )
                                           else
-                                            GestureDetector(
+                                            Pressable(
                                               onTap: () {
                                                 bloc.add(const CreateCategoryParentRemoved());
                                               },
+                                              borderRadius: AppDecorations.chipRadius(),
+                                              semanticLabel: S.current.removeParentCategory,
                                               child: Icon(
                                                 Icons.close,
                                                 size: Dimens.d20.responsive(),

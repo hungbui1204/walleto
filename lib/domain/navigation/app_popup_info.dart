@@ -49,20 +49,15 @@ sealed class AppPopupInfo with _$AppPopupInfo {
     required void Function(String) onNoteChanged,
   }) = NoteInput;
 
-  /// Bottom sheet; wallets from AppBloc (no Total). Save/Cancel.
-  /// Not [SelectWallet] (caller-supplied list + dialog).
+  /// Bottom sheet; tap row selects and pops.
+  /// [wallets] null → AppBloc.wallets (no Total).
+  /// [includeTotalWallet] keeps the Total row (Transactions filter).
   const factory AppPopupInfo.chooseWallet({
     required void Function(Wallet) onWalletSelected,
-    required Wallet? currentWallet,
+    Wallet? currentWallet,
+    List<Wallet>? wallets,
+    @Default(false) bool includeTotalWallet,
   }) = ChooseWallet;
-
-  /// Dialog; [wallets] from caller (may include Total). Tap selects and pops.
-  /// Not [ChooseWallet] (AppBloc list + bottom sheet).
-  const factory AppPopupInfo.selectWallet({
-    required List<Wallet> wallets,
-    required void Function(Wallet) onWalletSelected,
-    Wallet? selectedWallet,
-  }) = SelectWallet;
 
   const factory AppPopupInfo.selectIcon({
     required IconType iconType,

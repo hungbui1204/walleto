@@ -3,6 +3,7 @@ import 'package:walleto/domain/domain.dart';
 import 'package:walleto/resources/resources.dart';
 
 import '../extensions/operation_type_extension.dart';
+import 'pressable.dart';
 
 class NumericKeyboard extends StatelessWidget {
   const NumericKeyboard({
@@ -88,20 +89,12 @@ class NumericKeyboard extends StatelessWidget {
             foregroundColor = blackColor;
           }
 
-          return ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              padding: EdgeInsets.zero,
-              side: BorderSide(color: isDone ? primaryColor : glassHairlineColor),
-              shadowColor: transParentColor,
-              elevation: 0,
-              backgroundColor: backgroundColor,
-              foregroundColor: foregroundColor,
-              minimumSize: Size(Dimens.d44.responsive(), Dimens.d44.responsive()),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(Dimens.d12.responsive()),
-              ),
-            ),
-            onPressed: () {
+          return _NumericKey(
+            label: key,
+            backgroundColor: backgroundColor,
+            foregroundColor: foregroundColor,
+            isPrimary: isDone,
+            onTap: () {
               if (key == S.current.backspace) {
                 onBackspace();
               } else if (key == S.current.clear) {
@@ -116,12 +109,47 @@ class NumericKeyboard extends StatelessWidget {
                 onNumberKeyTap(key);
               }
             },
-            child: Text(
-              key,
-              style: AppThemes.amount(fontSize: Dimens.d18.responsive(), color: foregroundColor),
-            ),
           );
         },
+      ),
+    );
+  }
+}
+
+class _NumericKey extends StatelessWidget {
+  const _NumericKey({
+    required this.label,
+    required this.backgroundColor,
+    required this.foregroundColor,
+    required this.onTap,
+    required this.isPrimary,
+  });
+
+  final String label;
+  final Color backgroundColor;
+  final Color foregroundColor;
+  final VoidCallback onTap;
+  final bool isPrimary;
+
+  @override
+  Widget build(BuildContext context) {
+    final radius = AppDecorations.chipRadius();
+
+    return Pressable(
+      onTap: onTap,
+      borderRadius: radius,
+      semanticLabel: label,
+      child: DecoratedBox(
+        decoration:
+            isPrimary
+                ? AppDecorations.primaryCta(radius: radius)
+                : AppDecorations.secondaryCta(radius: radius, color: backgroundColor),
+        child: Center(
+          child: Text(
+            label,
+            style: AppThemes.amount(fontSize: Dimens.d18.responsive(), color: foregroundColor),
+          ),
+        ),
       ),
     );
   }

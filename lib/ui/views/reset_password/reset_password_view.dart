@@ -13,8 +13,7 @@ class ResetPasswordView extends StatefulWidget {
   State<ResetPasswordView> createState() => _ResetPasswordViewState();
 }
 
-class _ResetPasswordViewState
-    extends BasePageState<ResetPasswordView, ResetPasswordBloc> {
+class _ResetPasswordViewState extends BasePageState<ResetPasswordView, ResetPasswordBloc> {
   late final TextEditingController emailController;
   late final TextEditingController passwordController;
   late final TextEditingController otpController;
@@ -52,55 +51,45 @@ class _ResetPasswordViewState
                 BlocBuilder<ResetPasswordBloc, ResetPasswordState>(
                   buildWhen:
                       (previous, current) =>
-                          previous.resetPasswordStep !=
-                          current.resetPasswordStep,
+                          previous.resetPasswordStep != current.resetPasswordStep,
                   builder: (context, state) {
-                    if (state.resetPasswordStep ==
-                            ResetPasswordStep.emailConfirm ||
-                        state.resetPasswordStep ==
-                            ResetPasswordStep.resetPasswordComplete) {
+                    if (state.resetPasswordStep == ResetPasswordStep.emailConfirm ||
+                        state.resetPasswordStep == ResetPasswordStep.resetPasswordComplete) {
                       return const SizedBox.shrink();
                     }
 
                     return Column(
                       children: [
                         SizedBox(height: Dimens.d10.responsive()),
-                        Material(
-                          color: transParentColor,
-                          child: InkWell(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(Dimens.d8.responsive()),
-                            ),
-                            onTap: () {
-                              // Clear all inputs
-                              emailController.clear();
-                              passwordController.clear();
-                              otpController.clear();
-                              confirmPasswordController.clear();
+                        Pressable(
+                          onTap: () {
+                            emailController.clear();
+                            passwordController.clear();
+                            otpController.clear();
+                            confirmPasswordController.clear();
 
-                              // Go back to the first step
-                              context.read<ResetPasswordBloc>().add(
-                                const ResetPasswordBackToPreviousStepButtonPressed(),
-                              );
-                            },
-                            child: Padding(
-                              padding: EdgeInsets.all(
-                                Dimens.d8.responsive(),
-                              ).copyWith(left: 0),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    Icons.arrow_back_ios_sharp,
-                                    size: Dimens.d14.responsive(),
-                                  ),
-                                  SizedBox(width: Dimens.d8.responsive()),
-                                  Text(
-                                    S.current.backToFirstStep,
-                                    style: AppTextStyles.s16wNormalBlack(),
-                                  ),
-                                ],
-                              ),
+                            context.read<ResetPasswordBloc>().add(
+                              const ResetPasswordBackToPreviousStepButtonPressed(),
+                            );
+                          },
+                          borderRadius: AppDecorations.chipRadius(),
+                          semanticLabel: S.current.backToFirstStep,
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                              top: Dimens.d8.responsive(),
+                              right: Dimens.d8.responsive(),
+                              bottom: Dimens.d8.responsive(),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.arrow_back_ios_sharp, size: Dimens.d14.responsive()),
+                                SizedBox(width: Dimens.d8.responsive()),
+                                Text(
+                                  S.current.backToFirstStep,
+                                  style: AppTextStyles.s16wNormalBlack(),
+                                ),
+                              ],
                             ),
                           ),
                         ),
@@ -111,8 +100,7 @@ class _ResetPasswordViewState
                 SizedBox(height: Dimens.d10.responsive()),
                 BlocBuilder<ResetPasswordBloc, ResetPasswordState>(
                   buildWhen: (previous, current) {
-                    return previous.resetPasswordStep !=
-                        current.resetPasswordStep;
+                    return previous.resetPasswordStep != current.resetPasswordStep;
                   },
                   builder: (context, state) {
                     return AnimatedSwitcher(
@@ -123,27 +111,21 @@ class _ResetPasswordViewState
                         final tween = Tween<Offset>(begin: begin, end: end);
                         final offsetAnimation = animation.drive(tween);
 
-                        return SlideTransition(
-                          position: offsetAnimation,
-                          child: child,
-                        );
+                        return SlideTransition(position: offsetAnimation, child: child);
                       },
                       child: KeyedSubtree(
                         key: ValueKey(state.resetPasswordStep),
                         child: switch (state.resetPasswordStep) {
-                          ResetPasswordStep.emailConfirm =>
-                            ResetPasswordConfirmEmailStepWidget(
-                              emailController: emailController,
-                            ),
-                          ResetPasswordStep.otpConfirm =>
-                            ResetPasswordConfirmOtpStepWidget(
-                              otpController: otpController,
-                            ),
+                          ResetPasswordStep.emailConfirm => ResetPasswordConfirmEmailStepWidget(
+                            emailController: emailController,
+                          ),
+                          ResetPasswordStep.otpConfirm => ResetPasswordConfirmOtpStepWidget(
+                            otpController: otpController,
+                          ),
                           ResetPasswordStep.resettingPassword =>
                             ResetPasswordResettingPasswordStepWidget(
                               passwordController: passwordController,
-                              confirmPasswordController:
-                                  confirmPasswordController,
+                              confirmPasswordController: confirmPasswordController,
                             ),
                           ResetPasswordStep.resetPasswordComplete =>
                             const ResetPasswordCompleteStepWidget(),

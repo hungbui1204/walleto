@@ -57,55 +57,24 @@ class _TransactionsViewState extends BasePageState<TransactionsView, Transaction
                 bloc.add(const TransactionsRefreshed());
                 await next;
               },
-              child: SingleChildScrollView(
+              child: CustomScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: Dimens.d12.responsive()),
-                    const Center(child: _SelectedWalletWidget()),
-                    SizedBox(height: Dimens.d20.responsive()),
-                    const _DatePickerDropDownWidget(),
-                    SizedBox(height: Dimens.d20.responsive()),
-                    BlocBuilder<TransactionsBloc, TransactionsState>(
-                      buildWhen: (previous, current) {
-                        return previous.allDayTransactions != current.allDayTransactions;
-                      },
-                      builder: (context, state) {
-                        if (state.allDayTransactions.isEmpty) {
-                          return CommonEmptyPanel(
-                            icon: Icons.receipt_long_outlined,
-                            message: S.current.noRecentTransactions,
-                            actionLabel: S.current.addTransaction,
-                            onAction: () {
-                              final hasWallets = appBloc.state.wallets.isNotEmpty;
-                              navigator.push(
-                                hasWallets
-                                    ? const AppRouteInfo.createTransaction()
-                                    : const AppRouteInfo.createWallet(),
-                              );
-                            },
-                          );
-                        }
-
-                        return ListView.separated(
-                          physics: const NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount: state.allDayTransactions.length,
-                          itemBuilder: (context, index) {
-                            if (state.allDayTransactions.isEmpty) return const SizedBox.shrink();
-
-                            return _DayTransactionsWidget(state.allDayTransactions[index]);
-                          },
-                          separatorBuilder: (context, index) {
-                            return SizedBox(height: Dimens.d20.responsive());
-                          },
-                        );
-                      },
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(height: Dimens.d12.responsive()),
+                        const Center(child: _SelectedWalletWidget()),
+                        SizedBox(height: Dimens.d20.responsive()),
+                        const _DatePickerDropDownWidget(),
+                        SizedBox(height: Dimens.d20.responsive()),
+                      ],
                     ),
-                    SizedBox(height: Dimens.d24.responsive()),
-                  ],
-                ),
+                  ),
+                  const _DayTransactionsSliver(),
+                  SliverToBoxAdapter(child: SizedBox(height: Dimens.d24.responsive())),
+                ],
               ),
             ),
           ),
@@ -115,14 +84,63 @@ class _TransactionsViewState extends BasePageState<TransactionsView, Transaction
   }
 }
 
-class _DayTransactionsWidget extends StatelessWidget {
-  const _DayTransactionsWidget(this.dayTransactions);
+class _DayTransactionsSliver extends StatelessWidget {
+  const _DayTransactionsSliver();
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<TransactionsBloc, TransactionsState>(
+      buildWhen: (previous, current) {
+        return previous.allDayTransactions != current.allDayTransactions;
+      },
+      builder: (context, state) {
+        if (state.allDayTransactions.isEmpty) {
+          return SliverToBoxAdapter(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CommonEmptyPanel(
+                  icon: Icons.receipt_long_outlined,
+                  message: S.current.noRecentTransactions,
+                  actionLabel: S.current.addTransaction,
+                  onAction: () {
+                    final hasWallets = context.read<AppBloc>().state.wallets.isNotEmpty;
+                    context.read<AppNavigator>().push(
+                      hasWallets
+                          ? const AppRouteInfo.createTransaction()
+                          : const AppRouteInfo.createWallet(),
+                    );
+                  },
+                ),
+              ],
+            ),
+          );
+        }
+
+        final days = state.allDayTransactions;
+
+        return SliverMainAxisGroup(
+          slivers: [
+            for (var index = 0; index < days.length; index++) ...[
+              _DayTransactionsGroupSliver(days[index]),
+              if (index != days.length - 1)
+                SliverToBoxAdapter(child: SizedBox(height: Dimens.d20.responsive())),
+            ],
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _DayTransactionsGroupSliver extends StatelessWidget {
+  const _DayTransactionsGroupSliver(this.dayTransactions);
 
   final DayTransactions dayTransactions;
 
   @override
   Widget build(BuildContext context) {
-    return CommonTitledPanel(
+    return CommonTitledPanelSliver(
       titleWidget:
           dayTransactions.date == null
               ? null
@@ -150,22 +168,10 @@ class _DayTransactionsWidget extends StatelessWidget {
                   ),
                 ],
               ),
-      contentWidget:
-          dayTransactions.transactions.isEmpty
-              ? null
-              : ListView.separated(
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: dayTransactions.transactions.length,
-                itemBuilder: (context, index) {
-                  final transaction = dayTransactions.transactions[index];
-
-                  return _TransactionInfoWidget(transaction);
-                },
-                separatorBuilder: (context, index) {
-                  return const CommonLine();
-                },
-              ),
+      itemCount: dayTransactions.transactions.length,
+      itemBuilder: (context, index) {
+        return _TransactionInfoWidget(dayTransactions.transactions[index]);
+      },
     );
   }
 }
@@ -177,34 +183,24 @@ class _TransactionInfoWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.translucent,
+    return CommonListRow(
       onTap: () {
         context.read<AppNavigator>().push(AppRouteInfo.transactionDetail(transaction: transaction));
       },
-      child: ConstrainedBox(
-        constraints: BoxConstraints(minHeight: Dimens.d44.responsive()),
-        child: Row(
-          children: [
-            CommonCircleNetworkImage(
-              imageUrl: transaction.category.iconUrl,
-              backgroundColor: primaryShadeColor,
-            ),
-            SizedBox(width: Dimens.d10.responsive()),
-            Expanded(
-              child: Text(transaction.category.name, style: AppTextStyles.s14wNormalBlack()),
-            ),
-            CommonAmountWithSymbol(
-              amount: transaction.amount,
-              currencyCode: transaction.currencyCode,
-              textStyle: AppThemes.amount(
-                fontSize: Dimens.d14.responsive(),
-                color: transaction.type == CategoryType.expense ? redColor : greenColor,
-              ),
-            ),
-          ],
+      leading: CommonCircleNetworkImage(
+        imageUrl: transaction.category.iconUrl,
+        backgroundColor: primaryShadeColor,
+      ),
+      title: Text(transaction.category.name, style: AppTextStyles.s14wNormalBlack()),
+      trailing: CommonAmountWithSymbol(
+        amount: transaction.amount,
+        currencyCode: transaction.currencyCode,
+        textStyle: AppThemes.amount(
+          fontSize: Dimens.d14.responsive(),
+          color: transaction.type == CategoryType.expense ? redColor : greenColor,
         ),
       ),
+      showChevron: true,
     );
   }
 }
@@ -225,12 +221,13 @@ class _DatePickerDropDownWidget extends StatelessWidget {
           decoration: AppDecorations.glassPanel(),
           child: Column(
             children: [
-              GestureDetector(
+              Pressable(
                 onTap: () {
                   context.read<TransactionsBloc>().add(
                     const TransactionsDatePickerMethodExpandTriggered(),
                   );
                 },
+                borderRadius: AppDecorations.panelRadius(),
                 child: Container(
                   constraints: BoxConstraints(minHeight: Dimens.d44.responsive()),
                   padding: EdgeInsets.all(Dimens.d10.responsive()),
@@ -266,7 +263,7 @@ class _DatePickerDropDownWidget extends StatelessWidget {
               ),
               AnimatedSize(
                 curve: Curves.easeInOut,
-                duration: const Duration(milliseconds: 300),
+                duration: DurationConstants.defaultAnimationDuration,
                 child:
                     state.isDatePickerMethodExpanded
                         ? Column(
@@ -278,7 +275,7 @@ class _DatePickerDropDownWidget extends StatelessWidget {
                               showBorder: false,
                               borderRadius: BorderRadius.zero,
                               onTap: () {
-                                context.read<AppNavigator>().showDialog(
+                                context.read<AppNavigator>().showModalBottomSheet(
                                   AppPopupInfo.selectMonth(
                                     firstYear: AppConstants.firstYear,
                                     lastYear: AppConstants.lastYear,
@@ -301,8 +298,8 @@ class _DatePickerDropDownWidget extends StatelessWidget {
                               color: surfaceColor,
                               showBorder: false,
                               borderRadius: BorderRadius.only(
-                                bottomLeft: Radius.circular(Dimens.d16.responsive()),
-                                bottomRight: Radius.circular(Dimens.d16.responsive()),
+                                bottomLeft: AppDecorations.panelRadius().bottomLeft,
+                                bottomRight: AppDecorations.panelRadius().bottomRight,
                               ),
                               onTap: () {
                                 context.read<TransactionsBloc>().add(
@@ -357,10 +354,11 @@ class _SelectedWalletWidget extends StatelessWidget {
                   ),
 
           onTap: () {
-            context.read<AppNavigator>().showDialog(
-              AppPopupInfo.selectWallet(
+            context.read<AppNavigator>().showModalBottomSheet(
+              AppPopupInfo.chooseWallet(
                 wallets: state.wallets,
-                selectedWallet: state.selectedWallet,
+                currentWallet: state.selectedWallet,
+                includeTotalWallet: true,
                 onWalletSelected: (wallet) {
                   context.read<TransactionsBloc>().add(
                     TransactionsWalletSelected(selectedWallet: wallet),

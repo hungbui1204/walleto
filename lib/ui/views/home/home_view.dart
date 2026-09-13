@@ -14,23 +14,14 @@ class HomeView extends StatefulWidget {
   State<HomeView> createState() => _HomeViewState();
 }
 
-class _HomeViewState extends BasePageState<HomeView, HomeBloc> with SingleTickerProviderStateMixin {
-  late final TabController _tabController;
-
+class _HomeViewState extends BasePageState<HomeView, HomeBloc> {
   @override
   bool get useSkeletonLoading => true;
 
   @override
   void initState() {
-    _tabController = TabController(length: 2, vsync: this);
     bloc.add(const HomeViewInitialized());
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
   }
 
   @override
@@ -75,24 +66,21 @@ class _HomeViewState extends BasePageState<HomeView, HomeBloc> with SingleTicker
                 bloc.add(const HomeDataRefreshed());
                 await next;
               },
-              child: SingleChildScrollView(
+              child: CustomScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    SizedBox(height: Dimens.d8.responsive()),
-                    const _NoirBalanceHero(),
-                    SizedBox(height: Dimens.d16.responsive()),
-                    const _GlassFlowRow(),
-                    SizedBox(height: Dimens.d16.responsive()),
-                    const _AllWalletsWidget(),
-                    SizedBox(height: Dimens.d16.responsive()),
-                    StatisticWidget(tabController: _tabController),
-                    SizedBox(height: Dimens.d16.responsive()),
-                    const _RecentTransactionsWidget(),
-                    SizedBox(height: Dimens.d28.responsive()),
-                  ],
-                ),
+                slivers: [
+                  SliverToBoxAdapter(child: SizedBox(height: Dimens.d8.responsive())),
+                  const SliverToBoxAdapter(child: _NoirBalanceHero()),
+                  SliverToBoxAdapter(child: SizedBox(height: Dimens.d16.responsive())),
+                  const SliverToBoxAdapter(child: _GlassFlowRow()),
+                  SliverToBoxAdapter(child: SizedBox(height: Dimens.d16.responsive())),
+                  const SliverToBoxAdapter(child: _AllWalletsWidget()),
+                  SliverToBoxAdapter(child: SizedBox(height: Dimens.d16.responsive())),
+                  const SliverToBoxAdapter(child: StatisticWidget()),
+                  SliverToBoxAdapter(child: SizedBox(height: Dimens.d16.responsive())),
+                  const _RecentTransactionsSliver(),
+                  SliverToBoxAdapter(child: SizedBox(height: Dimens.d28.responsive())),
+                ],
               ),
             ),
           ),
@@ -268,11 +256,11 @@ class _AllWalletsWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(S.current.allWallets, style: AppTextStyles.s16wBoldBlack()),
-          GestureDetector(
-            behavior: HitTestBehavior.opaque,
+          Pressable(
             onTap: () {
               context.read<AppNavigator>().push(const AppRouteInfo.wallets());
             },
+            semanticLabel: S.current.seeAll,
             child: Padding(
               padding: EdgeInsets.symmetric(
                 vertical: Dimens.d8.responsive(),
@@ -299,16 +287,14 @@ class _AllWalletsWidget extends StatelessWidget {
 
           final count = state.wallets.length.clamp(0, 3);
 
-          return ListView.separated(
-            itemCount: count,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemBuilder: (context, index) {
-              return _WalletInfoWidget(state.wallets[index]);
-            },
-            separatorBuilder: (context, index) {
-              return const CommonLine();
-            },
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              for (var index = 0; index < count; index++) ...[
+                if (index > 0) const CommonLine(),
+                _WalletInfoWidget(state.wallets[index]),
+              ],
+            ],
           );
         },
       ),
@@ -323,75 +309,66 @@ class _WalletInfoWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Pressable(
+    return CommonListRow(
       onTap: () {
         context.read<AppNavigator>().push(AppRouteInfo.editWallet(wallet: wallet));
       },
       semanticLabel: wallet.name,
-      child: ConstrainedBox(
-        constraints: BoxConstraints(minHeight: Dimens.d44.responsive()),
-        child: Row(
-          children: [
-            CommonCircleNetworkImage(
-              imageUrl: wallet.iconUrl,
-              placeHolderType: ImagePlaceHolderType.wallet,
-            ),
-            SizedBox(width: Dimens.d10.responsive()),
-            Expanded(child: Text(wallet.name, style: AppTextStyles.s16wNormalBlack())),
-            CommonAmountWithSymbol(amount: wallet.amount, currencyCode: wallet.currencyCode),
-            SizedBox(width: Dimens.d4.responsive()),
-            Icon(Icons.chevron_right, size: Dimens.d20.responsive(), color: darkGreyColor),
-          ],
-        ),
+      leading: CommonCircleNetworkImage(
+        imageUrl: wallet.iconUrl,
+        placeHolderType: ImagePlaceHolderType.wallet,
       ),
+      title: Text(wallet.name),
+      trailing: CommonAmountWithSymbol(amount: wallet.amount, currencyCode: wallet.currencyCode),
+      showChevron: true,
     );
   }
 }
 
-class _RecentTransactionsWidget extends StatelessWidget {
-  const _RecentTransactionsWidget();
+class _RecentTransactionsSliver extends StatelessWidget {
+  const _RecentTransactionsSliver();
 
   @override
   Widget build(BuildContext context) {
-    return CommonTitledPanel(
-      titleWidget: Align(
-        alignment: Alignment.centerLeft,
-        child: Text(S.current.recentTransactions, style: AppTextStyles.s16wBoldBlack()),
-      ),
-      contentWidget: BlocBuilder<HomeBloc, HomeState>(
-        buildWhen: (previous, current) {
-          return previous.recentTransactions != current.recentTransactions;
-        },
-        builder: (context, state) {
-          if (state.recentTransactions.isEmpty) {
-            return CommonEmptyPanel(
-              icon: Icons.receipt_long_outlined,
-              message: S.current.noRecentTransactions,
-              actionLabel: S.current.addTransaction,
-              onAction: () {
-                final hasWallets = context.read<AppBloc>().state.wallets.isNotEmpty;
-                context.read<AppNavigator>().push(
-                  hasWallets
-                      ? const AppRouteInfo.createTransaction()
-                      : const AppRouteInfo.createWallet(),
-                );
-              },
-            );
-          }
+    return BlocBuilder<HomeBloc, HomeState>(
+      buildWhen: (previous, current) {
+        return previous.recentTransactions != current.recentTransactions;
+      },
+      builder: (context, state) {
+        final title = Align(
+          alignment: Alignment.centerLeft,
+          child: Text(S.current.recentTransactions, style: AppTextStyles.s16wBoldBlack()),
+        );
 
-          return ListView.separated(
-            physics: const NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            itemCount: state.recentTransactions.length,
-            itemBuilder: (context, index) {
-              return _RecentTransactionWidget(state.recentTransactions[index]);
-            },
-            separatorBuilder: (context, index) {
-              return const CommonLine();
-            },
+        if (state.recentTransactions.isEmpty) {
+          return SliverToBoxAdapter(
+            child: CommonTitledPanel(
+              titleWidget: title,
+              contentWidget: CommonEmptyPanel(
+                icon: Icons.receipt_long_outlined,
+                message: S.current.noRecentTransactions,
+                actionLabel: S.current.addTransaction,
+                onAction: () {
+                  final hasWallets = context.read<AppBloc>().state.wallets.isNotEmpty;
+                  context.read<AppNavigator>().push(
+                    hasWallets
+                        ? const AppRouteInfo.createTransaction()
+                        : const AppRouteInfo.createWallet(),
+                  );
+                },
+              ),
+            ),
           );
-        },
-      ),
+        }
+
+        return CommonTitledPanelSliver(
+          titleWidget: title,
+          itemCount: state.recentTransactions.length,
+          itemBuilder: (context, index) {
+            return _RecentTransactionWidget(state.recentTransactions[index]);
+          },
+        );
+      },
     );
   }
 }
@@ -403,63 +380,44 @@ class _RecentTransactionWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ConstrainedBox(
-      constraints: BoxConstraints(minHeight: Dimens.d44.responsive()),
-      child: GestureDetector(
-        behavior: HitTestBehavior.translucent,
-        onTap: () {
-          context.read<AppNavigator>().push(
-            AppRouteInfo.transactionDetail(transaction: transaction),
-          );
-        },
-        child: Row(
-          children: [
-            Stack(
-              clipBehavior: Clip.none,
-              children: [
-                CommonCircleNetworkImage(imageUrl: transaction.category.iconUrl),
-                Positioned(
-                  bottom: 0,
-                  right: -6,
-                  child: CommonCircleNetworkImage(
-                    imageUrl: transaction.wallet.iconUrl,
-                    placeHolderType: ImagePlaceHolderType.wallet,
-                    backgroundColor: primaryShadeColor,
-                    size: Dimens.d16.responsive(),
-                  ),
-                ),
-              ],
+    return CommonListRow(
+      onTap: () {
+        context.read<AppNavigator>().push(AppRouteInfo.transactionDetail(transaction: transaction));
+      },
+      leading: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          CommonCircleNetworkImage(imageUrl: transaction.category.iconUrl),
+          Positioned(
+            bottom: 0,
+            right: -Dimens.d6.responsive(),
+            child: CommonCircleNetworkImage(
+              imageUrl: transaction.wallet.iconUrl,
+              placeHolderType: ImagePlaceHolderType.wallet,
+              backgroundColor: primaryShadeColor,
+              size: Dimens.d16.responsive(),
             ),
-            SizedBox(width: Dimens.d16.responsive()),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(transaction.category.name, style: AppTextStyles.s14wBoldBlack()),
-                  Text(
-                    transaction.transactionDate!.toStringWithFormat(
-                      DateTimeFormatConstants.dayMonthYearFormat,
-                    ),
-                    style: AppThemes.amount(
-                      fontSize: Dimens.d11.responsive(),
-                      fontWeight: FontWeight.w500,
-                      color: darkGreyColor,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            CommonAmountWithSymbol(
-              amount: transaction.amount,
-              currencyCode: transaction.currencyCode,
-              textStyle: AppThemes.amount(
-                fontSize: Dimens.d14.responsive(),
-                color: transaction.type == CategoryType.expense ? redColor : greenColor,
-              ),
-            ),
-          ],
+          ),
+        ],
+      ),
+      title: Text(transaction.category.name, style: AppTextStyles.s14wBoldBlack()),
+      subtitle: Text(
+        transaction.transactionDate!.toStringWithFormat(DateTimeFormatConstants.dayMonthYearFormat),
+        style: AppThemes.amount(
+          fontSize: Dimens.d11.responsive(),
+          fontWeight: FontWeight.w500,
+          color: darkGreyColor,
         ),
       ),
+      trailing: CommonAmountWithSymbol(
+        amount: transaction.amount,
+        currencyCode: transaction.currencyCode,
+        textStyle: AppThemes.amount(
+          fontSize: Dimens.d14.responsive(),
+          color: transaction.type == CategoryType.expense ? redColor : greenColor,
+        ),
+      ),
+      showChevron: true,
     );
   }
 }

@@ -68,8 +68,9 @@ class _AiChatViewState extends BasePageState<AiChatView, AiChatBloc> {
 
   @override
   Widget buildPage(BuildContext context) {
+    // Keyboard dismiss overlay — Pressable exception.
     return GestureDetector(
-      behavior: HitTestBehavior.translucent,
+      behavior: HitTestBehavior.opaque,
       onTap: () => ViewUtils.hideKeyboard(context),
       child: Scaffold(
         appBar: CommonAppBar(title: S.current.aiAssistant),

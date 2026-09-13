@@ -10,7 +10,6 @@ extension BottomTabUi on BottomTab {
     return switch (this) {
       BottomTab.home => _buildIcon(
         iconPath: selected ? Assets.icons.homeActive.path : Assets.icons.homeInactive.path,
-        height: Dimens.d30.responsive(),
       ),
       BottomTab.transactions => _buildIcon(
         iconPath:
@@ -19,19 +18,19 @@ extension BottomTabUi on BottomTab {
                 : Assets.icons.transactionsHistoryInactive.path,
       ),
       BottomTab.createTrans => _buildIcon(iconPath: Assets.icons.plus.path),
-      BottomTab.budgets => Icon(
-        Icons.auto_awesome_rounded,
-        size: Dimens.d28.responsive(),
-        color: blackColor,
-      ),
+      BottomTab.budgets => Icon(Icons.auto_awesome_rounded, size: Dimens.d24.responsive()),
       BottomTab.account => _buildIcon(
         iconPath: selected ? Assets.icons.accountActive.path : Assets.icons.accountInactive.path,
       ),
     };
   }
 
-  Widget _buildIcon({required String iconPath, double? height}) {
-    return SvgPicture.asset(iconPath, height: height ?? Dimens.d28.responsive());
+  Widget _buildIcon({required String iconPath}) {
+    return SvgPicture.asset(
+      iconPath,
+      width: Dimens.d24.responsive(),
+      height: Dimens.d24.responsive(),
+    );
   }
 
   String get title {
