@@ -8,6 +8,9 @@ analyzer:
     - "**/*.config.dart"
     - "**/*.gen.dart"
     - "**/generated/**"
+    - build/**
+    - android/**
+    - ios/**
   errors:
     unused_import: warning
     invalid_annotation_target: ignore

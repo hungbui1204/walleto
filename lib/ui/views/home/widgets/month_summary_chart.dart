@@ -17,8 +17,7 @@ class MonthSummaryChart extends StatelessWidget {
       return AspectRatio(
         aspectRatio: 1.4,
         child: ChartEmptyPanel(
-          onRetry:
-              () => context.read<HomeBloc>().add(const HomeViewInitialized()),
+          onRetry: () => context.read<HomeBloc>().add(const HomeViewInitialized()),
         ),
       );
     }
@@ -40,10 +39,7 @@ class MonthSummaryChart extends StatelessWidget {
                 getTitlesWidget: (value, meta) {
                   return SideTitleWidget(
                     meta: meta,
-                    child: Text(
-                      meta.formattedValue,
-                      style: AppTextStyles.s10wNormalGrey(),
-                    ),
+                    child: Text(meta.formattedValue, style: AppTextStyles.s10wNormalGrey()),
                   );
                 },
               ),
@@ -61,11 +57,7 @@ class MonthSummaryChart extends StatelessWidget {
           gridData: FlGridData(
             drawVerticalLine: false,
             getDrawingHorizontalLine: (value) {
-              return const FlLine(
-                color: frameColor,
-                strokeWidth: 0.5,
-                dashArray: [4, 3],
-              );
+              return const FlLine(color: frameColor, strokeWidth: 0.5, dashArray: [4, 3]);
             },
           ),
           borderData: FlBorderData(
@@ -83,9 +75,7 @@ class MonthSummaryChart extends StatelessWidget {
               ).copyWith(bottom: 0, top: Dimens.d4.responsive()),
               getTooltipItem: (group, groupIndex, rod, rodIndex) {
                 return BarTooltipItem(
-                  rod.toY.toStringWithFormat(
-                    NumberFormatConstants.amountFormat,
-                  ),
+                  rod.toY.toStringWithFormat(NumberFormatConstants.amountFormat),
                   rod.color == greenColor
                       ? AppTextStyles.s10wNormalGreen()
                       : AppTextStyles.s10wNormalRed(),
@@ -143,12 +133,8 @@ class MonthSummaryChart extends StatelessWidget {
   // Calculate the maximum Y value for the chart based on the stats
   double _getMaxY() {
     if (stats.isEmpty) return 1;
-    final maxIncome = stats
-        .map((e) => e.totalIncome)
-        .fold(0.0, (a, b) => a > b ? a : b);
-    final maxExpense = stats
-        .map((e) => e.totalExpense)
-        .fold(0.0, (a, b) => a > b ? a : b);
+    final maxIncome = stats.map((e) => e.totalIncome).fold(0.0, (a, b) => a > b ? a : b);
+    final maxExpense = stats.map((e) => e.totalExpense).fold(0.0, (a, b) => a > b ? a : b);
     final peak = maxIncome > maxExpense ? maxIncome : maxExpense;
     return peak <= 0 ? 1 : peak * 1.2;
   }

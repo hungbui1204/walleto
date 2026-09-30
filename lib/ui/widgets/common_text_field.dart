@@ -79,37 +79,35 @@ class _CommonTextFieldState extends State<CommonTextField> {
         border: _border(),
         errorBorder: _border(color: fieldErrorColor),
         focusedErrorBorder: _border(color: fieldErrorColor),
-        prefixIcon:
-            widget.prefixIcon != null
-                ? Padding(
-                  padding: EdgeInsets.symmetric(horizontal: Dimens.d12.responsive()),
-                  child: ColorFiltered(
-                    colorFilter: ColorFilter.mode(
-                      widget.prefixBackgroundColor ?? darkGreyColor,
-                      BlendMode.srcIn,
-                    ),
-                    child: widget.prefixIcon,
+        prefixIcon: widget.prefixIcon != null
+            ? Padding(
+                padding: EdgeInsets.symmetric(horizontal: Dimens.d12.responsive()),
+                child: ColorFiltered(
+                  colorFilter: ColorFilter.mode(
+                    widget.prefixBackgroundColor ?? darkGreyColor,
+                    BlendMode.srcIn,
                   ),
-                )
-                : null,
+                  child: widget.prefixIcon,
+                ),
+              )
+            : null,
         prefixIconConstraints: BoxConstraints(
           minWidth: Dimens.d44.responsive(),
           minHeight: Dimens.d44.responsive(),
         ),
-        suffixIcon:
-            widget.isPasswordField
-                ? IconButton(
-                  onPressed: () {
-                    setState(() {
-                      isVisible = !isVisible;
-                    });
-                  },
-                  icon: Icon(
-                    isVisible ? Icons.visibility_outlined : Icons.visibility_off_outlined,
-                    color: darkGreyColor,
-                  ),
-                )
-                : null,
+        suffixIcon: widget.isPasswordField
+            ? IconButton(
+                onPressed: () {
+                  setState(() {
+                    isVisible = !isVisible;
+                  });
+                },
+                icon: Icon(
+                  isVisible ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                  color: darkGreyColor,
+                ),
+              )
+            : null,
       ),
     );
   }

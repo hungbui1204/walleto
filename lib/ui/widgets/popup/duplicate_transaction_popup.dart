@@ -90,10 +90,9 @@ class _DuplicateTransactionPopupState extends State<DuplicateTransactionPopup> {
                     CommonAmountWithSymbol(
                       amount: widget.transaction.amount,
                       currencyCode: widget.transaction.currencyCode,
-                      textStyle:
-                          widget.transaction.category.type == CategoryType.income
-                              ? AppTextStyles.s16wNormalGreen()
-                              : AppTextStyles.s16wNormalRed(),
+                      textStyle: widget.transaction.category.type == CategoryType.income
+                          ? AppTextStyles.s16wNormalGreen()
+                          : AppTextStyles.s16wNormalRed(),
                     ),
                   ],
                 ),
@@ -134,12 +133,11 @@ class _DuplicateTransactionPopupState extends State<DuplicateTransactionPopup> {
               SizedBox(height: Dimens.d20.responsive()),
               CommonButton(
                 text: S.current.confirm,
-                onTap:
-                    selectedDateUI != null
-                        ? () {
-                          widget.onConfirm(selectedDateUI!);
-                        }
-                        : null,
+                onTap: selectedDateUI != null
+                    ? () {
+                        widget.onConfirm(selectedDateUI!);
+                      }
+                    : null,
               ),
             ],
           ),

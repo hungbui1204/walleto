@@ -79,8 +79,4 @@ extension ResponsiveDoubleExtension on double {
   }
 }
 
-enum ScreenType {
-  mobile,
-  tablet,
-  ultraTablet,
-}
+enum ScreenType { mobile, tablet, ultraTablet }

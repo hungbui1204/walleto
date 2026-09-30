@@ -33,16 +33,15 @@ class CommonButton extends StatelessWidget {
     final isPrimary = backgroundColor == primaryColor;
     final isDestructive = backgroundColor == redColor || textColor == redColor;
 
-    final decoration =
-        isPrimary
-            ? (enabled
-                ? AppDecorations.primaryCta(radius: radius)
-                : AppDecorations.secondaryCta(radius: radius, color: frameColor))
-            : AppDecorations.secondaryCta(
-              radius: radius,
-              color: backgroundColor ?? surfaceColor,
-              borderColor: isDestructive ? redColor : glassHairlineColor,
-            );
+    final decoration = isPrimary
+        ? (enabled
+              ? AppDecorations.primaryCta(radius: radius)
+              : AppDecorations.secondaryCta(radius: radius, color: frameColor))
+        : AppDecorations.secondaryCta(
+            radius: radius,
+            color: backgroundColor ?? surfaceColor,
+            borderColor: isDestructive ? redColor : glassHairlineColor,
+          );
 
     final child = AnimatedOpacity(
       opacity: enabled ? 1 : 0.45,

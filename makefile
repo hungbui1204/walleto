@@ -46,11 +46,19 @@ analyze:
 #   fvm dart format lib/path/to/changed_file.dart
 GENERATED_DART_FILTER=! -name '*.g.dart' ! -name '*.gr.dart' ! -name '*.freezed.dart' ! -name '*.config.dart' ! -name '*.gen.dart' ! -path '*/generated/*'
 
+ifeq ($(OS),Windows_NT)
+format:
+	powershell.exe -NoProfile -ExecutionPolicy Bypass -File tools/format_dart.ps1
+
+format_check:
+	powershell.exe -NoProfile -ExecutionPolicy Bypass -File tools/format_dart.ps1 -Check
+else
 format:
 	find lib -name '*.dart' $(GENERATED_DART_FILTER) -print0 | xargs -0 fvm dart format
 
 format_check:
 	find lib -name '*.dart' $(GENERATED_DART_FILTER) -print0 | xargs -0 fvm dart format --output=none --set-exit-if-changed
+endif
 
 # analyze + format_check + testing — run before opening a PR
 verify: analyze format_check testing
@@ -60,7 +68,7 @@ gen_env:
 	fvm dart run tools/gen_env/lib/main.dart
 
 sync:
-	fvm use 3.29.3 -f
+	fvm use 3.47.5 -f
 	fvm flutter pub get
 	fluttergen
 	fvm dart run intl_utils:generate

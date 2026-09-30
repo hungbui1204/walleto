@@ -252,10 +252,9 @@ class FileUtils {
   /// 例外がある場合は、`null`を返します。
   static Future<Directory?> _getDownloadDir() async {
     try {
-      final directory =
-          Platform.isAndroid
-              ? Directory('/storage/emulated/0/Download')
-              : await getApplicationDocumentsDirectory();
+      final directory = Platform.isAndroid
+          ? Directory('/storage/emulated/0/Download')
+          : await getApplicationDocumentsDirectory();
       final documentPath = '${directory.path}${defaultDir != null ? '/$defaultDir' : ''}';
       final downloadDir = Directory(documentPath);
       if (!(await downloadDir.exists())) {

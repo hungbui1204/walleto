@@ -14,9 +14,7 @@ class ConfirmPopup extends PopUpWidget {
     this.onPressed,
     this.showCancel = false,
   }) : super(
-         action:
-             confirmAction ??
-             _ConfirmButton(onPressed: onPressed, showCancel: showCancel),
+         action: confirmAction ?? _ConfirmButton(onPressed: onPressed, showCancel: showCancel),
        );
 
   final Widget? confirmAction;
@@ -36,9 +34,7 @@ class _ConfirmButton extends StatelessWidget {
       children: [
         CommonButton(
           text: S.current.ok,
-          onTap:
-              onPressed?.call ??
-              () => context.read<AppNavigator>().pop(useRootNavigator: true),
+          onTap: onPressed?.call ?? () => context.read<AppNavigator>().pop(useRootNavigator: true),
         ),
         if (showCancel) ...[
           SizedBox(height: Dimens.d18.responsive()),

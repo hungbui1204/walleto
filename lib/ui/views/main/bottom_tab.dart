@@ -12,10 +12,9 @@ extension BottomTabUi on BottomTab {
         iconPath: selected ? Assets.icons.homeActive.path : Assets.icons.homeInactive.path,
       ),
       BottomTab.transactions => _buildIcon(
-        iconPath:
-            selected
-                ? Assets.icons.transactionsHistoryActive.path
-                : Assets.icons.transactionsHistoryInactive.path,
+        iconPath: selected
+            ? Assets.icons.transactionsHistoryActive.path
+            : Assets.icons.transactionsHistoryInactive.path,
       ),
       BottomTab.createTrans => _buildIcon(iconPath: Assets.icons.plus.path),
       BottomTab.budgets => Icon(Icons.auto_awesome_rounded, size: Dimens.d24.responsive()),

@@ -11,8 +11,8 @@ class JsonObjectStatusCodeResponseMapper<T extends Object>
   }) {
     return decoder != null
         ? response is Map<String, dynamic>
-            ? StatusCodeResponse(data: decoder(response), statusCode: statusCode)
-            : StatusCodeResponse(statusCode: statusCode)
+              ? StatusCodeResponse(data: decoder(response), statusCode: statusCode)
+              : StatusCodeResponse(statusCode: statusCode)
         : StatusCodeResponse(statusCode: statusCode);
   }
 }

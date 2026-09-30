@@ -10,6 +10,4 @@ class ParseException extends AppException {
   String toString() => 'ParseException: {kind: $kind, rootException: $rootException}';
 }
 
-enum ParseExceptionKind {
-  invalidSourceFormat,
-}
+enum ParseExceptionKind { invalidSourceFormat }

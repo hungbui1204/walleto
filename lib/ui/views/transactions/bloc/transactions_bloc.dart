@@ -160,16 +160,15 @@ class TransactionsBloc extends BaseBloc<TransactionsEvent, TransactionsState> {
       final converted = await _convertAmountsToCurrencyUseCase.execute(
         ConvertAmountsToCurrencyInput(
           targetCurrencyCode: targetCurrencyCode,
-          amounts:
-              entry.value
-                  .map(
-                    (transaction) => AmountInCurrency(
-                      amount: transaction.amount,
-                      currencyCode: transaction.currencyCode,
-                      sign: transaction.type == CategoryType.income ? 1 : -1,
-                    ),
-                  )
-                  .toList(),
+          amounts: entry.value
+              .map(
+                (transaction) => AmountInCurrency(
+                  amount: transaction.amount,
+                  currencyCode: transaction.currencyCode,
+                  sign: transaction.type == CategoryType.income ? 1 : -1,
+                ),
+              )
+              .toList(),
         ),
       );
 
@@ -304,13 +303,12 @@ class TransactionsBloc extends BaseBloc<TransactionsEvent, TransactionsState> {
     final totalOutput = await _convertAmountsToCurrencyUseCase.execute(
       ConvertAmountsToCurrencyInput(
         targetCurrencyCode: targetCurrencyCode,
-        amounts:
-            realWallets
-                .map(
-                  (wallet) =>
-                      AmountInCurrency(amount: wallet.amount, currencyCode: wallet.currencyCode),
-                )
-                .toList(),
+        amounts: realWallets
+            .map(
+              (wallet) =>
+                  AmountInCurrency(amount: wallet.amount, currencyCode: wallet.currencyCode),
+            )
+            .toList(),
       ),
     );
 

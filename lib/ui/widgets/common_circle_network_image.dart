@@ -15,10 +15,9 @@ class CommonCircleNetworkImage extends CommonShapeNetworkImage {
 
   @override
   Widget buildShapeImage(BuildContext context, {required Widget imageWidget}) {
-    final widgetSize =
-        width == null
-            ? Dimens.d36.responsive()
-            : width! + (enablePadding ? Dimens.d6.responsive() : Dimens.d2.responsive());
+    final widgetSize = width == null
+        ? Dimens.d36.responsive()
+        : width! + (enablePadding ? Dimens.d6.responsive() : Dimens.d2.responsive());
 
     return ClipOval(
       child: Container(

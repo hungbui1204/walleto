@@ -24,13 +24,9 @@ class CommonAmountWithSymbol extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(
-          amount.toStringWithFormat(NumberFormatConstants.amountFormat),
-          style: style,
-        ),
+        Text(amount.toStringWithFormat(NumberFormatConstants.amountFormat), style: style),
         BlocBuilder<AppBloc, AppState>(
-          buildWhen:
-              (previous, current) => previous.currencies != current.currencies,
+          buildWhen: (previous, current) => previous.currencies != current.currencies,
           builder: (context, state) {
             final currency = state.currencies.firstOrNullWhere((currency) {
               return currency.code == currencyCode;

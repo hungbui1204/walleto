@@ -66,10 +66,9 @@ class _CurrencyWidget extends StatelessWidget {
       ),
       title: Text(currency.name, style: AppTextStyles.s14wNormalBlack()),
       backgroundColor: isSelected ? primaryShade1Color : surfaceColor,
-      trailing:
-          isSelected
-              ? Icon(Icons.check_rounded, color: primaryColor, size: Dimens.d20.responsive())
-              : null,
+      trailing: isSelected
+          ? Icon(Icons.check_rounded, color: primaryColor, size: Dimens.d20.responsive())
+          : null,
     );
   }
 }

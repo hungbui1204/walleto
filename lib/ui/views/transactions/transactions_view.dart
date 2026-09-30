@@ -141,33 +141,32 @@ class _DayTransactionsGroupSliver extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CommonTitledPanelSliver(
-      titleWidget:
-          dayTransactions.date == null
-              ? null
-              : Row(
-                children: [
-                  Text('${dayTransactions.date!.day}', style: AppTextStyles.s28wBoldBlack()),
-                  SizedBox(width: Dimens.d10.responsive()),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(AppUtils.mapWeekDayToString(dayTransactions.date!.weekday)),
-                      Row(
-                        children: [
-                          Text(AppUtils.mapMonthToString(dayTransactions.date!.month)),
-                          SizedBox(width: Dimens.d4.responsive()),
-                          Text('${dayTransactions.date!.year}'),
-                        ],
-                      ),
-                    ],
-                  ),
-                  const Spacer(),
-                  CommonAmountWithSymbol(
-                    amount: dayTransactions.totalAmount,
-                    currencyCode: dayTransactions.currencyCode,
-                  ),
-                ],
-              ),
+      titleWidget: dayTransactions.date == null
+          ? null
+          : Row(
+              children: [
+                Text('${dayTransactions.date!.day}', style: AppTextStyles.s28wBoldBlack()),
+                SizedBox(width: Dimens.d10.responsive()),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(AppUtils.mapWeekDayToString(dayTransactions.date!.weekday)),
+                    Row(
+                      children: [
+                        Text(AppUtils.mapMonthToString(dayTransactions.date!.month)),
+                        SizedBox(width: Dimens.d4.responsive()),
+                        Text('${dayTransactions.date!.year}'),
+                      ],
+                    ),
+                  ],
+                ),
+                const Spacer(),
+                CommonAmountWithSymbol(
+                  amount: dayTransactions.totalAmount,
+                  currencyCode: dayTransactions.currencyCode,
+                ),
+              ],
+            ),
       itemCount: dayTransactions.transactions.length,
       itemBuilder: (context, index) {
         return _TransactionInfoWidget(dayTransactions.transactions[index]);
@@ -264,52 +263,51 @@ class _DatePickerDropDownWidget extends StatelessWidget {
               AnimatedSize(
                 curve: Curves.easeInOut,
                 duration: DurationConstants.defaultAnimationDuration,
-                child:
-                    state.isDatePickerMethodExpanded
-                        ? Column(
-                          children: [
-                            const CommonLine(margin: EdgeInsets.zero),
-                            CommonForwardButton(
-                              title: S.current.filterByMonth,
-                              color: surfaceColor,
-                              showBorder: false,
-                              borderRadius: BorderRadius.zero,
-                              onTap: () {
-                                context.read<AppNavigator>().showModalBottomSheet(
-                                  AppPopupInfo.selectMonth(
-                                    firstYear: AppConstants.firstYear,
-                                    lastYear: AppConstants.lastYear,
-                                    onMonthSelected: (date) {
-                                      context.read<TransactionsBloc>().add(
-                                        TransactionsMonthSelected(selectedDate: date),
-                                      );
-                                    },
-                                    initialDate: state.selectedDate,
-                                  ),
-                                );
-                              },
+                child: state.isDatePickerMethodExpanded
+                    ? Column(
+                        children: [
+                          const CommonLine(margin: EdgeInsets.zero),
+                          CommonForwardButton(
+                            title: S.current.filterByMonth,
+                            color: surfaceColor,
+                            showBorder: false,
+                            borderRadius: BorderRadius.zero,
+                            onTap: () {
+                              context.read<AppNavigator>().showModalBottomSheet(
+                                AppPopupInfo.selectMonth(
+                                  firstYear: AppConstants.firstYear,
+                                  lastYear: AppConstants.lastYear,
+                                  onMonthSelected: (date) {
+                                    context.read<TransactionsBloc>().add(
+                                      TransactionsMonthSelected(selectedDate: date),
+                                    );
+                                  },
+                                  initialDate: state.selectedDate,
+                                ),
+                              );
+                            },
+                          ),
+                          CommonLine(
+                            margin: EdgeInsets.zero,
+                            padding: EdgeInsets.symmetric(horizontal: Dimens.d16.responsive()),
+                          ),
+                          CommonForwardButton(
+                            title: S.current.filterByDateRange,
+                            color: surfaceColor,
+                            showBorder: false,
+                            borderRadius: BorderRadius.only(
+                              bottomLeft: AppDecorations.panelRadius().bottomLeft,
+                              bottomRight: AppDecorations.panelRadius().bottomRight,
                             ),
-                            CommonLine(
-                              margin: EdgeInsets.zero,
-                              padding: EdgeInsets.symmetric(horizontal: Dimens.d16.responsive()),
-                            ),
-                            CommonForwardButton(
-                              title: S.current.filterByDateRange,
-                              color: surfaceColor,
-                              showBorder: false,
-                              borderRadius: BorderRadius.only(
-                                bottomLeft: AppDecorations.panelRadius().bottomLeft,
-                                bottomRight: AppDecorations.panelRadius().bottomRight,
-                              ),
-                              onTap: () {
-                                context.read<TransactionsBloc>().add(
-                                  const TransactionsDateRangePicked(),
-                                );
-                              },
-                            ),
-                          ],
-                        )
-                        : const SizedBox.shrink(),
+                            onTap: () {
+                              context.read<TransactionsBloc>().add(
+                                const TransactionsDateRangePicked(),
+                              );
+                            },
+                          ),
+                        ],
+                      )
+                    : const SizedBox.shrink(),
               ),
             ],
           ),
@@ -332,26 +330,25 @@ class _SelectedWalletWidget extends StatelessWidget {
       builder: (context, state) {
         return CommonChipButton(
           text: state.selectedWallet.name,
-          icon:
-              state.selectedWallet.id == AppConstants.totalWalletId
-                  ? ClipOval(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(color: frameColor),
-                      ),
-                      child: Assets.icons.summation.svg(
-                        width: Dimens.d32.responsive(),
-                        height: Dimens.d32.responsive(),
-                      ),
+          icon: state.selectedWallet.id == AppConstants.totalWalletId
+              ? ClipOval(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: frameColor),
                     ),
-                  )
-                  : CommonCircleNetworkImage(
-                    imageUrl: state.selectedWallet.iconUrl,
-                    placeHolderType: ImagePlaceHolderType.wallet,
-                    size: Dimens.d32.responsive(),
-                    backgroundColor: primaryShadeColor,
+                    child: Assets.icons.summation.svg(
+                      width: Dimens.d32.responsive(),
+                      height: Dimens.d32.responsive(),
+                    ),
                   ),
+                )
+              : CommonCircleNetworkImage(
+                  imageUrl: state.selectedWallet.iconUrl,
+                  placeHolderType: ImagePlaceHolderType.wallet,
+                  size: Dimens.d32.responsive(),
+                  backgroundColor: primaryShadeColor,
+                ),
 
           onTap: () {
             context.read<AppNavigator>().showModalBottomSheet(

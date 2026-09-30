@@ -52,34 +52,30 @@ class _CreateTransactionViewState
                         convertedAmount: state.convertedAmount,
                         selectedCategory: state.selectedCategory,
                         selectedDate: state.selectedDate,
-                        onAmountTap:
-                            () => bloc.add(const CreateTransactionKeyboardToggled(show: true)),
-                        onWalletSelected:
-                            (wallet) => bloc.add(CreateTransactionWalletSelected(wallet: wallet)),
-                        onCurrencySelected:
-                            (currency) =>
-                                bloc.add(CreateTransactionCurrencySelected(currency: currency)),
-                        onCategorySelected:
-                            (category) =>
-                                bloc.add(CreateTransactionCategorySelected(category: category)),
+                        onAmountTap: () =>
+                            bloc.add(const CreateTransactionKeyboardToggled(show: true)),
+                        onWalletSelected: (wallet) =>
+                            bloc.add(CreateTransactionWalletSelected(wallet: wallet)),
+                        onCurrencySelected: (currency) =>
+                            bloc.add(CreateTransactionCurrencySelected(currency: currency)),
+                        onCategorySelected: (category) =>
+                            bloc.add(CreateTransactionCategorySelected(category: category)),
                         onNoteChanged: (note) => bloc.add(CreateTransactionNoteChanged(note: note)),
-                        onDateSelected:
-                            (date) => bloc.add(CreateTransactionDateSelected(date: date)),
+                        onDateSelected: (date) =>
+                            bloc.add(CreateTransactionDateSelected(date: date)),
                       );
                     },
                   ),
                   SizedBox(height: Dimens.d20.responsive()),
                   BlocBuilder<CreateTransactionBloc, CreateTransactionState>(
-                    buildWhen:
-                        (previous, current) =>
-                            previous.confirmButtonEnable != current.confirmButtonEnable,
+                    buildWhen: (previous, current) =>
+                        previous.confirmButtonEnable != current.confirmButtonEnable,
                     builder: (context, state) {
                       return CommonButton(
                         text: S.current.save,
-                        onTap:
-                            state.confirmButtonEnable
-                                ? () => bloc.add(const CreateTransactionConfirmButtonPressed())
-                                : null,
+                        onTap: state.confirmButtonEnable
+                            ? () => bloc.add(const CreateTransactionConfirmButtonPressed())
+                            : null,
                       );
                     },
                   ),

@@ -32,13 +32,12 @@ class LoginTab extends StatelessWidget {
                   width: double.infinity,
                   child: CommonButton(
                     text: S.current.login,
-                    onTap:
-                        state.isEnableLoginButton
-                            ? () {
-                              ViewUtils.hideKeyboard(context);
-                              context.read<LoginBloc>().add(const SignInButtonPressed());
-                            }
-                            : null,
+                    onTap: state.isEnableLoginButton
+                        ? () {
+                            ViewUtils.hideKeyboard(context);
+                            context.read<LoginBloc>().add(const SignInButtonPressed());
+                          }
+                        : null,
                   ),
                 );
               },

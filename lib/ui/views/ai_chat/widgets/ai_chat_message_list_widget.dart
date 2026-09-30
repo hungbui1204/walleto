@@ -19,10 +19,9 @@ class AiChatMessageListWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AiChatBloc, AiChatState>(
-      buildWhen:
-          (previous, current) =>
-              previous.messages.length != current.messages.length ||
-              previous.isLoadingMore != current.isLoadingMore,
+      buildWhen: (previous, current) =>
+          previous.messages.length != current.messages.length ||
+          previous.isLoadingMore != current.isLoadingMore,
       builder: (context, state) {
         if (state.isEmpty) {
           return AiChatEmptyStateWidget(onPromptSelected: onPromptSelected);

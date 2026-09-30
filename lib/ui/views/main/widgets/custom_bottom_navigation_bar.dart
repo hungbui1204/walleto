@@ -26,8 +26,9 @@ class CustomBottomNavigationBar extends StatelessWidget {
               height: Dimens.d64.responsive(),
               child: Row(
                 children: List.generate(BottomTab.values.length, (index) {
-                  final indexWithout3rdIcon =
-                      index < BottomTab.createTrans.index ? index : index - 1;
+                  final indexWithout3rdIcon = index < BottomTab.createTrans.index
+                      ? index
+                      : index - 1;
 
                   if (index == BottomTab.createTrans.index) {
                     return SizedBox(width: Dimens.d56.responsive());

@@ -133,64 +133,61 @@ class _TransactionDetailViewState
                 text: S.current.editTransaction,
                 backgroundColor: surfaceColor,
                 textColor: blackColor,
-                onTap:
-                    isAdjustTransaction
-                        ? null
-                        : () {
-                          navigator.push(
-                            AppRouteInfo.editTransaction(transaction: widget.transaction),
-                          );
-                        },
+                onTap: isAdjustTransaction
+                    ? null
+                    : () {
+                        navigator.push(
+                          AppRouteInfo.editTransaction(transaction: widget.transaction),
+                        );
+                      },
               ),
               SizedBox(height: Dimens.d12.responsive()),
               CommonButton(
                 text: S.current.duplicateTransaction,
-                onTap:
-                    isAdjustTransaction
-                        ? null
-                        : () {
-                          navigator.showDialog(
-                            AppPopupInfo.duplicateTransaction(
-                              transaction: widget.transaction,
-                              onConfirm: (selectedDate) {
-                                bloc.add(
-                                  TransactionDetailDuplicateButtonPressed(
-                                    transactionId: widget.transaction.id,
-                                    selectedDate: selectedDate,
-                                  ),
-                                );
+                onTap: isAdjustTransaction
+                    ? null
+                    : () {
+                        navigator.showDialog(
+                          AppPopupInfo.duplicateTransaction(
+                            transaction: widget.transaction,
+                            onConfirm: (selectedDate) {
+                              bloc.add(
+                                TransactionDetailDuplicateButtonPressed(
+                                  transactionId: widget.transaction.id,
+                                  selectedDate: selectedDate,
+                                ),
+                              );
 
-                                navigator.pop(useRootNavigator: true);
-                              },
-                            ),
-                          );
-                        },
+                              navigator.pop(useRootNavigator: true);
+                            },
+                          ),
+                        );
+                      },
               ),
               const Spacer(),
               CommonButton(
                 text: S.current.deleteTransaction,
                 backgroundColor: surfaceColor,
                 textColor: redColor,
-                onTap:
-                    isAdjustTransaction
-                        ? null
-                        : () {
-                          navigator.showDialog(
-                            AppPopupInfo.confirm(
-                              message: S.current.areYouSureYouWantToDeleteThisTransaction,
-                              showCancel: true,
-                              onPressed: Func0(() {
-                                bloc.add(
-                                  TransactionDetailDeleteButtonPressed(
-                                    transactionId: widget.transaction.id,
-                                  ),
-                                );
+                onTap: isAdjustTransaction
+                    ? null
+                    : () {
+                        navigator.showDialog(
+                          AppPopupInfo.confirm(
+                            message: S.current.areYouSureYouWantToDeleteThisTransaction,
+                            showCancel: true,
+                            onPressed: Func0(() {
+                              bloc.add(
+                                TransactionDetailDeleteButtonPressed(
+                                  transactionId: widget.transaction.id,
+                                ),
+                              );
 
-                                navigator.pop(useRootNavigator: true);
-                              }),
-                            ),
-                          );
-                        },
+                              navigator.pop(useRootNavigator: true);
+                            }),
+                          ),
+                        );
+                      },
               ),
             ],
           ),

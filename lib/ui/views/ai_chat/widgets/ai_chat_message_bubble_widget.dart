@@ -13,10 +13,9 @@ class AiChatMessageBubbleWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final isUser = message.role == AiChatRole.user;
     final radius = Dimens.d16.responsive();
-    final style =
-        isUser
-            ? AppTextStyles.s14wNormalBlack().copyWith(color: onPrimaryColor)
-            : AppTextStyles.s14wNormalBlack();
+    final style = isUser
+        ? AppTextStyles.s14wNormalBlack().copyWith(color: onPrimaryColor)
+        : AppTextStyles.s14wNormalBlack();
 
     return Align(
       alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
@@ -28,16 +27,15 @@ class AiChatMessageBubbleWidget extends StatelessWidget {
             horizontal: Dimens.d16.responsive(),
             vertical: Dimens.d12.responsive(),
           ),
-          decoration:
-              isUser
-                  ? AppDecorations.primaryCta(
-                    radius: BorderRadius.only(
-                      topLeft: Radius.circular(radius),
-                      topRight: Radius.circular(radius),
-                      bottomLeft: Radius.circular(radius),
-                    ),
-                  )
-                  : AppDecorations.glassPanel(radius: radius),
+          decoration: isUser
+              ? AppDecorations.primaryCta(
+                  radius: BorderRadius.only(
+                    topLeft: Radius.circular(radius),
+                    topRight: Radius.circular(radius),
+                    bottomLeft: Radius.circular(radius),
+                  ),
+                )
+              : AppDecorations.glassPanel(radius: radius),
           child: _body(isUser: isUser, style: style),
         ),
       ),

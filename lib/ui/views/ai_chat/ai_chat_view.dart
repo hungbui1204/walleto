@@ -81,10 +81,9 @@ class _AiChatViewState extends BasePageState<AiChatView, AiChatBloc> {
                 child: buildSkeletonOrContent(
                   skeleton: const AiChatLoadingSkeletonWidget(),
                   content: BlocListener<AiChatBloc, AiChatState>(
-                    listenWhen:
-                        (previous, current) =>
-                            previous.isSending != current.isSending ||
-                            previous.messages.length != current.messages.length,
+                    listenWhen: (previous, current) =>
+                        previous.isSending != current.isSending ||
+                        previous.messages.length != current.messages.length,
                     listener: (context, state) {
                       final pending = _pendingMessage;
                       if (!state.isSending && pending != null) {

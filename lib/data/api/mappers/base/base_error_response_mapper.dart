@@ -1,10 +1,7 @@
 import 'package:walleto/data/data.dart';
 import 'package:walleto/shared/shared.dart';
 
-enum ErrorResponseMapperType {
-  jsonObject,
-  jsonArray,
-}
+enum ErrorResponseMapperType { jsonObject, jsonArray }
 
 abstract class BaseErrorResponseMapper<T extends Object> {
   const BaseErrorResponseMapper();

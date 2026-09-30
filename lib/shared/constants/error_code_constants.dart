@@ -1,8 +1,7 @@
 import 'package:dartx/dartx.dart';
 
 class ErrorCodeConstants {
-  static Map<String, String> errorMessages = {
-  };
+  static Map<String, String> errorMessages = {};
 
   static String getErrorMessage(String errorCode) {
     return errorMessages[errorCode] ?? '';

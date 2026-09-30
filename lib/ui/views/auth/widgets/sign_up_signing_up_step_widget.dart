@@ -32,12 +32,11 @@ class SignUpSigningUpStepWidget extends StatelessWidget {
             builder: (context, state) {
               return CommonButton(
                 text: S.current.signUp,
-                onTap:
-                    state.isEnableSignUpButton
-                        ? () {
-                          context.read<LoginBloc>().add(const SignUpConfirmButtonPressed());
-                        }
-                        : null,
+                onTap: state.isEnableSignUpButton
+                    ? () {
+                        context.read<LoginBloc>().add(const SignUpConfirmButtonPressed());
+                      }
+                    : null,
               );
             },
           ),
@@ -221,10 +220,9 @@ class _AcceptTermCheckbox extends StatelessWidget {
               return IgnorePointer(
                 child: Checkbox(
                   visualDensity: VisualDensity.comfortable,
-                  fillColor:
-                      state.isCheckedAcceptTerms
-                          ? WidgetStateProperty.all(primaryColor)
-                          : WidgetStateProperty.all(fieldFillColor),
+                  fillColor: state.isCheckedAcceptTerms
+                      ? WidgetStateProperty.all(primaryColor)
+                      : WidgetStateProperty.all(fieldFillColor),
                   checkColor: onPrimaryColor,
                   side: const BorderSide(color: frameColor),
                   value: state.isCheckedAcceptTerms,

@@ -17,22 +17,20 @@ abstract class BasePageStateDelegate<T extends StatefulWidget, B extends BaseBlo
   late final exceptionMessageMapper = const ExceptionMessageMapper();
   late final exceptionHandler = ExceptionHandler(navigator: navigator, listener: this);
 
-  late final commonBloc =
-      GetIt.instance.get<CommonBloc>()
-        ..navigator = navigator
-        ..disposeBag = disposeBag
-        ..appBloc = appBloc
-        ..exceptionHandler = exceptionHandler
-        ..exceptionMessageMapper = exceptionMessageMapper;
+  late final commonBloc = GetIt.instance.get<CommonBloc>()
+    ..navigator = navigator
+    ..disposeBag = disposeBag
+    ..appBloc = appBloc
+    ..exceptionHandler = exceptionHandler
+    ..exceptionMessageMapper = exceptionMessageMapper;
 
-  late final bloc =
-      GetIt.instance.get<B>()
-        ..navigator = navigator
-        ..disposeBag = disposeBag
-        ..appBloc = appBloc
-        ..commonBloc = commonBloc
-        ..exceptionHandler = exceptionHandler
-        ..exceptionMessageMapper = exceptionMessageMapper;
+  late final bloc = GetIt.instance.get<B>()
+    ..navigator = navigator
+    ..disposeBag = disposeBag
+    ..appBloc = appBloc
+    ..commonBloc = commonBloc
+    ..exceptionHandler = exceptionHandler
+    ..exceptionMessageMapper = exceptionMessageMapper;
 
   late final disposeBag = DisposeBag();
 

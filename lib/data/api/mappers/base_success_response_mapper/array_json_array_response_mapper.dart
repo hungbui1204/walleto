@@ -7,12 +7,12 @@ class ArrayJsonArrayResponseMapper<T extends Object>
   List<List<T>>? mapToDataModel({required dynamic response, Decoder<T>? decoder, int? statusCode}) {
     return decoder != null && response is List
         ? response
-            .map((jsonList) {
-              return (jsonList as List)
-                  .map((jsonObject) => decoder(jsonObject as Map<String, dynamic>))
-                  .toList(growable: false);
-            })
-            .toList(growable: false)
+              .map((jsonList) {
+                return (jsonList as List)
+                    .map((jsonObject) => decoder(jsonObject as Map<String, dynamic>))
+                    .toList(growable: false);
+              })
+              .toList(growable: false)
         : null;
   }
 }

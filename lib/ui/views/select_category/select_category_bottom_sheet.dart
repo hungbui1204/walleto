@@ -73,16 +73,15 @@ class _SelectCategoryBottomSheetState
             SizedBox(height: Dimens.d20.responsive()),
           ],
           Expanded(
-            child:
-                _selectedType == CategoryType.income
-                    ? _IncomeCategoryTab(
-                      onCategorySelected: widget.onCategorySelected,
-                      isSelectingParent: widget.isSelectingParent,
-                    )
-                    : _ExpenseCategoryTab(
-                      onCategorySelected: widget.onCategorySelected,
-                      isSelectingParent: widget.isSelectingParent,
-                    ),
+            child: _selectedType == CategoryType.income
+                ? _IncomeCategoryTab(
+                    onCategorySelected: widget.onCategorySelected,
+                    isSelectingParent: widget.isSelectingParent,
+                  )
+                : _ExpenseCategoryTab(
+                    onCategorySelected: widget.onCategorySelected,
+                    isSelectingParent: widget.isSelectingParent,
+                  ),
           ),
         ],
       ),

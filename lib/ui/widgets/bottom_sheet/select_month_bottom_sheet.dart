@@ -60,8 +60,9 @@ class _SelectMonthBottomSheetState extends State<SelectMonthBottomSheet> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Pressable(
-                onTap:
-                    selectedYear > widget.firstYear ? () => setState(() => selectedYear--) : null,
+                onTap: selectedYear > widget.firstYear
+                    ? () => setState(() => selectedYear--)
+                    : null,
                 semanticLabel: S.current.previousYear,
                 child: Padding(
                   padding: EdgeInsets.all(Dimens.d8.responsive()),
@@ -115,10 +116,9 @@ class _SelectMonthBottomSheetState extends State<SelectMonthBottomSheet> {
                       child: Center(
                         child: Text(
                           '${months[month]}',
-                          style:
-                              isSelected
-                                  ? AppTextStyles.s14wBoldBlack().copyWith(color: onPrimaryColor)
-                                  : AppTextStyles.s14wNormalBlack(),
+                          style: isSelected
+                              ? AppTextStyles.s14wBoldBlack().copyWith(color: onPrimaryColor)
+                              : AppTextStyles.s14wNormalBlack(),
                         ),
                       ),
                     ),

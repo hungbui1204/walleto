@@ -3,21 +3,19 @@ import 'package:walleto/shared/shared.dart';
 
 abstract class BaseLoadMoreUseCase<Input extends BaseInput, Output>
     extends BaseUseCase<Input, Future<PagedList<Output>>> {
-  BaseLoadMoreUseCase({
-    this.initPage = PagingConstants.initialPage,
-    this.initOffset = 0,
-  })  : _output = LoadMoreOutput<Output>(
-          data: <Output>[],
-          key: '',
-          page: initPage,
-          offset: initOffset,
-        ),
-        _oldOutput = LoadMoreOutput<Output>(
-          data: <Output>[],
-          key: '',
-          page: initPage,
-          offset: initOffset,
-        );
+  BaseLoadMoreUseCase({this.initPage = PagingConstants.initialPage, this.initOffset = 0})
+    : _output = LoadMoreOutput<Output>(
+        data: <Output>[],
+        key: '',
+        page: initPage,
+        offset: initOffset,
+      ),
+      _oldOutput = LoadMoreOutput<Output>(
+        data: <Output>[],
+        key: '',
+        page: initPage,
+        offset: initOffset,
+      );
 
   final int initPage;
   final int initOffset;

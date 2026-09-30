@@ -38,7 +38,10 @@ class Pressable extends StatefulWidget {
       decoration: BoxDecoration(borderRadius: radius, boxShadow: decoration.boxShadow),
       child: ClipRRect(
         borderRadius: radius,
-        child: DecoratedBox(decoration: decoration.copyWith(boxShadow: const []), child: child),
+        child: DecoratedBox(
+          decoration: decoration.copyWith(boxShadow: const []),
+          child: child,
+        ),
       ),
     );
   }
@@ -70,8 +73,9 @@ class _PressableState extends State<Pressable> {
     final duration = reduceMotion ? Duration.zero : DurationConstants.microInteraction;
     final radius = widget.borderRadius ?? AppDecorations.panelRadius();
     final scale = feedback == PressableFeedback.scale && _pressed ? Pressable.pressedScale : 1.0;
-    final opacity =
-        feedback == PressableFeedback.opacity && _pressed ? Pressable.pressedOpacity : 1.0;
+    final opacity = feedback == PressableFeedback.opacity && _pressed
+        ? Pressable.pressedOpacity
+        : 1.0;
     final scaledChild = AnimatedScale(
       scale: scale,
       duration: duration,

@@ -133,10 +133,9 @@ class _CreateCategoryPopupState extends BasePageState<CreateCategoryPopup, Creat
                           ),
                           const CommonLine(),
                           BlocBuilder<CreateCategoryBloc, CreateCategoryState>(
-                            buildWhen:
-                                (previous, current) =>
-                                    previous.parent != current.parent ||
-                                    previous.categoryType != current.categoryType,
+                            buildWhen: (previous, current) =>
+                                previous.parent != current.parent ||
+                                previous.categoryType != current.categoryType,
                             builder: (context, state) {
                               return Pressable(
                                 onTap: () {
@@ -226,16 +225,13 @@ class _CreateCategoryPopupState extends BasePageState<CreateCategoryPopup, Creat
                       builder: (context, state) {
                         return CommonButton(
                           text: S.current.save,
-                          onTap:
-                              state.confirmButtonEnable
-                                  ? () {
-                                    context.read<CreateCategoryBloc>().add(
-                                      CreateCategoryConfirmButtonPressed(
-                                        widget.onFetchNewCategories,
-                                      ),
-                                    );
-                                  }
-                                  : null,
+                          onTap: state.confirmButtonEnable
+                              ? () {
+                                  context.read<CreateCategoryBloc>().add(
+                                    CreateCategoryConfirmButtonPressed(widget.onFetchNewCategories),
+                                  );
+                                }
+                              : null,
                         );
                       },
                     ),
