@@ -25,14 +25,12 @@ abstract class CommonShapeNetworkImage extends StatelessWidget {
   Widget get _placeholder {
     return switch (placeHolderType) {
       ImagePlaceHolderType.user => ClipOval(
-        child: Assets.images.chooseAvt.image(
-          width: width,
-          height: height,
-          fit: BoxFit.cover,
-        ),
+        child: Assets.images.chooseAvt.image(width: width, height: height, fit: BoxFit.cover),
       ),
-      ImagePlaceHolderType.category => Assets.icons.categoryImagePlaceHolder
-          .svg(width: width, height: height),
+      ImagePlaceHolderType.category => Assets.icons.categoryImagePlaceHolder.svg(
+        width: width,
+        height: height,
+      ),
       ImagePlaceHolderType.wallet => Assets.icons.walletImagePlaceHolder.svg(
         width: width,
         height: height,
@@ -54,18 +52,17 @@ abstract class CommonShapeNetworkImage extends StatelessWidget {
       height: height,
       child: Builder(
         builder: (context) {
-          final imageWidget =
-              imageUrl != null && imageUrl!.isNotEmpty
-                  ? Image.network(
-                    imageUrl!,
-                    fit: fit,
-                    width: width,
-                    height: height,
-                    errorBuilder: (context, error, stackTrace) {
-                      return _placeholder;
-                    },
-                  )
-                  : _placeholder;
+          final imageWidget = imageUrl != null && imageUrl!.isNotEmpty
+              ? Image.network(
+                  imageUrl!,
+                  fit: fit,
+                  width: width,
+                  height: height,
+                  errorBuilder: (context, error, stackTrace) {
+                    return _placeholder;
+                  },
+                )
+              : _placeholder;
 
           return buildShapeImage(context, imageWidget: imageWidget);
         },

@@ -8,10 +8,9 @@ class JsonObjectErrorResponseMapper extends BaseErrorResponseMapper<Map<String, 
       return ServerError(
         generalServerStatusCode: errorResponse?['code'] as int?,
         generalServerErrorId: errorResponse?['error_code'] as String?,
-        generalMessage:
-            (errorResponse?['msg'] as List?)?.isNotEmpty ?? false
-                ? (errorResponse?['msg'] as List?)?.join('\n')
-                : null,
+        generalMessage: (errorResponse?['msg'] as List?)?.isNotEmpty ?? false
+            ? (errorResponse?['msg'] as List?)?.join('\n')
+            : null,
       );
     }
 

@@ -40,16 +40,15 @@ class CommonListRow extends StatelessWidget {
         children: [
           if (leading != null) ...[leading!, SizedBox(width: Dimens.d10.responsive())],
           Expanded(
-            child:
-                currentSubtitle == null
-                    ? resolvedTitle
-                    : Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [resolvedTitle, currentSubtitle],
-                    ),
+            child: currentSubtitle == null
+                ? resolvedTitle
+                : Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [resolvedTitle, currentSubtitle],
+                  ),
           ),
-          if (trailing != null) trailing!,
+          ?trailing,
           if (showChevron) ...[
             if (trailing != null) SizedBox(width: Dimens.d4.responsive()),
             Icon(

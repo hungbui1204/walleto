@@ -39,14 +39,13 @@ class PopUpWidget extends StatelessWidget {
         vertical: Dimens.d40.responsive(),
       ),
       actionsAlignment: MainAxisAlignment.center,
-      actionsPadding:
-          action is SizedBox
-              ? EdgeInsets.zero
-              : actionPadding ??
-                  EdgeInsets.symmetric(
-                    horizontal: Dimens.d24.responsive(),
-                    vertical: Dimens.d40.responsive(),
-                  ).copyWith(top: 0),
+      actionsPadding: action is SizedBox
+          ? EdgeInsets.zero
+          : actionPadding ??
+                EdgeInsets.symmetric(
+                  horizontal: Dimens.d24.responsive(),
+                  vertical: Dimens.d40.responsive(),
+                ).copyWith(top: 0),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(Dimens.d16.responsive()),
         side: const BorderSide(color: glassHairlineColor),
@@ -54,10 +53,9 @@ class PopUpWidget extends StatelessWidget {
       icon: icon,
       content: SizedBox(
         width: context.sizeOf.width,
-        child:
-            message != null
-                ? Text(message!, style: AppTextStyles.s16wBoldBlack(), textAlign: TextAlign.center)
-                : content,
+        child: message != null
+            ? Text(message!, style: AppTextStyles.s16wBoldBlack(), textAlign: TextAlign.center)
+            : content,
       ),
       actions: [action ?? const SizedBox.shrink()],
     );

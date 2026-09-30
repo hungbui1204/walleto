@@ -239,10 +239,9 @@ class _CategoryRow extends StatelessWidget {
         size: Dimens.d30.responsive(),
         backgroundColor: primaryShadeColor,
       ),
-      title:
-          selectedCategory != null
-              ? Text(selectedCategory.name, style: AppTextStyles.s14wNormalBlack())
-              : Text(S.current.selectCategory, style: AppTextStyles.s14wNormalGrey()),
+      title: selectedCategory != null
+          ? Text(selectedCategory.name, style: AppTextStyles.s14wNormalBlack())
+          : Text(S.current.selectCategory, style: AppTextStyles.s14wNormalGrey()),
       showChevron: true,
     );
   }
@@ -266,10 +265,9 @@ class _NoteRow extends StatelessWidget {
         width: Dimens.d30.responsive(),
         height: Dimens.d30.responsive(),
       ),
-      title:
-          note.isNotEmpty
-              ? Text(note, style: AppTextStyles.s14wNormalBlack(), overflow: TextOverflow.ellipsis)
-              : Text(S.current.note, style: AppTextStyles.s14wNormalGrey()),
+      title: note.isNotEmpty
+          ? Text(note, style: AppTextStyles.s14wNormalBlack(), overflow: TextOverflow.ellipsis)
+          : Text(S.current.note, style: AppTextStyles.s14wNormalGrey()),
       showChevron: true,
     );
   }
@@ -303,13 +301,12 @@ class _DateRow extends StatelessWidget {
         width: Dimens.d30.responsive(),
         height: Dimens.d30.responsive(),
       ),
-      title:
-          selectedDate != null
-              ? Text(
-                selectedDate.toStringWithFormat(DateTimeFormatConstants.commonDateFormat),
-                style: AppTextStyles.s14wNormalBlack(),
-              )
-              : const SizedBox.shrink(),
+      title: selectedDate != null
+          ? Text(
+              selectedDate.toStringWithFormat(DateTimeFormatConstants.commonDateFormat),
+              style: AppTextStyles.s14wNormalBlack(),
+            )
+          : const SizedBox.shrink(),
       showChevron: true,
     );
   }

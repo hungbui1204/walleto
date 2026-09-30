@@ -159,12 +159,12 @@ class CommonShimmerPanel extends StatelessWidget {
         title ??
         (showTitleBar
             ? Align(
-              alignment: Alignment.centerLeft,
-              child: CommonShimmerBox(
-                height: Dimens.d16.responsive(),
-                width: Dimens.d120.responsive(),
-              ),
-            )
+                alignment: Alignment.centerLeft,
+                child: CommonShimmerBox(
+                  height: Dimens.d16.responsive(),
+                  width: Dimens.d120.responsive(),
+                ),
+              )
             : null);
 
     return Container(

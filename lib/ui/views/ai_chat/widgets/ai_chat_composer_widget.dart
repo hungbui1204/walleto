@@ -48,22 +48,20 @@ class AiChatComposerWidget extends StatelessWidget {
             ),
             SizedBox(width: Dimens.d8.responsive()),
             Pressable(
-              onTap:
-                  !enabled
-                      ? null
-                      : isSending
-                      ? onStop
-                      : () => onSubmit(controller.text),
+              onTap: !enabled
+                  ? null
+                  : isSending
+                  ? onStop
+                  : () => onSubmit(controller.text),
               semanticLabel: isSending ? S.current.aiChatStop : S.current.aiChatSend,
               borderRadius: radius,
               child: Container(
                 width: Dimens.d48.responsive(),
                 height: Dimens.d48.responsive(),
                 alignment: Alignment.center,
-                decoration:
-                    isSending
-                        ? AppDecorations.secondaryCta(radius: radius, borderColor: alertColor)
-                        : AppDecorations.primaryCta(radius: radius),
+                decoration: isSending
+                    ? AppDecorations.secondaryCta(radius: radius, borderColor: alertColor)
+                    : AppDecorations.primaryCta(radius: radius),
                 child: Icon(
                   isSending ? Icons.stop_rounded : Icons.send_rounded,
                   color: isSending ? alertColor : onPrimaryColor,

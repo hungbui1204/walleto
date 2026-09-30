@@ -140,10 +140,9 @@ class _NumericKey extends StatelessWidget {
       borderRadius: radius,
       semanticLabel: label,
       child: DecoratedBox(
-        decoration:
-            isPrimary
-                ? AppDecorations.primaryCta(radius: radius)
-                : AppDecorations.secondaryCta(radius: radius, color: backgroundColor),
+        decoration: isPrimary
+            ? AppDecorations.primaryCta(radius: radius)
+            : AppDecorations.secondaryCta(radius: radius, color: backgroundColor),
         child: Center(
           child: Text(
             label,

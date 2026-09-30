@@ -29,24 +29,22 @@ class SelectIconBloc extends BaseBloc<SelectIconEvent, SelectIconState> {
           case IconType.wallet:
             // Fetch wallet icons
             final output = await _getWalletImagesUseCase.execute(const GetWalletImagesInput());
-            final icons =
-                output.images.map((e) {
-                  return e.copyWith(
-                    url: UrlConstants.imageUrl(path: e.name ?? '', bucket: 'wallet-images'),
-                  );
-                }).toList();
+            final icons = output.images.map((e) {
+              return e.copyWith(
+                url: UrlConstants.imageUrl(path: e.name ?? '', bucket: 'wallet-images'),
+              );
+            }).toList();
             emit(state.copyWith(icons: icons));
             break;
 
           case IconType.category:
             // Fetch category icons
             final output = await _getCategoryImagesUseCase.execute(const GetCategoryImagesInput());
-            final icons =
-                output.images.map((e) {
-                  return e.copyWith(
-                    url: UrlConstants.imageUrl(path: e.name ?? '', bucket: 'category-images'),
-                  );
-                }).toList();
+            final icons = output.images.map((e) {
+              return e.copyWith(
+                url: UrlConstants.imageUrl(path: e.name ?? '', bucket: 'category-images'),
+              );
+            }).toList();
             emit(state.copyWith(icons: icons));
         }
       },

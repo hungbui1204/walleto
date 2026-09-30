@@ -8,11 +8,8 @@ part 'paged_list.freezed.dart';
 sealed class PagedList<T> with _$PagedList<T> {
   const PagedList._();
 
-  const factory PagedList({
-    required List<T> data,
-    @Default(null) Object? otherData,
-    String? key,
-  }) = _PagedList;
+  const factory PagedList({required List<T> data, @Default(null) Object? otherData, String? key}) =
+      _PagedList;
 
   bool get isLastPage => key.isNullOrEmpty;
 

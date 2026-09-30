@@ -14,7 +14,6 @@ class AuthRouteGuard extends AutoRouteGuard {
     final result = await runAsyncCatching(
       action: () async {
         final isLoggedInOutput = await _isLoggedInUseCase.execute(const IsLoggedInInput());
-        
 
         return isLoggedInOutput.isLoggedIn;
       },

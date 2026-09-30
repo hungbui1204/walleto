@@ -95,22 +95,22 @@ abstract class BaseBlocDelegate<E extends BaseBlocEvent, S extends BaseBlocState
                 doOnRetry ??
                 (handleRetry
                     ? () async {
-                      recursion = Completer();
-                      await runBlocCatching(
-                        action: action,
-                        doOnEventCompleted: doOnEventCompleted,
-                        doOnSubscribe: doOnSubscribe,
-                        doOnSuccessOrError: doOnSuccessOrError,
-                        doOnError: doOnError,
-                        doOnRetry: doOnRetry,
-                        forceHandleError: forceHandleError,
-                        handleError: handleError,
-                        handleLoading: handleLoading,
-                        handleRetry: handleRetry,
-                        overrideErrorMessage: overrideErrorMessage,
-                      );
-                      recursion?.complete();
-                    }
+                        recursion = Completer();
+                        await runBlocCatching(
+                          action: action,
+                          doOnEventCompleted: doOnEventCompleted,
+                          doOnSubscribe: doOnSubscribe,
+                          doOnSuccessOrError: doOnSuccessOrError,
+                          doOnError: doOnError,
+                          doOnRetry: doOnRetry,
+                          forceHandleError: forceHandleError,
+                          handleError: handleError,
+                          handleLoading: handleLoading,
+                          handleRetry: handleRetry,
+                          overrideErrorMessage: overrideErrorMessage,
+                        );
+                        recursion?.complete();
+                      }
                     : null),
             exceptionCompleter: Completer<void>(),
             overrideMessage: overrideErrorMessage,

@@ -176,9 +176,9 @@ class AppNavigatorImpl extends AppNavigator with LogMixin {
     return useRootNavigator
         ? _appRouter.popAndPush<T, R>(_appRouteInfoMapper.map(appRouteInfo), result: result)
         : _currentTabRouterOrRootRouter.popAndPush<T, R>(
-          _appRouteInfoMapper.map(appRouteInfo),
-          result: result,
-        );
+            _appRouteInfoMapper.map(appRouteInfo),
+            result: result,
+          );
   }
 
   @override
@@ -226,8 +226,8 @@ class AppNavigatorImpl extends AppNavigator with LogMixin {
     return useRootNavigator
         ? _appRouter.popAndPushAll(_appRouteInfoMapper.mapList(listAppRouteInfo))
         : _currentTabRouterOrRootRouter.popAndPushAll(
-          _appRouteInfoMapper.mapList(listAppRouteInfo),
-        );
+            _appRouteInfoMapper.mapList(listAppRouteInfo),
+          );
   }
 
   @override
@@ -262,7 +262,7 @@ class AppNavigatorImpl extends AppNavigator with LogMixin {
       useSafeArea: useSafeArea,
       builder: (_) {
         return m.PopScope(
-          onPopInvokedWithResult: (_, __) async {
+          onPopInvokedWithResult: (_, _) async {
             logD('Dialog $appPopupInfo dismissed');
             _shownPopups.remove(appPopupInfo);
           },
@@ -296,7 +296,7 @@ class AppNavigatorImpl extends AppNavigator with LogMixin {
       barrierDismissible: barrierDismissible,
       pageBuilder: (context, animation1, animation2) {
         return m.PopScope(
-          onPopInvokedWithResult: (_, __) async {
+          onPopInvokedWithResult: (_, _) async {
             logD('Dialog $appPopupInfo dismissed');
             _shownPopups.remove(appPopupInfo);
           },

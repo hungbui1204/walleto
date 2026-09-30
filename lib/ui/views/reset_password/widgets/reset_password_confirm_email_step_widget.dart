@@ -32,15 +32,14 @@ class ResetPasswordConfirmEmailStepWidget extends StatelessWidget {
                 child: ButtonWithSecondCounting(
                   count: state.remainingSecondsForReSendOtp,
                   text: S.current.sendCode,
-                  onTap:
-                      state.isEnableConfirmEmailButton
-                          ? () {
-                            ViewUtils.hideKeyboard(context);
-                            context.read<ResetPasswordBloc>().add(
-                              const ResetPasswordConfirmEmailButtonPressed(),
-                            );
-                          }
-                          : null,
+                  onTap: state.isEnableConfirmEmailButton
+                      ? () {
+                          ViewUtils.hideKeyboard(context);
+                          context.read<ResetPasswordBloc>().add(
+                            const ResetPasswordConfirmEmailButtonPressed(),
+                          );
+                        }
+                      : null,
                 ),
               );
             },

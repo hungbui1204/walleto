@@ -19,13 +19,12 @@ class ParentCategoryWidget extends StatelessWidget {
         backgroundColor: primaryShadeColor,
       ),
       title: Text(category.name, style: AppTextStyles.s18wNormalBlack()),
-      onTap:
-          onCategorySelected == null
-              ? null
-              : () {
-                onCategorySelected!.call(category);
-                context.read<AppNavigator>().pop(useRootNavigator: true);
-              },
+      onTap: onCategorySelected == null
+          ? null
+          : () {
+              onCategorySelected!.call(category);
+              context.read<AppNavigator>().pop(useRootNavigator: true);
+            },
     );
   }
 }

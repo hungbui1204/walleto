@@ -149,14 +149,13 @@ class _CreateWalletViewState extends BasePageState<CreateWalletView, CreateWalle
                   builder: (context, state) {
                     return CommonButton(
                       text: S.current.save,
-                      onTap:
-                          state.isConfirmButtonEnabled
-                              ? () {
-                                context.read<CreateWalletBloc>().add(
-                                  const CreateWalletConfirmButtonPressed(),
-                                );
-                              }
-                              : null,
+                      onTap: state.isConfirmButtonEnabled
+                          ? () {
+                              context.read<CreateWalletBloc>().add(
+                                const CreateWalletConfirmButtonPressed(),
+                              );
+                            }
+                          : null,
                     );
                   },
                 ),

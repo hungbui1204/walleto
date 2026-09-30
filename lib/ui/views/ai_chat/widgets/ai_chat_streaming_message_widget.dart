@@ -10,11 +10,10 @@ class AiChatStreamingMessageWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AiChatBloc, AiChatState>(
-      buildWhen:
-          (previous, current) =>
-              previous.streamingPhase != current.streamingPhase ||
-              previous.isSending != current.isSending ||
-              _trailingAssistantContent(previous) != _trailingAssistantContent(current),
+      buildWhen: (previous, current) =>
+          previous.streamingPhase != current.streamingPhase ||
+          previous.isSending != current.isSending ||
+          _trailingAssistantContent(previous) != _trailingAssistantContent(current),
       builder: (context, state) {
         final last = _trailingMessage(state);
         final isEmptyAssistant =
@@ -22,10 +21,9 @@ class AiChatStreamingMessageWidget extends StatelessWidget {
 
         if (state.isSending && isEmptyAssistant) {
           return AiChatTypingIndicatorWidget(
-            label:
-                state.streamingPhase == AiChatStreamingPhase.loadingContext
-                    ? S.current.aiChatLoadingContext
-                    : S.current.aiChatTyping,
+            label: state.streamingPhase == AiChatStreamingPhase.loadingContext
+                ? S.current.aiChatLoadingContext
+                : S.current.aiChatTyping,
           );
         }
 

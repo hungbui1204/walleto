@@ -22,26 +22,20 @@ class ResetPasswordResettingPasswordStepWidget extends StatelessWidget {
           SizedBox(height: Dimens.d16.responsive()),
           _PasswordForm(passwordController: passwordController),
           SizedBox(height: Dimens.d16.responsive()),
-          _PasswordConfirmForm(
-            confirmPasswordController: confirmPasswordController,
-          ),
+          _PasswordConfirmForm(confirmPasswordController: confirmPasswordController),
           SizedBox(height: Dimens.d36.responsive()),
           BlocBuilder<ResetPasswordBloc, ResetPasswordState>(
             buildWhen: (previous, current) {
-              return previous.isEnableResetPasswordButton !=
-                  current.isEnableResetPasswordButton;
+              return previous.isEnableResetPasswordButton != current.isEnableResetPasswordButton;
             },
             builder: (context, state) {
               return CommonButton(
                 text: S.current.resetPassword,
-                onTap:
-                    state.isEnableResetPasswordButton
-                        ? () {
-                          context.read<ResetPasswordBloc>().add(
-                            const ResetPasswordButtonPressed(),
-                          );
-                        }
-                        : null,
+                onTap: state.isEnableResetPasswordButton
+                    ? () {
+                        context.read<ResetPasswordBloc>().add(const ResetPasswordButtonPressed());
+                      }
+                    : null,
               );
             },
           ),
@@ -59,10 +53,7 @@ class _EmailWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          S.current.yourConfirmedEmail,
-          style: AppTextStyles.s14wBoldBlack(),
-        ),
+        Text(S.current.yourConfirmedEmail, style: AppTextStyles.s14wBoldBlack()),
         SizedBox(height: Dimens.d4.responsive()),
         BlocBuilder<ResetPasswordBloc, ResetPasswordState>(
           buildWhen: (previous, current) => previous.email != current.email,
@@ -71,9 +62,7 @@ class _EmailWidget extends StatelessWidget {
               decoration: BoxDecoration(
                 color: fieldFillColor,
                 border: Border.all(color: frameColor),
-                borderRadius: BorderRadius.all(
-                  Radius.circular(Dimens.d12.responsive()),
-                ),
+                borderRadius: BorderRadius.all(Radius.circular(Dimens.d12.responsive())),
               ),
               child: Row(
                 children: [
@@ -82,9 +71,7 @@ class _EmailWidget extends StatelessWidget {
                     padding: EdgeInsets.all(Dimens.d16.responsive()),
                     decoration: BoxDecoration(
                       color: primaryShadeColor,
-                      border: const Border(
-                        right: BorderSide(color: frameColor),
-                      ),
+                      border: const Border(right: BorderSide(color: frameColor)),
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(Dimens.d12.responsive()),
                         bottomLeft: Radius.circular(Dimens.d12.responsive()),
@@ -144,10 +131,7 @@ class _PasswordForm extends StatelessWidget {
                 if (state.passwordError.isNotEmpty)
                   Padding(
                     padding: EdgeInsets.only(top: Dimens.d8.responsive()),
-                    child: Text(
-                      state.passwordError,
-                      style: AppTextStyles.s14wNormalRed(),
-                    ),
+                    child: Text(state.passwordError, style: AppTextStyles.s14wNormalRed()),
                   ),
               ],
             );
@@ -168,10 +152,7 @@ class _PasswordConfirmForm extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          S.current.confirmNewPassword,
-          style: AppTextStyles.s14wBoldBlack(),
-        ),
+        Text(S.current.confirmNewPassword, style: AppTextStyles.s14wBoldBlack()),
         SizedBox(height: Dimens.d4.responsive()),
         BlocBuilder<ResetPasswordBloc, ResetPasswordState>(
           buildWhen: (previous, current) {
@@ -190,9 +171,7 @@ class _PasswordConfirmForm extends StatelessWidget {
                   hintText: S.current.hintConfirmNewPassword,
                   onChanged: (password) {
                     context.read<ResetPasswordBloc>().add(
-                      ResetPasswordConfirmPasswordInputChanged(
-                        confirmPassword: password,
-                      ),
+                      ResetPasswordConfirmPasswordInputChanged(confirmPassword: password),
                     );
                   },
                   controller: confirmPasswordController,
@@ -201,10 +180,7 @@ class _PasswordConfirmForm extends StatelessWidget {
                 if (state.confirmPasswordError.isNotEmpty)
                   Padding(
                     padding: EdgeInsets.only(top: Dimens.d8.responsive()),
-                    child: Text(
-                      state.confirmPasswordError,
-                      style: AppTextStyles.s14wNormalRed(),
-                    ),
+                    child: Text(state.confirmPasswordError, style: AppTextStyles.s14wNormalRed()),
                   ),
               ],
             );

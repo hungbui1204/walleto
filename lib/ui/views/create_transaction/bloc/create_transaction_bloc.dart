@@ -80,13 +80,12 @@ class CreateTransactionBloc extends BaseBloc<CreateTransactionEvent, CreateTrans
 
     final now = DateTime.now();
     final defaultWallet = wallets.first;
-    final defaultCurrency =
-        currencies.isEmpty
-            ? null
-            : currencies.firstWhere(
-              (currency) => currency.code == defaultWallet.currencyCode,
-              orElse: () => currencies.first,
-            );
+    final defaultCurrency = currencies.isEmpty
+        ? null
+        : currencies.firstWhere(
+            (currency) => currency.code == defaultWallet.currencyCode,
+            orElse: () => currencies.first,
+          );
 
     emit(
       state.copyWith(
@@ -314,13 +313,12 @@ class CreateTransactionBloc extends BaseBloc<CreateTransactionEvent, CreateTrans
     if (event.wallet.id == state.selectedWallet?.id) return;
 
     // Reset the selected currency to selected wallet's currency, exchange rate, and converted amount
-    final walletCurrency =
-        appBloc.state.currencies.isEmpty
-            ? null
-            : appBloc.state.currencies.firstWhere(
-              (currency) => currency.code == event.wallet.currencyCode,
-              orElse: () => appBloc.state.currencies.first,
-            );
+    final walletCurrency = appBloc.state.currencies.isEmpty
+        ? null
+        : appBloc.state.currencies.firstWhere(
+            (currency) => currency.code == event.wallet.currencyCode,
+            orElse: () => appBloc.state.currencies.first,
+          );
 
     emit(
       state.copyWith(

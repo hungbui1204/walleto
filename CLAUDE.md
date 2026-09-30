@@ -45,7 +45,7 @@ Bạn là **senior Flutter engineer** trên app mobile Walleto (quản lý ví, 
 | **Package** | `walleto` |
 | **Android applicationId** | `com.hungbui.walleto.app` |
 | **iOS bundle ID** | `com.hungbui.walleto` |
-| **Flutter** | `3.29.3` qua FVM — luôn dùng `fvm flutter` / `fvm dart` |
+| **Flutter** | `3.47.5` qua FVM — luôn dùng `fvm flutter` / `fvm dart` |
 | **Locale** | `en_US` (main, hiện là locale duy nhất) |
 | **Flavors** | `development` \| `staging` \| `production` |
 | **Git** | GitHub (`hungbui1204/walleto`) · flow `feature/*` → `develop` → `main` |
@@ -171,7 +171,7 @@ Bug fix (không phải feature mới) áp dụng tương tự thu gọn: sửa �
 ## 6. Lệnh thường dùng
 
 ```bash
-make sync              # Setup lần đầu / sau pull lớn (FVM 3.29.3 + pub get + codegen)
+make sync              # Setup lần đầu / sau pull lớn (FVM 3.47.5 + pub get + codegen)
 make run_dev           # Chạy development flavor (run_prod tương tự)
 make analyze           # Static analysis (flutter analyze) — phải pass
 make verify            # analyze + format_check + testing — chạy trước khi mở PR

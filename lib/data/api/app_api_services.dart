@@ -92,11 +92,11 @@ class AppApiServices {
       method: RequestMethod.post,
       path: 'rpc/get_user_transactions',
       body: {
-        if (targetMonth != null) 'target_month': targetMonth,
-        if (targetYear != null) 'target_year': targetYear,
-        if (fromDate != null) 'from_date': fromDate.toIso8601String(),
-        if (toDate != null) 'to_date': toDate.toIso8601String(),
-        if (walletId != null) 'wallet_id': walletId,
+        'target_month': ?targetMonth,
+        'target_year': ?targetYear,
+        'from_date': ?fromDate?.toIso8601String(),
+        'to_date': ?toDate?.toIso8601String(),
+        'wallet_id': ?walletId,
       },
       decoder: (data) => TransactionData.fromJson(data as Map<String, dynamic>),
       successResponseMapperType: SuccessResponseMapperType.jsonArray,
@@ -133,7 +133,7 @@ class AppApiServices {
     return _serverApiClientRest.request(
       method: RequestMethod.post,
       path: 'rpc/get_monthly_summary',
-      body: {if (baseCurrency != null) 'base_currency': baseCurrency},
+      body: {'base_currency': ?baseCurrency},
       decoder: (data) => MonthSummaryStatData.fromJson(data as Map<String, dynamic>),
       successResponseMapperType: SuccessResponseMapperType.jsonArray,
     );
@@ -188,7 +188,7 @@ class AppApiServices {
     return _serverApiClientRest.request(
       method: RequestMethod.post,
       path: 'rpc/get_recent_transactions',
-      body: {if (walletId != null) 'wallet_id': walletId},
+      body: {'wallet_id': ?walletId},
       decoder: (data) => TransactionData.fromJson(data as Map<String, dynamic>),
       successResponseMapperType: SuccessResponseMapperType.jsonArray,
     );

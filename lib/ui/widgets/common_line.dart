@@ -23,7 +23,9 @@ class CommonLine extends StatelessWidget {
       margin: margin ?? EdgeInsets.symmetric(vertical: Dimens.d12.responsive()),
       height: thickness,
       width: double.infinity,
-      child: CustomPaint(painter: CustomLinePainter(color: color, thickness: thickness)),
+      child: CustomPaint(
+        painter: CustomLinePainter(color: color, thickness: thickness),
+      ),
     );
   }
 }
@@ -36,11 +38,10 @@ class CustomLinePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint =
-        Paint()
-          ..color = color
-          ..strokeWidth = thickness
-          ..style = PaintingStyle.stroke;
+    final paint = Paint()
+      ..color = color
+      ..strokeWidth = thickness
+      ..style = PaintingStyle.stroke;
 
     const start = Offset.zero;
     final end = Offset(size.width, 0);

@@ -17,13 +17,12 @@ class CategoryWidget extends StatelessWidget {
       child: CommonListRow(
         leading: CommonCircleNetworkImage(imageUrl: category.iconUrl),
         title: Text(category.name, style: AppTextStyles.s14wNormalBlack()),
-        onTap:
-            onCategorySelected == null
-                ? null
-                : () {
-                  onCategorySelected!.call(category);
-                  context.read<AppNavigator>().pop(useRootNavigator: true);
-                },
+        onTap: onCategorySelected == null
+            ? null
+            : () {
+                onCategorySelected!.call(category);
+                context.read<AppNavigator>().pop(useRootNavigator: true);
+              },
       ),
     );
   }

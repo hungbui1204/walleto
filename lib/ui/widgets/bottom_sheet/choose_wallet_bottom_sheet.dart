@@ -23,23 +23,22 @@ class ChooseWalletBottomSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return CommonPickerSheet(
       title: S.current.chooseWallet,
-      child:
-          wallets != null
-              ? _WalletList(
-                wallets: _visibleWallets(wallets!),
-                currentWallet: currentWallet,
-                onWalletSelected: onWalletSelected,
-              )
-              : BlocBuilder<AppBloc, AppState>(
-                buildWhen: (previous, current) => previous.wallets != current.wallets,
-                builder: (context, state) {
-                  return _WalletList(
-                    wallets: _visibleWallets(state.wallets),
-                    currentWallet: currentWallet,
-                    onWalletSelected: onWalletSelected,
-                  );
-                },
-              ),
+      child: wallets != null
+          ? _WalletList(
+              wallets: _visibleWallets(wallets!),
+              currentWallet: currentWallet,
+              onWalletSelected: onWalletSelected,
+            )
+          : BlocBuilder<AppBloc, AppState>(
+              buildWhen: (previous, current) => previous.wallets != current.wallets,
+              builder: (context, state) {
+                return _WalletList(
+                  wallets: _visibleWallets(state.wallets),
+                  currentWallet: currentWallet,
+                  onWalletSelected: onWalletSelected,
+                );
+              },
+            ),
     );
   }
 
@@ -98,10 +97,9 @@ class _WalletWidget extends StatelessWidget {
       leading: _WalletLeading(wallet: wallet),
       title: Text(wallet.name, style: AppTextStyles.s14wNormalBlack()),
       backgroundColor: isSelected ? primaryShade1Color : surfaceColor,
-      trailing:
-          isSelected
-              ? Icon(Icons.check_rounded, color: primaryColor, size: Dimens.d20.responsive())
-              : null,
+      trailing: isSelected
+          ? Icon(Icons.check_rounded, color: primaryColor, size: Dimens.d20.responsive())
+          : null,
     );
   }
 }
@@ -116,7 +114,10 @@ class _WalletLeading extends StatelessWidget {
     if (wallet.id == AppConstants.totalWalletId) {
       return ClipOval(
         child: DecoratedBox(
-          decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: frameColor)),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(color: frameColor),
+          ),
           child: Assets.icons.summation.svg(
             width: Dimens.d32.responsive(),
             height: Dimens.d32.responsive(),

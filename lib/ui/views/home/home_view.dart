@@ -96,10 +96,9 @@ class _NoirBalanceHero extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<HomeBloc, HomeState>(
-      buildWhen:
-          (previous, current) =>
-              previous.totalBalance != current.totalBalance ||
-              previous.defaultCurrencyCode != current.defaultCurrencyCode,
+      buildWhen: (previous, current) =>
+          previous.totalBalance != current.totalBalance ||
+          previous.defaultCurrencyCode != current.defaultCurrencyCode,
       builder: (context, state) {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -138,20 +137,19 @@ class _GlassFlowRow extends StatelessWidget {
     return BlocBuilder<AppBloc, AppState>(
       buildWhen: (previous, current) => previous.wallets != current.wallets,
       builder: (context, appState) {
-        final fallbackCurrency =
-            appState.wallets.isNotEmpty ? appState.wallets.first.currencyCode : '';
+        final fallbackCurrency = appState.wallets.isNotEmpty
+            ? appState.wallets.first.currencyCode
+            : '';
 
         return BlocBuilder<HomeBloc, HomeState>(
           buildWhen: (previous, current) => previous.monthSummaryStats != current.monthSummaryStats,
           builder: (context, homeState) {
-            final current =
-                homeState.monthSummaryStats.isNotEmpty
-                    ? homeState.monthSummaryStats.first
-                    : const MonthSummaryStat();
-            final currency =
-                homeState.defaultCurrencyCode.isNotEmpty
-                    ? homeState.defaultCurrencyCode
-                    : fallbackCurrency;
+            final current = homeState.monthSummaryStats.isNotEmpty
+                ? homeState.monthSummaryStats.first
+                : const MonthSummaryStat();
+            final currency = homeState.defaultCurrencyCode.isNotEmpty
+                ? homeState.defaultCurrencyCode
+                : fallbackCurrency;
 
             return Row(
               children: [

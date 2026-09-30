@@ -54,16 +54,14 @@ class _EditTransactionViewState extends BasePageState<EditTransactionView, EditT
                         convertedAmount: state.convertedAmount,
                         selectedCategory: state.selectedCategory,
                         selectedDate: state.selectedDate,
-                        onAmountTap:
-                            () => bloc.add(const EditTransactionKeyboardToggled(show: true)),
-                        onWalletSelected:
-                            (wallet) => bloc.add(EditTransactionWalletSelected(wallet: wallet)),
-                        onCurrencySelected:
-                            (currency) =>
-                                bloc.add(EditTransactionCurrencySelected(currency: currency)),
-                        onCategorySelected:
-                            (category) =>
-                                bloc.add(EditTransactionCategorySelected(category: category)),
+                        onAmountTap: () =>
+                            bloc.add(const EditTransactionKeyboardToggled(show: true)),
+                        onWalletSelected: (wallet) =>
+                            bloc.add(EditTransactionWalletSelected(wallet: wallet)),
+                        onCurrencySelected: (currency) =>
+                            bloc.add(EditTransactionCurrencySelected(currency: currency)),
+                        onCategorySelected: (category) =>
+                            bloc.add(EditTransactionCategorySelected(category: category)),
                         onNoteChanged: (note) => bloc.add(EditTransactionNoteChanged(note: note)),
                         onDateSelected: (date) => bloc.add(EditTransactionDateSelected(date: date)),
                       );
@@ -71,16 +69,14 @@ class _EditTransactionViewState extends BasePageState<EditTransactionView, EditT
                   ),
                   SizedBox(height: Dimens.d20.responsive()),
                   BlocBuilder<EditTransactionBloc, EditTransactionState>(
-                    buildWhen:
-                        (previous, current) =>
-                            previous.confirmButtonEnable != current.confirmButtonEnable,
+                    buildWhen: (previous, current) =>
+                        previous.confirmButtonEnable != current.confirmButtonEnable,
                     builder: (context, state) {
                       return CommonButton(
                         text: S.current.save,
-                        onTap:
-                            state.confirmButtonEnable
-                                ? () => bloc.add(const EditTransactionConfirmButtonPressed())
-                                : null,
+                        onTap: state.confirmButtonEnable
+                            ? () => bloc.add(const EditTransactionConfirmButtonPressed())
+                            : null,
                       );
                     },
                   ),

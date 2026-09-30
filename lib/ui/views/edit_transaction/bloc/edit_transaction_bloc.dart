@@ -317,13 +317,12 @@ class EditTransactionBloc extends BaseBloc<EditTransactionEvent, EditTransaction
     if (event.wallet.id == state.selectedWallet?.id) return;
 
     // Reset the selected currency to selected wallet's currency, exchange rate, and converted amount
-    final walletCurrency =
-        appBloc.state.currencies.isEmpty
-            ? null
-            : appBloc.state.currencies.firstWhere(
-              (currency) => currency.code == event.wallet.currencyCode,
-              orElse: () => appBloc.state.currencies.first,
-            );
+    final walletCurrency = appBloc.state.currencies.isEmpty
+        ? null
+        : appBloc.state.currencies.firstWhere(
+            (currency) => currency.code == event.wallet.currencyCode,
+            orElse: () => appBloc.state.currencies.first,
+          );
 
     emit(
       state.copyWith(

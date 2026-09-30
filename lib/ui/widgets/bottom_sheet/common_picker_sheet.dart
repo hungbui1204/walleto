@@ -21,10 +21,12 @@ class CommonPickerSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final maxHeight = MediaQuery.sizeOf(context).height * AppConstants.pickerSheetMaxHeightFactor;
-    final body =
-        expandChild
-            ? Expanded(child: child)
-            : ConstrainedBox(constraints: BoxConstraints(maxHeight: maxHeight), child: child);
+    final body = expandChild
+        ? Expanded(child: child)
+        : ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: maxHeight),
+            child: child,
+          );
 
     final content = Column(
       mainAxisSize: expandChild ? MainAxisSize.max : MainAxisSize.min,

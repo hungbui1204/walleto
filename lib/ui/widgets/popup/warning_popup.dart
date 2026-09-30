@@ -18,7 +18,10 @@ class _WarningIcon extends StatelessWidget {
         Container(
           width: Dimens.d64.responsive(),
           height: Dimens.d64.responsive(),
-          decoration: BoxDecoration(border: Border.all(color: iconYellow), shape: BoxShape.circle),
+          decoration: BoxDecoration(
+            border: Border.all(color: iconYellow),
+            shape: BoxShape.circle,
+          ),
         ),
         Icon(Icons.priority_high_rounded, size: Dimens.d34.responsive(), color: iconYellow),
       ],

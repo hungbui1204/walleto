@@ -88,14 +88,13 @@ class _EditWalletViewState extends BasePageState<EditWalletView, EditWalletBloc>
                   builder: (context, state) {
                     return CommonButton(
                       text: S.current.save,
-                      onTap:
-                          state.isConfirmButtonEnabled
-                              ? () {
-                                context.read<EditWalletBloc>().add(
-                                  const EditWalletConfirmButtonPressed(),
-                                );
-                              }
-                              : null,
+                      onTap: state.isConfirmButtonEnabled
+                          ? () {
+                              context.read<EditWalletBloc>().add(
+                                const EditWalletConfirmButtonPressed(),
+                              );
+                            }
+                          : null,
                     );
                   },
                 ),

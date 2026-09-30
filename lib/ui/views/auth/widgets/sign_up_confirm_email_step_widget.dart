@@ -33,13 +33,12 @@ class SignUpConfirmEmailStepWidget extends StatelessWidget {
                 child: ButtonWithSecondCounting(
                   count: state.remainingSecondsForReSendOtp,
                   text: S.current.sendCode,
-                  onTap:
-                      state.isEnableConfirmEmailSignUpButton
-                          ? () {
-                            ViewUtils.hideKeyboard(context);
-                            context.read<LoginBloc>().add(const ConfirmEmailSignUpButtonPressed());
-                          }
-                          : null,
+                  onTap: state.isEnableConfirmEmailSignUpButton
+                      ? () {
+                          ViewUtils.hideKeyboard(context);
+                          context.read<LoginBloc>().add(const ConfirmEmailSignUpButtonPressed());
+                        }
+                      : null,
                 ),
               );
             },

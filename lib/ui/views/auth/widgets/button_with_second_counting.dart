@@ -20,10 +20,9 @@ class ButtonWithSecondCounting extends StatelessWidget {
   Widget build(BuildContext context) {
     final isCounting = count != null && count! > 0;
     final background = color ?? primaryColor;
-    final onColor =
-        background == primaryColor || background == secondaryColor
-            ? onPrimaryColor
-            : blackColor;
+    final onColor = background == primaryColor || background == secondaryColor
+        ? onPrimaryColor
+        : blackColor;
 
     return Stack(
       children: [
@@ -37,9 +36,7 @@ class ButtonWithSecondCounting extends StatelessWidget {
           Positioned.fill(
             child: Container(
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(Dimens.d16.responsive()),
-                ),
+                borderRadius: BorderRadius.all(Radius.circular(Dimens.d16.responsive())),
                 color: scaffoldBackgroundColor.withValues(alpha: 0.55),
               ),
               alignment: Alignment.center,

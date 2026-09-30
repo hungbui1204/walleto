@@ -6,8 +6,8 @@ class JsonArrayResponseMapper<T extends Object> extends BaseSuccessResponseMappe
   List<T>? mapToDataModel({required dynamic response, Decoder<T>? decoder, int? statusCode}) {
     return decoder != null && response is List
         ? response
-            .map((jsonObject) => decoder(jsonObject as Map<String, dynamic>))
-            .toList(growable: false)
+              .map((jsonObject) => decoder(jsonObject as Map<String, dynamic>))
+              .toList(growable: false)
         : null;
   }
 }

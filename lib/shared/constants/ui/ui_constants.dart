@@ -8,10 +8,7 @@ class UiConstants {
   static const appTitle = '自治体マイページ';
 
   /// orientation
-  static const mobileOrientation = [
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ];
+  static const mobileOrientation = [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown];
 
   static const tabletOrientation = [
     DeviceOrientation.portraitUp,

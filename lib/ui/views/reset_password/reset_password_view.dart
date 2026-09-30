@@ -49,9 +49,8 @@ class _ResetPasswordViewState extends BasePageState<ResetPasswordView, ResetPass
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 BlocBuilder<ResetPasswordBloc, ResetPasswordState>(
-                  buildWhen:
-                      (previous, current) =>
-                          previous.resetPasswordStep != current.resetPasswordStep,
+                  buildWhen: (previous, current) =>
+                      previous.resetPasswordStep != current.resetPasswordStep,
                   builder: (context, state) {
                     if (state.resetPasswordStep == ResetPasswordStep.emailConfirm ||
                         state.resetPasswordStep == ResetPasswordStep.resetPasswordComplete) {

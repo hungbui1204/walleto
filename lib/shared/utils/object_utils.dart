@@ -1,6 +1,5 @@
 import 'package:walleto/shared/shared.dart';
 
-
 T run<T>(T Function() block) {
   return block();
 }

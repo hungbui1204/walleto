@@ -45,10 +45,9 @@ class _Segment extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final radius = AppDecorations.chipRadius();
-    final duration =
-        MediaQuery.disableAnimationsOf(context)
-            ? Duration.zero
-            : DurationConstants.microInteraction;
+    final duration = MediaQuery.disableAnimationsOf(context)
+        ? Duration.zero
+        : DurationConstants.microInteraction;
 
     return Pressable(
       onTap: onTap,

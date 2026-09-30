@@ -26,7 +26,7 @@ class LocalNotificationService with LogMixin {
     );
 
     _notificationsPlugin.initialize(
-      initializationSettings,
+      settings: initializationSettings,
       onDidReceiveNotificationResponse: (details) {
         if (details.payload != null) {
           final json = jsonDecode(details.payload!);
@@ -120,10 +120,10 @@ class LocalNotificationService with LogMixin {
     final id = DateTime.now().millisecondsSinceEpoch ~/ 1000;
 
     await FlutterLocalNotificationsPlugin().show(
-      id,
-      title,
-      body,
-      notificationDetails,
+      id: id,
+      title: title,
+      body: body,
+      notificationDetails: notificationDetails,
       payload: jsonEncode(message.data),
     );
   }

@@ -101,7 +101,7 @@ class _WalletsViewState extends BasePageState<WalletsView, WalletsBloc> {
                               ),
                             );
                           },
-                          separatorBuilder: (_, __) => const CommonLine(),
+                          separatorBuilder: (_, _) => const CommonLine(),
                         ),
                       );
                     },

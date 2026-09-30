@@ -26,7 +26,7 @@
     "**/!(base_page)_state.dart",
     "**/*_event.dart"
   ],
-  "dart.flutterSdkPath": ".fvm/versions/3.29.3",
+  "dart.flutterSdkPath": ".fvm/versions/3.47.5",
   "flutter-plus.wraps": [
     {
       "name": "GestureDetector",

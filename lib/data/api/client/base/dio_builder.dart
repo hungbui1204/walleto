@@ -16,12 +16,12 @@ class DioBuilder {
       ),
     );
 
-    final sortedInterceptors = [
-      ...ApiClientDefaultSetting.requiredInterceptors(dio),
-      ...interceptors,
-    ].sortedByDescending((element) {
-      return element is BaseInterceptor ? element.priority : -1;
-    });
+    final sortedInterceptors =
+        [...ApiClientDefaultSetting.requiredInterceptors(dio), ...interceptors].sortedByDescending((
+          element,
+        ) {
+          return element is BaseInterceptor ? element.priority : -1;
+        });
 
     dio.interceptors.addAll(sortedInterceptors);
 

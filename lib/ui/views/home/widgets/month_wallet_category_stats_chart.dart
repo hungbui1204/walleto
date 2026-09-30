@@ -112,18 +112,13 @@ class _MonthWalletCategoryStatsChartState extends State<MonthWalletCategoryStats
       final isTouched = index == _touchedIndex;
       final total = stats.fold<double>(0, (sum, e) => sum + e.totalAmount);
       final double radius = isTouched ? Dimens.d60.responsive() : Dimens.d50.responsive();
-      final title =
-          isTouched
-              ? stat.totalAmount.round().toCompactString()
-              : '${((stat.totalAmount / total) * 100).toStringAsFixed(1)}%';
+      final title = isTouched
+          ? stat.totalAmount.round().toCompactString()
+          : '${((stat.totalAmount / total) * 100).toStringAsFixed(1)}%';
 
-      final badgeWidget =
-          isTouched
-              ? CommonCircleNetworkImage(
-                imageUrl: stat.categoryIconUrl,
-                size: Dimens.d24.responsive(),
-              )
-              : null;
+      final badgeWidget = isTouched
+          ? CommonCircleNetworkImage(imageUrl: stat.categoryIconUrl, size: Dimens.d24.responsive())
+          : null;
 
       return PieChartSectionData(
         badgeWidget: badgeWidget,

@@ -154,10 +154,9 @@ class HomeBloc extends BaseBloc<HomeEvent, HomeState> {
     await runBlocCatching(
       handleLoading: false,
       action: () async {
-        final currencyCode =
-            state.defaultCurrencyCode.isNotEmpty
-                ? state.defaultCurrencyCode
-                : appBloc.state.userDefaultCurrency.code;
+        final currencyCode = state.defaultCurrencyCode.isNotEmpty
+            ? state.defaultCurrencyCode
+            : appBloc.state.userDefaultCurrency.code;
         final totalBalance = await _totalBalanceInCurrency(currencyCode);
         emit(state.copyWith(totalBalance: totalBalance));
       },
@@ -173,13 +172,12 @@ class HomeBloc extends BaseBloc<HomeEvent, HomeState> {
     final output = await _convertAmountsToCurrencyUseCase.execute(
       ConvertAmountsToCurrencyInput(
         targetCurrencyCode: currencyCode,
-        amounts:
-            wallets
-                .map(
-                  (wallet) =>
-                      AmountInCurrency(amount: wallet.amount, currencyCode: wallet.currencyCode),
-                )
-                .toList(),
+        amounts: wallets
+            .map(
+              (wallet) =>
+                  AmountInCurrency(amount: wallet.amount, currencyCode: wallet.currencyCode),
+            )
+            .toList(),
       ),
     );
 
