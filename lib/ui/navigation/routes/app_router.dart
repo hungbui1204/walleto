@@ -1,7 +1,9 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:flutter/widgets.dart';
 import 'package:injectable/injectable.dart';
 import 'package:walleto/di/di.dart';
 import 'package:walleto/domain/domain.dart';
+import 'package:walleto/resources/resources.dart';
 import 'package:walleto/ui/ui.dart';
 
 @LazySingleton()
@@ -132,22 +134,24 @@ class AppRouter extends RootStackRouter {
   ];
 }
 
+Widget _bottomTabPlaceholder(BuildContext _) => const ColoredBox(color: scaffoldBackgroundColor);
+
 @RoutePage(name: 'BottomTabHomeRouter')
 class BottomTabHomeView extends AutoRouter {
-  const BottomTabHomeView({super.key});
+  const BottomTabHomeView({super.key}) : super(placeholder: _bottomTabPlaceholder);
 }
 
 @RoutePage(name: 'BottomTabTransactionsRouter')
 class BottomTabTransactionsView extends AutoRouter {
-  const BottomTabTransactionsView({super.key});
+  const BottomTabTransactionsView({super.key}) : super(placeholder: _bottomTabPlaceholder);
 }
 
 @RoutePage(name: 'BottomTabBudgetsRouter')
 class BottomTabBudgetsView extends AutoRouter {
-  const BottomTabBudgetsView({super.key});
+  const BottomTabBudgetsView({super.key}) : super(placeholder: _bottomTabPlaceholder);
 }
 
 @RoutePage(name: 'BottomTabAccountRouter')
 class BottomTabAccountView extends AutoRouter {
-  const BottomTabAccountView({super.key});
+  const BottomTabAccountView({super.key}) : super(placeholder: _bottomTabPlaceholder);
 }

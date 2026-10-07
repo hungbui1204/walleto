@@ -28,6 +28,8 @@ class _MainViewState extends BasePageState<MainView, MainBloc> {
 
     return AutoTabsScaffold(
       routes: navigator.tabRoutes,
+      backgroundColor: scaffoldBackgroundColor,
+      transitionBuilder: (_, child, _) => child,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: hideBottomNav
           ? null
