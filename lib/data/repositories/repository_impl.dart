@@ -42,6 +42,22 @@ class RepositoryImpl implements Repository {
   final WalletStatDataMapper _walletStatDataMapper;
 
   @override
+  Future<AppThemePreference> getAppThemePreference() async {
+    final value = await _appPreferences.appThemePreference;
+
+    return switch (value) {
+      'light' => AppThemePreference.light,
+      'dark' => AppThemePreference.dark,
+      _ => AppThemePreference.dark,
+    };
+  }
+
+  @override
+  Future<void> setAppThemePreference(AppThemePreference preference) async {
+    await _appPreferences.setAppThemePreference(preference.name);
+  }
+
+  @override
   Future<bool> get isLoggedIn async => await _appPreferences.token != null;
 
   @override

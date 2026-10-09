@@ -41,10 +41,10 @@ class CommonTextField extends StatefulWidget {
 class _CommonTextFieldState extends State<CommonTextField> {
   bool isVisible = true;
 
-  OutlineInputBorder _border({Color color = glassHairlineColor}) {
+  OutlineInputBorder _border({Color? color}) {
     return OutlineInputBorder(
       borderRadius: BorderRadius.all(Radius.circular(Dimens.d16.responsive())),
-      borderSide: BorderSide(color: color),
+      borderSide: BorderSide(color: color ?? glassHairlineColor),
     );
   }
 

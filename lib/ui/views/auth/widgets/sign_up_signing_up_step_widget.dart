@@ -80,7 +80,7 @@ class _EmailWidget extends StatelessWidget {
                     padding: EdgeInsets.all(Dimens.d16.responsive()),
                     decoration: BoxDecoration(
                       color: primaryShadeColor,
-                      border: const Border(right: BorderSide(color: frameColor)),
+                      border: Border(right: BorderSide(color: frameColor)),
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(Dimens.d12.responsive()),
                         bottomLeft: Radius.circular(Dimens.d12.responsive()),
@@ -224,7 +224,7 @@ class _AcceptTermCheckbox extends StatelessWidget {
                       ? WidgetStateProperty.all(primaryColor)
                       : WidgetStateProperty.all(fieldFillColor),
                   checkColor: onPrimaryColor,
-                  side: const BorderSide(color: frameColor),
+                  side: BorderSide(color: frameColor),
                   value: state.isCheckedAcceptTerms,
                   onChanged: (_) {},
                 ),

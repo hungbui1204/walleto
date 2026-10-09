@@ -1,13 +1,22 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:injectable/injectable.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:walleto/shared/shared.dart';
 
 @singleton
 class AppPreferences {
-  AppPreferences(this._secureStorage);
+  AppPreferences(this._secureStorage) : _sharedPreferences = SharedPreferencesAsync();
 
-  // final SharedPreferencesAsync _sharedPreference;
   final FlutterSecureStorage _secureStorage;
+  final SharedPreferencesAsync _sharedPreferences;
+
+  Future<String?> get appThemePreference async {
+    return _sharedPreferences.getString(SharedPreferenceKeys.appThemePreference);
+  }
+
+  Future<void> setAppThemePreference(String value) async {
+    await _sharedPreferences.setString(SharedPreferenceKeys.appThemePreference, value);
+  }
 
   Future<String?> get token async {
     return await _secureStorage.read(key: SharedPreferenceKeys.token);

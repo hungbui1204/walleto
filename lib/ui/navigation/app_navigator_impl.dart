@@ -316,7 +316,7 @@ class AppNavigatorImpl extends AppNavigator with LogMixin {
     bool isDismissible = true,
     bool enableDrag = true,
     m.Color barrierColor = backgroundOverlayColor,
-    m.Color backgroundColor = surfaceColor,
+    m.Color? backgroundColor,
   }) {
     if (LogConfig.enableNavigatorObserverLog) {
       logD('showModalBottomSheet $appPopupInfo, useRootNav = $useRootNavigator');
@@ -329,7 +329,7 @@ class AppNavigatorImpl extends AppNavigator with LogMixin {
       enableDrag: enableDrag,
       useRootNavigator: useRootNavigator,
       isScrollControlled: isScrollControlled,
-      backgroundColor: backgroundColor,
+      backgroundColor: backgroundColor ?? surfaceColor,
       barrierColor: barrierColor,
     );
   }

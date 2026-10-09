@@ -133,7 +133,7 @@ class _MonthWalletCategoryStatsChartState extends State<MonthWalletCategoryStats
   }
 
   Color _getColorForIndex(int index) {
-    const colors = AppConstants.pieChartColors;
+    final colors = AppConstants.pieChartColors;
 
     return colors[index % colors.length];
   }

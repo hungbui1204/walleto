@@ -8,7 +8,7 @@ abstract class CommonShapeNetworkImage extends StatelessWidget {
     required this.imageUrl,
     required this.width,
     required this.height,
-    this.backgroundColor = fieldFillColor,
+    this.backgroundColor,
     this.enablePadding = true,
     this.fit = BoxFit.cover,
     this.placeHolderType = ImagePlaceHolderType.category,
@@ -17,7 +17,7 @@ abstract class CommonShapeNetworkImage extends StatelessWidget {
   final String? imageUrl;
   final double? width;
   final double? height;
-  final Color backgroundColor;
+  final Color? backgroundColor;
   final bool enablePadding;
   final BoxFit fit;
   final ImagePlaceHolderType placeHolderType;

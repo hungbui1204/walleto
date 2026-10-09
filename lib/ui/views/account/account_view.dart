@@ -187,6 +187,8 @@ class _UtilitiesWidget extends StatelessWidget {
               context.read<AppNavigator>().push(const AppRouteInfo.categories());
             },
           ),
+          CommonLine(margin: EdgeInsets.symmetric(horizontal: Dimens.d16.responsive())),
+          const AccountThemeSelectorWidget(),
         ],
       ),
     );

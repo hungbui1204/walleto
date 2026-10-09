@@ -66,7 +66,15 @@ abstract class BasePageStateDelegate<T extends StatefulWidget, B extends BaseBlo
                 current.appExceptionWrapper != null;
           },
           listener: (context, state) => handleException(state.appExceptionWrapper!),
-          child: buildPageListeners(child: _buildPageContent(context)),
+          child: isAppWidget
+              ? buildPageListeners(child: _buildPageContent(context))
+              : BlocBuilder<AppBloc, AppState>(
+                  buildWhen: (previous, current) =>
+                      previous.themePreference != current.themePreference,
+                  builder: (context, state) {
+                    return buildPageListeners(child: _buildPageContent(context));
+                  },
+                ),
         ),
       ),
     );

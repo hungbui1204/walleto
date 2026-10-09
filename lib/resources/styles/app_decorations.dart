@@ -38,20 +38,20 @@ class AppDecorations {
 
   static BoxDecoration secondaryCta({
     required BorderRadius radius,
-    Color color = surfaceColor,
-    Color borderColor = glassHairlineColor,
+    Color? color,
+    Color? borderColor,
   }) {
     return BoxDecoration(
-      color: color,
+      color: color ?? surfaceColor,
       borderRadius: radius,
-      border: Border.all(color: borderColor),
+      border: Border.all(color: borderColor ?? glassHairlineColor),
     );
   }
 
   static BoxDecoration keyboardSheet() {
     return BoxDecoration(
       color: surfaceColor,
-      border: const Border(top: BorderSide(color: glassHairlineColor)),
+      border: Border(top: BorderSide(color: glassHairlineColor)),
       borderRadius: BorderRadius.vertical(top: Radius.circular(Dimens.d16.responsive())),
     );
   }

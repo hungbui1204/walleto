@@ -48,7 +48,7 @@ class PopUpWidget extends StatelessWidget {
                 ).copyWith(top: 0),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(Dimens.d16.responsive()),
-        side: const BorderSide(color: glassHairlineColor),
+        side: BorderSide(color: glassHairlineColor),
       ),
       icon: icon,
       content: SizedBox(

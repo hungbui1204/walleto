@@ -8,8 +8,16 @@ class AppThemes {
   static const String displayFont = FontFamily.spaceGrotesk;
   static const String bodyFont = FontFamily.dMSans;
 
-  static ThemeData get appTheme {
-    final base = ThemeData.dark(useMaterial3: true);
+  static ThemeData get appTheme => darkTheme;
+
+  static ThemeData get lightTheme => _buildTheme(light: true);
+
+  static ThemeData get darkTheme => _buildTheme(light: false);
+
+  static ThemeData _buildTheme({required bool light}) {
+    AppColorPalette.setLight(light);
+    final brightness = light ? Brightness.light : Brightness.dark;
+    final base = ThemeData(brightness: brightness, useMaterial3: true);
     final baseTextTheme = base.textTheme.apply(
       fontFamily: bodyFont,
       bodyColor: blackColor,
@@ -18,24 +26,35 @@ class AppThemes {
 
     return ThemeData(
       useMaterial3: true,
-      brightness: Brightness.dark,
+      brightness: brightness,
       fontFamily: bodyFont,
       primaryColor: primaryColor,
       scaffoldBackgroundColor: scaffoldBackgroundColor,
       visualDensity: VisualDensity.adaptivePlatformDensity,
-      colorScheme: const ColorScheme.dark(
-        primary: primaryColor,
-        onPrimary: onPrimaryColor,
-        secondary: secondaryColor,
-        onSecondary: onPrimaryColor,
-        surface: surfaceColor,
-        onSurface: blackColor,
-        error: redColor,
-        onError: onPrimaryColor,
-      ),
+      colorScheme: light
+          ? ColorScheme.light(
+              primary: primaryColor,
+              onPrimary: onPrimaryColor,
+              secondary: secondaryColor,
+              onSecondary: onPrimaryColor,
+              surface: surfaceColor,
+              onSurface: blackColor,
+              error: redColor,
+              onError: onPrimaryColor,
+            )
+          : ColorScheme.dark(
+              primary: primaryColor,
+              onPrimary: onPrimaryColor,
+              secondary: secondaryColor,
+              onSecondary: onPrimaryColor,
+              surface: surfaceColor,
+              onSurface: blackColor,
+              error: redColor,
+              onError: onPrimaryColor,
+            ),
       textTheme: baseTextTheme,
-      iconTheme: const IconThemeData(color: blackColor),
-      appBarTheme: const AppBarTheme(
+      iconTheme: IconThemeData(color: blackColor),
+      appBarTheme: AppBarTheme(
         backgroundColor: scaffoldBackgroundColor,
         elevation: 0,
         scrolledUnderElevation: 0,
@@ -50,27 +69,27 @@ class AppThemes {
         ),
         iconTheme: IconThemeData(color: darkGreyColor),
       ),
-      floatingActionButtonTheme: const FloatingActionButtonThemeData(
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
         backgroundColor: primaryColor,
         foregroundColor: onPrimaryColor,
         elevation: 4,
       ),
-      dividerTheme: const DividerThemeData(color: frameColor, thickness: 1, space: 1),
-      bottomSheetTheme: const BottomSheetThemeData(
+      dividerTheme: DividerThemeData(color: frameColor, thickness: 1, space: 1),
+      bottomSheetTheme: BottomSheetThemeData(
         backgroundColor: surfaceColor,
         modalBackgroundColor: surfaceColor,
         surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(
           // Matches panel radius token (d16). ThemeData is built once at app start.
-          borderRadius: BorderRadius.vertical(top: Radius.circular(Dimens.d16)),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(Dimens.d16)),
           side: BorderSide(color: glassHairlineColor),
         ),
       ),
-      dialogTheme: const DialogThemeData(
+      dialogTheme: DialogThemeData(
         backgroundColor: surfaceColor,
         surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(Dimens.d16)),
+          borderRadius: const BorderRadius.all(Radius.circular(Dimens.d16)),
           side: BorderSide(color: glassHairlineColor),
         ),
       ),
@@ -79,23 +98,27 @@ class AppThemes {
         selectionHandleColor: primaryColor,
         selectionColor: primaryColor.withValues(alpha: 0.28),
       ),
-      pageTransitionsTheme: const PageTransitionsTheme(
+      pageTransitionsTheme: PageTransitionsTheme(
         builders: {
           TargetPlatform.android: FadeForwardsPageTransitionsBuilder(
             backgroundColor: scaffoldBackgroundColor,
           ),
-          TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+          TargetPlatform.iOS: const CupertinoPageTransitionsBuilder(),
         },
       ),
-      tabBarTheme: const TabBarThemeData(
+      tabBarTheme: TabBarThemeData(
         indicatorColor: primaryColor,
         labelColor: primaryColor,
         unselectedLabelColor: darkGreyColor,
         dividerColor: frameColor,
         indicatorSize: TabBarIndicatorSize.label,
         overlayColor: WidgetStatePropertyAll(primaryShade1Color),
-        labelStyle: TextStyle(fontFamily: bodyFont, fontWeight: FontWeight.w700, fontSize: 15),
-        unselectedLabelStyle: TextStyle(
+        labelStyle: const TextStyle(
+          fontFamily: bodyFont,
+          fontWeight: FontWeight.w700,
+          fontSize: 15,
+        ),
+        unselectedLabelStyle: const TextStyle(
           fontFamily: bodyFont,
           fontWeight: FontWeight.w500,
           fontSize: 15,
@@ -111,7 +134,7 @@ class AppThemes {
             if (states.contains(WidgetState.selected)) return primaryColor;
             return darkGreyColor;
           }),
-          side: const WidgetStatePropertyAll(BorderSide(color: frameColor)),
+          side: WidgetStatePropertyAll(BorderSide(color: frameColor)),
         ),
       ),
       datePickerTheme: datePicker,
@@ -120,8 +143,8 @@ class AppThemes {
   }
 
   static DatePickerThemeData get datePicker {
-    const shape = RoundedRectangleBorder(
-      borderRadius: BorderRadius.all(Radius.circular(Dimens.d16)),
+    final shape = RoundedRectangleBorder(
+      borderRadius: const BorderRadius.all(Radius.circular(Dimens.d16)),
       side: BorderSide(color: glassHairlineColor),
     );
 
@@ -144,13 +167,13 @@ class AppThemes {
       }),
       dayShape: WidgetStateOutlinedBorder.resolveWith((states) {
         if (states.contains(WidgetState.selected)) {
-          return const LinearBorder(side: BorderSide(color: primaryColor));
+          return LinearBorder(side: BorderSide(color: primaryColor));
         }
 
         return const LinearBorder(side: BorderSide(color: transParentColor));
       }),
-      todayForegroundColor: const WidgetStatePropertyAll(primaryColor),
-      todayBorder: const BorderSide(color: primaryColor),
+      todayForegroundColor: WidgetStatePropertyAll(primaryColor),
+      todayBorder: BorderSide(color: primaryColor),
       rangePickerElevation: 0,
       rangePickerBackgroundColor: surfaceColor,
       rangePickerHeaderBackgroundColor: primaryShadeColor,
@@ -163,14 +186,14 @@ class AppThemes {
   static TextStyle amount({
     double fontSize = 16,
     FontWeight fontWeight = FontWeight.w600,
-    Color color = blackColor,
+    Color? color,
     double height = 1.15,
   }) {
     return TextStyle(
       fontFamily: displayFont,
       fontSize: fontSize,
       fontWeight: fontWeight,
-      color: color,
+      color: color ?? blackColor,
       height: height,
       letterSpacing: -0.5,
     );
@@ -179,7 +202,7 @@ class AppThemes {
   static TextStyle display({
     double fontSize = 22,
     FontWeight fontWeight = FontWeight.w600,
-    Color color = blackColor,
+    Color? color,
     double height = 1.15,
     double letterSpacing = -0.4,
   }) {
@@ -187,7 +210,7 @@ class AppThemes {
       fontFamily: displayFont,
       fontSize: fontSize,
       fontWeight: fontWeight,
-      color: color,
+      color: color ?? blackColor,
       height: height,
       letterSpacing: letterSpacing,
     );

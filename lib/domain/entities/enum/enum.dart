@@ -2,6 +2,8 @@ import 'package:walleto/shared/constants/locale_constants.dart';
 
 enum InitialAppRoute { login, main, createWallet }
 
+enum AppThemePreference { light, dark }
+
 enum InvalidTokenHandlerStatus { emptyToken, tokenRefreshed, refreshTokenExpired, refreshFailed }
 
 enum LanguageCode {

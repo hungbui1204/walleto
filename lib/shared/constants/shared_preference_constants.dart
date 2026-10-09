@@ -5,4 +5,5 @@ class SharedPreferenceKeys {
   static const token = 'token';
   static const refreshToken = 'refreshToken';
   static const userId = 'userId';
+  static const appThemePreference = 'appThemePreference';
 }

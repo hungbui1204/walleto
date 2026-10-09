@@ -57,11 +57,11 @@ class MonthSummaryChart extends StatelessWidget {
           gridData: FlGridData(
             drawVerticalLine: false,
             getDrawingHorizontalLine: (value) {
-              return const FlLine(color: frameColor, strokeWidth: 0.5, dashArray: [4, 3]);
+              return FlLine(color: frameColor, strokeWidth: 0.5, dashArray: [4, 3]);
             },
           ),
           borderData: FlBorderData(
-            border: const Border(
+            border: Border(
               bottom: BorderSide(color: frameColor),
               left: BorderSide(color: frameColor),
             ),

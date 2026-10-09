@@ -11,8 +11,8 @@ class CommonButton extends StatelessWidget {
     required this.text,
     this.padding,
     this.borderRadius,
-    this.backgroundColor = primaryColor,
-    this.textColor = onPrimaryColor,
+    this.backgroundColor,
+    this.textColor,
     this.icon,
     this.compact = false,
   });
@@ -30,8 +30,10 @@ class CommonButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final enabled = onTap != null;
     final radius = borderRadius ?? BorderRadius.all(Radius.circular(Dimens.d16.responsive()));
-    final isPrimary = backgroundColor == primaryColor;
-    final isDestructive = backgroundColor == redColor || textColor == redColor;
+    final buttonBackgroundColor = backgroundColor ?? primaryColor;
+    final buttonTextColor = textColor ?? onPrimaryColor;
+    final isPrimary = buttonBackgroundColor == primaryColor;
+    final isDestructive = buttonBackgroundColor == redColor || buttonTextColor == redColor;
 
     final decoration = isPrimary
         ? (enabled
@@ -39,7 +41,7 @@ class CommonButton extends StatelessWidget {
               : AppDecorations.secondaryCta(radius: radius, color: frameColor))
         : AppDecorations.secondaryCta(
             radius: radius,
-            color: backgroundColor ?? surfaceColor,
+            color: buttonBackgroundColor,
             borderColor: isDestructive ? redColor : glassHairlineColor,
           );
 
@@ -69,14 +71,14 @@ class CommonButton extends StatelessWidget {
                   Text(
                     text,
                     textAlign: TextAlign.center,
-                    style: AppTextStyles.s16wBoldBlack().copyWith(color: textColor),
+                    style: AppTextStyles.s16wBoldBlack().copyWith(color: buttonTextColor),
                   )
                 else
                   Flexible(
                     child: Text(
                       text,
                       textAlign: TextAlign.center,
-                      style: AppTextStyles.s16wBoldBlack().copyWith(color: textColor),
+                      style: AppTextStyles.s16wBoldBlack().copyWith(color: buttonTextColor),
                     ),
                   ),
               ],
