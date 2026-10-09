@@ -36,8 +36,28 @@ Future<void> _runMyApp() async {
   }
 
   final initialResource = await _loadInitialResource();
+  final initialThemePreference = await _loadInitialThemePreference();
 
-  runApp(WalletoApplication(initialResource: initialResource));
+  runApp(
+    WalletoApplication(
+      initialResource: initialResource,
+      initialThemePreference: initialThemePreference,
+    ),
+  );
+}
+
+Future<AppThemePreference> _loadInitialThemePreference() async {
+  try {
+    final output = await getIt.get<GetAppThemePreferenceUseCase>().execute(
+      const GetAppThemePreferenceInput(),
+    );
+
+    return output.preference;
+  } on Object catch (error, stackTrace) {
+    Log.e(error, stackTrace: stackTrace, name: 'Failed to load app theme preference');
+
+    return AppThemePreference.dark;
+  }
 }
 
 Future<void> _reportError(Object error, StackTrace stackTrace) async {

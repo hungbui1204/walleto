@@ -4,6 +4,10 @@ import 'package:walleto/domain/domain.dart';
 import 'package:walleto/shared/shared.dart';
 
 abstract class Repository {
+  Future<AppThemePreference> getAppThemePreference();
+
+  Future<void> setAppThemePreference(AppThemePreference preference);
+
   Future<bool> get isLoggedIn;
 
   Future<String> get token;

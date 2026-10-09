@@ -16,6 +16,7 @@ class AppBloc extends BaseBloc<AppEvent, AppState> {
     this._getCurrenciesUseCase,
     this._getUserDefaultCurrencyUseCase,
     this._updateUserDefaultCurrencyUseCase,
+    this._setAppThemePreferenceUseCase,
   ) : super(const AppState()) {
     on<SignOutButtonPressed>(_onSignOutButtonPressed, transformer: log());
     on<DataFetched>(_onDataFetched, transformer: log());
@@ -23,6 +24,8 @@ class AppBloc extends BaseBloc<AppEvent, AppState> {
     on<StatisticalChartsReloaded>(_onStatisticalChartsReloaded, transformer: log());
     on<UserDefaultCurrencyUpdated>(_onUserDefaultCurrencyUpdated, transformer: log());
     on<GetUserDefaultCurrency>(_onGetUserDefaultCurrency, transformer: log());
+    on<AppThemePreferenceInitialized>(_onAppThemePreferenceInitialized, transformer: log());
+    on<AppThemePreferenceSelected>(_onAppThemePreferenceSelected, transformer: log());
   }
 
   final SignOutUseCase _signOutUseCase;
@@ -30,6 +33,37 @@ class AppBloc extends BaseBloc<AppEvent, AppState> {
   final GetCurrenciesUseCase _getCurrenciesUseCase;
   final GetUserDefaultCurrencyUseCase _getUserDefaultCurrencyUseCase;
   final UpdateUserDefaultCurrencyUseCase _updateUserDefaultCurrencyUseCase;
+  final SetAppThemePreferenceUseCase _setAppThemePreferenceUseCase;
+
+  void _onAppThemePreferenceInitialized(
+    AppThemePreferenceInitialized event,
+    Emitter<AppState> emit,
+  ) {
+    emit(state.copyWith(themePreference: event.preference, isThemePreferenceInitialized: true));
+  }
+
+  Future<void> _onAppThemePreferenceSelected(
+    AppThemePreferenceSelected event,
+    Emitter<AppState> emit,
+  ) async {
+    if (event.preference == state.themePreference || state.isThemePreferenceSaving) return;
+
+    emit(state.copyWith(isThemePreferenceSaving: true));
+    await runBlocCatching(
+      action: () async {
+        await _setAppThemePreferenceUseCase.execute(
+          SetAppThemePreferenceInput(preference: event.preference),
+        );
+        emit(state.copyWith(themePreference: event.preference));
+      },
+      doOnError: (error) async {
+        emit(state.copyWith(isThemePreferenceSaving: false));
+      },
+      doOnSuccessOrError: () async {
+        emit(state.copyWith(isThemePreferenceSaving: false));
+      },
+    );
+  }
 
   Future<void> _onSignOutButtonPressed(SignOutButtonPressed event, Emitter<AppState> emit) async {
     await runBlocCatching(

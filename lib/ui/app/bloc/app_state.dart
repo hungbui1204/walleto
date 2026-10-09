@@ -16,5 +16,8 @@ sealed class AppState extends BaseBlocState with _$AppState {
     /// The default user currency used in the app
     /// This is set when user create their first wallet, and can be updated
     @Default(Currency()) Currency userDefaultCurrency,
+    @Default(AppThemePreference.dark) AppThemePreference themePreference,
+    @Default(false) bool isThemePreferenceInitialized,
+    @Default(false) bool isThemePreferenceSaving,
   }) = _AppState;
 }

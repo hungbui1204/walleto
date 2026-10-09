@@ -4,6 +4,20 @@ sealed class AppEvent extends BaseBlocEvent {
   const AppEvent();
 }
 
+class AppThemePreferenceInitialized extends AppEvent {
+  const AppThemePreferenceInitialized(this.preference);
+
+  final AppThemePreference preference;
+}
+
+@freezed
+sealed class AppThemePreferenceSelected extends AppEvent with _$AppThemePreferenceSelected {
+  const AppThemePreferenceSelected._();
+
+  const factory AppThemePreferenceSelected({required AppThemePreference preference}) =
+      _AppThemePreferenceSelected;
+}
+
 @freezed
 sealed class SignOutButtonPressed extends AppEvent with _$SignOutButtonPressed {
   const SignOutButtonPressed._();
