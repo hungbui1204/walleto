@@ -25,6 +25,7 @@ export 'utils/transaction_amount_calculator.dart';
 export 'views/account/account_view.dart';
 export 'views/account/bloc/account_bloc.dart';
 export 'views/account/widgets/account_loading_skeleton_widget.dart';
+export 'views/account/widgets/account_theme_selector_widget.dart';
 export 'views/ai_chat/ai_chat_view.dart';
 export 'views/ai_chat/bloc/ai_chat_bloc.dart';
 export 'views/ai_chat/widgets/ai_chat_composer_widget.dart';

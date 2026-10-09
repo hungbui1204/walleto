@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:walleto/resources/resources.dart';
 
 class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -14,6 +15,9 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       backgroundColor: transParentColor,
+      systemOverlayStyle: Theme.of(context).brightness == Brightness.light
+          ? SystemUiOverlayStyle.dark
+          : SystemUiOverlayStyle.light,
       elevation: 0,
       scrolledUnderElevation: 0,
       title: Text(title, style: AppThemes.display(fontSize: Dimens.d22.responsive())),

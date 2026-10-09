@@ -81,7 +81,7 @@ abstract class AppNavigator {
     bool isDismissible = true,
     bool enableDrag = true,
     Color barrierColor = backgroundOverlayColor,
-    Color backgroundColor = surfaceColor,
+    Color? backgroundColor,
   });
 
   void showErrorSnackBar(String message, {Duration? duration});

@@ -9,7 +9,7 @@ class CommonChipButton extends StatelessWidget {
     this.onTap,
     required this.text,
     this.padding,
-    this.backgroundColor = surfaceColor,
+    this.backgroundColor,
     this.icon,
     this.borderRadius,
     this.textStyle,
@@ -18,7 +18,7 @@ class CommonChipButton extends StatelessWidget {
   final VoidCallback? onTap;
   final String text;
   final EdgeInsetsGeometry? padding;
-  final Color backgroundColor;
+  final Color? backgroundColor;
   final Widget? icon;
   final BorderRadius? borderRadius;
   final TextStyle? textStyle;
@@ -26,6 +26,7 @@ class CommonChipButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final radius = borderRadius ?? BorderRadius.circular(Dimens.d16.responsive());
+    final fillColor = backgroundColor ?? surfaceColor;
 
     return Pressable(
       onTap: onTap,
@@ -39,7 +40,7 @@ class CommonChipButton extends StatelessWidget {
               horizontal: Dimens.d12.responsive(),
               vertical: Dimens.d8.responsive(),
             ),
-        decoration: AppDecorations.secondaryCta(radius: radius, color: backgroundColor),
+        decoration: AppDecorations.secondaryCta(radius: radius, color: fillColor),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [

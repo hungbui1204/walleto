@@ -12,7 +12,7 @@ class AppConstants {
 
   static const double pickerSheetMaxHeightFactor = 0.7;
 
-  static const List<Color> pieChartColors = [
+  static List<Color> get pieChartColors => [
     primaryColor,
     secondaryColor,
     greenColor,

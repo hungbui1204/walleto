@@ -11,7 +11,7 @@ class NoirBackdrop extends StatelessWidget {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          const ColoredBox(color: scaffoldBackgroundColor),
+          ColoredBox(color: scaffoldBackgroundColor),
           Positioned(
             top: -Dimens.d88.responsive(),
             right: -Dimens.d48.responsive(),

@@ -57,7 +57,7 @@ class _MainViewState extends BasePageState<MainView, MainBloc> {
                         child: Assets.icons.plus.svg(
                           width: Dimens.d24.responsive(),
                           height: Dimens.d24.responsive(),
-                          colorFilter: const ColorFilter.mode(onPrimaryColor, BlendMode.srcIn),
+                          colorFilter: ColorFilter.mode(onPrimaryColor, BlendMode.srcIn),
                         ),
                       ),
                     ),

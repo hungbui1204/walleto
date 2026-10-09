@@ -56,7 +56,7 @@ class _WalletsViewState extends BasePageState<WalletsView, WalletsBloc> {
                             width: Dimens.d24.responsive(),
                             height: Dimens.d24.responsive(),
                             fit: BoxFit.cover,
-                            colorFilter: const ColorFilter.mode(primaryColor, BlendMode.srcIn),
+                            colorFilter: ColorFilter.mode(primaryColor, BlendMode.srcIn),
                           ),
                         ),
                       ),

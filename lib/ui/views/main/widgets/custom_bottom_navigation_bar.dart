@@ -18,7 +18,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
         child: DecoratedBox(
           decoration: BoxDecoration(
             color: surfaceColor.withValues(alpha: 0.82),
-            border: const Border(top: BorderSide(color: glassHairlineColor)),
+            border: Border(top: BorderSide(color: glassHairlineColor)),
           ),
           child: SafeArea(
             top: false,

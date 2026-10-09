@@ -16,7 +16,7 @@ class ResetPasswordCompleteStepWidget extends StatelessWidget {
         Container(
           alignment: Alignment.center,
           padding: EdgeInsets.all(Dimens.d16.responsive()),
-          decoration: const BoxDecoration(shape: BoxShape.circle, color: primaryColor),
+          decoration: BoxDecoration(shape: BoxShape.circle, color: primaryColor),
           child: Icon(Icons.check, color: onPrimaryColor, size: Dimens.d48.responsive()),
         ),
         SizedBox(height: Dimens.d24.responsive()),

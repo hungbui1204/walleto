@@ -87,7 +87,7 @@ class CommonShimmerBox extends StatelessWidget {
             gradient: LinearGradient(
               begin: Alignment(-1 + 2 * animation.value, 0),
               end: Alignment(2 * animation.value, 0),
-              colors: const [backgroundShimmer, backgroundShimmerHighlight, backgroundShimmer],
+              colors: [backgroundShimmer, backgroundShimmerHighlight, backgroundShimmer],
             ),
           ),
         );

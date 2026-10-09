@@ -20,7 +20,7 @@ class _CompleteIcon extends StatelessWidget {
         Container(
           width: Dimens.d64.responsive(),
           height: Dimens.d64.responsive(),
-          decoration: const BoxDecoration(color: accentGreen, shape: BoxShape.circle),
+          decoration: BoxDecoration(color: accentGreen, shape: BoxShape.circle),
         ),
         Icon(Icons.check, size: Dimens.d34.responsive(), color: whiteColor),
       ],
