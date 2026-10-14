@@ -43,6 +43,48 @@ class LoginTab extends StatelessWidget {
               },
             ),
             SizedBox(height: Dimens.d20.responsive()),
+            BlocBuilder<LoginBloc, LoginState>(
+              buildWhen: (previous, current) =>
+                  previous.isBiometricLoginEnabled != current.isBiometricLoginEnabled ||
+                  previous.isBiometricLoginAvailable != current.isBiometricLoginAvailable ||
+                  previous.isBiometricLoginLoading != current.isBiometricLoginLoading,
+              builder: (context, state) {
+                if (!state.isBiometricLoginAvailable || !state.isBiometricLoginEnabled) {
+                  return const SizedBox.shrink();
+                }
+                return LoginBiometricButtonWidget(
+                  isLoading: state.isBiometricLoginLoading,
+                  onTap: () => context.read<LoginBloc>().add(const BiometricLoginButtonPressed()),
+                );
+              },
+            ),
+            BlocBuilder<LoginBloc, LoginState>(
+              buildWhen: (previous, current) =>
+                  previous.hasStoredSession != current.hasStoredSession ||
+                  previous.isSessionRetryLoading != current.isSessionRetryLoading,
+              builder: (context, state) {
+                if (!state.hasStoredSession) return const SizedBox.shrink();
+                return SizedBox(
+                  width: double.infinity,
+                  child: CommonButton(
+                    text: S.current.retry,
+                    backgroundColor: surfaceColor,
+                    textColor: primaryColor,
+                    icon: state.isSessionRetryLoading
+                        ? SizedBox(
+                            width: Dimens.d18.responsive(),
+                            height: Dimens.d18.responsive(),
+                            child: CircularProgressIndicator(strokeWidth: 2, color: primaryColor),
+                          )
+                        : null,
+                    onTap: state.isSessionRetryLoading
+                        ? null
+                        : () => context.read<LoginBloc>().add(const SessionRetryButtonPressed()),
+                  ),
+                );
+              },
+            ),
+            SizedBox(height: Dimens.d20.responsive()),
             Row(
               children: [
                 Pressable(

@@ -4,8 +4,7 @@ import 'dart:io';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:walleto/data/data.dart';
 import 'package:walleto/domain/domain.dart';
 import 'package:walleto/firebase_options.dart';
 import 'package:walleto/ui/ui.dart';
@@ -65,17 +64,9 @@ Future<void> _reportError(Object error, StackTrace stackTrace) async {
 }
 
 Future<LoadInitialResourceOutput> _loadInitialResource() async {
-  final result = runCatching(
+  final result = await runAsyncCatching(
     action: () async {
-      final prefs = getIt.get<SharedPreferencesAsync>();
-
-      /// English:
-      /// Remove all data when the app is launched for the first time.
-      /// On Android, secure storage data is not cleared when the app is uninstalled.
-      if (await prefs.getBool(SharedPreferenceKeys.isFirstLaunchApp) ?? true) {
-        await getIt.get<FlutterSecureStorage>().deleteAll();
-        prefs.setBool(SharedPreferenceKeys.isFirstLaunchApp, false);
-      }
+      await getIt.get<AppPreferences>().initializeInstallation();
 
       return getIt.get<LoadInitialResourceUseCase>().execute(const LoadInitialResourceInput());
     },
@@ -83,6 +74,11 @@ Future<LoadInitialResourceOutput> _loadInitialResource() async {
 
   return switch (result) {
     Success(:final data) => data,
-    Failure() => const LoadInitialResourceOutput(),
+    Failure(:final exception) => _handleInitialSessionError(exception),
   };
+}
+
+LoadInitialResourceOutput _handleInitialSessionError(AppException exception) {
+  Log.e(exception, name: 'Failed to validate the stored session during startup');
+  return const LoadInitialResourceOutput(initialRoutes: [InitialAppRoute.login]);
 }

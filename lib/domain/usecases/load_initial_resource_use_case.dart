@@ -1,30 +1,38 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:walleto/domain/domain.dart';
+import 'package:walleto/shared/shared.dart';
 
 part 'load_initial_resource_use_case.freezed.dart';
 
 @injectable
 class LoadInitialResourceUseCase
     extends BaseFutureUseCase<LoadInitialResourceInput, LoadInitialResourceOutput> {
-  const LoadInitialResourceUseCase(this._repository);
+  const LoadInitialResourceUseCase(this._repository, this._refreshTokenManager);
 
   final Repository _repository;
+  final RefreshTokenManager _refreshTokenManager;
 
   @protected
   @override
   Future<LoadInitialResourceOutput> buildUseCase(LoadInitialResourceInput input) async {
-    if (!await _repository.isLoggedIn) {
+    if (!await _refreshTokenManager.ensureFreshSession()) {
       return const LoadInitialResourceOutput(initialRoutes: [InitialAppRoute.login]);
     }
 
+    var wallets = <Wallet>[];
     try {
-      final wallets = await _repository.getWallets();
-      if (wallets.isEmpty) {
-        return const LoadInitialResourceOutput(initialRoutes: [InitialAppRoute.createWallet]);
-      }
-    } catch (_) {
-      /// Network/auth errors should not block Main; UI still guards empty wallets.
+      wallets = await _repository.getWallets();
+    } on RemoteException catch (error) {
+      if (error.kind != RemoteExceptionKind.invalidToken) rethrow;
+
+      // A request may race with expiry after the initial preflight; refresh once, then retry once.
+      await _refreshTokenManager.refreshToken();
+      wallets = await _repository.getWallets();
+    }
+
+    if (wallets.isEmpty) {
+      return const LoadInitialResourceOutput(initialRoutes: [InitialAppRoute.createWallet]);
     }
 
     return const LoadInitialResourceOutput();

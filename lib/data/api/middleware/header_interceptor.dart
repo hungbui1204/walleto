@@ -16,10 +16,10 @@ class HeaderInterceptor extends BaseInterceptor {
 
   @override
   Future<void> onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
-    final isRevokeRefeshToken =
-        options.extra[ServerRequestResponseConstants.revokeRefreshToken] == true;
-
-    final headers = await getHeaders(isRevokeRefeshToken);
+    final headers = await getHeaders();
+    if (options.headers.containsKey('Authorization')) {
+      headers.remove('Authorization');
+    }
     if (options.headers.containsKey(ServerRequestResponseConstants.acceptHeader)) {
       headers.remove(ServerRequestResponseConstants.acceptHeader);
     }
@@ -29,7 +29,7 @@ class HeaderInterceptor extends BaseInterceptor {
     handler.next(options);
   }
 
-  Future<Map<String, dynamic>> getHeaders(bool isRevokeRefeshToken) async {
+  Future<Map<String, dynamic>> getHeaders() async {
     Map<String, dynamic> headers = {
       'Content-Type': 'application/json',
       ServerRequestResponseConstants.acceptHeader: '*/*',
@@ -41,15 +41,6 @@ class HeaderInterceptor extends BaseInterceptor {
     if (token != null && token.isNotEmpty) {
       final tokenHeader = {'Authorization': 'Bearer $token'};
       headers.addAll(tokenHeader);
-    }
-
-    // If the request is for revoking the refresh token, add the refresh token to headers
-    if (isRevokeRefeshToken) {
-      final refreshToken = await _secureStorage.read(key: SharedPreferenceKeys.refreshToken);
-      if (refreshToken != null && refreshToken.isNotEmpty) {
-        final refreshTokenHeader = {'Authorization': 'Bearer $refreshToken'};
-        headers.addAll(refreshTokenHeader);
-      }
     }
 
     return headers;

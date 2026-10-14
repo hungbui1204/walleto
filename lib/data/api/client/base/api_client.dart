@@ -53,7 +53,13 @@ class ApiClient {
     } catch (error) {
       throw DioExceptionMapper(
         BaseErrorResponseMapper.fromType(errorResponseMapperType ?? this.errorResponseMapperType),
-      ).map(error);
+      ).map(
+        error,
+        allowInvalidTokenRecovery:
+            path != 'token' &&
+            path != 'logout' &&
+            !(options?.headers?.containsKey('Authorization') ?? false),
+      );
     }
   }
 

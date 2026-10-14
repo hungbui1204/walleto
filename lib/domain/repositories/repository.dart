@@ -18,6 +18,8 @@ abstract class Repository {
 
   Future<void> setRefreshToken(String refreshToken);
 
+  Future<DateTime?> get sessionExpiresAt;
+
   Future<Authentication> loginByPassword({
     required String email,
     required String password,
@@ -27,7 +29,22 @@ abstract class Repository {
 
   Future<Authentication> refreshAuthToken({required String refreshToken});
 
-  Future<void> signOut();
+  Future<SignOutResult> signOut();
+
+  Future<void> clearInvalidSession();
+
+  Future<BiometricLoginStatus> getBiometricLoginStatus({
+    String? userId,
+    required bool verifyServer,
+  });
+
+  Future<void> setBiometricLoginEnabled({
+    required String userId,
+    required bool enabled,
+    String? password,
+  });
+
+  Future<Authentication> loginWithBiometrics();
 
   Future<List<Category>> getCategories();
 

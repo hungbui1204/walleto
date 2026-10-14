@@ -24,10 +24,16 @@ class LoginBloc extends BaseBloc<LoginEvent, LoginState> {
     this._verifyOtpForEmailUseCase,
     this._sendOtpForEmailCheckingUseCase,
     this._getWalletsUseCase,
+    this._getBiometricLoginStatusUseCase,
+    this._loginWithBiometricsUseCase,
+    this._loadInitialResourceUseCase,
   ) : super(const LoginState()) {
+    on<LoginViewInitiated>(_onLoginViewInitiated, transformer: log());
     on<LoginEmailInputChanged>(_onEmailInputChanged, transformer: log());
     on<LoginPasswordInputChanged>(_onPasswordInputChanged, transformer: log());
     on<SignInButtonPressed>(_onSignInButtonPressed, transformer: log());
+    on<BiometricLoginButtonPressed>(_onBiometricLoginButtonPressed, transformer: log());
+    on<SessionRetryButtonPressed>(_onSessionRetryButtonPressed, transformer: log());
     on<SignUpEmailInputChanged>(_onSignUpEmailInputChanged, transformer: log());
     on<ConfirmEmailSignUpButtonPressed>(_onConfirmEmailSignUpButtonPressed, transformer: log());
     on<SignUpBackToPreviousStepButtonPressed>(
@@ -52,6 +58,9 @@ class LoginBloc extends BaseBloc<LoginEvent, LoginState> {
   final VerifyOtpForEmailUseCase _verifyOtpForEmailUseCase;
   final SendOtpForEmailCheckingUseCase _sendOtpForEmailCheckingUseCase;
   final GetWalletsUseCase _getWalletsUseCase;
+  final GetBiometricLoginStatusUseCase _getBiometricLoginStatusUseCase;
+  final LoginWithBiometricsUseCase _loginWithBiometricsUseCase;
+  final LoadInitialResourceUseCase _loadInitialResourceUseCase;
   Timer? _reSendOtpTimer;
 
   @override
@@ -84,6 +93,23 @@ class LoginBloc extends BaseBloc<LoginEvent, LoginState> {
 
   bool _confirmOtpButtonEnable(String otp) {
     return otp.length == 6;
+  }
+
+  Future<void> _onLoginViewInitiated(LoginViewInitiated event, Emitter<LoginState> emit) async {
+    await runBlocCatching(
+      action: () async {
+        final output = await _getBiometricLoginStatusUseCase.execute(
+          const GetBiometricLoginStatusInput(),
+        );
+        emit(
+          state.copyWith(
+            isBiometricLoginAvailable: output.status.isAvailable,
+            isBiometricLoginEnabled: output.status.isEnabled,
+            hasStoredSession: output.status.hasStoredSession,
+          ),
+        );
+      },
+    );
   }
 
   void _startTimerForReSendOtp() {
@@ -168,6 +194,7 @@ class LoginBloc extends BaseBloc<LoginEvent, LoginState> {
             timezone: timeZoneName,
           ),
         );
+        await appBloc.clearUserSessionData();
 
         // Handle if wallets is empty, it means user just signed up and has no wallets
         // Navigate to create wallet view
@@ -180,6 +207,60 @@ class LoginBloc extends BaseBloc<LoginEvent, LoginState> {
         }
 
         navigator.replace(const AppRouteInfo.main());
+      },
+    );
+  }
+
+  Future<void> _onBiometricLoginButtonPressed(
+    BiometricLoginButtonPressed event,
+    Emitter<LoginState> emit,
+  ) async {
+    if (!state.isBiometricLoginEnabled || state.isBiometricLoginLoading) return;
+
+    emit(state.copyWith(isBiometricLoginLoading: true));
+    await runBlocCatching(
+      action: () async {
+        await _loginWithBiometricsUseCase.execute(const LoginWithBiometricsInput());
+        await appBloc.clearUserSessionData();
+        final walletsOutput = await _getWalletsUseCase.execute(const GetWalletsInput());
+        if (walletsOutput.wallets.isEmpty) {
+          navigator.replace(const AppRouteInfo.createWallet(isFromSignUp: true));
+          return;
+        }
+        navigator.replace(const AppRouteInfo.main());
+      },
+      doOnSuccessOrError: () async {
+        emit(state.copyWith(isBiometricLoginLoading: false));
+      },
+    );
+  }
+
+  Future<void> _onSessionRetryButtonPressed(
+    SessionRetryButtonPressed event,
+    Emitter<LoginState> emit,
+  ) async {
+    if (!state.hasStoredSession || state.isSessionRetryLoading) return;
+
+    emit(state.copyWith(isSessionRetryLoading: true));
+    await runBlocCatching(
+      action: () async {
+        final initialOutput = await _loadInitialResourceUseCase.execute(
+          const LoadInitialResourceInput(),
+        );
+        final destination = initialOutput.initialRoutes.firstOrNull;
+        if (destination == InitialAppRoute.login) {
+          emit(state.copyWith(hasStoredSession: false));
+          return;
+        }
+
+        await appBloc.clearUserSessionData();
+        navigator.replace(switch (destination) {
+          InitialAppRoute.createWallet => const AppRouteInfo.createWallet(isFromSignUp: true),
+          _ => const AppRouteInfo.main(),
+        });
+      },
+      doOnSuccessOrError: () async {
+        emit(state.copyWith(isSessionRetryLoading: false));
       },
     );
   }

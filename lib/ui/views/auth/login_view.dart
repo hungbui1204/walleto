@@ -32,6 +32,7 @@ class _LoginViewState extends BasePageState<LoginView, LoginBloc>
     _confirmPasswordSignUpController = TextEditingController();
     _tabController = TabController(length: 2, vsync: this);
     super.initState();
+    bloc.add(const LoginViewInitiated());
   }
 
   @override

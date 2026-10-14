@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:walleto/domain/domain.dart';
@@ -35,8 +33,7 @@ class InvalidTokenHandleUseCase
 
       return const InvalidTokenHandleOutput(status: InvalidTokenHandlerStatus.tokenRefreshed);
     } on RemoteException catch (e) {
-      // If the status code is 401, it means the refresh token is expired.
-      if (e.httpErrorCode == HttpStatus.unauthorized) {
+      if (_isRejectedRefreshToken(e)) {
         // 3. The refresh token is expired
         //    -> return [InvalidTokenHandlerStatus.refreshTokenExpired]
         return const InvalidTokenHandleOutput(
@@ -48,6 +45,13 @@ class InvalidTokenHandleUseCase
     } catch (_) {
       return const InvalidTokenHandleOutput(status: InvalidTokenHandlerStatus.refreshFailed);
     }
+  }
+
+  bool _isRejectedRefreshToken(RemoteException error) {
+    return AuthSessionConstants.isRejectedRefreshToken(
+      httpStatusCode: error.httpErrorCode,
+      errorCode: error.generalServerErrorId,
+    );
   }
 }
 

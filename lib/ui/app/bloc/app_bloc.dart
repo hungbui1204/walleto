@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:walleto/domain/domain.dart';
+import 'package:walleto/resources/resources.dart';
 import 'package:walleto/ui/ui.dart';
 
 part 'app_event.dart';
@@ -17,8 +20,11 @@ class AppBloc extends BaseBloc<AppEvent, AppState> {
     this._getUserDefaultCurrencyUseCase,
     this._updateUserDefaultCurrencyUseCase,
     this._setAppThemePreferenceUseCase,
+    this._isLoggedInUseCase,
   ) : super(const AppState()) {
     on<SignOutButtonPressed>(_onSignOutButtonPressed, transformer: log());
+    on<UserSessionCleared>(_onUserSessionCleared, transformer: log());
+    on<SessionValidationRequested>(_onSessionValidationRequested, transformer: log());
     on<DataFetched>(_onDataFetched, transformer: log());
     on<TransactionsReloaded>(_onTransactionsReloaded, transformer: log());
     on<StatisticalChartsReloaded>(_onStatisticalChartsReloaded, transformer: log());
@@ -34,6 +40,48 @@ class AppBloc extends BaseBloc<AppEvent, AppState> {
   final GetUserDefaultCurrencyUseCase _getUserDefaultCurrencyUseCase;
   final UpdateUserDefaultCurrencyUseCase _updateUserDefaultCurrencyUseCase;
   final SetAppThemePreferenceUseCase _setAppThemePreferenceUseCase;
+  final IsLoggedInUseCase _isLoggedInUseCase;
+
+  Future<void> clearUserSessionData() {
+    final completer = Completer<void>();
+    add(UserSessionCleared(completer));
+    return completer.future;
+  }
+
+  void _clearUserSessionData(Emitter<AppState> emit) {
+    emit(
+      state.copyWith(
+        totalBalance: 0,
+        wallets: const [],
+        userDefaultCurrency: const Currency(),
+        needReloadTransactions: false,
+        needReloadStatisticalCharts: false,
+        sessionGeneration: state.sessionGeneration + 1,
+      ),
+    );
+  }
+
+  Future<void> _onUserSessionCleared(UserSessionCleared event, Emitter<AppState> emit) async {
+    _clearUserSessionData(emit);
+    if (!event.completer.isCompleted) event.completer.complete();
+  }
+
+  Future<void> _onSessionValidationRequested(
+    SessionValidationRequested event,
+    Emitter<AppState> emit,
+  ) async {
+    if (navigator.getCurrentRouteNames(useRootNavigator: true).contains(LoginRoute.name)) return;
+
+    await runBlocCatching(
+      action: () async {
+        final output = await _isLoggedInUseCase.execute(const IsLoggedInInput());
+        if (!output.isLoggedIn) {
+          _clearUserSessionData(emit);
+          await navigator.replace(const AppRouteInfo.login());
+        }
+      },
+    );
+  }
 
   void _onAppThemePreferenceInitialized(
     AppThemePreferenceInitialized event,
@@ -68,8 +116,12 @@ class AppBloc extends BaseBloc<AppEvent, AppState> {
   Future<void> _onSignOutButtonPressed(SignOutButtonPressed event, Emitter<AppState> emit) async {
     await runBlocCatching(
       action: () async {
-        await _signOutUseCase.execute(const SignOutInput());
+        final output = await _signOutUseCase.execute(const SignOutInput());
+        _clearUserSessionData(emit);
         await navigator.replace(const AppRouteInfo.login());
+        if (!output.serverSessionRevoked && !output.retainedForBiometric) {
+          navigator.showErrorSnackBar(S.current.serverSignOutNotConfirmed);
+        }
       },
     );
   }
@@ -77,9 +129,11 @@ class AppBloc extends BaseBloc<AppEvent, AppState> {
   Future<void> _onDataFetched(DataFetched event, Emitter<AppState> emit) async {
     await runBlocCatching(
       action: () async {
+        final sessionGeneration = state.sessionGeneration;
         // Fetch wallets
         if (event.walletsFetched) {
           final walletsOutput = await _getWalletsUseCase.execute(const GetWalletsInput());
+          if (sessionGeneration != state.sessionGeneration) return;
 
           final sortedByNameWallets =
               walletsOutput.wallets.where((wallet) => wallet.name.isNotEmpty).toList()
@@ -90,12 +144,14 @@ class AppBloc extends BaseBloc<AppEvent, AppState> {
           final defaultCurrencyOutput = await _getUserDefaultCurrencyUseCase.execute(
             const GetUserDefaultCurrencyInput(),
           );
+          if (sessionGeneration != state.sessionGeneration) return;
           emit(state.copyWith(userDefaultCurrency: defaultCurrencyOutput.currency));
         }
 
         // Fetch currencies
         if (event.currenciesFetched) {
           final currenciesOutput = await _getCurrenciesUseCase.execute(const GetCurrenciesInput());
+          if (sessionGeneration != state.sessionGeneration) return;
 
           emit(state.copyWith(currencies: currenciesOutput.currencies));
         }

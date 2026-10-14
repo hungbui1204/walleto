@@ -4,6 +4,18 @@ sealed class AppEvent extends BaseBlocEvent {
   const AppEvent();
 }
 
+class UserSessionCleared extends AppEvent {
+  const UserSessionCleared(this.completer);
+
+  final Completer<void> completer;
+}
+
+@freezed
+sealed class SessionValidationRequested extends AppEvent with _$SessionValidationRequested {
+  const SessionValidationRequested._();
+  const factory SessionValidationRequested() = _SessionValidationRequested;
+}
+
 class AppThemePreferenceInitialized extends AppEvent {
   const AppThemePreferenceInitialized(this.preference);
 

@@ -10,7 +10,7 @@ class DioExceptionMapper extends ExceptionMapper<RemoteException> {
   final BaseErrorResponseMapper _errorResponseMapper;
 
   @override
-  RemoteException map(Object? exception) {
+  RemoteException map(Object? exception, {bool allowInvalidTokenRecovery = true}) {
     if (exception is DioException) {
       switch (exception.type) {
         case DioExceptionType.cancel:
@@ -27,7 +27,7 @@ class DioExceptionMapper extends ExceptionMapper<RemoteException> {
           if (exception.response?.data != null) {
             final serverError = _errorResponseMapper.map(exception.response!.data!);
 
-            if (httpErrorCode == HttpStatus.unauthorized) {
+            if (httpErrorCode == HttpStatus.unauthorized && allowInvalidTokenRecovery) {
               return RemoteException(
                 kind: RemoteExceptionKind.invalidToken,
                 httpErrorCode: httpErrorCode,
