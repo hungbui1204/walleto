@@ -27,11 +27,13 @@ class WalletoApplication extends StatefulWidget {
   State<WalletoApplication> createState() => _WalletoApplicationState();
 }
 
-class _WalletoApplicationState extends BasePageState<WalletoApplication, AppBloc> {
+class _WalletoApplicationState extends BasePageState<WalletoApplication, AppBloc>
+    with WidgetsBindingObserver {
   final _appRouter = getIt.get<AppRouter>();
 
   @override
   void initState() {
+    WidgetsBinding.instance.addObserver(this);
     appBloc.add(AppThemePreferenceInitialized(widget.initialThemePreference));
     if (Platform.isAndroid) {
       // TODO: implement push noti for iOS
@@ -40,6 +42,19 @@ class _WalletoApplicationState extends BasePageState<WalletoApplication, AppBloc
 
     appBloc.add(const DataFetched(currenciesFetched: true));
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      appBloc.add(const SessionValidationRequested());
+    }
   }
 
   @override

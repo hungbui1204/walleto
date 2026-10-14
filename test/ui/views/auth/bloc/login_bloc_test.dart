@@ -15,6 +15,12 @@ class _MockSendOtpForEmailCheckingUseCase extends Mock implements SendOtpForEmai
 
 class _MockGetWalletsUseCase extends Mock implements GetWalletsUseCase {}
 
+class _MockGetBiometricLoginStatusUseCase extends Mock implements GetBiometricLoginStatusUseCase {}
+
+class _MockLoginWithBiometricsUseCase extends Mock implements LoginWithBiometricsUseCase {}
+
+class _MockLoadInitialResourceUseCase extends Mock implements LoadInitialResourceUseCase {}
+
 class _MockAppNavigator extends Mock implements AppNavigator {}
 
 class _MockAppBloc extends Mock implements AppBloc {}
@@ -29,6 +35,9 @@ void main() {
   late _MockVerifyOtpForEmailUseCase verifyOtpForEmailUseCase;
   late _MockSendOtpForEmailCheckingUseCase sendOtpForEmailCheckingUseCase;
   late _MockGetWalletsUseCase getWalletsUseCase;
+  late _MockGetBiometricLoginStatusUseCase getBiometricLoginStatusUseCase;
+  late _MockLoginWithBiometricsUseCase loginWithBiometricsUseCase;
+  late _MockLoadInitialResourceUseCase loadInitialResourceUseCase;
   late _MockAppNavigator navigator;
   late _MockAppBloc appBloc;
   late _MockCommonBloc commonBloc;
@@ -41,6 +50,9 @@ void main() {
         verifyOtpForEmailUseCase,
         sendOtpForEmailCheckingUseCase,
         getWalletsUseCase,
+        getBiometricLoginStatusUseCase,
+        loginWithBiometricsUseCase,
+        loadInitialResourceUseCase,
       )
       ..navigator = navigator
       ..disposeBag = DisposeBag()
@@ -64,6 +76,9 @@ void main() {
     verifyOtpForEmailUseCase = _MockVerifyOtpForEmailUseCase();
     sendOtpForEmailCheckingUseCase = _MockSendOtpForEmailCheckingUseCase();
     getWalletsUseCase = _MockGetWalletsUseCase();
+    getBiometricLoginStatusUseCase = _MockGetBiometricLoginStatusUseCase();
+    loginWithBiometricsUseCase = _MockLoginWithBiometricsUseCase();
+    loadInitialResourceUseCase = _MockLoadInitialResourceUseCase();
     navigator = _MockAppNavigator();
     appBloc = _MockAppBloc();
     commonBloc = _MockCommonBloc();
@@ -86,24 +101,22 @@ void main() {
   blocTest<LoginBloc, LoginState>(
     'sends the in-memory OTP with email and password when sign-up is confirmed',
     build: buildBloc,
-    seed:
-        () => const LoginState(
-          signUpEmail: 'user@example.com',
-          signUpPassword: 'secret12',
-          otp: '123456',
-          isCheckedAcceptTerms: true,
-        ),
+    seed: () => const LoginState(
+      signUpEmail: 'user@example.com',
+      signUpPassword: 'secret12',
+      otp: '123456',
+      isCheckedAcceptTerms: true,
+    ),
     act: (bloc) => bloc.add(const SignUpConfirmButtonPressed()),
-    expect:
-        () => const [
-          LoginState(
-            signUpEmail: 'user@example.com',
-            signUpPassword: 'secret12',
-            otp: '123456',
-            isCheckedAcceptTerms: true,
-            signUpStep: SignUpStep.signUpComplete,
-          ),
-        ],
+    expect: () => const [
+      LoginState(
+        signUpEmail: 'user@example.com',
+        signUpPassword: 'secret12',
+        otp: '123456',
+        isCheckedAcceptTerms: true,
+        signUpStep: SignUpStep.signUpComplete,
+      ),
+    ],
     verify: (_) {
       verify(
         () => createUserByEmailUseCase.execute(

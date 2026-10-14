@@ -5,6 +5,12 @@ sealed class LoginEvent extends BaseBlocEvent {
 }
 
 @freezed
+sealed class LoginViewInitiated extends LoginEvent with _$LoginViewInitiated {
+  const LoginViewInitiated._();
+  const factory LoginViewInitiated() = _LoginViewInitiated;
+}
+
+@freezed
 sealed class LoginEmailInputChanged extends LoginEvent with _$LoginEmailInputChanged {
   const LoginEmailInputChanged._();
   const factory LoginEmailInputChanged({required String email}) = _LoginEmailInputChanged;
@@ -23,6 +29,18 @@ sealed class LoginPasswordInputChanged extends LoginEvent with _$LoginPasswordIn
 sealed class SignInButtonPressed extends LoginEvent with _$SignInButtonPressed {
   const SignInButtonPressed._();
   const factory SignInButtonPressed() = _SignInButtonPressed;
+}
+
+@freezed
+sealed class BiometricLoginButtonPressed extends LoginEvent with _$BiometricLoginButtonPressed {
+  const BiometricLoginButtonPressed._();
+  const factory BiometricLoginButtonPressed() = _BiometricLoginButtonPressed;
+}
+
+@freezed
+sealed class SessionRetryButtonPressed extends LoginEvent with _$SessionRetryButtonPressed {
+  const SessionRetryButtonPressed._();
+  const factory SessionRetryButtonPressed() = _SessionRetryButtonPressed;
 }
 
 @freezed

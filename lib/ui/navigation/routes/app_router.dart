@@ -134,7 +134,7 @@ class AppRouter extends RootStackRouter {
   ];
 }
 
-Widget _bottomTabPlaceholder(BuildContext _) => const ColoredBox(color: scaffoldBackgroundColor);
+Widget _bottomTabPlaceholder(BuildContext _) => ColoredBox(color: scaffoldBackgroundColor);
 
 @RoutePage(name: 'BottomTabHomeRouter')
 class BottomTabHomeView extends AutoRouter {

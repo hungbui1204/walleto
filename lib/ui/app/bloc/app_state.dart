@@ -19,5 +19,6 @@ sealed class AppState extends BaseBlocState with _$AppState {
     @Default(AppThemePreference.dark) AppThemePreference themePreference,
     @Default(false) bool isThemePreferenceInitialized,
     @Default(false) bool isThemePreferenceSaving,
+    @Default(0) int sessionGeneration,
   }) = _AppState;
 }

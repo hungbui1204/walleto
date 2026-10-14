@@ -38,30 +38,45 @@ class _AccountViewState extends BasePageState<AccountView, AccountBloc> {
               children: [
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: Dimens.d16.responsive()),
-                  child: Column(
-                    children: [
-                      SizedBox(height: Dimens.d40.responsive()),
-                      const _AccountInfoWidget(),
-                      SizedBox(height: Dimens.d20.responsive()),
-                      const _UtilitiesWidget(),
-                      SizedBox(height: Dimens.d20.responsive()),
-                      CommonButton(
-                        text: S.current.signOut,
-                        backgroundColor: surfaceColor,
-                        textColor: redColor,
-                        onTap: () {
-                          navigator.showDialog(
-                            AppPopupInfo.confirm(
-                              message: S.current.areYouSureYouWantToSignOut,
-                              showCancel: true,
-                              onPressed: Func0(() {
-                                appBloc.add(const SignOutButtonPressed());
-                              }),
-                            ),
-                          );
-                        },
-                      ),
-                    ],
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        SizedBox(height: Dimens.d40.responsive()),
+                        const _AccountInfoWidget(),
+                        SizedBox(height: Dimens.d20.responsive()),
+                        const _UtilitiesWidget(),
+                        SizedBox(height: Dimens.d20.responsive()),
+                        BlocBuilder<AccountBloc, AccountState>(
+                          buildWhen: (previous, current) =>
+                              previous.biometricLoginStatus != current.biometricLoginStatus ||
+                              previous.isBiometricLoginUpdating != current.isBiometricLoginUpdating,
+                          builder: (context, state) {
+                            return AccountBiometricLoginWidget(
+                              status: state.biometricLoginStatus,
+                              isUpdating: state.isBiometricLoginUpdating,
+                              onChanged: (enabled) => _onBiometricLoginChanged(enabled),
+                            );
+                          },
+                        ),
+                        SizedBox(height: Dimens.d20.responsive()),
+                        CommonButton(
+                          text: S.current.signOut,
+                          backgroundColor: surfaceColor,
+                          textColor: redColor,
+                          onTap: () {
+                            navigator.showDialog(
+                              AppPopupInfo.confirm(
+                                message: S.current.areYouSureYouWantToSignOut,
+                                showCancel: true,
+                                onPressed: Func0(() {
+                                  appBloc.add(const SignOutButtonPressed());
+                                }),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 const _UserCircleAvatarWidget(),
@@ -71,6 +86,74 @@ class _AccountViewState extends BasePageState<AccountView, AccountBloc> {
         ),
       ),
     );
+  }
+
+  Future<void> _onBiometricLoginChanged(bool enabled) async {
+    if (!enabled) {
+      bloc.add(const AccountBiometricLoginToggled(enabled: false));
+      return;
+    }
+
+    final password = await _requestBiometricPassword();
+    if (password == null || password.isEmpty) return;
+    bloc.add(AccountBiometricLoginToggled(enabled: true, password: password));
+  }
+
+  Future<String?> _requestBiometricPassword() async {
+    final controller = TextEditingController();
+    try {
+      return await showDialog<String>(
+        context: context,
+        builder: (dialogContext) {
+          return Dialog(
+            backgroundColor: surfaceColor,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(Dimens.d20.responsive()),
+              side: BorderSide(color: glassHairlineColor),
+            ),
+            child: Padding(
+              padding: EdgeInsets.all(Dimens.d20.responsive()),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(S.current.biometricSignIn, style: AppTextStyles.s18wBoldBlack()),
+                  SizedBox(height: Dimens.d8.responsive()),
+                  Text(S.current.biometricEnableExplanation, style: AppTextStyles.s14wNormalGrey()),
+                  SizedBox(height: Dimens.d16.responsive()),
+                  CommonTextField(
+                    controller: controller,
+                    hintText: S.current.hintPassword,
+                    isPasswordField: true,
+                  ),
+                  SizedBox(height: Dimens.d16.responsive()),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: CommonButton(
+                          text: S.current.cancel,
+                          backgroundColor: frameColor,
+                          onTap: () => Navigator.of(dialogContext).pop(),
+                        ),
+                      ),
+                      SizedBox(width: Dimens.d8.responsive()),
+                      Expanded(
+                        child: CommonButton(
+                          text: S.current.confirm,
+                          onTap: () => Navigator.of(dialogContext).pop(controller.text),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    } finally {
+      controller.dispose();
+    }
   }
 }
 
