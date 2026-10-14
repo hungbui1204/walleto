@@ -54,11 +54,71 @@ class AppApiServices {
     );
   }
 
-  Future<void> revokeRefreshToken() {
+  Future<void> revokeRefreshToken({required String accessToken}) {
     return _serverApiClientAuth.request(
       method: RequestMethod.post,
       path: 'logout',
-      options: Options(extra: {ServerRequestResponseConstants.revokeRefreshToken: true}),
+      queryParameters: {'scope': 'local'},
+      options: Options(headers: {'Authorization': 'Bearer $accessToken'}),
+    );
+  }
+
+  Future<List<BiometricLoginDeviceData>?> getBiometricLoginDevices({
+    required String userId,
+    required String installationId,
+    String? accessToken,
+  }) {
+    return _serverApiClientRest.request(
+      method: RequestMethod.get,
+      path: 'biometric_login_devices',
+      queryParameters: {
+        'select': 'user_id,installation_id,enabled,updated_at',
+        'user_id': 'eq.$userId',
+        'installation_id': 'eq.$installationId',
+      },
+      options: accessToken == null
+          ? null
+          : Options(headers: {'Authorization': 'Bearer $accessToken'}),
+      decoder: (data) => BiometricLoginDeviceData.fromJson(data as Map<String, dynamic>),
+      successResponseMapperType: SuccessResponseMapperType.jsonArray,
+    );
+  }
+
+  Future<void> upsertBiometricLoginDevice({
+    required String userId,
+    required String installationId,
+    required bool enabled,
+    String? accessToken,
+  }) {
+    return _serverApiClientRest.request(
+      method: RequestMethod.post,
+      path: 'biometric_login_devices',
+      queryParameters: {'on_conflict': 'user_id,installation_id'},
+      body: {
+        'user_id': userId,
+        'installation_id': installationId,
+        'enabled': enabled,
+        'updated_at': DateTime.now().toUtc().toIso8601String(),
+      },
+      options: Options(
+        headers: {
+          'Prefer': 'resolution=merge-duplicates,return=minimal',
+          if (accessToken != null) 'Authorization': 'Bearer $accessToken',
+        },
+      ),
+    );
+  }
+
+  Future<void> setBiometricLoginDeviceEnabled({
+    required String userId,
+    required String installationId,
+    required bool enabled,
+  }) {
+    return _serverApiClientRest.request(
+      method: RequestMethod.patch,
+      path: 'biometric_login_devices',
+      queryParameters: {'user_id': 'eq.$userId', 'installation_id': 'eq.$installationId'},
+      body: {'enabled': enabled, 'updated_at': DateTime.now().toUtc().toIso8601String()},
     );
   }
 

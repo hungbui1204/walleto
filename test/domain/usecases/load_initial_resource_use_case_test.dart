@@ -11,7 +11,10 @@ void main() {
 
   setUp(() {
     repository = _MockRepository();
-    useCase = LoadInitialResourceUseCase(repository);
+    useCase = LoadInitialResourceUseCase(
+      repository,
+      RefreshTokenManager(repository, AuthSessionCoordinator()),
+    );
   });
 
   test('routes to login when the user is not logged in', () async {
@@ -25,6 +28,9 @@ void main() {
 
   test('routes to create wallet when logged in with no wallets', () async {
     when(() => repository.isLoggedIn).thenAnswer((_) async => true);
+    when(
+      () => repository.sessionExpiresAt,
+    ).thenAnswer((_) async => DateTime.now().add(const Duration(minutes: 3)));
     when(() => repository.getWallets()).thenAnswer((_) async => const <Wallet>[]);
 
     final output = await useCase.execute(const LoadInitialResourceInput());
@@ -35,6 +41,9 @@ void main() {
   test('routes to main when logged in with wallets', () async {
     when(() => repository.isLoggedIn).thenAnswer((_) async => true);
     when(
+      () => repository.sessionExpiresAt,
+    ).thenAnswer((_) async => DateTime.now().add(const Duration(minutes: 3)));
+    when(
       () => repository.getWallets(),
     ).thenAnswer((_) async => const [Wallet(id: 1, name: 'Cash')]);
 
@@ -43,14 +52,18 @@ void main() {
     expect(output.initialRoutes, [InitialAppRoute.main]);
   });
 
-  test('routes to main when wallet fetch fails', () async {
+  test('propagates a wallet network error instead of entering main offline', () async {
     when(() => repository.isLoggedIn).thenAnswer((_) async => true);
+    when(
+      () => repository.sessionExpiresAt,
+    ).thenAnswer((_) async => DateTime.now().add(const Duration(minutes: 3)));
     when(
       () => repository.getWallets(),
     ).thenThrow(const RemoteException(kind: RemoteExceptionKind.network));
 
-    final output = await useCase.execute(const LoadInitialResourceInput());
-
-    expect(output.initialRoutes, [InitialAppRoute.main]);
+    await expectLater(
+      useCase.execute(const LoadInitialResourceInput()),
+      throwsA(isA<RemoteException>()),
+    );
   });
 }

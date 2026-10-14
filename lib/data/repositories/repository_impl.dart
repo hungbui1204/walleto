@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:injectable/injectable.dart';
+import 'package:uuid/uuid.dart';
 import 'package:walleto/data/data.dart';
 import 'package:walleto/domain/domain.dart';
 import 'package:walleto/shared/shared.dart';
@@ -23,6 +24,9 @@ class RepositoryImpl implements Repository {
     this._supabaseImageDataMapper,
     this._currencyDataMapper,
     this._exchangeRateDataMapper,
+    this._biometricLoginDeviceDataMapper,
+    this._biometricAuthenticationService,
+    this._authSessionCoordinator,
   );
 
   final AppApiServices _appApiServices;
@@ -39,6 +43,9 @@ class RepositoryImpl implements Repository {
   final SupabaseImageDataMapper _supabaseImageDataMapper;
   final CurrencyDataMapper _currencyDataMapper;
   final ExchangeRateDataMapper _exchangeRateDataMapper;
+  final BiometricLoginDeviceDataMapper _biometricLoginDeviceDataMapper;
+  final BiometricAuthenticationService _biometricAuthenticationService;
+  final AuthSessionCoordinator _authSessionCoordinator;
   final WalletStatDataMapper _walletStatDataMapper;
 
   @override
@@ -58,7 +65,20 @@ class RepositoryImpl implements Repository {
   }
 
   @override
-  Future<bool> get isLoggedIn async => await _appPreferences.token != null;
+  Future<bool> get isLoggedIn async {
+    final token = await _appPreferences.token;
+    final refreshToken = await _appPreferences.refreshToken;
+    final userId = await _appPreferences.userId;
+    return token != null &&
+        token.isNotEmpty &&
+        refreshToken != null &&
+        refreshToken.isNotEmpty &&
+        userId != null &&
+        userId.isNotEmpty;
+  }
+
+  @override
+  Future<DateTime?> get sessionExpiresAt => _appPreferences.sessionExpiresAt;
 
   @override
   Future<Authentication> loginByPassword({
@@ -67,43 +87,359 @@ class RepositoryImpl implements Repository {
     required String fcmToken,
     required String timezone,
   }) async {
-    final response = await _appApiServices.loginByPassword(email: email, password: password);
-    final authInfo = _authenticationDataMapper.mapToEntity(response);
+    return _authSessionCoordinator.runExclusive(() async {
+      final response = await _appApiServices.loginByPassword(email: email, password: password);
+      final authInfo = _authenticationDataMapper.mapToEntity(response);
+      final linkedUserId = await _appPreferences.biometricLoginUserId;
+      if (linkedUserId != null && linkedUserId != authInfo.user.id) {
+        // Drop the previous account association before loading or showing the new user's data.
+        await _appPreferences.clearBiometricLogin();
+      } else if (linkedUserId == authInfo.user.id) {
+        await _appPreferences.clearBiometricCredential();
+      }
+      await _appPreferences.saveSession(authInfo);
 
-    // Save the authentication data to secure storage
-    await _appPreferences.setToken(response?.accessToken ?? '');
-    await _appPreferences.setRefreshToken(response?.refreshToken ?? '');
-    await _appPreferences.setUserId(response?.user?.id ?? '');
+      await _appApiServices.updateUserFcmTokenAndTimeZone(
+        fcmToken: fcmToken,
+        timezone: timezone,
+        userId: authInfo.user.id,
+      );
 
-    // Update the user's FCM token and timezone
-    await _appApiServices.updateUserFcmTokenAndTimeZone(
-      fcmToken: fcmToken,
-      timezone: timezone,
-      userId: authInfo.user.id,
-    );
-
-    return authInfo;
+      return authInfo;
+    });
   }
 
   @override
   Future<Authentication> refreshAuthToken({required String refreshToken}) async {
     final response = await _appApiServices.refreshToken(refreshToken: refreshToken);
-
-    // Save the new access token to secure storage
-    await _appPreferences.setToken(response?.accessToken ?? '');
-
-    return _authenticationDataMapper.mapToEntity(response);
+    final authentication = _authenticationDataMapper.mapToEntity(response);
+    final currentRefreshToken = await _appPreferences.refreshToken;
+    if (currentRefreshToken != refreshToken) {
+      throw const AppUncaughtException('Session changed while refresh was in flight');
+    }
+    await _appPreferences.saveSession(authentication);
+    return authentication;
   }
 
   @override
-  Future<void> signOut() async {
-    // Revoke the current refresh token
-    // Not using at the moment, because the refresh token is not a jwt token
-    // Consider using it in the future if needed
-    // await _appApiServices.revokeRefreshToken();
+  Future<SignOutResult> signOut() {
+    return _authSessionCoordinator.runExclusive(() async {
+      final currentUserId = await _appPreferences.userId ?? '';
+      final refreshToken = await _appPreferences.refreshToken ?? '';
+      var accessToken = await _appPreferences.token ?? '';
+      final keepBiometricLogin =
+          await _appPreferences.isBiometricLoginEnabled &&
+          currentUserId.isNotEmpty &&
+          await _appPreferences.biometricLoginUserId == currentUserId;
 
-    // Clear the current user data from secure storage
-    await _appPreferences.clearCurrentUserData();
+      if (keepBiometricLogin && refreshToken.isNotEmpty) {
+        await _appPreferences.setBiometricTransferPending(true);
+        try {
+          await _appPreferences.clearBiometricCredential();
+          await _appPreferences.writeBiometricRefreshToken(refreshToken);
+          await _appPreferences.markBiometricCredentialPresent();
+          await _appPreferences.clearSession();
+          await _appPreferences.setBiometricTransferPending(false);
+          return const SignOutResult(retainedForBiometric: true);
+        } on Object catch (error, stackTrace) {
+          Log.e(error, stackTrace: stackTrace, name: 'Biometric session transfer failed');
+          await _appPreferences.clearSession();
+          await _appPreferences.clearBiometricLogin();
+          await _appPreferences.setBiometricTransferPending(false);
+          return const SignOutResult();
+        }
+      }
+
+      var serverSessionRevoked = false;
+      final expiresAt = await _appPreferences.sessionExpiresAt;
+      if (accessToken.isNotEmpty &&
+          (expiresAt == null ||
+              !expiresAt.isAfter(DateTime.now().add(AuthSessionConstants.refreshSafetyWindow)))) {
+        try {
+          final authentication = await refreshAuthToken(refreshToken: refreshToken);
+          accessToken = authentication.accessToken;
+        } on Object catch (error, stackTrace) {
+          Log.e(error, stackTrace: stackTrace, name: 'Session refresh before sign-out failed');
+        }
+      }
+      if (accessToken.isNotEmpty) {
+        try {
+          await _appApiServices.revokeRefreshToken(accessToken: accessToken);
+          serverSessionRevoked = true;
+        } on Object catch (error, stackTrace) {
+          Log.e(error, stackTrace: stackTrace, name: 'Supabase local session revocation failed');
+        }
+      }
+
+      await _appPreferences.clearSession();
+      await _appPreferences.clearBiometricLogin();
+      return SignOutResult(serverSessionRevoked: serverSessionRevoked);
+    });
+  }
+
+  @override
+  Future<void> clearInvalidSession() async {
+    await _appPreferences.clearSession();
+    await _appPreferences.clearBiometricLogin();
+  }
+
+  @override
+  Future<BiometricLoginStatus> getBiometricLoginStatus({
+    String? userId,
+    required bool verifyServer,
+  }) async {
+    final isAvailable = await _biometricAuthenticationService.isAvailable;
+    final localEnabled = await _appPreferences.isBiometricLoginEnabled;
+    final localUserId = await _appPreferences.biometricLoginUserId;
+    final credentialPresent = await _appPreferences.biometricCredentialPresent;
+    final installationId = await _appPreferences.getInstallationId();
+    final activeAccessToken = await _appPreferences.token;
+    final activeRefreshToken = await _appPreferences.refreshToken;
+    final activeUserId = await _appPreferences.userId;
+    final hasStoredSession =
+        activeAccessToken != null &&
+        activeAccessToken.isNotEmpty &&
+        activeRefreshToken != null &&
+        activeRefreshToken.isNotEmpty &&
+        activeUserId != null &&
+        activeUserId.isNotEmpty;
+
+    if (userId != null && localUserId != null && userId != localUserId) {
+      await _appPreferences.clearBiometricLogin();
+      return BiometricLoginStatus(isAvailable: isAvailable, hasStoredSession: hasStoredSession);
+    }
+
+    if (!verifyServer) {
+      return BiometricLoginStatus(
+        isAvailable: isAvailable,
+        isEnabled: isAvailable && localEnabled && credentialPresent && localUserId != null,
+        hasStoredSession: hasStoredSession,
+      );
+    }
+
+    final targetUserId = userId ?? localUserId;
+    if (targetUserId == null || targetUserId.isEmpty) {
+      return BiometricLoginStatus(isAvailable: isAvailable, hasStoredSession: hasStoredSession);
+    }
+
+    final serverRows = await _appApiServices.getBiometricLoginDevices(
+      userId: targetUserId,
+      installationId: installationId,
+    );
+    final serverEnabled = _biometricLoginDeviceDataMapper
+        .mapToListEntity(serverRows)
+        .any(
+          (device) =>
+              device.userId == targetUserId &&
+              device.installationId == installationId &&
+              device.enabled,
+        );
+    final hasActiveCredential =
+        activeUserId == targetUserId && activeRefreshToken != null && activeRefreshToken.isNotEmpty;
+    final isEnabled =
+        isAvailable &&
+        localEnabled &&
+        (credentialPresent || hasActiveCredential) &&
+        localUserId == targetUserId &&
+        serverEnabled;
+
+    if (!isEnabled && localEnabled && (!serverEnabled || !isAvailable)) {
+      await _appPreferences.clearBiometricLogin();
+    }
+
+    return BiometricLoginStatus(
+      isAvailable: isAvailable,
+      isEnabled: isEnabled,
+      hasStoredSession: hasStoredSession,
+    );
+  }
+
+  @override
+  Future<void> setBiometricLoginEnabled({
+    required String userId,
+    required bool enabled,
+    String? password,
+  }) {
+    return _authSessionCoordinator.runExclusive(() async {
+      final currentUserId = await _appPreferences.userId ?? '';
+      final installationId = await _appPreferences.getInstallationId();
+      if (!enabled) {
+        if (currentUserId != userId) {
+          throw const AppUncaughtException('The active account changed');
+        }
+        await _appApiServices.setBiometricLoginDeviceEnabled(
+          userId: userId,
+          installationId: installationId,
+          enabled: false,
+        );
+        await _appPreferences.clearBiometricLogin();
+        return;
+      }
+
+      if (password == null || password.isEmpty || currentUserId != userId) {
+        throw const AppUncaughtException('Password re-authentication is required');
+      }
+      if (!await _biometricAuthenticationService.isAvailable) {
+        throw const AppUncaughtException('Strong biometric authentication is unavailable');
+      }
+
+      final email = await _appPreferences.userEmail ?? '';
+      if (email.isEmpty) throw const AppUncaughtException('The active account email is missing');
+
+      final response = await _appApiServices.loginByPassword(email: email, password: password);
+      final authentication = _authenticationDataMapper.mapToEntity(response);
+      if (authentication.user.id != userId) {
+        await _tryRevokeTemporarySession(authentication.accessToken);
+        throw const AppUncaughtException('Password re-authentication returned another account');
+      }
+
+      // Password grant may replace the prior Supabase session; the new valid session stays active
+      // even if enabling biometric sign-in later fails.
+      await _appPreferences.saveSession(authentication);
+      var rowWasEnabled = false;
+      try {
+        final probe = const Uuid().v4();
+        await _appPreferences.writeBiometricProbe(probe);
+        final protectedProbe = await _appPreferences.readBiometricProbe();
+        await _appPreferences.clearBiometricProbe();
+        if (protectedProbe != probe) {
+          throw const AppUncaughtException('Biometric credential protection could not be verified');
+        }
+
+        await _appApiServices.upsertBiometricLoginDevice(
+          userId: userId,
+          installationId: installationId,
+          enabled: true,
+          accessToken: authentication.accessToken,
+        );
+        rowWasEnabled = true;
+        await _appPreferences.setBiometricLogin(enabled: true, userId: userId);
+      } on Object {
+        await _appPreferences.clearBiometricProbe();
+        if (rowWasEnabled) {
+          try {
+            await _appApiServices.setBiometricLoginDeviceEnabled(
+              userId: userId,
+              installationId: installationId,
+              enabled: false,
+            );
+          } on Object {
+            // Local state remains off; the next Account load reconciles with the server.
+          }
+        }
+        await _appPreferences.clearBiometricLogin();
+        rethrow;
+      }
+    });
+  }
+
+  @override
+  Future<Authentication> loginWithBiometrics() {
+    return _authSessionCoordinator.runExclusive(() async {
+      final localEnabled = await _appPreferences.isBiometricLoginEnabled;
+      final linkedUserId = await _appPreferences.biometricLoginUserId ?? '';
+      if (!localEnabled ||
+          linkedUserId.isEmpty ||
+          !await _biometricAuthenticationService.isAvailable) {
+        throw const AppUncaughtException('Biometric sign-in is unavailable');
+      }
+
+      final refreshToken = await _appPreferences.readBiometricRefreshToken();
+      if (refreshToken == null || refreshToken.isEmpty) {
+        await _appPreferences.clearBiometricLogin();
+        throw const AppUncaughtException('Biometric credential is unavailable');
+      }
+
+      AuthenticationData? response;
+      try {
+        response = await _appApiServices.refreshToken(refreshToken: refreshToken);
+      } on RemoteException catch (error) {
+        if (_isRejectedRefreshToken(error)) {
+          await _appPreferences.clearBiometricLogin();
+        }
+        rethrow;
+      }
+      final authentication = _authenticationDataMapper.mapToEntity(response);
+      if (authentication.user.id != linkedUserId) {
+        await _tryRevokeTemporarySession(authentication.accessToken);
+        await _appPreferences.clearBiometricLogin();
+        throw const AppUncaughtException('Biometric credential belongs to another account');
+      }
+
+      _validateAuthentication(authentication);
+
+      // Supabase rotates refresh tokens. Save the new protected credential before any follow-up API.
+      try {
+        await _appPreferences.writeBiometricRefreshToken(authentication.refreshToken);
+      } on Object {
+        // The old refresh token has already been consumed. Do not offer a dead credential again.
+        await _appPreferences.clearBiometricLogin();
+        rethrow;
+      }
+      final installationId = await _appPreferences.getInstallationId();
+      final serverRows = await _appApiServices.getBiometricLoginDevices(
+        userId: linkedUserId,
+        installationId: installationId,
+        accessToken: authentication.accessToken,
+      );
+      final isServerEnabled = _biometricLoginDeviceDataMapper
+          .mapToListEntity(serverRows)
+          .any(
+            (device) =>
+                device.userId == linkedUserId &&
+                device.installationId == installationId &&
+                device.enabled,
+          );
+      if (!isServerEnabled) {
+        await _tryRevokeTemporarySession(authentication.accessToken);
+        await _appPreferences.clearBiometricLogin();
+        throw const AppUncaughtException('Biometric sign-in was disabled for this device');
+      }
+
+      await _appPreferences.setBiometricTransferPending(true);
+      try {
+        await _appPreferences.saveSession(authentication);
+        await _appPreferences.clearBiometricCredential();
+        await _appPreferences.setBiometricTransferPending(false);
+      } on Object {
+        await _appPreferences.clearSession();
+        await _appPreferences.clearBiometricLogin();
+        await _appPreferences.setBiometricTransferPending(false);
+        rethrow;
+      }
+      return authentication;
+    });
+  }
+
+  Future<void> _tryRevokeTemporarySession(String accessToken) async {
+    if (accessToken.isEmpty) return;
+    try {
+      await _appApiServices.revokeRefreshToken(accessToken: accessToken);
+    } on Object catch (error, stackTrace) {
+      Log.e(error, stackTrace: stackTrace, name: 'Temporary Supabase session revocation failed');
+    }
+  }
+
+  void _validateAuthentication(Authentication authentication) {
+    final expiresAt =
+        authentication.expiresAt ??
+        (authentication.expiresIn > 0
+            ? DateTime.now().add(Duration(seconds: authentication.expiresIn))
+            : null);
+    if (authentication.accessToken.isEmpty ||
+        authentication.refreshToken.isEmpty ||
+        authentication.user.id.isEmpty ||
+        expiresAt == null ||
+        !expiresAt.isAfter(DateTime.now())) {
+      throw const AppUncaughtException('Supabase returned an incomplete or expired session');
+    }
+  }
+
+  bool _isRejectedRefreshToken(RemoteException error) {
+    return AuthSessionConstants.isRejectedRefreshToken(
+      httpStatusCode: error.httpErrorCode,
+      errorCode: error.generalServerErrorId,
+    );
   }
 
   @override

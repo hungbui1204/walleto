@@ -13,7 +13,10 @@ void main() {
 
   setUp(() {
     repository = _MockRepository();
-    useCase = InvalidTokenHandleUseCase(repository, RefreshTokenManager(repository));
+    useCase = InvalidTokenHandleUseCase(
+      repository,
+      RefreshTokenManager(repository, AuthSessionCoordinator()),
+    );
   });
 
   test('returns emptyToken when the user is not logged in', () async {
@@ -43,8 +46,10 @@ void main() {
       const RemoteException(
         kind: RemoteExceptionKind.invalidToken,
         httpErrorCode: HttpStatus.unauthorized,
+        serverError: ServerError(generalServerErrorId: 'refresh_token_not_found'),
       ),
     );
+    when(() => repository.clearInvalidSession()).thenAnswer((_) async {});
 
     final output = await useCase.execute(const InvalidTokenHandleInput());
 

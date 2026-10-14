@@ -13,11 +13,18 @@ class SignOutUseCase extends BaseFutureUseCase<SignOutInput, SignOutOutput> {
   @protected
   @override
   Future<SignOutOutput> buildUseCase(SignOutInput input) async {
+    var serverSessionRevoked = false;
+    var retainedForBiometric = false;
     if (await _repository.isLoggedIn) {
-      await _repository.signOut();
+      final result = await _repository.signOut();
+      serverSessionRevoked = result.serverSessionRevoked;
+      retainedForBiometric = result.retainedForBiometric;
     }
 
-    return const SignOutOutput();
+    return SignOutOutput(
+      serverSessionRevoked: serverSessionRevoked,
+      retainedForBiometric: retainedForBiometric,
+    );
   }
 }
 
@@ -32,5 +39,8 @@ sealed class SignOutInput extends BaseInput with _$SignOutInput {
 sealed class SignOutOutput extends BaseOutput with _$SignOutOutput {
   const SignOutOutput._();
 
-  const factory SignOutOutput() = _SignOutOutput;
+  const factory SignOutOutput({
+    @Default(false) bool serverSessionRevoked,
+    @Default(false) bool retainedForBiometric,
+  }) = _SignOutOutput;
 }
