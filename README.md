@@ -1,7 +1,7 @@
 # walleto
 A money manager app
 
-**AI agents:** read [CLAUDE.md](CLAUDE.md) before changing code. Conventions: [CODING_RULES.md](CODING_RULES.md). Roles: [AGENTS.md](AGENTS.md). Use FVM Flutter `3.47.5` (`fvm flutter` / `fvm dart`).
+**AI agents:** read [CLAUDE.md](CLAUDE.md) before changing code. Conventions: [CODING_RULES.md](CODING_RULES.md). Roles and review skill routing: [AGENTS.md](AGENTS.md). Repo-local skills live in [.agents/skills/](.agents/skills/). Use FVM Flutter `3.47.5` (`fvm flutter` / `fvm dart`).
 
 ## Setup on macOS
 

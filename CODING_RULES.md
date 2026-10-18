@@ -662,6 +662,7 @@ docs: add AI agent coding rules
 - [ ] Test cases (khi applicable)
 - [ ] Xoá code / dependency không dùng
 - [ ] Screenshot cho thay đổi UI
+- [ ] Tự review diff bằng [`walleto-code-review`](.agents/skills/walleto-code-review/SKILL.md); kiểm tra thêm BLoC/layer hoặc security bằng skill chuyên sâu khi liên quan
 
 Chạy local trước PR: `make verify`.
 

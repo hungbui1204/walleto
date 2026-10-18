@@ -24,6 +24,7 @@ Nếu chỉ đọc 1 phần, đọc phần này. Vi phạm các mục này = tas
 12. **Minimize scope** — sửa đúng layer cần, không refactor diện rộng ngoài task.
 13. **Không đụng** `ios/`, `android/`, `.github/`, `env/*.json`, secrets/keystore trừ khi task yêu cầu (xem [AGENTS.md](AGENTS.md)).
 14. Repo này dùng **GitHub** (`gh`), **không** GitLab. Flow: `feature/*` → `develop` → `main`.
+15. **Tự review diff trước khi báo xong** bằng [`walleto-code-review`](.agents/skills/walleto-code-review/SKILL.md); nếu đụng BLoC/layer hoặc bề mặt bảo mật, dùng thêm skill chuyên sâu theo [AGENTS.md §8](AGENTS.md). Chỉ sửa phát hiện thuộc scope task đã được giao.
 
 ---
 
@@ -217,6 +218,7 @@ make clean             # flutter clean
 - [ ] Không hard-code color / text style / string / magic number.
 - [ ] BLoC dùng `runBlocCatching` + `transformer: log()`; UI có `buildWhen`/`listenWhen`.
 - [ ] Diff tập trung đúng scope — không refactor ngoài task.
+- [ ] Đã tự review diff bằng `walleto-code-review`; áp dụng `walleto-bloc-check` / `walleto-security-review` khi thay đổi chạm đúng phạm vi của chúng.
 - [ ] Không commit trừ khi user yêu cầu.
 
 ---
