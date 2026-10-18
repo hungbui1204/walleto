@@ -1,0 +1,138 @@
+# Kế hoạch: đăng nhập sinh trắc học gắn với tài khoản Supabase
+
+**Trạng thái:** Thiết kế lịch sử; phần triển khai đã được merge qua [PR #41](https://github.com/hungbui1204/walleto/pull/41). Mục “Hiện trạng” ghi lại repo tại thời điểm lập kế hoạch.
+
+## 1. Mục tiêu và phạm vi
+
+- Người dùng đã đăng nhập bằng email/mật khẩu có thể bật hoặc tắt **Đăng nhập bằng sinh trắc học** trong màn Account. Mặc định là tắt; thiết lập chỉ có hiệu lực cho **tài khoản hiện tại trên thiết bị hiện tại**.
+- Khi đã bật và còn phiên hợp lệ được giữ trên thiết bị, màn Login/khóa ứng dụng có nút đăng nhập nhanh bằng vân tay/Face ID. Luồng vẫn phải lấy **phiên Supabase hợp lệ** trước khi vào Main; xác thực bằng `local_auth` một mình không tạo phiên Supabase.
+- Dữ liệu trên Supabase chỉ ghi `user_id`, mã cài đặt thiết bị ngẫu nhiên, trạng thái bật/tắt và thời điểm cập nhật. Không lưu ảnh vân tay/khuôn mặt, mật khẩu, access token hoặc refresh token trên database.
+- Không lưu email/mật khẩu để gửi lại API `grant_type=password`. Email/mật khẩu và quên mật khẩu tiếp tục hoạt động, kể cả khi thiết bị không hỗ trợ sinh trắc học hoặc người dùng từ chối lời nhắc.
+- Tài liệu ghi lại quyết định thiết kế trước khi thay đổi Dart, native project và schema Supabase.
+
+## 2. Hiện trạng đã kiểm tra
+
+| Vị trí | Kết quả |
+| --- | --- |
+| `pubspec.yaml` | Đã có `local_auth: ^3.0.2`, `local_auth_android`, `local_auth_darwin` và `flutter_secure_storage`; cần kiểm tra khả năng khóa credential theo sinh trắc học trước khi quyết định có thêm plugin/bridge native. |
+| `lib/ui/views/auth/` | `LoginBloc` gọi `LoginByPasswordUseCase`, rồi lấy ví để điều hướng tới Create Wallet hoặc Main. `LoginTab` chưa có nút sinh trắc học. |
+| `lib/ui/views/account/` | Account chỉ tải thông tin user; chưa có điều khiển bảo mật. Nút Sign Out gửi `SignOutButtonPressed` lên `AppBloc`. |
+| `lib/data/repositories/repository_impl.dart`, `lib/data/preferences/app_preferences.dart` | Đăng nhập mật khẩu ghi access token, refresh token và user ID vào secure storage. `signOut()` xóa access/refresh token, nhưng hiện còn `userId`. |
+| `lib/data/api/app_api_services.dart` | App gọi trực tiếp Supabase Auth REST `token?grant_type=password` / `token?grant_type=refresh_token` và PostgREST `profiles`; chưa dùng `supabase_flutter`. |
+| `lib/domain/helper/refresh_token_manager.dart`, `ExceptionHandler` | Có cơ chế chống refresh trùng. Refresh hiện **chỉ chạy sau khi request báo token không hợp lệ/401**; không có refresh định kỳ hoặc refresh trước hạn. `refreshAuthToken()` chỉ lưu access token, bỏ qua refresh token mới dù Supabase xoay vòng token. |
+| `AuthenticationData`, `Authentication` | Đã parse `expires_in`/`expires_at`, nhưng app chưa dùng để kiểm tra hạn hoặc lên lịch refresh. Thời hạn JWT thực tế do Supabase Auth Settings quyết định, không thể suy ra chắc chắn từ repo. |
+| `lib/domain/usecases/load_initial_resource_use_case.dart`, `AuthRouteGuard` | Đăng nhập được suy ra từ việc **có** access token trong secure storage, không kiểm tra hạn. Bootstrap thử tải ví nhưng bắt mọi lỗi và vẫn vào Main; phiên hết hạn/mất mạng cần được phân loại rõ. |
+| `RepositoryImpl.signOut()` | Hiện xóa access/refresh token ở local, **không gọi** API revoke phiên Supabase; `userId` còn lưu. Luồng mới được đề xuất ở §3. |
+| Native | Android `MainActivity` đang kế thừa `FlutterActivity`, manifest chưa có `USE_BIOMETRIC`, LaunchTheme chưa là AppCompat. iOS `Info.plist` chưa có `NSFaceIDUsageDescription`. Android `minSdk = 24`, iOS Podfile đặt 13.0 phù hợp ngưỡng package; cần rà deployment target trong Xcode project. |
+
+## 3. Một nút Đăng xuất, hành vi theo công tắc sinh trắc học
+
+Giữ **duy nhất nút Đăng xuất / Sign Out đang có** trong Account và công tắc bật/tắt sinh trắc học của phương án A. Không thêm nút “Khóa ứng dụng” hay “Đăng xuất hoàn toàn”. Dòng mô tả dưới công tắc dùng ngôn ngữ dễ hiểu, ví dụ: “Khi bật, bạn có thể dùng Face ID/vân tay để vào lại sau khi đăng xuất trên thiết bị này.” Khi bật tính năng lần đầu, giải thích ngắn điều này trước khi xác nhận.
+
+- **Công tắc bật → Đăng xuất:** xóa access token và dữ liệu phiên đang hiển thị, chuyển về Login, giữ một refresh credential chỉ dùng được sau khi xác thực sinh trắc học. Phiên Supabase vẫn tồn tại để đăng nhập nhanh; không gọi API logout. Màn Login hiện nút Face ID/vân tay và form mật khẩu như phương án A.
+- **Công tắc tắt → Đăng xuất:** gọi Supabase logout `scope=local`, rồi xóa toàn bộ token và liên kết nhanh trên máy; lần sau đăng nhập bằng email/mật khẩu. Tắt công tắc trong lúc đang đăng nhập chỉ gỡ khả năng đăng nhập nhanh; phiên hiện tại tiếp tục hoạt động cho đến khi bấm Đăng xuất. Nếu API logout lỗi/offline, vẫn rời phiên và xóa local để không còn dữ liệu truy cập trên máy, nhưng phải báo rõ **chưa thu hồi được phiên trên server**. Sau khi đã xóa token, app không thể tự thử thu hồi lại phiên này; thông báo phải nói phiên server có thể còn tồn tại. Nếu sản phẩm yêu cầu thu hồi từ xa được bảo đảm ngay cả khi offline, phải thiết kế thêm một cơ chế phía server trước khi phát hành. Không báo “đã thu hồi phiên” trong nhánh lỗi.
+
+Với `local_auth` + refresh token, **không thể** vừa thu hồi refresh token của phiên cuối cùng vừa dùng chính token đó để đăng nhập nhanh. Vì vậy, khi công tắc bật, “Đăng xuất” là rời phiên đang hiển thị trên app nhưng vẫn giữ quyền đăng nhập nhanh đã được bảo vệ trên máy. Khi công tắc tắt, “Đăng xuất” cố thu hồi phiên theo §3; chỉ xác nhận đã thu hồi nếu server trả thành công. JWT access token đã cấp có thể vẫn được server chấp nhận đến khi hết hạn. Muốn đăng nhập nhanh sau khi thu hồi phiên hoàn toàn phải có cơ chế khác được server chấp nhận, như passkey; nằm ngoài phạm vi `local_auth` của kế hoạch này.
+
+### 3.1 Nguyên tắc bảo vệ credential
+
+- `local_auth` dùng để kiểm tra khả năng thiết bị và hiển thị lời nhắc hệ thống. Kết quả `authenticate()` là một giá trị trong client; tự nó **không khóa** refresh token đang lưu bởi `flutter_secure_storage`.
+- Hệ điều hành xác thực **một sinh trắc học đã đăng ký trên thiết bị**, không chứng minh đó là sinh trắc học của chủ tài khoản Supabase. Với máy dùng chung, người có vân tay/Face ID được thêm vào máy có thể mở đăng nhập nhanh của tài khoản đã liên kết. Chỉ hỗ trợ luồng này trên thiết bị cá nhân mà người dùng kiểm soát danh sách sinh trắc học; giải thích ngắn khi bật tính năng.
+- Trước khi phát hành tính năng cho dữ liệu tài chính, xác minh và triển khai cơ chế **biometric-bound access** cho credential: iOS Keychain với `SecAccessControl` phù hợp (ưu tiên `biometryCurrentSet`/`ThisDeviceOnly` theo chính sách sản phẩm), Android Keystore với khóa yêu cầu xác thực mỗi lần sử dụng và `BiometricPrompt` + `CryptoObject`. Có thể cần bridge native/plugin phù hợp; không mặc định package secure storage hiện tại đã cung cấp bảo vệ này. Nếu không có cơ chế này, chưa phát hành luồng đăng nhập nhanh chỉ với boolean của `local_auth`.
+- Dùng `biometricOnly: true` cho lời nhắc `local_auth` nếu sản phẩm hứa chỉ dùng sinh trắc học; khóa bảo vệ credential cũng phải có chính sách tương ứng, không cho PIN/passcode mở credential qua một đường khác. Trên Android, luồng `CryptoObject` cần biometric đủ mức `BIOMETRIC_STRONG`. Nếu thiết bị không đáp ứng được, ẩn hoặc vô hiệu hóa đăng nhập nhanh và giữ cách đăng nhập bằng mật khẩu.
+- Nếu sinh trắc học bị gỡ/đăng ký lại hoặc khóa hệ điều hành thay đổi, quyền truy cập credential phải thất bại an toàn; đưa về đăng nhập mật khẩu để liên kết lại. Không lưu password trong secure storage cho luồng đăng nhập nhanh.
+- Bản ghi `enabled` trên Supabase là trạng thái bật/tắt và thu hồi tính năng. Nó không làm cho một bearer refresh token bị đánh cắp trở nên vô hiệu nếu server không ràng buộc thao tác refresh với bằng chứng thiết bị; không mô tả DB flag là lớp bảo vệ token.
+
+## 4. Luồng trải nghiệm
+
+### 4.1 Bật trong Account
+
+1. `AccountBloc` tải trạng thái cho `user.id` và `installation_id`, kiểm tra `canCheckBiometrics` **và** `getAvailableBiometrics()` không rỗng. Chỉ dựa vào `canCheckBiometrics` chưa đủ vì thiết bị có thể chưa đăng ký vân tay/Face ID.
+2. Dùng **phương án A · Integrated** từ `docs/previews/biometric-login/option-a.png`: một hàng Security với switch, mô tả “thiết bị này” và khả năng vào lại sau Đăng xuất, trạng thái loading và thông báo lỗi. Không thêm hành động đăng xuất mới. Nếu không hỗ trợ/chưa đăng ký sinh trắc học, switch bị vô hiệu hóa và có hướng dẫn mở cài đặt thiết bị.
+3. Khi bật, yêu cầu xác thực lại bằng mật khẩu hiện tại. Tạm dừng refresh/request của phiên cũ, rồi gọi `grant_type=password` qua một thao tác **riêng**, không tái dùng `RepositoryImpl.loginByPassword()` vì hàm đó ghi đè token/user ID và cập nhật profile. Nếu grant lỗi, tiếp tục phiên cũ và giữ switch tắt. So khớp `user.id` trong response với tài khoản đang mở; nếu khác, thu hồi phiên tạm `scope=local` và giữ switch tắt. Password grant tạo **phiên Supabase mới**; nếu môi trường bật single-session policy, phiên cũ có thể bị vô hiệu. Vì vậy, coi phiên mới là phiên thay thế: sau khi xác minh đúng user, lưu cặp token mới cho phiên hoạt động theo quy trình lưu token của §4.4 và tăng mã thế hệ phiên để bỏ qua response cũ. Nếu bước bật sinh trắc học tiếp theo thất bại, vẫn giữ phiên mới như một phiên đăng nhập thường và để switch tắt. Nếu không thể lưu phiên mới, cố thu hồi phiên mới bằng bearer tạm `scope=local`, xóa local và yêu cầu đăng nhập bằng mật khẩu. Không để phiên tạm bị bỏ quên trên server khi còn khả năng thu hồi. Sau đó kiểm tra cơ chế bảo vệ credential bằng một secret thử ngẫu nhiên, không sao chép refresh token sang vùng sinh trắc học khi phiên thường còn hoạt động; xóa secret thử sau xác thực (§3.1). Chỉ khi cơ chế bảo vệ và xác thực local thành công mới ghi bản ghi Supabase/cờ local. Chống nhấn liên tiếp và rollback cờ/credential nếu một bước lỗi.
+4. Không ghi dữ liệu sinh trắc học vào app. Lưu một `installation_id` UUID ngẫu nhiên ổn định trong **một lần cài app** và `user_id` tương ứng trong secure storage. UI chỉ báo bật khi bản ghi server, cờ local, đúng user và khả năng thiết bị cùng hợp lệ.
+
+### 4.2 Đăng nhập nhanh ở Login
+
+1. Trên preview A, nút **Continue with Face ID/fingerprint** là thao tác phụ dưới form mật khẩu. Chỉ hiện khi đúng tài khoản đã liên kết, còn credential phiên được bảo vệ bởi hệ điều hành và thiết bị còn sinh trắc học đã đăng ký; tính hợp lệ trên server được kiểm tra khi người dùng bấm nút. Không tự bật sau đăng nhập mật khẩu; không tự mở lời nhắc khi vừa vào Login. Sau Đăng xuất khi công tắc bật, nút này vẫn hiện; sau Đăng xuất khi công tắc tắt thì biến mất.
+2. Khi chạm nút, yêu cầu hệ điều hành cho phép **sử dụng credential được bảo vệ**; `local_auth` cung cấp lời nhắc/khả năng thiết bị nhưng kết quả boolean không được là điều kiện bảo vệ duy nhất. Hủy/lockout/credential bị vô hiệu giữ nguyên màn Login và cho nhập mật khẩu. Không log token hoặc dữ liệu nhạy cảm.
+3. Sau khi lấy được refresh token qua bước bảo vệ, đổi lấy access **và refresh token mới** qua Supabase Auth. Kiểm tra response rồi ghi ngay refresh token mới vào vùng credential sinh trắc học được bảo vệ **trước mọi request tiếp theo**; nếu ghi thất bại, không vào Main và yêu cầu đăng nhập bằng mật khẩu. Giữ access token **tạm trong bộ nhớ**, chưa ghi vào key phiên hoạt động. Dùng bearer tạm đó để đọc bản ghi `user_id + installation_id` trên PostgREST, đối chiếu `Authentication.user.id` với user đã liên kết, và xác nhận `enabled = true`. API kiểm tra này không được phụ thuộc interceptor đọc access token của phiên đang hoạt động. Nếu request refresh thành công ở server nhưng app bị dừng trước khi lưu response, token cũ có thể không còn dùng được; chỉ dựa vào cơ chế reuse được Supabase xác nhận cho môi trường đó, còn thất bại thì yêu cầu mật khẩu, không lặp vô hạn.
+4. Chỉ sau các kiểm tra trên mới chuyển cặp token mới vào vùng phiên đang hoạt động, xóa credential sinh trắc học cũ, rồi đi theo logic hiện có: không có ví → Create Wallet, có ví → Main. Áp dụng cùng trạng thái chuyển tiếp an toàn khi app bị dừng giữa chừng như §4.3. Nếu server báo tắt, token mất hiệu lực hoặc user không khớp, xóa liên kết local/token và trở về đăng nhập mật khẩu. Nếu mất mạng sau khi refresh, không vào Main; giữ **refresh token đã xoay vòng** trong vùng được bảo vệ để thử lại và hiển thị lỗi phù hợp.
+5. Khi người dùng đăng nhập mật khẩu bằng **tài khoản khác** trên cùng thiết bị, xóa liên kết nhanh cũ tại local trước khi hiện trạng thái của tài khoản mới. Không cho user A xác thực sinh trắc học rồi vào dữ liệu user B.
+
+### 4.3 Tắt, đổi tài khoản và cài lại app
+
+- Tắt trong Account: cập nhật server thành `enabled = false` (hoặc xóa row), sau đó xóa cờ/liên kết local; nếu đang đăng nhập thường thì giữ phiên thường. Trường hợp ghi server thất bại phải giữ switch ở trạng thái bật và báo lỗi. Lần Đăng xuất kế tiếp sẽ theo nhánh công tắc tắt ở §3.
+- Khi **Đăng xuất** với tính năng đang bật: trước tiên chặn request mới, vô hiệu các callback/request của phiên cũ và ghi dấu `biometric_transfer_pending` vào vùng lưu bền vững. Chuyển refresh token đang hoạt động sang vùng lưu **yêu cầu xác thực sinh trắc học khi sử dụng**, xóa access token và bản refresh token thường, rồi mới ghi trạng thái hoàn tất và điều hướng Login. Không giữ hai bản dùng được lâu dài. Tại cold start, nếu thấy dấu chuyển tiếp dở dang hoặc cả token thường lẫn token bảo vệ cùng tồn tại, **không** tự khôi phục phiên: xóa các bản local, yêu cầu đăng nhập mật khẩu và cho bật lại tính năng. Nếu chuyển/lưu bảo vệ thất bại, xử lý giống nhánh dở dang. Khi đăng nhập nhanh thành công, chuyển cặp token mới về phiên hoạt động bằng cùng quy trình có dấu chuyển tiếp; lần Đăng xuất tiếp theo lại bảo vệ token mới. Khi tính năng tắt, thu hồi/xóa phiên như §3.
+- Rời phiên hoặc đổi tài khoản phải reset `AppBloc` singleton (`wallets`, `userDefaultCurrency` và dữ liệu gắn với user), cache/BLoC theo user; dùng mã thế hệ phiên để bỏ qua kết quả request cũ trả về sau khi reset. Hoàn tất reset trước khi điều hướng Login hoặc hiển thị dữ liệu tài khoản mới; tải lại dữ liệu theo user mới, kể cả khi đang offline.
+- iOS Keychain có thể giữ item sau khi gỡ/cài lại app; `ThisDeviceOnly` chỉ hạn chế chuyển sang thiết bị khác, không bảo đảm xóa khi uninstall. Lưu dấu `installation_initialized` trong app data **không được đưa vào bản backup/restore**. Ở cold start, **trước khi đọc bất kỳ token nào**, nếu thiếu dấu này thì xóa token phiên, credential sinh trắc học, liên kết user và `installation_id` cũ trong Keychain rồi tạo `installation_id` mới và ghi dấu cài đặt. Lần phát hành đầu có dấu này sẽ yêu cầu người dùng hiện hữu đăng nhập lại bằng mật khẩu một lần; không tự khôi phục phiên Keychain chưa được đánh dấu. Android cần kiểm tra backup/restore của secure storage để không nhận credential thuộc lần cài hoặc thiết bị khác.
+- Cài lại app, xóa dữ liệu app, secure storage bị reset, hoặc sinh trắc học thiết bị bị gỡ: sau bước nhận diện lần cài mới ở trên, nút nhanh biến mất; bản ghi server còn sót không đủ để đăng nhập. Khi đăng nhập mật khẩu lại, cho người dùng bật lại hoặc dọn row cũ.
+- Đổi mật khẩu, phiên bị thu hồi, refresh bị từ chối theo mã lỗi Auth: xóa liên kết local; yêu cầu mật khẩu. Không diễn giải “server enabled” như quyền đăng nhập nếu credential local không còn.
+
+### 4.4 Sửa vòng đời phiên hiện tại trước khi tích hợp sinh trắc học
+
+1. Sau đăng nhập mật khẩu hoặc refresh, validate response có access token, refresh token, user ID và hạn hợp lệ; không ghi chuỗi rỗng như một phiên thành công. Lưu **cả access và refresh token mới** từ một response refresh; không tiếp tục dùng refresh token cũ. Tuần tự hóa tất cả refresh qua `RefreshTokenManager`, kể cả bootstrap/foreground và phản ứng 401. Ghi cặp token theo thứ tự an toàn và kiểm thử lỗi ghi từng key; nếu không thể bảo đảm cặp token nhất quán, xóa phiên local và yêu cầu đăng nhập lại.
+2. Dùng `expires_in`/`expires_at` do Supabase trả về làm nguồn thời gian: lưu hạn phiên/đọc hạn JWT và dùng một ngưỡng an toàn có tên để refresh trước khi hết hạn khi app đang hoạt động. Khi app từ nền lên hoặc cold start, kiểm tra hạn rồi refresh nếu cần; timer nền không phải nguồn sự thật. Không hard-code “1 giờ” vì cấu hình Supabase có thể khác.
+3. Tại bootstrap, xử lý dấu cài đặt mới và mọi dấu chuyển token dở dang của §4.3 **trước** khi đọc phiên. Không suy luận đã đăng nhập chỉ vì key access token tồn tại. Nếu chỉ có credential sinh trắc học được khóa, tới Login mà **không** tự refresh. Với phiên đang hoạt động, trước khi đi Main/Create Wallet hãy kiểm tra hạn và thử refresh nếu cần. Phân biệt: token hợp lệ → tiếp tục; refresh bị từ chối theo **mã lỗi Auth** → xóa credential và yêu cầu mật khẩu; mất mạng/timeout → trạng thái offline có Retry, không tự xóa phiên hay âm thầm vào Main. `AuthRouteGuard` cần cùng tiêu chí này để không đi đường khác với bootstrap.
+4. Giữ refresh sau 401 của **request dùng access token phiên hiện tại** làm phương án dự phòng, retry request **một lần** khi thành công; không lặp vô hạn. Không áp dụng xử lý refresh chung lên lỗi của endpoint login/refresh hoặc các request dùng bearer tạm. Với endpoint đổi refresh token, phân loại theo `error_code` của Supabase (ví dụ `refresh_token_not_found`, `refresh_token_already_used`, `session_not_found`, `session_expired`) thay vì chỉ HTTP 401: Auth có thể trả HTTP 400/422 cho credential không hợp lệ. Mã chỉ lỗi mạng, timeout hoặc 5xx không được xóa credential; mã lỗi không nhận diện phải giữ phiên ở trạng thái lỗi có thể Retry/đăng nhập mật khẩu, không tự lặp refresh. Kiểm thử response thực tế của từng environment và cập nhật mapper nếu contract khác.
+5. Kiểm tra Supabase Dashboard → Auth → Sessions để ghi nhận JWT expiry, inactivity timeout, maximum session lifetime, single-session policy cho từng environment. Repo hiện không chứa các giá trị này. Theo mặc định Supabase, refresh token không hết hạn chỉ vì không mở app lâu, nhưng có thể bị vô hiệu bởi các chính sách/thu hồi phiên; không cam kết đăng nhập sinh trắc học luôn dùng được sau một số ngày cố định.
+6. Rà `AppApiServices.revokeRefreshToken()`/`HeaderInterceptor`: `/logout` yêu cầu **access token Bearer hợp lệ**, và `scope=local` để chỉ thu hồi phiên trên thiết bị. Hiện helper của app định gửi refresh token làm Bearer; không tái sử dụng helper đó nếu chưa sửa contract. Nếu access token hết hạn, refresh trước khi logout; nếu refresh cũng bị từ chối thì xóa local và báo phiên đã mất hiệu lực.
+
+## 5. Thiết kế dữ liệu Supabase
+
+Tạo migration backend được quản lý riêng (repo hiện chưa có thư mục `supabase/`; không sửa schema trực tiếp trong kế hoạch). Bảng đề xuất `public.biometric_login_devices`:
+
+| Cột | Kiểu / ràng buộc | Ý nghĩa |
+| --- | --- | --- |
+| `user_id` | `uuid not null references auth.users(id) on delete cascade` | Chủ sở hữu tài khoản. |
+| `installation_id` | `uuid not null` | UUID sinh một lần trong app, không dùng hardware ID/FCM token. |
+| `enabled` | `boolean not null default false` | Trạng thái trên thiết bị này. |
+| `created_at`, `updated_at` | `timestamptz not null` | Kiểm tra và quản lý liên kết. |
+| khóa | `primary key (user_id, installation_id)` | Một dòng cho mỗi tài khoản trên một cài đặt app. |
+
+- Bật RLS; chính sách SELECT/INSERT/UPDATE/DELETE cho `authenticated` đều ràng `auth.uid() = user_id` (UPDATE dùng cả `USING` và `WITH CHECK`). Cấp quyền tối thiểu cần thiết; không dùng service role key trong app.
+- App truy vấn qua `AppApiServices`/PostgREST và access token của user, tương tự bảng `profiles`; không cho client ghi `user_id` của tài khoản khác. Tạo index theo khóa chính, kiểm thử user A không đọc/đổi row user B.
+- Bảng này là trạng thái đồng bộ và thu hồi tính năng; **không** chứa token, template sinh trắc học hoặc “bằng chứng” sinh trắc học. `local_auth` chỉ trả kết quả xác thực trên thiết bị; server không tự kiểm chứng được việc đã quét sinh trắc học. Nếu cần ràng buộc mật mã chống app bị sửa/root, cần thiết kế bổ sung bằng hardware-backed key/passkey, ngoài phạm vi `local_auth` thuần.
+
+## 6. Thay đổi dự kiến theo layer
+
+| Bước | Vị trí chính | Việc làm |
+| --- | --- | --- |
+| 0. Sửa phiên hiện tại | `repository_impl.dart`, `refresh_token_manager.dart`, `load_initial_resource_use_case.dart`, `AuthRouteGuard`, `ExceptionHandler`, `AppPreferences`, Auth error mapper | Lưu refresh token mới mỗi lần refresh; kiểm tra hạn tại cold start/foreground, phân loại lỗi theo `error_code` Supabase thay vì chỉ HTTP 401, retry request bảo vệ hữu hạn. Hoàn tất và test riêng trước khi gắn sinh trắc học. |
+| 1. Domain | `lib/domain/repositories/repository.dart`, `lib/domain/usecases/`, `lib/domain/entities/` | Thêm entity trạng thái thiết bị và use case kiểm tra, bật, tắt, đăng nhập nhanh, Đăng xuất theo trạng thái công tắc; giữ `Repository` hiện tại. |
+| 2. Data | `lib/data/api/app_api_services.dart`, model/mapper, `repository_impl.dart`, `app_preferences.dart` | CRUD bảng Supabase; re-auth bằng password grant tách khỏi login thường và kiểm tra đúng user; quản lý `installation_id`, dấu cài mới và dấu chuyển token; di chuyển refresh token giữa vùng phiên thường và vùng bảo vệ sinh trắc học theo §4.3, xử lý lỗi từng bước. |
+| 3. Platform | `android/app/src/main/`, `ios/Runner/Info.plist`, iOS deployment target và bridge/plugin phù hợp | Android dùng `FlutterFragmentActivity`, thêm `USE_BIOMETRIC`, AppCompat theme; iOS thêm `NSFaceIDUsageDescription`. Triển khai quyền sử dụng credential gắn với Android Keystore/iOS Keychain (§3.1), loại dấu lần cài khỏi backup/restore, kiểm thử thiết bị thật trước khi bật tính năng. |
+| 4. Login | `login_bloc.dart`, `login_tab.dart`, `load_initial_resource_use_case.dart`, `AuthRouteGuard`, `AppBloc`/Sign Out | Theo **preview A · Integrated**: nút sinh trắc học dưới form, trạng thái loading/error; đăng nhập nhanh sau Đăng xuất khi tính năng bật; reset state/cache theo user và bỏ qua kết quả request phiên cũ trước điều hướng; điều hướng theo ví. |
+| 5. Account | `account_bloc.dart`, `account_view.dart`, widget riêng trong `widgets/`, skeleton | Theo **preview A · Integrated**: nhóm Security có switch và mô tả ngắn về đăng nhập nhanh sau Đăng xuất; giữ một nút Đăng xuất hiện tại, xác thực lại khi bật, phản hồi lỗi. |
+| 6. i18n/DI | Mọi ARB hiện có, barrel exports, `lib/di/` nếu cần | Chuỗi cho switch, mô tả dễ hiểu, lý do hệ thống, lỗi và nút Login; chạy `make l10n` và `make force_build` khi thay injectable/freezed. |
+
+Tuân thủ `ui → domain ← data`: view/BLoC gọi use case, không gọi trực tiếp `local_auth`, secure storage hoặc API. Async BLoC dùng `runBlocCatching`, event `transformer: log()`, `BlocBuilder` có `buildWhen`/`BlocListener` có `listenWhen`.
+
+## 7. Trường hợp lỗi và kiểm thử
+
+- Unit test cho bước 0: access token sắp/hết hạn, app mở lại sau nhiều ngày, refresh token xoay vòng, nhiều request cùng 401 chỉ refresh một lần, 401 từ login không lặp, refresh trả `400 refresh_token_not_found`/`refresh_token_already_used` buộc nhập mật khẩu, lỗi mạng/timeout/5xx không xóa phiên, lỗi Auth chưa nhận diện không lặp vô hạn. Kiểm tra response token thiếu/trống hoặc ghi token lỗi không được coi là đăng nhập thành công.
+- Unit test tính năng: trạng thái bật theo user/installation, sai user khi re-auth, password grant tạo phiên thay thế khi single-session policy bật, di chuyển credential khi Đăng xuất với công tắc bật, app bị dừng sau **từng bước ghi/xóa** token và khôi phục fail-closed, thu hồi/xóa credential khi công tắc tắt, logout offline báo chưa thu hồi server, thiếu/đổi refresh token, server disable, hủy prompt, lockout, thiết bị không hỗ trợ, switch rollback khi API lỗi.
+- BLoC/widget test: nút nhanh chỉ hiện khi đủ điều kiện, email/mật khẩu vẫn dùng được, Account switch có nhãn trợ năng và không lặp request khi nhấn nhanh; sau user A Đăng xuất và user B đăng nhập, không hiển thị ví/tiền tệ của A kể cả khi request cũ trả về muộn hoặc tải dữ liệu B lỗi; điều hướng đúng Main/Create Wallet.
+- Kiểm thử tay trên Android vân tay và iPhone Face ID: bật/tắt, cold start, Đăng xuất khi công tắc bật/tắt, đổi account, thêm/gỡ sinh trắc học trong Settings, máy có nhiều vân tay đã đăng ký, quyền Face ID bị từ chối, app vào nền khi prompt mở, offline, hủy và khóa tạm thời. Gỡ/cài lại trên iOS phải xóa credential Keychain cũ; restore backup Android/iOS không được bật lại liên kết cũ. Kiểm tra credential không đọc được khi chưa qua xác thực hệ điều hành và PIN/passcode không mở được luồng đã hứa chỉ dùng sinh trắc học.
+- Sau triển khai: format đúng file sửa, `make force_build`/`make l10n` khi cần, `make verify`; xác nhận schema/RLS bằng hai tài khoản Supabase riêng. Không log token, mật khẩu, mã OTP hay user data nhạy cảm.
+
+## 8. Tiêu chí hoàn thành
+
+- Account chỉ bật được khi thiết bị có sinh trắc học khả dụng và người dùng xác thực lại; trạng thái sau mở lại app đúng với local + Supabase cho tài khoản/thiết bị đó.
+- Login/Account theo **phương án A · Integrated**; Account chỉ có công tắc sinh trắc học và nút Đăng xuất hiện tại. Sau Đăng xuất khi công tắc bật, Login có nút sinh trắc học; đăng nhập thành công khôi phục phiên Supabase hợp lệ rồi điều hướng đúng. Chuyển token dở dang hoặc cài lại app không được tự khôi phục phiên. Mọi lỗi cho phép quay lại mật khẩu; dữ liệu user cũ không xuất hiện sau khi rời phiên.
+- Bật/tắt trên thiết bị A không tự bật/tắt thiết bị B. RLS ngăn tài khoản A đọc/sửa trạng thái của tài khoản B.
+- Không có token hay dữ liệu sinh trắc học trong database; refresh token mới được lưu sau **mọi** lần refresh thành công. Khi công tắc bật, token dùng sau Đăng xuất chỉ đọc được qua cơ chế sinh trắc học của hệ điều hành. Khi công tắc tắt, Đăng xuất online thu hồi refresh token, xóa credential local và nút đăng nhập nhanh biến mất; nếu logout server lỗi/offline, local vẫn bị xóa và UI phải nói rõ phiên server **chưa được xác nhận thu hồi**. JWT đã cấp còn hiệu lực tới khi hết hạn.
+- Cold start/foreground xử lý hạn token trước khi vào Main; thời hạn lấy từ Supabase, không hard-code. Mất mạng không bị nhầm với token hết hiệu lực; `400` kèm mã Auth xác định refresh token bị từ chối cũng phải yêu cầu đăng nhập bằng mật khẩu, không chỉ `401`.
+- `make verify` pass và kiểm thử Android/iOS thật hoàn tất.
+
+## Tài liệu tham khảo
+
+- [local_auth 3.0.2 trên pub.dev](https://pub.dev/packages/local_auth): kiểm tra enrolled biometrics, `biometricOnly`, `persistAcrossBackgrounding` và lỗi `LocalAuthException`.
+- [local_auth_android setup](https://pub.dev/packages/local_auth_android): `FlutterFragmentActivity`, `USE_BIOMETRIC`, AppCompat theme.
+- [local_auth_darwin setup](https://pub.dev/packages/local_auth_darwin): `NSFaceIDUsageDescription`.
+- [Supabase Auth sessions](https://supabase.com/docs/guides/auth/sessions): access/refresh token và cơ chế refresh token chỉ sử dụng một lần.
+- [Supabase Auth error codes](https://supabase.com/docs/guides/auth/debugging/error-codes): phân loại refresh token không hợp lệ bằng `error_code`, không chỉ HTTP status.
+- [Supabase sign out](https://supabase.com/docs/guides/auth/signout), [Auth API contract](https://github.com/supabase/auth/blob/master/openapi.yaml): thu hồi phiên với `scope=local` và access token Bearer.
+- [Supabase RLS](https://supabase.com/docs/guides/database/postgres/row-level-security): policy theo `auth.uid()`.
+- [OWASP: cryptographic binding for biometrics](https://mas.owasp.org/MASTG/best-practices/MASTG-BEST-0036/), [Apple Keychain access control](https://developer.apple.com/documentation/Security/restricting-keychain-item-accessibility): bảo vệ quyền sử dụng credential tại hệ điều hành, không chỉ dựa vào một boolean trong app.
+- [Apple Developer Forums, DTS về vòng đời Keychain](https://developer.apple.com/forums/thread/36442): item Keychain có thể còn sau khi gỡ/cài lại app; không dựa vào uninstall để xóa credential.
