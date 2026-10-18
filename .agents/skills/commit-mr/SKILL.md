@@ -1,86 +1,28 @@
 ---
 name: commit-mr
-description: Commit thay đổi hiện tại và tạo Pull Request vào nhánh develop cho Walleto (GitHub hungbui1204/walleto). Tự tạo branch feature/* nếu đang ở develop/main, commit theo conventional style, push rồi gh pr create. Dùng khi user muốn "commit", "tạo PR/pull request", "push tạo PR vào develop", "mở pull request".
+description: Commit, push hoặc tạo GitHub Pull Request cho Walleto theo đúng hành động user đã yêu cầu. Dùng khi user nói rõ commit, push hay mở PR; mỗi hành động chỉ được thực hiện trong phạm vi đã được cho phép.
 ---
 
-# Commit + tạo PR vào develop (Walleto)
+# Git delivery — Walleto
 
-Repo dùng **GitHub** (`https://github.com/hungbui1204/walleto.git`), flow `feature/* → develop → main`.
-Dùng **`gh`**. Không dùng GitLab / `glab` / git push-options `merge_request.*`.
+Repo dùng GitHub `hungbui1204/walleto`, `gh` và flow `feature/* → develop → main`. Đọc `CLAUDE.md`, `AGENTS.md` và phần Git trong `CODING_RULES.md`. **"Commit" chỉ cho phép commit; "push" và "tạo PR" là hành động riêng.** Không suy rộng một yêu cầu thành tất cả bước.
 
-> Chỉ chạy skill này khi user yêu cầu rõ ràng commit/tạo PR (đây chính là sự cho phép). Push là hành động ra ngoài — không tự ý làm nếu user chưa yêu cầu.
+## Xác định diff
 
-## 0. Nắm scope
-```bash
-git branch --show-current
-git status --short
-git diff --stat
-```
-- Đọc kỹ diff các file sẽ commit. **Chỉ** `git add` đúng file thuộc scope task — không add đại `git add -A`.
-- **Tuyệt đối không commit:** `env/*.json`, keystore/secrets/token, `key.properties`, provisioning, file generated (`*.g.dart`, `*.freezed.dart`, `*.gr.dart`, `di.config.dart` — đã gitignore).
-- Nếu diff lẫn code ngoài scope → hỏi user trước, đừng gộp bừa.
+1. Xem branch, `git status --short`, `git diff` và `git diff --cached`. Đọc từng file dự định đưa vào commit; working tree có thể chứa thay đổi của user hoặc task khác. Stage đúng path thuộc yêu cầu, không dùng `git add -A` theo thói quen.
+2. Không stage secrets, `env/*.json`, keystore, `key.properties`, provisioning profile hay file generated đã ignore. Nếu thay đổi ngoài scope lẫn trong cùng file, tách hunk an toàn hoặc hỏi user trước khi commit phần chưa được yêu cầu.
+3. Nếu thay đổi Dart, xác nhận codegen/l10n cần thiết đã chạy, format đúng file đã sửa, và `make verify` đã pass. Với docs/skill-only, kiểm tra format/link/validation phù hợp thay vì chạy Flutter test vô ích. Báo rõ gate chưa chạy hoặc lỗi do trạng thái workspace; không ghi "pass" khi chưa thấy kết quả.
 
-## 1. Pre-flight (bắt buộc pass trước khi commit)
-Nếu vừa sửa Dart mà chưa kiểm tra:
-```bash
-make analyze                       # phải "No issues found" (hoặc giải thích lỗi còn lại)
-fvm dart format <các-file-đã-sửa>  # format đúng file, không format cả thư mục
-```
-- Đụng freezed/injectable/auto_route/json_serializable → `make force_build`. Thêm string → ARB + `make l10n`.
-- Analyze fail → **dừng, sửa xong mới commit.**
+## Commit theo yêu cầu
 
-## 2. Tạo branch (nếu cần)
-- Đang ở `develop` / `main` → **bắt buộc** tạo nhánh mới `feature/<mô-tả-kebab>`:
-```bash
-git checkout -b feature/<mo-ta-ngan-gon>
-```
-- Đang ở sẵn một `feature/*` phù hợp → commit thẳng.
-- Tên branch ngắn, mô tả đúng thay đổi. Nếu không chắc → đề xuất 1 tên rồi tiếp tục.
+- Nếu đang ở `develop`/`main` và cần commit feature, tạo branch `feature/<mô-tả>` theo quy ước repo; nếu đã ở branch phù hợp thì dùng branch đó. Không đổi branch khi có thay đổi chưa phân định được chủ sở hữu hoặc khi thao tác có thể mang theo diff ngoài scope.
+- Commit message tiếng Anh theo Conventional Commits, mô tả lý do khi cần. Không `--no-verify`, không amend commit đã push nếu user chưa yêu cầu. Dùng cách ghi message phù hợp shell hiện tại; không sao chép heredoc Bash vào PowerShell.
+- Sau commit, dừng nếu user chỉ yêu cầu commit. Trả branch và hash cùng kết quả kiểm chứng.
 
-## 3. Commit
-Message theo **conventional commits** (`feat:` / `fix:` / `refactor:` / `build:` / `chore:` …), tiếng Anh, tiêu đề ≤ ~72 ký tự, thân giải thích *tại sao*:
+## Push/PR khi được yêu cầu
 
-```bash
-git add <đúng-các-file>
-git commit -m "$(cat <<'EOF'
-<type>: <tóm tắt thay đổi>
+- Push branch hiện tại bằng `git push -u origin HEAD` nếu user đã yêu cầu push hoặc PR. Không force push nếu chưa được yêu cầu rõ. Khi bị từ chối, giữ local commit và báo nguyên nhân.
+- Trước khi tạo PR, kiểm tra PR hiện có cho branch. Nếu đã có, cập nhật branch và trả URL; không tạo bản trùng. PR mới dùng `gh pr create --base develop` trừ khi user chỉ định base khác. Theo `.github/pull_request_template.md` nếu có; nội dung nêu thay đổi, lý do, các test **đã thực chạy**, rủi ro hoặc phần chưa kiểm chứng. Viết body vào file tạm rồi dùng `--body-file` để giữ xuống dòng trên cả PowerShell và Bash.
+- Trả URL PR và trạng thái CI quan sát được. Không tự review, approve hoặc merge PR.
 
-<thân: bối cảnh + lý do, không chỉ liệt kê file>
-
-EOF
-)"
-```
-
-Không `--no-verify`. Không amend commit đã push.
-
-## 4. Push + tạo PR
-PR description **bám** `.github/pull_request_template.md` nếu file tồn tại.
-
-```bash
-git push -u origin HEAD
-
-gh pr create --base develop --title "<type>: <tóm tắt>" --body "$(cat <<'EOF'
-## Summary
-<1-3 bullet points: what and why>
-
-## Test plan
-- [ ] make analyze
-- [ ] make testing (nếu có test mới/sửa)
-- [ ] Manual: <bước kiểm tra UI/flow nếu có>
-
-EOF
-)"
-```
-
-- **Không** `--force`. Không đổi base sang `main` trừ khi user yêu cầu.
-- PR đã tồn tại cho branch này → chỉ `git push` (không `gh pr create` lần nữa). Trả URL PR hiện có: `gh pr view --web` / `gh pr view --json url`.
-- Tick checklist **đã thật sự làm**. Không bịa ticket/link.
-
-## 5. Báo cáo
-Trả lại cho user:
-- Tên branch, hash commit, và **link PR**.
-- Nhắc review + merge vào `develop`.
-
-## Xử lý sự cố
-- **`gh` chưa login / thiếu quyền:** báo user; commit local vẫn giữ.
-- **Push bị từ chối:** báo user, không `--force` trừ khi user yêu cầu rõ.
+Khi `gh` thiếu đăng nhập/quyền hoặc push bị chặn, hoàn tất phần local đã được phép và báo rõ bước nào chưa xong.

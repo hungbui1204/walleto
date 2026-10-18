@@ -1,59 +1,33 @@
 ---
 name: scaffold-feature
-description: Sinh khung một feature full-stack mới trong Walleto theo đúng thứ tự Clean Architecture (domain → data → ui) + codegen + i18n + analyze. Dùng khi user muốn "thêm feature mới", "tạo màn hình kèm API/use case", hoặc scaffold end-to-end một chức năng.
+description: Triển khai một feature Walleto cần phối hợp domain, data và có thể cả UI, từ contract/API đến test. Dùng khi thêm hành vi hoặc endpoint mới xuyên nhiều layer; với UI chỉ dùng add-screen.
 ---
 
-# Scaffold feature full-stack (Walleto)
+# Scaffold feature — Walleto
 
-Tạo khung một feature mới theo Clean Architecture của Walleto. Bám sát `CLAUDE.md §4.2` và `CODING_RULES.md`. **Bắt chước file mẫu**, không bịa pattern.
+Đọc `CLAUDE.md`, `AGENTS.md`, `CODING_RULES.md` và requirement liên quan nếu có. Hoàn thiện một flow dùng được; "scaffold" không có nghĩa là để placeholder. Giữ `ui → domain ← data`, một `Repository` interface, `get_it` + `injectable`, `dio`/Supabase qua `AppApiServices`, `freezed` và barrel hiện có. Không áp cấu trúc package-per-feature, MVVM, GoRouter hay HTTP client khác từ skill bên ngoài.
 
-## 0. Trước khi bắt đầu
-- Hỏi/nhận rõ: tên feature, danh sách use case (API nào), các field entity, màn hình đi kèm (nếu có).
-- Nếu có `docs/requirements/<feature>.md` → đọc trước.
-- Mở file mẫu: `lib/domain/usecases/get_wallets_use_case.dart`, `lib/data/api/mappers/wallet_data_mapper.dart`, `lib/ui/views/create_wallet/`.
-- **Tra xem đã có sẵn chưa:** `ls lib/domain/usecases/ lib/domain/entities/ lib/ui/views/`.
+## Xác định lát cắt
 
-## 1. Domain (làm trước)
-1. Entity (nếu chưa có): `lib/domain/entities/<name>.dart` — pure Dart, không import `flutter/`/`dio`/`data/`.
-2. **Thêm method vào `Repository`** (`lib/domain/repositories/repository.dart`) — return type là entity. **Không** tạo repo mới theo feature trừ khi user yêu cầu tách.
-3. Use case(s): `lib/domain/usecases/<verb>_<noun>_use_case.dart` — extend `BaseFutureUseCase<Input, Output>`, `@injectable`, inject `Repository`, logic trong `buildUseCase`. Input/Output `@freezed sealed class` extends `BaseInput`/`BaseOutput`.
-4. Export tất cả vào `lib/domain/domain.dart`.
+- Truy vết flow gần nhất từ View/BLoC qua use case, `Repository`, `RepositoryImpl`, API/service và mapper. Dùng `rg --files` trong `lib/domain/`, `lib/data/`, `lib/ui/views/`, `test/` để tìm code tái dùng; đọc contract API thật trước khi quyết định model/endpoint.
+- Xác định đây là Future, Stream, local preference/service hay phối hợp nhiều nguồn. Xác định input, output, lỗi, cancellation/retry, route/overlay và dữ liệu nào là số tiền hoặc auth. Hỏi khi contract hoặc product behavior chưa thể suy ra; tiếp tục phần độc lập trước.
+- Tham khảo `get_wallets_use_case.dart` + `wallet_data_mapper.dart` cho request thường; `send_ai_chat_message_use_case.dart` + `ai_chat/` cho stream. Chọn mẫu theo behavior, không tạo entity/model/mapper chỉ vì checklist.
 
-## 2. Data
-1. Model API: `lib/data/api/models/<name>_data.dart` — suffix `Data`, `@freezed` + `json_serializable`, `@JsonKey`.
-2. Mapper: `lib/data/api/mappers/<name>_data_mapper.dart` — extend `BaseDataMapper<Data, Entity>`, `@injectable`, null-safe default. Cần 2 chiều → `with DataMapperMixin`.
-3. API method trong `lib/data/api/app_api_services.dart` (đúng client: Auth / Rest / Functions / Storage).
-4. Implement method trên `RepositoryImpl` — `@LazySingleton(as: Repository)`, không leak `*Data`.
-5. Export vào `lib/data/data.dart`.
+## Domain → data → UI khi cần
 
-## 3. UI (nếu feature có màn hình)
-**Dùng skill `add-screen`** cho toàn bộ phần UI. Tóm tắt: BLoC extend `BaseBloc` `@injectable`, mọi `emit` async bọc `runBlocCatching`, `transformer: log()`; View extend `BasePageState`, `@RoutePage()`, `BlocBuilder` có `buildWhen`; không hard-code; tái sử dụng `lib/ui/widgets/`.
+1. **Domain:** dùng entity hiện có hoặc thêm entity thuần Dart khi contract cần. Thêm method vào `lib/domain/repositories/repository.dart`; không tạo repo mới nếu user không yêu cầu thay kiến trúc. Use case `@injectable` ở `lib/domain/usecases/` dùng `BaseFutureUseCase` hoặc `BaseStreamUseCase` đúng kết quả; I/O theo pattern `BaseInput`/`BaseOutput` của repo. Đặt business rule tại domain, không trong widget hoặc `*Data` model. Export public file trong `lib/domain/domain.dart`.
+2. **Data:** cập nhật `AppApiServices`/service thích hợp, `RepositoryImpl` (`@LazySingleton(as: Repository)`) và mapper/model cần thiết. Model `*Data` chỉ ở data layer; dùng `freezed`/JSON generation khi contract cần. Mapper `@injectable` theo `BaseDataMapper`, thêm `DataMapperMixin` khi cần map hai chiều. JSON/field nullable theo response thật; dùng default null-safe hợp lý, không che thiếu field bắt buộc hoặc leak `*Data` ra domain. Tìm đúng client Auth/Rest/Functions/Storage, giữ xử lý token/error/logging sẵn có. Export public file trong `lib/data/data.dart`.
+3. **UI nếu feature có màn:** áp dụng `add-screen` cho View/BLoC, widget, route hoặc overlay, i18n và test. Nếu feature chỉ là data/domain, không dựng màn giả hoặc route không dùng.
 
-## 4. Codegen
-```bash
-make force_build
-```
-Sinh `*.freezed.dart`, `*.g.dart`, `di.config.dart`, `*.gr.dart`. **Không sửa tay** file generated.
+## Test và verify
 
-## 5. i18n (nếu có string user-facing)
-Thêm key vào mọi ARB hiện có rồi `make l10n`. (Skill `add-i18n`.)
+- Thêm/cập nhật test mirror `lib/` cho behavior mới hoặc bug fix: use case (kết quả, lỗi), mapper/parser khi có biến đổi, BLoC (state, side effect, retry/concurrency) và widget khi tương tác UI cần kiểm chứng. Với stream, kiểm tra thứ tự event, cancellation và lỗi phù hợp. Kiểm tra contract `BaseFutureUseCase.execute`: `AppException` giữ nguyên, lỗi khác được wrap theo base class. Dùng `mocktail`, `bloc_test`, `flutter_test` hiện có; tham khảo test cùng layer thay vì tạo helper/mock package chung mới.
+- Chạy `make force_build` khi đổi `freezed`, JSON generation, injectable hoặc route. Chạy `make l10n` khi đổi ARB. Không sửa generated file bằng tay; format đúng file Dart đã chạm bằng `fvm dart format <file...>`.
+- Chạy `make verify` (`analyze`, `format_check`, `testing`), rồi tự review bằng `walleto-code-review` và `walleto-bloc-check`; thêm `walleto-security-review` khi thay đổi auth, giao dịch, dữ liệu tài chính, storage hoặc network nhạy cảm. Nêu rõ kiểm tra chưa chạy được. Không tự commit/push/PR hay thêm dependency lớn ngoài yêu cầu.
 
-## 6. Test (bắt buộc — `CLAUDE.md §0 mục 10`)
-- Use case: `test/domain/usecases/<verb>_<noun>_use_case_test.dart` — mock `Repository`, cover happy path + lỗi (`AppException` propagate, lỗi lạ bọc `AppUncaughtException`).
-- Mapper (nếu mapping logic thật): `test/data/api/mappers/<name>_data_mapper_test.dart`.
-- Bloc/view → skill `add-screen`.
-- Mock local theo file. Chi tiết: `CODING_RULES.md §15`.
-- Nếu chưa có `bloc_test`/`mocktail` → thêm `dev_dependencies` khi viết test đầu tiên.
+## Nguồn tham khảo bổ trợ
 
-## 7. Verify
-```bash
-make verify
-```
-Gồm analyze + format_check + testing. Checklist `CLAUDE.md §8`.
-
-## Ràng buộc
-- Layer một chiều `ui → domain ← data`; UI không gọi `Repository`/API trực tiếp.
-- Import qua barrel; export file public mới.
-- Không hard-code color/style/string/magic number.
-- Minimize scope; không commit trừ khi user yêu cầu.
-- Không bỏ qua Test — feature mới bắt buộc kèm unit test tương ứng.
+- [Flutter Agent Plugins](https://github.com/flutter/agent-plugins)
+- [Dart unit test workflow](https://github.com/dart-lang/skills/blob/main/skills/dart-add-unit-test/SKILL.md)
+- [VGV BLoC testing](https://github.com/VeryGoodOpenSource/vgv-ai-flutter-plugin/blob/main/skills/bloc/SKILL.md)
+- [Flutter app workflow (discovery-first)](https://github.com/thienqo/flutter-skills/blob/main/skills/flutter-app-workflow/SKILL.md)
