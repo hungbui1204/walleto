@@ -47,6 +47,7 @@ User yêu cầu                                  → Role
 | `lib/` | ✅ | ❌ | ✅ | ❌ | ❌ | 👁 |
 | `test/` (bắt buộc kèm feature/bug fix — [CLAUDE.md §0 mục 10](CLAUDE.md)) | ✅ | ❌ | ✅ | ❌ | ❌ | 👁 |
 | `docs/`, `*.md` root | ❌ | ✅ | ❌ | ❌ | ❌ | 👁 |
+| `.agents/skills/**` (hướng dẫn skill, không gồm script chạy) | ❌ | ✅ | ❌ | ❌ | ❌ | 👁 |
 | `ios/`, `android/` | ❌ | ❌ | ❌ | ✅ | ❌ | 👁 |
 | `.github/`, `makefile`, `tools/` | ❌ | ❌ | ❌ | ❌ | ✅ | 👁 |
 | `pubspec.yaml` | ⚠️ | ❌ | ❌ | ⚠️ | ❌ | 👁 |
@@ -68,7 +69,7 @@ User yêu cầu                                  → Role
 
 **Không được:** commit/push/PR (trừ khi user yêu cầu) · sửa `ios/`,`android/` (→ Platform Agent) · sửa `.github/` (→ CI Agent) · thêm dependency lớn không được approve · tạo file docs mới (→ Docs Agent) · bỏ qua test khi coding feature/fix bug.
 
-**Output mong đợi:** diff tập trung đúng scope, pass `make verify` (analyze + format_check + testing), unit test cho logic mới/sửa, barrel exports đầy đủ, i18n đủ ARB hiện có nếu có string mới. Theo checklist [CLAUDE.md §8](CLAUDE.md).
+**Output mong đợi:** diff tập trung đúng scope, pass `make verify` (analyze + format_check + testing), unit test cho logic mới/sửa, barrel exports đầy đủ, i18n đủ ARB hiện có nếu có string mới. Trước khi báo xong, tự review diff bằng skill [`walleto-code-review`](.agents/skills/walleto-code-review/SKILL.md); dùng skill chuyên sâu khi phần thay đổi liên quan. Theo checklist [CLAUDE.md §8](CLAUDE.md).
 
 ---
 
@@ -76,7 +77,7 @@ User yêu cầu                                  → Role
 
 **Dùng khi:** viết requirement màn hình, flow nghiệp vụ, cập nhật README/design notes.
 
-**Được phép:** `docs/**` · `README.md`, `CLAUDE.md`, `CODING_RULES.md`, `AGENTS.md` · `.github/` templates.
+**Được phép:** `docs/**` · `README.md`, `CLAUDE.md`, `CODING_RULES.md`, `AGENTS.md` · `.agents/skills/**` cho hướng dẫn skill · `.github/` templates.
 
 **Không được:** sửa `lib/` (trừ khi user yêu cầu đồng bộ code + docs) · chạy build/release · thay đổi CI hoặc native.
 
@@ -154,3 +155,11 @@ Tham chiếu file có sẵn: `ls docs/requirements/ docs/flows/` (tạo khi user
 6. i18n: string mới có trong mọi ARB hiện có.
 7. Security: không leak secrets/token/key; không log dữ liệu nhạy cảm.
 8. Dead code: widget/class mới thêm phải được tham chiếu thật (không chỉ trong barrel).
+
+**Skill dùng khi review:**
+
+- [`walleto-code-review`](.agents/skills/walleto-code-review/SKILL.md): review diff/commit/PR hoặc tự kiểm tra trước khi kết thúc task coding; chỉ báo lỗi có đường dẫn, tác động và bằng chứng.
+- [`walleto-bloc-check`](.agents/skills/walleto-bloc-check/SKILL.md): thêm khi diff đụng BLoC, use case, repository, mapper hoặc ranh giới layer.
+- [`walleto-security-review`](.agents/skills/walleto-security-review/SKILL.md): thêm khi review auth, dữ liệu tài chính nhạy cảm, storage, network, deep link, native config hoặc dependency liên quan bảo mật.
+
+Skill là hướng dẫn bổ trợ; nếu mâu thuẫn, ưu tiên `CLAUDE.md`, `CODING_RULES.md` và phân quyền trong file này. Review độc lập luôn chỉ đọc. Code Agent được sửa lỗi phát hiện trong phạm vi task coding đã được giao, rồi chạy lại kiểm tra liên quan. Không tự gửi review/comment lên GitHub.
