@@ -15,7 +15,6 @@ class RepositoryImpl implements Repository {
     this._categoryDataMapper,
     this._walletDataMapper,
     this._transactionDataMapper,
-    this._dailyStatDataMapper,
     this._monthSummaryStatDataMapper,
     this._walletStatDataMapper,
     this._userDataMapper,
@@ -35,7 +34,6 @@ class RepositoryImpl implements Repository {
   final CategoryDataMapper _categoryDataMapper;
   final WalletDataMapper _walletDataMapper;
   final TransactionDataMapper _transactionDataMapper;
-  final DailyStatDataMapper _dailyStatDataMapper;
   final MonthSummaryStatDataMapper _monthSummaryStatDataMapper;
   final UserDataMapper _userDataMapper;
   final AiChatStreamEventDataMapper _aiChatStreamEventDataMapper;
@@ -500,35 +498,10 @@ class RepositoryImpl implements Repository {
   }
 
   @override
-  Future<List<DailyStat>> getMonthStat({required int targetMonth, required int targetYear}) async {
-    final response = await _appApiServices.getDailyStats(
-      targetMonth: targetMonth,
-      targetYear: targetYear,
-    );
-
-    return _dailyStatDataMapper.mapToListEntity(response);
-  }
-
-  @override
   Future<List<MonthSummaryStat>> getMonthSummaryStats({String? baseCurrency}) async {
     final response = await _appApiServices.getMonthSummaryStats(baseCurrency: baseCurrency);
 
     return _monthSummaryStatDataMapper.mapToListEntity(response);
-  }
-
-  @override
-  Future<List<WalletStat>> getWalletStats({
-    required int targetMonth,
-    required int targetYear,
-    required CategoryType categoryType,
-  }) async {
-    final response = await _appApiServices.getWalletStats(
-      targetMonth: targetMonth,
-      targetYear: targetYear,
-      categoryType: categoryType,
-    );
-
-    return _walletStatDataMapper.mapToListEntity(response);
   }
 
   @override

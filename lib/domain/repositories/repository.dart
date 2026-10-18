@@ -60,15 +60,7 @@ abstract class Repository {
 
   Future<void> createTransaction(Transaction transaction);
 
-  Future<List<DailyStat>> getMonthStat({required int targetMonth, required int targetYear});
-
   Future<List<MonthSummaryStat>> getMonthSummaryStats({String? baseCurrency});
-
-  Future<List<WalletStat>> getWalletStats({
-    required int targetMonth,
-    required int targetYear,
-    required CategoryType categoryType,
-  });
 
   Future<WalletStat> getTopWalletStats({
     required int targetMonth,
