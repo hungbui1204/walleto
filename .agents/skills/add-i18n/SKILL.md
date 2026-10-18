@@ -1,45 +1,15 @@
 ---
 name: add-i18n
-description: Thêm string localization mới vào Walleto — thêm key vào mọi file ARB hiện có (hiện intl_en_US.arb) đúng format rồi make l10n, dùng qua S.current. Dùng khi user muốn "thêm text/string mới", "thêm i18n key", "dịch chuỗi".
+description: Thêm hoặc sửa chuỗi hiển thị và nhãn accessibility của Walleto trong ARB hiện có, sinh lại intl_utils và cập nhật chỗ dùng S.current. Dùng khi một UI flow cần copy, placeholder hoặc bản dịch mới.
 ---
 
-# Add i18n key (Walleto)
+# Add i18n — Walleto
 
-Thêm chuỗi localization theo `CODING_RULES.md §9`. **Không hard-code string user-facing.**
+Đọc `CLAUDE.md` và `CODING_RULES.md §9` trước khi sửa. Repo dùng `intl_utils` (`make l10n`) và `S.current`, không dùng hướng dẫn `flutter gen-l10n`/`context.l10n` từ project khác.
 
-## 0. Nhận rõ
-- Key name (lowerCamelCase, mô tả ý nghĩa: `createWallet`), và nội dung từng locale.
-- Hiện **chỉ có `en_US`**. Nếu sau này có thêm locale → thêm cùng key vào **mọi** ARB, không locale nào trống.
-- Nếu user chỉ đưa 1 ngôn ngữ trong khi đã có nhiều ARB → hỏi bản dịch còn lại. **Không bỏ trống locale nào.**
+1. Tra `lib/resources/l10n/intl_*.arb` và `S.current` để tìm key cùng ý nghĩa trước khi tạo key mới. Chọn key lowerCamelCase theo vai trò của text, tránh key theo vị trí hoặc bản dịch hiện tại.
+2. Thêm/sửa key trong **mọi ARB hiện có**. Tại `intl_en_US.arb` đặt `@key.description` mô tả ngữ cảnh cho copy mới. Với chuỗi có tham số, xem cú pháp placeholder và metadata của các key đang dùng rồi xác nhận API được sinh ra sau `make l10n`. Giữ cấu trúc JSON và cách nhóm key của file. Với locale khác, cung cấp bản dịch có nghĩa; hỏi user chỉ khi thuật ngữ sản phẩm hoặc bản dịch bắt buộc chưa được xác định.
+3. Dùng `S.current.<key>` ở View/widget hoặc nơi phù hợp; truyền chuỗi đã localize vào widget chung khi widget không nên phụ thuộc trực tiếp vào l10n. Nhãn screen reader và thông báo lỗi user-facing cũng cần key.
+4. Chạy `make l10n`, không sửa `lib/resources/l10n/generated/` bằng tay. Nếu có Dart thay đổi, format đúng file vừa sửa; chạy `make analyze` và test liên quan đến copy/placeholder nếu behavior phụ thuộc vào chúng.
 
-## 1. Thêm key vào mọi file ARB
-Hiện tại: `lib/resources/l10n/intl_en_US.arb` (main locale — kèm metadata `@key`).
-
-```jsonc
-"createWallet": "Create wallet",
-"@createWallet": { "description": "Create wallet screen title" }
-```
-
-- Giữ JSON hợp lệ (dấu phẩy, ngoặc). Key theo thứ tự nhất quán với file.
-- Placeholder: ICU `"{name}"` + khai báo trong `@key.placeholders`.
-
-## 2. Regenerate
-```bash
-make l10n
-```
-Sinh code trong `lib/resources/l10n/generated/` — **không sửa tay**.
-
-## 3. Dùng trong UI
-```dart
-Text(S.current.createWallet)
-```
-
-## 4. Verify
-```bash
-make analyze
-```
-Phải pass (thiếu key ở 1 locale sẽ báo lỗi khi build/analyze).
-
-## Ràng buộc
-- Đủ mọi locale hiện có, không locale nào trống.
-- Không sửa file generated. Không commit trừ khi user yêu cầu.
+Hiện repo có `intl_en_US.arb`; luôn khám phá lại trước mỗi task thay vì giả định chỉ có một locale. Không tự commit/push/PR.

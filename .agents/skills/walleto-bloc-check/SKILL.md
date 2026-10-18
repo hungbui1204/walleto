@@ -11,8 +11,8 @@ Trace one changed user flow from the view to its BLoC, use case, `Repository` in
 
 - `ui → domain ← data`: UI calls use cases through BLoC and never imports `data/` or invokes API/repository directly. Data models stay inside data; domain exposes entities.
 - Walleto keeps one `Repository` interface unless the user explicitly requests a split. Public files use the project's barrels; DI follows existing `get_it`/`injectable` conventions.
-- Async BLoC handlers use `runBlocCatching`; event registrations use `transformer: log()`. `BlocBuilder`, `BlocListener`, and `BlocConsumer` use the applicable `buildWhen`/`listenWhen`. Check that navigation and one-shot effects do not fire from rebuilds.
-- State ownership, subscriptions, disposals, repeated events, and error/loading transitions behave correctly under retries and page disposal. Do not flag every local `setState` without a concrete bug or a Walleto rule violation.
+- Async BLoC handlers use `runBlocCatching`; new event registrations follow the repo's `transformer: log()` convention. Where the affected flow deliberately uses another transformer (for example `AiChatBloc` uses `exhaustMap()` for load-more and submit), verify the concurrency requirement and test it rather than flagging the transformer name alone. `BlocBuilder`, `BlocListener`, and `BlocConsumer` use the applicable `buildWhen`/`listenWhen`. Check that navigation and one-shot effects do not fire from rebuilds.
+- State ownership, subscriptions, disposals, repeated events, stream cancellation, and error/loading transitions behave correctly under retries and page disposal. Do not flag every local `setState` without a concrete bug or a Walleto rule violation.
 - New or fixed logic has meaningful tests in the mirrored `test/` path: use case and BLoC behavior, plus mapper/service logic when present. Verify happy path and the relevant error/edge path.
 
 In a standalone review, report evidence-backed findings using `path:line` and do not edit files. During implementation, fix only issues in the authorized task scope and run the repository's focused verification commands.

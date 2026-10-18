@@ -1,126 +1,42 @@
 ---
 name: add-screen
-description: Code một màn hình Walleto end-to-end — dựng khung (view + BLoC event/state + route + barrel) → code UI theo design system (app_colors/AppTextStyles/Dimens.responsive(), tái sử dụng lib/ui/widgets) → i18n ARB → codegen → analyze. Tự áp dụng Clean Architecture + coding rules. Dùng khi user muốn "code/thêm màn hình", "tạo screen/page", "làm giao diện + logic màn X", "style/ráp UI màn hình".
+description: Thêm hoặc hoàn thiện màn hình, tab, popup hay bottom sheet trong Walleto khi data/use case đã có. Dùng cho UI và BLoC của một flow; nếu cần API/use case mới, dùng scaffold-feature cho toàn bộ lát cắt.
 ---
 
-# Add screen (Walleto) — end-to-end
+# Add screen — Walleto
 
-Skill "ô dù" để code trọn một màn hình: **cấu trúc + UI + i18n**, luôn tuân thủ Clean Architecture (`ui → domain ← data`). Bám `CODING_RULES.md §7` (BLoC/View), §8 (design system), §9 (i18n), §10 (navigation).
+Đọc `CLAUDE.md`, `AGENTS.md` và phần liên quan trong `CODING_RULES.md` trước khi sửa. Các file đó quyết định kiến trúc và quyền ghi; ví dụ của skill chỉ là điểm khởi đầu. Làm xong một flow hoạt động được, không để widget, route hoặc BLoC mới thành dead code.
 
-> Nếu màn hình cần **API/use case mới** → làm domain+data trước bằng skill `scaffold-feature`, rồi quay lại đây cho phần UI.
-> Nếu khung màn đã có, chỉ cần **code/style UI** → nhảy thẳng Bước 3–4.
+## Khảo sát flow hiện có
 
-## 0. Trước khi bắt đầu
-- Nhận rõ: tên screen, feature nhóm nó, dữ liệu/use case cần, có protected route (auth) không, design/Figma nếu có.
-- Đọc `docs/requirements/<screen>.md` nếu có.
-- **Mở màn mẫu để bắt chước pattern:** `lib/ui/views/create_wallet/` (1 màn + bloc inject use case), `lib/ui/views/home/` (nhiều section), `lib/ui/views/auth/` (nhiều bước).
+- Đọc yêu cầu trong `docs/requirements/` nếu có; xác định đây là màn được route, tab con, popup/bottom sheet, hay chỉnh một màn đã tồn tại. Tra `lib/ui/views/`, màn lân cận, `lib/ui/widgets/`, styles trong `lib/resources/`, ARB và test tương ứng trước khi tạo file.
+- Kiểm tra dữ liệu và use case đã tồn tại trong `lib/domain/`. Nếu behavior cần API, model, mapper hoặc use case mới, xử lý lát cắt đó bằng `scaffold-feature`; không cho View/BLoC gọi `Repository` hay `AppApiServices` trực tiếp.
+- Dùng `rg --files` và `rg` để tra nguồn thật. `create_wallet/` minh họa page + BLoC; `ai_chat/` minh họa stream, widget tách file và trạng thái phức tạp. Không chép các widget inline cũ làm mẫu cho code mới.
 
----
+## Dựng đúng loại UI
 
-## 1. Cấu trúc thư mục
+- **Page có route:** đặt View trong `lib/ui/views/<feature>/`, BLoC và các `part` event/state trong `bloc/` khi có state/logic. `@RoutePage()` và `BasePageState<View, Bloc>` theo page lân cận. Đăng ký `AppRouter`; nếu flow điều hướng bằng `AppNavigator`, cập nhật cả `AppRouteInfo` và `AppRouteInfoMapper`. Chọn nhánh tab, guard, path và `hideBottomNav` theo hành vi thực tế; một View có thể xuất hiện dưới nhiều tab.
+- **Popup/bottom sheet:** theo `AppPopupInfo` và `AppPopupInfoMapper`, xem `select_category/` hoặc `create_category/`. Không thêm `AutoRoute` cho overlay. Chỉ thêm BLoC khi flow cần quản lý state/async.
+- **Màn đã có:** sửa đúng widget, BLoC và route chịu tác động; không scaffold lại toàn màn hay refactor phần không liên quan.
+- Code UI mới: View giữ lifecycle và lắp ráp bố cục; khối UI con có ý nghĩa đặt trong `widgets/<screen>_<component>_widget.dart` với class public theo `CODING_RULES.md §7.5`. Export public file mới qua `lib/ui/ui.dart` và bảo đảm nó được dùng thật.
 
-**Feature 1 màn hình** (mặc định) — file nằm THẲNG trong `<feature>/`, **KHÔNG** lồng `<feature>/<feature>/`:
-```
-lib/ui/views/<feature>/
-├── bloc/
-│   ├── <feature>_bloc.dart      # extend BaseBloc, @injectable
-│   ├── <feature>_event.dart     # part of bloc; sealed extends BaseBlocEvent
-│   └── <feature>_state.dart     # part of bloc; @freezed sealed extends BaseBlocState
-├── widgets/
-│   └── <feature>_<component>_widget.dart
-└── <feature>_view.dart          # @RoutePage(), extend BasePageState
-```
+## State, UI và tương tác
 
-**Feature nhiều màn / nhiều bước** (vd `auth/`) — nhóm trong `lib/ui/views/<feature>/`.
+- BLoC `@injectable` dùng use case qua constructor, `BaseBloc`, event/state `freezed` theo màn lân cận. Event mang ý định người dùng. Với async handler, đặt `emit` trong `runBlocCatching` và kiểm tra loading, error, retry, huỷ/lifecycle. Đăng ký event với `transformer: log()` theo mặc định của repo; nếu cần chặn request trùng như `AiChatBloc` dùng `exhaustMap()`, chứng minh ngữ nghĩa concurrency bằng test.
+- `BlocBuilder`, `BlocListener`, `BlocConsumer` có `buildWhen`/`listenWhen` tương ứng. Navigation và side effect không đặt trong `builder` có thể chạy lại.
+- Tái dùng `Pressable`, `CommonListRow`, form control, panel, shimmer, popup và bottom sheet sẵn có sau khi xem constructor. Dùng `app_colors.dart`, `AppTextStyles`, `AppDecorations` và `Dimens.dXX.responsive()` thay vì màu, style, string hoặc kích thước tự đặt. `app_colors.dart` hiện có palette **light và dark**; kiểm tra cả hai theme, không giả định mọi bề mặt luôn nền tối. `NoirScaffoldBody` là component hiện có, dùng khi phù hợp với màn lân cận.
+- Khi UI thay đổi, kiểm tra trạng thái loading/empty/error, màn nhỏ, bàn phím, text scale, semantic label và vùng chạm của control quan trọng. Có thể tham khảo hướng dẫn widget test của Flutter ở cuối file, nhưng giữ harness của Walleto.
+- String hiển thị và nhãn accessibility dùng `S.current`; áp dụng `add-i18n` khi có key mới.
 
-> `<screen>` dưới đây = tên thư mục lá (với feature 1 màn thì `<screen>` == `<feature>`).
+## Kiểm chứng và bàn giao
 
-## 2. BLoC + Event/State
-- BLoC extend `BaseBloc<<Screen>Event, <Screen>State>`, `@injectable`, inject use case qua constructor (**không** gọi `Repository`/API trực tiếp).
-- Handler: `on<<Screen>Event>(_handler, transformer: log())`.
-- **Mọi `emit` async bọc `runBlocCatching(action: ...)`**.
-- Event: `sealed class <Screen>Event extends BaseBlocEvent`; mỗi event `@freezed sealed class`. Tên theo **ý định** (`<Screen>ViewInitiated`, `<Screen>ConfirmButtonPressed`).
-- State: `@freezed sealed class <Screen>State extends BaseBlocState`.
+1. Thêm/cập nhật test trong `test/` mirror `lib/`: BLoC và logic mới phải có test hành vi; widget test khi tương tác, layout hoặc nhánh state là phần cần bảo vệ. Dùng `bloc_test`, `mocktail`, `flutter_test` đã có. Với BLoC, tham khảo `test/ui/views/create_wallet/bloc/create_wallet_bloc_test.dart` để gắn các delegate (`navigator`, `disposeBag`, `appBloc`, `commonBloc`, exception handler); với `BasePageState` widget test, đăng ký mock vào `getIt` và dọn trong `tearDown`. Xem thêm `CODING_RULES.md §15`.
+2. Chạy `make force_build` khi thay đổi `freezed`, DI hoặc `auto_route`; chạy `make l10n` nếu đổi ARB. Không sửa file generated bằng tay.
+3. Format đúng file Dart đã sửa bằng `fvm dart format <file...>`, rồi `make verify`. Nếu verify bị chặn bởi thay đổi khác trong working tree, báo rõ lệnh và lỗi thay vì sửa ngoài scope.
+4. Tự review diff bằng `walleto-code-review`; thêm `walleto-bloc-check` khi đổi BLoC/layer, và `walleto-security-review` khi flow chạm auth, tiền, storage hoặc network nhạy cảm. Không tự commit/push/PR.
 
-## 3. View + UI (design system)
+## Nguồn tham khảo bổ trợ
 
-### 3.1 View
-- `@RoutePage()` trên `StatefulWidget`; state extend `BasePageState<<Screen>View, <Screen>Bloc>`.
-- `initState` → `bloc.add(const <Screen>ViewInitiated())`.
-- Body: `NoirScaffoldBody`. App bar: `CommonAppBar`.
-
-### 3.2 Tái sử dụng widget dùng chung (ưu tiên #1)
-
-**Bắt buộc chạy trước khi tự viết widget mới:**
-
-```bash
-ls lib/ui/widgets/ lib/ui/widgets/popup/ lib/ui/widgets/bottom_sheet/
-```
-
-Có sẵn CommonButton, CommonAppBar, CommonTextField, NoirScaffoldBody, popup, bottom sheet, shimmer, empty panel… Mở file để xem constructor trước khi dùng.
-
-> Skill này **cố tình không liệt kê danh sách widget**. Luôn `ls` rồi mới kết luận "chưa có".
-
-### 3.3 Styling — KHÔNG hard-code
-| Thành phần | Dùng | Cấm | Tra danh sách |
-|------------|------|-----|---------------|
-| Màu | constant từ `app_colors.dart` | `Color(0xFF…)` | `grep '^const' lib/resources/styles/app_colors.dart` |
-| Text | `AppTextStyles.s18wBoldBlack()` | `TextStyle(...)` | `grep 'static TextStyle' lib/resources/styles/app_text_styles.dart` |
-| Panel kính | `AppDecorations.glassPanel()` | `BoxDecoration` glass tự bịa | `app_decorations.dart` |
-| Spacing/size | `Dimens.dXX.responsive()` | `16`, `EdgeInsets.all(16)` |
-| Assets | `Assets.images.xxx` | path string |
-| String | `S.current.<key>` | text trần |
-
-```dart
-Container(
-  padding: EdgeInsets.all(Dimens.d16.responsive()),
-  decoration: AppDecorations.glassPanel(),
-  child: Text(S.current.createWallet, style: AppTextStyles.s18wBoldBlack()),
-)
-```
-
-### 3.4 Kết nối state — bắt buộc buildWhen/listenWhen
-- `BlocBuilder` → `buildWhen`; `BlocListener` → `listenWhen`; `BlocConsumer` → cả hai.
-
-### 3.5 Tách widget (code mới)
-- `*_view.dart` chỉ giữ View + State + `buildPage`. Khối UI con → `widgets/<screen>_<component>_widget.dart`, class **public**.
-- Export vào `lib/ui/ui.dart`. Widget con **stateless** khi có thể; không load data / gọi use case.
-- Màn cũ có thể còn widget `_private` cùng file — đừng refactor hàng loạt trừ khi task yêu cầu.
-
-### 3.6 Responsive
-- Mọi `Dimens` gọi `.responsive()`. Ưu tiên `Expanded`/`Flexible`/`Wrap`.
-
-## 4. Route
-- Thêm `AutoRoute(page: <Screen>Route.page)` vào `lib/ui/navigation/routes/app_router.dart`.
-- Nested tab cần ẩn bottom nav → `meta: const {'hideBottomNav': true}`.
-- Protected → `AuthRouteGuard`. Navigate qua `AppNavigator`/`AppRouteInfo`.
-
-## 5. i18n
-Thêm key vào **mọi** ARB hiện có (`lib/resources/l10n/intl_en_US.arb`), rồi `make l10n`. Dùng `S.current.<key>`. (Chi tiết: skill `add-i18n`.)
-
-## 6. Codegen + verify + barrel
-```bash
-make force_build       # freezed + injectable + *.gr.dart
-make verify            # analyze + format_check + testing
-```
-Export view/widget public vào `lib/ui/ui.dart`.
-
-## 7. Test (bắt buộc — `CLAUDE.md §0 mục 10`)
-- BLoC: `test/ui/views/<feature>/bloc/<feature>_bloc_test.dart` — constructor thật + mock use case, cascade-assign `BaseBlocDelegate` (`navigator`/`disposeBag`/`appBloc`/`commonBloc`/`exceptionHandler`/`exceptionMessageMapper`), `blocTest()` happy path + lỗi.
-- View: chỉ bắt buộc nếu view có logic đáng kể. Page `BasePageState` → register mock vào `getIt`.
-- Mock: `class _MockX extends Mock implements X {}` local trong file test.
-- Nếu chưa có `bloc_test`/`mocktail` → thêm `dev_dependencies` khi viết test đầu tiên.
-- `make testing` phải pass. Chi tiết: `CODING_RULES.md §15`.
-
----
-
-## Checklist trước khi báo xong
-- [ ] Đã `ls lib/ui/widgets/` trước khi viết widget mới
-- [ ] Layer đúng: UI không import `data/`, chỉ gọi use case qua BLoC
-- [ ] `runBlocCatching` · `transformer: log()` · `buildWhen`/`listenWhen`
-- [ ] 0 hard-code color/text style/magic number/string · `.responsive()` trên mọi Dimens
-- [ ] Widget con không tự load data
-- [ ] i18n ARB + `make l10n`
-- [ ] Route đăng ký · export barrel · `make force_build` · `make analyze` pass
-- [ ] Unit test bloc (+ view nếu cần) — `make testing` pass
-- [ ] Không commit trừ khi user yêu cầu
+- [Flutter widget testing](https://github.com/flutter/agent-plugins/blob/main/skills/flutter-add-widget-test/SKILL.md)
+- [Flutter layout troubleshooting](https://github.com/flutter/agent-plugins/blob/main/skills/flutter-fix-layout-issues/SKILL.md)
+- [VGV testing](https://github.com/VeryGoodOpenSource/vgv-ai-flutter-plugin/blob/main/skills/testing/SKILL.md)
