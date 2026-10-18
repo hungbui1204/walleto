@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Walleto — Light theme previews</title>
+  <style>
+    @font-face { font-family: DM; src: url('../../../assets/fonts/DMSans-Regular.ttf'); font-weight: 400; }
+    @font-face { font-family: DM; src: url('../../../assets/fonts/DMSans-SemiBold.ttf'); font-weight: 600; }
+    @font-face { font-family: DM; src: url('../../../assets/fonts/DMSans-Bold.ttf'); font-weight: 700; }
+    @font-face { font-family: Space; src: url('../../../assets/fonts/SpaceGrotesk-Regular.ttf'); font-weight: 400; }
+    @font-face { font-family: Space; src: url('../../../assets/fonts/SpaceGrotesk-SemiBold.ttf'); font-weight: 600; }
+    @font-face { font-family: Space; src: url('../../../assets/fonts/SpaceGrotesk-Bold.ttf'); font-weight: 700; }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: #e9ecea; color: #172825; font-family: DM, Arial, sans-serif; }
+    button { font: inherit; }
+    .intro { max-width: 1290px; margin: 0 auto; padding: 44px 28px 22px; }
+    .eyebrow { color: #376d65; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; }
+    .intro h1 { font: 700 clamp(30px, 4vw, 48px)/1.06 Space, sans-serif; letter-spacing: -1.6px; margin: 13px 0 10px; }
+    .intro p { max-width: 720px; line-height: 1.55; color: #526662; margin: 0; }
+    .jump { display: flex; gap: 9px; flex-wrap: wrap; margin-top: 22px; }
+    .jump a { text-decoration: none; border-radius: 999px; border: 1px solid #c6d1ce; background: #fff; color: #244540; padding: 10px 15px; font-size: 13px; font-weight: 700; }
+    .jump a:hover, .jump a:focus-visible { border-color: #0e7168; outline: 2px solid #0e7168; outline-offset: 2px; }
+    .gallery { max-width: 1290px; margin: 0 auto; padding: 0 28px 70px; display: grid; grid-template-columns: minmax(0,1fr); gap: 34px; }
+    .concept { min-width: 0; --bg: #f4f7f5; --surface: #fff; --raised: #fff; --ink: #172b28; --sub: #526964; --border: #dbe6e1; --accent: #0b7266; --accent-soft: #e2f3ef; --positive: #08755c; --negative: #b84856; --shadow: 0 8px 26px rgba(23, 52, 46, .06); --hero: #dff1eb; --hero-2: #eff9f5; --avatar: #cfe7de; --icon-bg: #e8f3ef; --line: #a9d8c9; --nav: rgba(255,255,255,.95); background: #f7faf8; border: 1px solid #d7e2dd; border-radius: 28px; padding: 26px 28px 30px; }
+    .concept[data-concept="b"] { --bg: #f8f4ec; --surface: #fffdfa; --raised: #fffdfa; --ink: #263a32; --sub: #676b5e; --border: #e9e0d0; --accent: #176d5c; --accent-soft: #e6eee3; --positive: #22704f; --negative: #af4c4a; --shadow: 0 9px 25px rgba(75, 56, 26, .07); --hero: #e6eadc; --hero-2: #f4f1e6; --avatar: #e5e5d4; --icon-bg: #f3efe3; --line: #bdcfaa; --nav: rgba(255,253,250,.96); background: #fbf8f2; border-color: #eadfcd; }
+    .concept[data-concept="c"] { --bg: #f1f5f7; --surface: #fff; --raised: #fff; --ink: #1a3039; --sub: #526a72; --border: #d9e5ea; --accent: #006b70; --accent-soft: #ddf0f0; --positive: #08765e; --negative: #b54859; --shadow: 0 7px 24px rgba(22, 49, 62, .07); --hero: #d9eff0; --hero-2: #edf8f8; --avatar: #d1e7e9; --icon-bg: #e6f0f3; --line: #9fd1d2; --nav: rgba(255,255,255,.96); background: #f6fafb; border-color: #d3e1e6; }
+    .concept-head { display: flex; align-items: end; justify-content: space-between; gap: 18px; margin-bottom: 24px; }
+    .concept-kicker { font-size: 11px; font-weight: 700; letter-spacing: 2px; color: var(--accent); text-transform: uppercase; }
+    .concept h2 { font: 700 28px/1.1 Space, sans-serif; letter-spacing: -.8px; margin: 7px 0 6px; color: var(--ink); }
+    .concept-head p { font-size: 13px; color: var(--sub); line-height: 1.45; max-width: 560px; margin: 0; }
+    .swatches { display: flex; gap: 7px; flex-shrink: 0; }
+    .swatch { display: grid; gap: 4px; justify-items: center; font-size: 9px; color: var(--sub); }
+    .swatch i { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--border); box-shadow: 0 1px 3px #0001; }
+    .screens { min-width: 0; max-width: 100%; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 25px; align-items: start; }
+    .screen-slot { display: grid; justify-items: center; gap: 10px; }
+    .screen-caption { font: 700 11px/1.2 DM, sans-serif; color: var(--sub); letter-spacing: 1.5px; text-transform: uppercase; }
+    .phone { position: relative; width: 330px; height: 690px; overflow: hidden; background: var(--bg); color: var(--ink); border: 5px solid #26332f; border-radius: 39px; box-shadow: 0 18px 35px rgba(30,45,41,.16), 0 1px 1px #fff8 inset; }
+    .concept[data-concept="b"] .phone { border-color: #4b5149; }
+    .concept[data-concept="c"] .phone { border-color: #233d45; }
+    .phone::after { position: absolute; content: ''; width: 112px; height: 21px; border-radius: 0 0 15px 15px; background: #26332f; top: 0; left: 50%; transform: translateX(-50%); z-index: 4; }
+    .concept[data-concept="b"] .phone::after { background: #4b5149; }
+    .concept[data-concept="c"] .phone::after { background: #233d45; }
+    .status { position: relative; z-index: 3; height: 36px; padding: 8px 19px 0; display: flex; justify-content: space-between; align-items: start; font: 700 11px Space, sans-serif; }
+    .status-right { display: flex; gap: 3px; align-items: center; }
+    .status svg { width: 13px; height: 13px; }
+    .appbar { height: 50px; display: flex; align-items: center; justify-content: space-between; padding: 0 18px; }
+    .appbar h3 { font: 700 22px/1 Space, sans-serif; letter-spacing: -.7px; margin: 0; }
+    .appbar .ghost { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border: 1px solid var(--border); background: var(--surface); border-radius: 11px; color: var(--sub); }
+    .appbar .ghost svg { width: 18px; height: 18px; }
+    .screen-scroll { height: 532px; overflow: hidden; padding: 4px 15px 12px; }
+    .screen-scroll.account-scroll { height: 545px; }
+    .balance-label { text-transform: uppercase; letter-spacing: 1.5px; color: var(--sub); font: 700 10px DM, sans-serif; }
+    .balance { font: 700 37px/1.08 Space, sans-serif; letter-spacing: -1.9px; margin-top: 8px; white-space: nowrap; }
+    .balance small { font-size: 16px; letter-spacing: 0; vertical-align: 6px; margin-left: 2px; }
+    .accent-rule { width: 48px; height: 3px; border-radius: 3px; background: var(--accent); margin: 13px 0 16px; }
+    .flow { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-bottom: 13px; }
+    .flow-card, .panel, .date-control, .wallet-chip { background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow); }
+    .flow-card { border-radius: 16px; min-height: 92px; padding: 13px; }
+    .flow-title { display: flex; align-items: center; gap: 6px; color: var(--sub); font-size: 11px; font-weight: 600; }
+    .flow-title svg { width: 15px; height: 15px; }
+    .flow-value { font: 700 14px Space, sans-serif; margin-top: 13px; letter-spacing: -.45px; white-space: nowrap; }
+    .positive { color: var(--positive); }
+    .negative { color: var(--negative); }
+    .panel { border-radius: 16px; padding: 14px; margin-bottom: 12px; }
+    .panel-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .panel-head strong { font-size: 14px; }
+    .panel-head span { color: var(--sub); font-size: 11px; }
+    .wallet-row, .transaction-row { display: flex; align-items: center; gap: 9px; padding: 8px 0; min-height: 47px; }
+    .wallet-row + .wallet-row, .transaction-row + .transaction-row { border-top: 1px solid var(--border); }
+    .circle-icon { width: 32px; height: 32px; flex: none; display: grid; place-items: center; background: var(--icon-bg); color: var(--accent); border-radius: 50%; }
+    .circle-icon svg { width: 17px; height: 17px; }
+    .row-copy { min-width: 0; flex: 1; }
+    .row-title { font-size: 12px; font-weight: 700; line-height: 1.18; }
+    .row-sub { font-size: 10px; color: var(--sub); margin-top: 3px; }
+    .row-value { font: 700 12px Space, sans-serif; white-space: nowrap; }
+    .chart-panel { height: 166px; padding-bottom: 6px; }
+    .segment { height: 29px; border-radius: 9px; display: grid; grid-template-columns: 1fr 1fr; align-items: center; background: var(--accent-soft); padding: 3px; color: var(--sub); font-size: 10px; text-align: center; }
+    .segment b { background: var(--surface); color: var(--accent); height: 23px; display: grid; place-items: center; border-radius: 7px; box-shadow: 0 1px 3px #0001; }
+    .chart { display: block; width: 100%; height: 88px; margin-top: 5px; overflow: visible; }
+    .chart .grid { stroke: var(--border); stroke-width: 1; }
+    .chart .bar-in { fill: var(--accent); }
+    .chart .bar-out { fill: #d9888f; }
+    .chart text { fill: var(--sub); font: 9px DM, sans-serif; }
+    .bottom-nav { position: absolute; bottom: 0; left: 0; right: 0; height: 77px; padding: 7px 11px 15px; display: flex; justify-content: space-between; align-items: start; background: var(--nav); border-top: 1px solid var(--border); z-index: 2; }
+    .nav-item { width: 54px; display: grid; justify-items: center; gap: 3px; color: var(--sub); font-size: 9px; }
+    .nav-item svg { width: 20px; height: 20px; }
+    .nav-item.active { color: var(--accent); font-weight: 700; }
+    .nav-plus { width: 43px; height: 43px; margin-top: -22px; background: var(--accent); color: #fff; border-radius: 14px; display: grid; place-items: center; box-shadow: 0 7px 16px color-mix(in srgb, var(--accent) 30%, transparent); border: 3px solid var(--bg); }
+    .nav-plus svg { width: 22px; height: 22px; }
+    .wallet-chip { width: max-content; max-width: 100%; margin: 5px auto 16px; display: flex; align-items: center; gap: 7px; border-radius: 30px; padding: 6px 10px 6px 6px; font-size: 11px; font-weight: 700; }
+    .wallet-chip .circle-icon { width: 25px; height: 25px; }
+    .wallet-chip .circle-icon svg { width: 15px; height: 15px; }
+    .wallet-chip > svg { width: 13px; height: 13px; color: var(--sub); }
+    .date-control { border-radius: 16px; height: 46px; display: flex; align-items: center; gap: 9px; padding: 0 12px; font-size: 12px; font-weight: 700; margin-bottom: 17px; }
+    .date-control svg { width: 17px; height: 17px; color: var(--accent); }
+    .date-control .end { margin-left: auto; color: var(--sub); }
+    .day-head { display: flex; align-items: center; justify-content: space-between; margin: 3px 2px 8px; }
+    .day-head .date-big { font: 700 26px Space, sans-serif; line-height: 1; }
+    .day-head .day-small { font-size: 10px; color: var(--sub); line-height: 1.25; }
+    .day-head .day-total { font: 700 12px Space, sans-serif; }
+    .day-panel { padding: 5px 13px; }
+    .day-panel .transaction-row { min-height: 53px; }
+    .avatar-wrap { display: grid; justify-items: center; position: relative; z-index: 1; height: 53px; }
+    .avatar { width: 65px; height: 65px; border-radius: 50%; background: var(--avatar); color: var(--accent); border: 4px solid var(--bg); display: grid; place-items: center; font: 700 26px Space, sans-serif; }
+    .account-info { padding: 42px 0 0; text-align: center; overflow: hidden; }
+    .account-info h4 { margin: 0; font-size: 16px; }
+    .account-info .email { color: var(--sub); font-size: 11px; margin: 4px 0 15px; }
+    .account-info .account-row { border-top: 1px solid var(--border); }
+    .account-row { min-height: 50px; padding: 0 13px; display: flex; align-items: center; gap: 11px; text-align: left; font-size: 12px; font-weight: 600; }
+    .account-row + .account-row { border-top: 1px solid var(--border); }
+    .account-row > svg { width: 18px; height: 18px; color: var(--accent); }
+    .account-row .chev { margin-left: auto; width: 15px; height: 15px; color: var(--sub); }
+    .utility-panel { padding: 0; overflow: hidden; }
+    .theme-box { padding: 12px; border-top: 1px solid var(--border); }
+    .theme-label { font-size: 12px; font-weight: 700; margin-bottom: 9px; }
+    .theme-options { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+    .theme-option { min-height: 48px; display: flex; align-items: center; justify-content: center; gap: 7px; border-radius: 11px; border: 1px solid var(--border); color: var(--sub); background: var(--surface); font-size: 11px; font-weight: 700; }
+    .theme-option svg { width: 16px; height: 16px; }
+    .theme-option.active { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
+    .theme-option.active::after { content: '✓'; font-size: 12px; }
+    .signout { min-height: 43px; border-radius: 13px; color: var(--negative); border: 1px solid var(--border); background: var(--surface); display: flex; align-items: center; justify-content: center; gap: 7px; font-size: 12px; font-weight: 700; }
+    .signout svg { width: 15px; height: 15px; }
+    .home-screen[data-concept="a"] .screen-scroll::before, .home-screen[data-concept="b"] .screen-scroll::before, .home-screen[data-concept="c"] .screen-scroll::before { content: ''; position: absolute; z-index: 0; top: 94px; right: -48px; width: 160px; height: 140px; background: var(--hero); filter: blur(43px); opacity: .74; pointer-events: none; }
+    .home-screen .screen-scroll > * { position: relative; }
+    .concept[data-concept="b"] .panel, .concept[data-concept="b"] .flow-card { box-shadow: 0 4px 18px rgba(90,67,34,.045); }
+    .concept[data-concept="c"] .panel, .concept[data-concept="c"] .flow-card { box-shadow: 0 5px 18px rgba(26,63,75,.045); }
+    .concept-note { font-size: 12px; line-height: 1.45; color: var(--sub); margin: 17px 0 0; }
+    .footer { max-width: 1290px; margin: 0 auto; padding: 0 28px 50px; color: #61716d; font-size: 13px; line-height: 1.5; }
+    @media (max-width: 1120px) { .screens { overflow-x: auto; grid-template-columns: repeat(3, 330px); justify-content: start; padding-bottom: 8px; } }
+    @media (max-width: 640px) { .intro { padding: 30px 17px 19px; } .gallery { padding: 0 11px 45px; } .concept { padding: 20px 12px 22px; border-radius: 20px; } .concept-head { align-items: start; flex-direction: column; } .screens { gap: 12px; } .footer { padding: 0 18px 40px; } }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  </style>
+</head>
+<body>
+  <svg aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden" xmlns="http://www.w3.org/2000/svg">
+    <symbol id="home" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></symbol>
+    <symbol id="receipt" viewBox="0 0 24 24"><path d="M5 3h14v18l-3-2-4 2-4-2-3 2zM8 8h8M8 12h8M8 16h5"/></symbol>
+    <symbol id="chart" viewBox="0 0 24 24"><path d="M3 20h18M5 17l4-5 4 3 6-9M18 6h1v3"/></symbol>
+    <symbol id="user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c.5-4 3-6 8-6s7.5 2 8 6"/></symbol>
+    <symbol id="plus" viewBox="0 0 24 24"><path d="M12 4v16M4 12h16"/></symbol>
+    <symbol id="wallet" viewBox="0 0 24 24"><path d="M4 6h15a2 2 0 0 1 2 2v12H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h13M16 12h5v4h-5a2 2 0 0 1 0-4z"/></symbol>
+    <symbol id="chev" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></symbol>
+    <symbol id="down" viewBox="0 0 24 24"><path d="m5 9 7 7 7-7"/></symbol>
+    <symbol id="sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+    <symbol id="moon" viewBox="0 0 24 24"><path d="M20.5 15.5A9 9 0 0 1 8.5 3.5 9 9 0 1 0 20.5 15.5z"/></symbol>
+    <symbol id="calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18"/></symbol>
+    <symbol id="lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></symbol>
+    <symbol id="grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></symbol>
+    <symbol id="logout" viewBox="0 0 24 24"><path d="M10 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h5M14 7l5 5-5 5M9 12h10"/></symbol>
+    <symbol id="arrow-up" viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6"/></symbol>
+    <symbol id="arrow-down" viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></symbol>
+    <symbol id="cup" viewBox="0 0 24 24"><path d="M4 8h14v6a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5zM18 9h2a2 2 0 0 1 0 4h-2M5 4h12"/></symbol>
+    <symbol id="basket" viewBox="0 0 24 24"><path d="M4 10h16l-2 10H6zM8 10l4-7 4 7M3 10h18"/></symbol>
+    <symbol id="briefcase" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M9 7V4h6v3M3 13h18"/></symbol>
+    <symbol id="signal" viewBox="0 0 24 24"><path d="M4 20v-4M9 20v-8M14 20V8M19 20V4"/></symbol>
+    <symbol id="battery" viewBox="0 0 24 24"><rect x="2" y="6" width="18" height="12" rx="2"/><path d="M22 10v4M5 9h12v6H5z"/></symbol>
+  </svg>
+  <main>
+    <header class="intro">
+      <div class="eyebrow">Walleto / Light theme study</div>
+      <h1>Chọn sắc thái sáng cho Walleto</h1>
+      <p>Ba phương án dùng cùng cấu trúc màn Home, Transactions và Account hiện tại. Chúng khác nhau ở nền, mặt thẻ, độ ấm và sắc teal. Dữ liệu hiển thị chỉ để xem thiết kế.</p>
+      <nav class="jump" aria-label="Chuyển đến phương án">
+        <a href="#concept-a">A · Pearl Teal</a><a href="#concept-b">B · Warm Paper</a><a href="#concept-c">C · Cool Ledger</a>
+      </nav>
+    </header>
+    <div class="gallery" id="gallery"></div>
+    <footer class="footer">Preview độc lập để chọn hướng thiết kế. Chưa nối Flutter, BLoC hay lưu theme. Các nút trong hình minh họa trạng thái tương tác; bản triển khai sẽ dùng `Pressable`, `Semantics` và màu semantic của app.</footer>
+  </main>
+  <script>
+    const icon = (name, extra = '') => `<svg ${extra} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#${name}"></use></svg>`;
+    const nav = active => `<div class="bottom-nav" aria-hidden="true">
+      <div class="nav-item ${active === 'Home' ? 'active' : ''}">${icon('home')}<span>Home</span></div>
+      <div class="nav-item ${active === 'Transactions' ? 'active' : ''}">${icon('receipt')}<span>Transactions</span></div>
+      <div class="nav-plus">${icon('plus')}</div>
+      <div class="nav-item">${icon('chart')}<span>Budgets</span></div>
+      <div class="nav-item ${active === 'Account' ? 'active' : ''}">${icon('user')}<span>Account</span></div>
+    </div>`;
+    const shell = (title, content, active, className = '') => `<div class="phone ${className}" role="img" aria-label="Preview màn ${title} ở light theme">
+      <div class="status"><span>9:41</span><span class="status-right">${icon('signal')}${icon('battery')}</span></div>
+      <div class="appbar"><h3>${title}</h3></div>
+      <div class="screen-scroll ${active === 'Account' ? 'account-scroll' : ''}">${content}</div>${nav(active)}
+    </div>`;
+    const row = (symbol, title, subtitle, value, valueClass = '') => `<div class="transaction-row"><div class="circle-icon">${icon(symbol)}</div><div class="row-copy"><div class="row-title">${title}</div><div class="row-sub">${subtitle}</div></div><div class="row-value ${valueClass}">${value}</div></div>`;
+    const home = () => shell('Home', `
+      <div class="balance-label">Total balance</div><div class="balance">24,580,000 <small>₫</small></div><div class="accent-rule"></div>
+      <div class="flow"><div class="flow-card"><div class="flow-title">${icon('arrow-down')}Income</div><div class="flow-value positive">+18,200,000 ₫</div></div><div class="flow-card"><div class="flow-title">${icon('arrow-up')}Expense</div><div class="flow-value negative">−5,420,000 ₫</div></div></div>
+      <div class="panel"><div class="panel-head"><strong>All Wallets</strong><span>See all ›</span></div><div class="wallet-row"><div class="circle-icon">${icon('wallet')}</div><div class="row-copy"><div class="row-title">Everyday Wallet</div><div class="row-sub">VND</div></div><div class="row-value">18,450,000 ₫</div></div><div class="wallet-row"><div class="circle-icon">${icon('briefcase')}</div><div class="row-copy"><div class="row-title">Savings</div><div class="row-sub">VND</div></div><div class="row-value">6,130,000 ₫</div></div></div>
+      <div class="panel chart-panel"><div class="panel-head"><strong>Statistical Charts</strong></div><div class="segment"><b>Month Summary</b><span>Spent Stats</span></div><svg class="chart" viewBox="0 0 280 88" role="img" aria-label="Biểu đồ thu chi minh họa"><path class="grid" d="M0 24h280M0 49h280M0 74h280"/><rect class="bar-in" x="20" y="35" width="14" height="39" rx="4"/><rect class="bar-out" x="37" y="51" width="14" height="23" rx="4"/><rect class="bar-in" x="70" y="19" width="14" height="55" rx="4"/><rect class="bar-out" x="87" y="43" width="14" height="31" rx="4"/><rect class="bar-in" x="120" y="28" width="14" height="46" rx="4"/><rect class="bar-out" x="137" y="48" width="14" height="26" rx="4"/><rect class="bar-in" x="170" y="8" width="14" height="66" rx="4"/><rect class="bar-out" x="187" y="39" width="14" height="35" rx="4"/><rect class="bar-in" x="220" y="23" width="14" height="51" rx="4"/><rect class="bar-out" x="237" y="44" width="14" height="30" rx="4"/><text x="27" y="86">May</text><text x="77" y="86">Jun</text><text x="127" y="86">Jul</text><text x="177" y="86">Aug</text><text x="227" y="86">Sep</text></svg></div>
+    `, 'Home', 'home-screen');
+    const transactions = () => shell('Transactions', `
+      <div class="wallet-chip"><div class="circle-icon">${icon('wallet')}</div><span>All Wallets</span>${icon('down')}</div>
+      <div class="date-control">${icon('calendar')}<span>October 2026</span><span class="end">${icon('down')}</span></div>
+      <div class="day-head"><div style="display:flex;gap:7px;align-items:center"><span class="date-big">09</span><span class="day-small">Friday<br>October 2026</span></div><span class="day-total negative">−326,000 ₫</span></div>
+      <div class="panel day-panel">${row('cup','Coffee','Everyday Wallet · 08:40','−65,000 ₫','negative')}${row('basket','Groceries','Everyday Wallet · 12:15','−261,000 ₫','negative')}</div>
+      <div class="day-head"><div style="display:flex;gap:7px;align-items:center"><span class="date-big">08</span><span class="day-small">Thursday<br>October 2026</span></div><span class="day-total positive">+4,500,000 ₫</span></div>
+      <div class="panel day-panel">${row('briefcase','Freelance','Savings · 17:30','+4,500,000 ₫','positive')}</div>
+      <div class="day-head"><div style="display:flex;gap:7px;align-items:center"><span class="date-big">07</span><span class="day-small">Wednesday<br>October 2026</span></div><span class="day-total negative">−840,000 ₫</span></div>
+      <div class="panel day-panel">${row('basket','Home supplies','Everyday Wallet · 18:20','−840,000 ₫','negative')}</div>
+    `, 'Transactions');
+    const account = () => shell('Account', `
+      <div class="avatar-wrap"><div class="avatar">AN</div></div>
+      <div class="panel account-info"><h4>Alex Nguyen</h4><div class="email">alex.nguyen@example.com</div><div class="account-row">${icon('lock')}<span>Change Password</span>${icon('chev','class="chev"')}</div></div>
+      <div class="panel utility-panel"><div class="account-row">${icon('wallet')}<span>My Wallets</span>${icon('chev','class="chev"')}</div><div class="account-row">${icon('grid')}<span>Categories</span>${icon('chev','class="chev"')}</div><div class="theme-box"><div class="theme-label">Appearance</div><div class="theme-options"><div class="theme-option active">${icon('sun')}Light</div><div class="theme-option">${icon('moon')}Dark</div></div></div></div>
+      <div class="signout">${icon('logout')}Sign Out</div>
+    `, 'Account');
+    const concepts = [
+      { id: 'a', title: 'Pearl Teal', detail: 'Gần với Noir Glass nhất: nền ngọc trai, thẻ trắng, teal rõ và bóng rất nhẹ. Giữ cảm giác Walleto khi chuyển từ Dark sang Light.', note: 'Đề xuất nếu ưu tiên giữ nhận diện hiện có và cần chuyển theme mượt, ít thay đổi cảm nhận.' },
+      { id: 'b', title: 'Warm Paper', detail: 'Nền giấy ấm và thẻ trắng kem. Cảm giác gần gũi, hợp app tài chính cá nhân hơn là bảng số liệu lạnh.', note: 'Đề xuất nếu muốn Light mode có cá tính riêng, dịu mắt và thân thiện.' },
+      { id: 'c', title: 'Cool Ledger', detail: 'Nền xanh xám nhạt, đường chia sắc nét, teal hơi xanh lam. Ưu tiên quét số liệu và đọc danh sách giao dịch.', note: 'Đề xuất nếu ưu tiên độ rõ của dữ liệu, bảng biểu và cảm giác gọn gàng.' },
+    ];
+    const gallery = document.getElementById('gallery');
+    gallery.innerHTML = concepts.map(c => `<section class="concept" id="concept-${c.id}" data-concept="${c.id}" aria-labelledby="title-${c.id}"><div class="concept-head"><div><div class="concept-kicker">Phương án ${c.id.toUpperCase()}</div><h2 id="title-${c.id}">${c.title}</h2><p>${c.detail}</p></div><div class="swatches"><span class="swatch"><i style="background:var(--bg)"></i>Nền</span><span class="swatch"><i style="background:var(--surface)"></i>Thẻ</span><span class="swatch"><i style="background:var(--accent)"></i>Teal</span><span class="swatch"><i style="background:var(--ink)"></i>Chữ</span></div></div><div class="screens"><div class="screen-slot"><span class="screen-caption">01 / Home</span>${home()}</div><div class="screen-slot"><span class="screen-caption">02 / Transactions</span>${transactions()}</div><div class="screen-slot"><span class="screen-caption">03 / Account</span>${account()}</div></div><p class="concept-note">${c.note}</p></section>`).join('');
+  </script>
+</body>
+</html>
