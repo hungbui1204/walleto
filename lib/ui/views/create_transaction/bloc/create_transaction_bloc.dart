@@ -37,12 +37,17 @@ class CreateTransactionBloc extends BaseBloc<CreateTransactionEvent, CreateTrans
 
   final CreateTransactionUseCase _createTransactionUseCase;
   final GetExchangeRateUseCase _getExchangeRateUseCase;
+  int _exchangeRateRequestId = 0;
+  bool _isExchangeRateLoading = false;
+  bool _isSubmitting = false;
+  bool _hasSubmittedSuccessfully = false;
 
   bool _confirmButtonEnableCheck({
     required String amountInput,
     required Category? selectedCategory,
     required DateTime? selectedDate,
     required String amountError,
+    bool exchangeRateReady = true,
   }) {
     // Check if the amount input is not empty and equals '0'
     // Check if a category is selected
@@ -54,7 +59,19 @@ class CreateTransactionBloc extends BaseBloc<CreateTransactionEvent, CreateTrans
         selectedCategory != null &&
         selectedDate != null &&
         amountError.isEmpty &&
+        exchangeRateReady &&
+        !_isSubmitting &&
         !AppUtils.isContainOperator(amountInput);
+  }
+
+  bool get _isExchangeRateReady {
+    final wallet = state.selectedWallet;
+    final currency = state.selectedCurrency;
+    if (wallet == null || currency == null || currency.code == wallet.currencyCode) {
+      return !_isExchangeRateLoading;
+    }
+
+    return !_isExchangeRateLoading && state.exchangeRate != null && state.convertedAmount != null;
   }
 
   void _updateConvertAmount(Emitter emit) {
@@ -124,6 +141,7 @@ class CreateTransactionBloc extends BaseBloc<CreateTransactionEvent, CreateTrans
           selectedCategory: state.selectedCategory,
           selectedDate: state.selectedDate,
           amountError: '',
+          exchangeRateReady: _isExchangeRateReady,
         ),
       ),
     );
@@ -159,6 +177,7 @@ class CreateTransactionBloc extends BaseBloc<CreateTransactionEvent, CreateTrans
           selectedCategory: state.selectedCategory,
           selectedDate: state.selectedDate,
           amountError: state.amountError,
+          exchangeRateReady: _isExchangeRateReady,
         ),
       ),
     );
@@ -188,6 +207,7 @@ class CreateTransactionBloc extends BaseBloc<CreateTransactionEvent, CreateTrans
           selectedCategory: state.selectedCategory,
           selectedDate: state.selectedDate,
           amountError: state.amountError,
+          exchangeRateReady: _isExchangeRateReady,
         ),
       ),
     );
@@ -212,6 +232,7 @@ class CreateTransactionBloc extends BaseBloc<CreateTransactionEvent, CreateTrans
           selectedCategory: state.selectedCategory,
           selectedDate: state.selectedDate,
           amountError: '',
+          exchangeRateReady: _isExchangeRateReady,
         ),
       ),
     );
@@ -254,6 +275,7 @@ class CreateTransactionBloc extends BaseBloc<CreateTransactionEvent, CreateTrans
           selectedCategory: event.category,
           selectedDate: state.selectedDate,
           amountError: state.amountError,
+          exchangeRateReady: _isExchangeRateReady,
         ),
       ),
     );
@@ -263,7 +285,37 @@ class CreateTransactionBloc extends BaseBloc<CreateTransactionEvent, CreateTrans
     CreateTransactionConfirmButtonPressed event,
     Emitter<CreateTransactionState> emit,
   ) async {
+    if (_isSubmitting || !state.confirmButtonEnable || !_isExchangeRateReady) {
+      return;
+    }
+    _isSubmitting = true;
+
     await runBlocCatching(
+      doOnSubscribe: () async {
+        emit(state.copyWith(confirmButtonEnable: false));
+      },
+      doOnError: (_) async {
+        if (_hasSubmittedSuccessfully) return;
+        _isSubmitting = false;
+        if (!isClosed) {
+          emit(
+            state.copyWith(
+              confirmButtonEnable: _confirmButtonEnableCheck(
+                amountInput: state.amountInput,
+                selectedCategory: state.selectedCategory,
+                selectedDate: state.selectedDate,
+                amountError: state.amountError,
+                exchangeRateReady: _isExchangeRateReady,
+              ),
+            ),
+          );
+        }
+      },
+      doOnEventCompleted: () async {
+        if (!_hasSubmittedSuccessfully) {
+          _isSubmitting = false;
+        }
+      },
       action: () async {
         // If the [state.convertedAmount] is not null, use it as the transaction amount
         // Otherwise, use the [state.amountInput] as the transaction amount
@@ -281,6 +333,7 @@ class CreateTransactionBloc extends BaseBloc<CreateTransactionEvent, CreateTrans
         await _createTransactionUseCase.execute(
           CreateTransactionInput(transaction: newTransaction),
         );
+        _hasSubmittedSuccessfully = true;
 
         // Refresh transactions after creating a new transaction
         // Refresh the wallets to update the balance
@@ -311,6 +364,8 @@ class CreateTransactionBloc extends BaseBloc<CreateTransactionEvent, CreateTrans
     Emitter<CreateTransactionState> emit,
   ) {
     if (event.wallet.id == state.selectedWallet?.id) return;
+    _exchangeRateRequestId++;
+    _isExchangeRateLoading = false;
 
     // Reset the selected currency to selected wallet's currency, exchange rate, and converted amount
     final walletCurrency = appBloc.state.currencies.isEmpty
@@ -331,6 +386,8 @@ class CreateTransactionBloc extends BaseBloc<CreateTransactionEvent, CreateTrans
           selectedCategory: state.selectedCategory,
           selectedDate: state.selectedDate,
           amountError: state.amountError,
+          exchangeRateReady:
+              walletCurrency == null || walletCurrency.code == event.wallet.currencyCode,
         ),
       ),
     );
@@ -340,32 +397,60 @@ class CreateTransactionBloc extends BaseBloc<CreateTransactionEvent, CreateTrans
     CreateTransactionCurrencySelected event,
     Emitter<CreateTransactionState> emit,
   ) async {
+    if (event.currency == state.selectedCurrency &&
+        (_isExchangeRateLoading || _isExchangeRateReady)) {
+      return;
+    }
+
+    final selectedWallet = state.selectedWallet;
+    if (selectedWallet == null) return;
+    final requestId = ++_exchangeRateRequestId;
+
+    if (event.currency.code == selectedWallet.currencyCode) {
+      _isExchangeRateLoading = false;
+      emit(
+        state.copyWith(
+          exchangeRate: null,
+          selectedCurrency: event.currency,
+          convertedAmount: null,
+          confirmButtonEnable: _confirmButtonEnableCheck(
+            amountInput: state.amountInput,
+            selectedCategory: state.selectedCategory,
+            selectedDate: state.selectedDate,
+            amountError: state.amountError,
+          ),
+        ),
+      );
+
+      return;
+    }
+
+    _isExchangeRateLoading = true;
+    emit(
+      state.copyWith(
+        selectedCurrency: event.currency,
+        exchangeRate: null,
+        convertedAmount: null,
+        confirmButtonEnable: false,
+      ),
+    );
+
     await runBlocCatching(
       action: () async {
-        if (event.currency == state.selectedCurrency) return;
-
-        // Check the selected currency is the same as the wallet currency
-        // Then reset the exchange rate and converted amount
-        if (event.currency.code == state.selectedWallet!.currencyCode) {
-          emit(
-            state.copyWith(
-              exchangeRate: null,
-              selectedCurrency: event.currency,
-              convertedAmount: null,
-            ),
-          );
-
-          return;
-        }
-
-        // Get exchange rate from selected currency to current wallet currency
         final exchangeRateOutput = await _getExchangeRateUseCase.execute(
           GetExchangeRateInput(
             fromCurrencyCode: event.currency.code,
-            toCurrencyCode: state.selectedWallet!.currencyCode,
+            toCurrencyCode: selectedWallet.currencyCode,
           ),
         );
 
+        if (requestId != _exchangeRateRequestId ||
+            state.selectedCurrency?.code != event.currency.code ||
+            state.selectedWallet?.currencyCode != selectedWallet.currencyCode) {
+          return;
+        }
+
+        _isExchangeRateLoading = false;
         final convertedAmount = AppUtils.calculateAmountWithExchangeRate(
           amount: state.amountInput.toDouble(),
           exchangeRate: exchangeRateOutput.exchangeRate.rate,
@@ -374,10 +459,23 @@ class CreateTransactionBloc extends BaseBloc<CreateTransactionEvent, CreateTrans
         emit(
           state.copyWith(
             exchangeRate: exchangeRateOutput.exchangeRate.rate,
-            selectedCurrency: event.currency,
             convertedAmount: convertedAmount,
+            confirmButtonEnable: _confirmButtonEnableCheck(
+              amountInput: state.amountInput,
+              selectedCategory: state.selectedCategory,
+              selectedDate: state.selectedDate,
+              amountError: state.amountError,
+            ),
           ),
         );
+      },
+      doOnError: (_) async {
+        if (requestId == _exchangeRateRequestId) {
+          _isExchangeRateLoading = false;
+        }
+        if (requestId == _exchangeRateRequestId && !isClosed) {
+          emit(state.copyWith(confirmButtonEnable: false));
+        }
       },
     );
   }

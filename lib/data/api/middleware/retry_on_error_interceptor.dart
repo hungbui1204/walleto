@@ -50,6 +50,11 @@ class RetryOnErrorInterceptor extends BaseInterceptor {
       return false;
     }
 
+    const retryableMethods = {'GET', 'HEAD', 'OPTIONS'};
+    if (!retryableMethods.contains(error.requestOptions.method.toUpperCase())) {
+      return false;
+    }
+
     return error.type != DioExceptionType.cancel && error.type != DioExceptionType.badResponse;
   }
 }
