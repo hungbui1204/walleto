@@ -10,7 +10,7 @@ abstract class BaseStreamUseCase<Input extends BaseInput, Output extends BaseOut
   Stream<Output> execute(Input input) async* {
     try {
       if (LogConfig.enableLogUseCaseInput) {
-        logD('StreamUseCase Input: $input');
+        logD('StreamUseCase Input: ${input.runtimeType}');
       }
 
       await for (final output in buildUseCase(input)) {
@@ -18,7 +18,7 @@ abstract class BaseStreamUseCase<Input extends BaseInput, Output extends BaseOut
       }
     } catch (e) {
       if (LogConfig.enableLogUseCaseError) {
-        logE('StreamUseCase Error: $e');
+        logE('StreamUseCase Error: ${e.runtimeType}');
       }
 
       throw e is AppException ? e : AppUncaughtException(e);
