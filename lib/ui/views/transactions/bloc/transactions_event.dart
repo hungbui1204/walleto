@@ -4,6 +4,12 @@ sealed class TransactionsEvent extends BaseBlocEvent {
   const TransactionsEvent();
 }
 
+class TransactionsRefreshRequested extends TransactionsEvent {
+  const TransactionsRefreshRequested(this.completer);
+
+  final Completer<void> completer;
+}
+
 @freezed
 sealed class TransactionsViewInitialized extends TransactionsEvent
     with _$TransactionsViewInitialized {

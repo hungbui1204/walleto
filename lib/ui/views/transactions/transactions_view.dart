@@ -52,11 +52,7 @@ class _TransactionsViewState extends BasePageState<TransactionsView, Transaction
             padding: EdgeInsets.symmetric(horizontal: Dimens.d16.responsive()),
             child: RefreshIndicator(
               color: primaryColor,
-              onRefresh: () async {
-                final next = bloc.stream.first;
-                bloc.add(const TransactionsRefreshed());
-                await next;
-              },
+              onRefresh: bloc.refreshTransactions,
               child: CustomScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
                 slivers: [

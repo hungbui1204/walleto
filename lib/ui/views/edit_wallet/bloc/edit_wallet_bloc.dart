@@ -29,11 +29,12 @@ class EditWalletBloc extends BaseBloc<EditWalletEvent, EditWalletState> {
     EditWalletAmountInputChanged event,
     Emitter<EditWalletState> emit,
   ) {
+    final amount = double.tryParse(event.amount);
     emit(
       state.copyWith(
         amount: event.amount,
         isConfirmButtonEnabled:
-            event.amount.isNotEmpty && (double.tryParse(event.amount) ?? 0) != state.wallet.amount,
+            amount != null && amount.isFinite && amount >= 0 && amount != state.wallet.amount,
       ),
     );
   }
@@ -42,10 +43,16 @@ class EditWalletBloc extends BaseBloc<EditWalletEvent, EditWalletState> {
     EditWalletConfirmButtonPressed event,
     Emitter<EditWalletState> emit,
   ) async {
+    final newAmount = double.tryParse(state.amount);
+    if (!state.isConfirmButtonEnabled ||
+        newAmount == null ||
+        !newAmount.isFinite ||
+        newAmount < 0) {
+      return;
+    }
+
     await runBlocCatching(
       action: () async {
-        final newAmount = double.tryParse(state.amount) ?? 0;
-
         await _updateWalletUseCase.execute(
           UpdateWalletInput(wallet: state.wallet.copyWith(amount: newAmount)),
         );

@@ -21,6 +21,7 @@ void main() {
   const seededWallet = CreateWalletState(
     walletName: 'Cash',
     initialBalance: '150',
+    isConfirmButtonEnabled: true,
     iconUrl: 'https://cdn.example/wallet.png',
     selectedCurrency: usd,
   );
@@ -85,6 +86,56 @@ void main() {
     build: buildBloc,
     act: (bloc) => bloc.add(const CreateWalletViewInitiated()),
     expect: () => const [CreateWalletState(selectedCurrency: usd)],
+  );
+
+  blocTest<CreateWalletBloc, CreateWalletState>(
+    'enables save when the name is entered after a valid balance',
+    build: buildBloc,
+    act: (bloc) {
+      bloc.add(const CreateWalletInitialBalanceInputChanged(initialBalance: '125'));
+      bloc.add(const CreateWalletNameInputChanged(walletName: 'Cash'));
+    },
+    verify: (bloc) {
+      expect(bloc.state.isConfirmButtonEnabled, isTrue);
+      expect(bloc.state.initialBalance, '125');
+      expect(bloc.state.walletName, 'Cash');
+    },
+  );
+
+  blocTest<CreateWalletBloc, CreateWalletState>(
+    'keeps save disabled for invalid and negative balances',
+    build: buildBloc,
+    act: (bloc) {
+      bloc.add(const CreateWalletNameInputChanged(walletName: 'Cash'));
+      bloc.add(const CreateWalletInitialBalanceInputChanged(initialBalance: 'not-a-number'));
+    },
+    verify: (bloc) {
+      expect(bloc.state.isConfirmButtonEnabled, isFalse);
+      expect(bloc.state.initialBalance, 'not-a-number');
+    },
+  );
+
+  blocTest<CreateWalletBloc, CreateWalletState>(
+    'keeps save disabled for a negative initial balance',
+    build: buildBloc,
+    act: (bloc) {
+      bloc.add(const CreateWalletNameInputChanged(walletName: 'Cash'));
+      bloc.add(const CreateWalletInitialBalanceInputChanged(initialBalance: '-1'));
+    },
+    verify: (bloc) {
+      expect(bloc.state.isConfirmButtonEnabled, isFalse);
+      expect(bloc.state.initialBalance, '-1');
+    },
+  );
+
+  blocTest<CreateWalletBloc, CreateWalletState>(
+    'does not create a wallet when the submitted balance is invalid',
+    build: buildBloc,
+    seed: () => const CreateWalletState(walletName: 'Cash', initialBalance: 'invalid'),
+    act: (bloc) => bloc.add(const CreateWalletConfirmButtonPressed()),
+    verify: (_) {
+      verifyNever(() => createWalletUseCase.execute(any()));
+    },
   );
 
   blocTest<CreateWalletBloc, CreateWalletState>(

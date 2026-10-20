@@ -28,11 +28,21 @@ class TransactionsBloc extends BaseBloc<TransactionsEvent, TransactionsState> {
     on<TransactionsWalletSelected>(_onWalletSelected, transformer: log());
     on<TransactionsWalletsUpdated>(_onTransactionsWalletsUpdated, transformer: log());
     on<TransactionsRefreshed>(_onTransactionsRefreshed, transformer: log());
+    on<TransactionsRefreshRequested>(_onTransactionsRefreshRequested, transformer: log());
   }
 
   final GetTransactionsUseCase _getTransactionsUseCase;
   final ConvertAmountsToCurrencyUseCase _convertAmountsToCurrencyUseCase;
   StreamSubscription<AppState>? _appBlocSubscription;
+
+  Future<void> refreshTransactions() {
+    if (isClosed) return Future<void>.value();
+
+    final completer = Completer<void>();
+    add(TransactionsRefreshRequested(completer));
+
+    return completer.future;
+  }
 
   @override
   Future<void> close() {
@@ -108,31 +118,36 @@ class TransactionsBloc extends BaseBloc<TransactionsEvent, TransactionsState> {
           return;
         }
 
-        late final GetTransactionsInput transactionsInput;
-
-        if (state.selectedDate != null) {
-          transactionsInput = GetTransactionsInput(
-            targetMonth: state.selectedDate!.month,
-            targetYear: state.selectedDate!.year,
-            walletId: _getWalletId(state.selectedWallet.id),
-          );
-        } else if (state.selectedDateRange != null) {
-          transactionsInput = GetTransactionsInput(
-            fromDate: state.selectedDateRange!.start,
-            toDate: state.selectedDateRange!.end.add(const Duration(days: 1)),
-            walletId: _getWalletId(state.selectedWallet.id),
-          );
-        } else {
+        if (state.selectedDate == null && state.selectedDateRange == null) {
           return;
         }
 
-        final transactionsOutput = await _getTransactionsUseCase.execute(transactionsInput);
+        final transactionsOutput = await _getTransactionsUseCase.execute(
+          _buildTransactionsInput(
+            selectedWallet: state.selectedWallet,
+            selectedDate: state.selectedDate,
+            selectedDateRange: state.selectedDateRange,
+          ),
+        );
 
         final allDayTransactions = await _getDayTransFromTrans(transactionsOutput.transactions);
 
         emit(state.copyWith(allDayTransactions: allDayTransactions));
       },
     );
+  }
+
+  Future<void> _onTransactionsRefreshRequested(
+    TransactionsRefreshRequested event,
+    Emitter<TransactionsState> emit,
+  ) async {
+    try {
+      await _onTransactionsRefreshed(const TransactionsRefreshed(), emit);
+    } finally {
+      if (!event.completer.isCompleted) {
+        event.completer.complete();
+      }
+    }
   }
 
   /// Convert a list of [Transaction] to a list of [DayTransactions]
@@ -200,10 +215,9 @@ class TransactionsBloc extends BaseBloc<TransactionsEvent, TransactionsState> {
         }
 
         final transactionsOutput = await _getTransactionsUseCase.execute(
-          GetTransactionsInput(
-            targetMonth: event.selectedDate.month,
-            targetYear: event.selectedDate.year,
-            walletId: _getWalletId(state.selectedWallet.id),
+          _buildTransactionsInput(
+            selectedWallet: state.selectedWallet,
+            selectedDate: event.selectedDate,
           ),
         );
 
@@ -246,10 +260,9 @@ class TransactionsBloc extends BaseBloc<TransactionsEvent, TransactionsState> {
         }
 
         final transactionsOutput = await _getTransactionsUseCase.execute(
-          GetTransactionsInput(
-            fromDate: dateRangePicked.start,
-            toDate: dateRangePicked.end.add(const Duration(days: 1)),
-            walletId: _getWalletId(state.selectedWallet.id),
+          _buildTransactionsInput(
+            selectedWallet: state.selectedWallet,
+            selectedDateRange: dateRangePicked,
           ),
         );
 
@@ -276,12 +289,10 @@ class TransactionsBloc extends BaseBloc<TransactionsEvent, TransactionsState> {
         if (state.selectedWallet == event.selectedWallet) return;
 
         final transactionsOutput = await _getTransactionsUseCase.execute(
-          GetTransactionsInput(
-            walletId: _getWalletId(event.selectedWallet.id),
-            fromDate: state.selectedDateRange?.start,
-            toDate: state.selectedDateRange?.end,
-            targetMonth: state.selectedDate?.month,
-            targetYear: state.selectedDate?.year,
+          _buildTransactionsInput(
+            selectedWallet: event.selectedWallet,
+            selectedDate: state.selectedDate,
+            selectedDateRange: state.selectedDateRange,
           ),
         );
 
@@ -342,6 +353,31 @@ class TransactionsBloc extends BaseBloc<TransactionsEvent, TransactionsState> {
 
   bool _isSameDateRange(DateTimeRange? current, DateTimeRange picked) {
     return current != null && current.start == picked.start && current.end == picked.end;
+  }
+
+  GetTransactionsInput _buildTransactionsInput({
+    required Wallet selectedWallet,
+    DateTime? selectedDate,
+    DateTimeRange? selectedDateRange,
+  }) {
+    final walletId = _getWalletId(selectedWallet.id);
+    if (selectedDateRange != null) {
+      return GetTransactionsInput(
+        fromDate: selectedDateRange.start,
+        toDate: selectedDateRange.end.add(const Duration(days: 1)),
+        walletId: walletId,
+      );
+    }
+
+    if (selectedDate != null) {
+      return GetTransactionsInput(
+        targetMonth: selectedDate.month,
+        targetYear: selectedDate.year,
+        walletId: walletId,
+      );
+    }
+
+    return GetTransactionsInput(walletId: walletId);
   }
 
   bool _hasSameWalletBalances(List<Wallet> previous, List<Wallet> next) {

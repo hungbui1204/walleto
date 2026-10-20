@@ -26,6 +26,7 @@ class AppBloc extends BaseBloc<AppEvent, AppState> {
     on<UserSessionCleared>(_onUserSessionCleared, transformer: log());
     on<SessionValidationRequested>(_onSessionValidationRequested, transformer: log());
     on<DataFetched>(_onDataFetched, transformer: log());
+    on<WalletsRefreshRequested>(_onWalletsRefreshRequested, transformer: log());
     on<TransactionsReloaded>(_onTransactionsReloaded, transformer: log());
     on<StatisticalChartsReloaded>(_onStatisticalChartsReloaded, transformer: log());
     on<UserDefaultCurrencyUpdated>(_onUserDefaultCurrencyUpdated, transformer: log());
@@ -41,6 +42,15 @@ class AppBloc extends BaseBloc<AppEvent, AppState> {
   final UpdateUserDefaultCurrencyUseCase _updateUserDefaultCurrencyUseCase;
   final SetAppThemePreferenceUseCase _setAppThemePreferenceUseCase;
   final IsLoggedInUseCase _isLoggedInUseCase;
+
+  Future<void> refreshWallets() {
+    if (isClosed) return Future<void>.value();
+
+    final completer = Completer<void>();
+    add(WalletsRefreshRequested(completer));
+
+    return completer.future;
+  }
 
   Future<void> clearUserSessionData() {
     final completer = Completer<void>();
@@ -157,6 +167,19 @@ class AppBloc extends BaseBloc<AppEvent, AppState> {
         }
       },
     );
+  }
+
+  Future<void> _onWalletsRefreshRequested(
+    WalletsRefreshRequested event,
+    Emitter<AppState> emit,
+  ) async {
+    try {
+      await _onDataFetched(const DataFetched(walletsFetched: true), emit);
+    } finally {
+      if (!event.completer.isCompleted) {
+        event.completer.complete();
+      }
+    }
   }
 
   void _onTransactionsReloaded(TransactionsReloaded event, Emitter<AppState> emit) {
