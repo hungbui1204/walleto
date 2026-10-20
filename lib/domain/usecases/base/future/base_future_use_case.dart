@@ -8,17 +8,17 @@ abstract class BaseFutureUseCase<Input extends BaseInput, Output extends BaseOut
   Future<Output> execute(Input input) async {
     try {
       if (LogConfig.enableLogUseCaseInput) {
-        logD('FutureUseCase Input: $input');
+        logD('FutureUseCase Input: ${input.runtimeType}');
       }
       final output = await buildUseCase(input);
       if (LogConfig.enableLogUseCaseOutput) {
-        logD('FutureUseCase Output: $output');
+        logD('FutureUseCase Output: ${output.runtimeType}');
       }
 
       return output;
     } catch (e) {
       if (LogConfig.enableLogUseCaseError) {
-        logE('FutureUseCase Error: $e');
+        logE('FutureUseCase Error: ${e.runtimeType}');
       }
 
       throw e is AppException ? e : AppUncaughtException(e);

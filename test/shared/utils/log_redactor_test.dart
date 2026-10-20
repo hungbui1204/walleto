@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:walleto/shared/shared.dart';
+import 'package:walleto/ui/ui.dart';
 
 class _LoginPasswordInputChanged {
   const _LoginPasswordInputChanged(this.password);
@@ -60,6 +61,27 @@ void main() {
       expect(redacted['email'], 'a@b.c');
       expect(redacted['password'], LogRedactor.placeholder);
     });
+
+    test('redacts chat content and user notes in request and response payloads', () {
+      final redacted =
+          LogRedactor.redact({
+                'message': 'private chat message',
+                'messages': [
+                  {'role': 'user', 'content': 'private response content'},
+                ],
+                'conversation': [
+                  {'role': 'assistant', 'content': 'private streamed content'},
+                ],
+                'note': 'private transaction note',
+              })
+              as Map<String, dynamic>;
+
+      expect(redacted['message'], LogRedactor.placeholder);
+      expect(redacted['messages'], LogRedactor.placeholder);
+      expect((redacted['conversation'] as List).single['content'], LogRedactor.placeholder);
+      expect(redacted['note'], LogRedactor.placeholder);
+      expect(LogRedactor.stringify(redacted), isNot(contains('private')));
+    });
   });
 
   group('LogRedactor.stringify', () {
@@ -100,6 +122,28 @@ void main() {
         LogRedactor.forEvent(const _HomeViewInitiated()),
         isNot(contains(LogRedactor.placeholder)),
       );
+    });
+
+    test('redacts submitted AI chat text', () {
+      const event = AiChatMessageSubmitted(message: 'private chat message');
+
+      expect(LogRedactor.isMessageBearingEvent(event), isTrue);
+      expect(LogRedactor.forEvent(event), isNot(contains('private chat message')));
+      expect(LogRedactor.forEvent(event), contains(LogRedactor.placeholder));
+    });
+
+    test('redacts transaction notes from BLoC event logs', () {
+      const event = CreateTransactionNoteChanged(note: 'private transaction note');
+
+      expect(LogRedactor.forEvent(event), isNot(contains('private transaction note')));
+      expect(LogRedactor.forEvent(event), contains(LogRedactor.placeholder));
+    });
+
+    test('redacts OTP from reset-password input event logs', () {
+      const event = ResetPasswordOtpInputChanged(otp: '914207');
+
+      expect(LogRedactor.forEvent(event), isNot(contains('914207')));
+      expect(LogRedactor.forEvent(event), contains(LogRedactor.placeholder));
     });
   });
 }

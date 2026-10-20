@@ -20,6 +20,11 @@ class LogRedactor {
     'apikey',
     'secret',
     'clientsecret',
+    'message',
+    'messages',
+    'content',
+    'prompt',
+    'note',
   };
 
   static bool isSensitiveKey(Object? key) {
@@ -44,11 +49,30 @@ class LogRedactor {
     return typeName.contains('passwordinput') || typeName.contains('confirmpassword');
   }
 
+  /// True when a BLoC event includes user-authored text that should not be logged.
+  static bool isMessageBearingEvent(Object? event) {
+    if (event == null) {
+      return false;
+    }
+
+    final typeName = event.runtimeType.toString().toLowerCase();
+    return typeName.contains('aichatmessagesubmitted') || typeName.contains('notechanged');
+  }
+
+  /// True when a BLoC event carries a one-time password.
+  static bool isOtpBearingEvent(Object? event) {
+    if (event == null) {
+      return false;
+    }
+
+    return event.runtimeType.toString().toLowerCase().contains('otpinputchanged');
+  }
+
   static String forEvent(Object? event) {
     if (event == null) {
       return 'null';
     }
-    if (isPasswordBearingEvent(event)) {
+    if (isPasswordBearingEvent(event) || isMessageBearingEvent(event) || isOtpBearingEvent(event)) {
       return '${event.runtimeType}($placeholder)';
     }
 

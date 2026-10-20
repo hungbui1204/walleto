@@ -26,8 +26,18 @@ class CreateWalletBloc extends BaseBloc<CreateWalletEvent, CreateWalletState> {
 
   final CreateWalletUseCase _createWalletUseCase;
 
-  bool get isConfirmButtonEnabled {
-    return state.walletName.isNotEmpty && (double.tryParse(state.initialBalance) ?? 0) >= 0;
+  double? _parseInitialBalance(String value) {
+    if (value.trim().isEmpty) {
+      return 0;
+    }
+
+    return double.tryParse(value);
+  }
+
+  bool _isConfirmButtonEnabled({required String walletName, required String initialBalance}) {
+    final balance = _parseInitialBalance(initialBalance);
+
+    return walletName.trim().isNotEmpty && balance != null && balance.isFinite && balance >= 0;
   }
 
   void _onCreateWalletViewInitiated(
@@ -45,11 +55,20 @@ class CreateWalletBloc extends BaseBloc<CreateWalletEvent, CreateWalletState> {
     CreateWalletConfirmButtonPressed event,
     Emitter<CreateWalletState> emit,
   ) async {
+    final initialBalance = _parseInitialBalance(state.initialBalance);
+    if (!_isConfirmButtonEnabled(
+          walletName: state.walletName,
+          initialBalance: state.initialBalance,
+        ) ||
+        initialBalance == null) {
+      return;
+    }
+
     await runBlocCatching(
       action: () async {
         final wallet = Wallet(
           name: state.walletName,
-          amount: double.tryParse(state.initialBalance) ?? 0,
+          amount: initialBalance,
           iconUrl: state.iconUrl,
           currencyCode: state.selectedCurrency?.code ?? '',
         );
@@ -74,7 +93,13 @@ class CreateWalletBloc extends BaseBloc<CreateWalletEvent, CreateWalletState> {
     Emitter<CreateWalletState> emit,
   ) {
     emit(
-      state.copyWith(walletName: event.walletName, isConfirmButtonEnabled: isConfirmButtonEnabled),
+      state.copyWith(
+        walletName: event.walletName,
+        isConfirmButtonEnabled: _isConfirmButtonEnabled(
+          walletName: event.walletName,
+          initialBalance: state.initialBalance,
+        ),
+      ),
     );
   }
 
@@ -85,7 +110,10 @@ class CreateWalletBloc extends BaseBloc<CreateWalletEvent, CreateWalletState> {
     emit(
       state.copyWith(
         initialBalance: event.initialBalance,
-        isConfirmButtonEnabled: isConfirmButtonEnabled,
+        isConfirmButtonEnabled: _isConfirmButtonEnabled(
+          walletName: state.walletName,
+          initialBalance: event.initialBalance,
+        ),
       ),
     );
   }

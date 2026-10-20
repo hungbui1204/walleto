@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -103,12 +105,11 @@ void main() {
 
   blocTest<TransactionsBloc, TransactionsState>(
     'does not show loading when transactions are refreshed',
-    seed:
-        () => TransactionsState(
-          selectedDate: selectedMonth,
-          selectedWallet: totalWallet,
-          wallets: const [totalWallet, cashWallet],
-        ),
+    seed: () => TransactionsState(
+      selectedDate: selectedMonth,
+      selectedWallet: totalWallet,
+      wallets: const [totalWallet, cashWallet],
+    ),
     build: buildBloc,
     act: (bloc) => bloc.add(const TransactionsRefreshed()),
     verify: (_) {
@@ -123,12 +124,11 @@ void main() {
 
   blocTest<TransactionsBloc, TransactionsState>(
     'does not show loading when a different month is selected',
-    seed:
-        () => TransactionsState(
-          selectedDate: selectedMonth,
-          selectedWallet: totalWallet,
-          wallets: const [totalWallet, cashWallet],
-        ),
+    seed: () => TransactionsState(
+      selectedDate: selectedMonth,
+      selectedWallet: totalWallet,
+      wallets: const [totalWallet, cashWallet],
+    ),
     build: buildBloc,
     act: (bloc) => bloc.add(TransactionsMonthSelected(selectedDate: otherMonth)),
     verify: (_) {
@@ -143,12 +143,11 @@ void main() {
 
   blocTest<TransactionsBloc, TransactionsState>(
     'does not show loading when a wallet is selected',
-    seed:
-        () => TransactionsState(
-          selectedDate: selectedMonth,
-          selectedWallet: totalWallet,
-          wallets: const [totalWallet, cashWallet],
-        ),
+    seed: () => TransactionsState(
+      selectedDate: selectedMonth,
+      selectedWallet: totalWallet,
+      wallets: const [totalWallet, cashWallet],
+    ),
     build: buildBloc,
     act: (bloc) => bloc.add(const TransactionsWalletSelected(selectedWallet: cashWallet)),
     verify: (_) {
@@ -162,12 +161,31 @@ void main() {
   );
 
   blocTest<TransactionsBloc, TransactionsState>(
-    'does not show loading when a date range is picked',
-    seed:
-        () => const TransactionsState(
-          selectedWallet: totalWallet,
-          wallets: [totalWallet, cashWallet],
+    'keeps the entire selected date range when the wallet changes',
+    seed: () => TransactionsState(
+      selectedWallet: totalWallet,
+      wallets: const [totalWallet, cashWallet],
+      selectedDateRange: DateTimeRange(start: DateTime(2026, 2), end: DateTime(2026, 2, 10)),
+    ),
+    build: buildBloc,
+    act: (bloc) => bloc.add(const TransactionsWalletSelected(selectedWallet: cashWallet)),
+    verify: (_) {
+      verify(
+        () => getTransactionsUseCase.execute(
+          GetTransactionsInput(
+            walletId: 1,
+            fromDate: DateTime(2026, 2),
+            toDate: DateTime(2026, 2, 11),
+          ),
         ),
+      ).called(1);
+    },
+  );
+
+  blocTest<TransactionsBloc, TransactionsState>(
+    'does not show loading when a date range is picked',
+    seed: () =>
+        const TransactionsState(selectedWallet: totalWallet, wallets: [totalWallet, cashWallet]),
     build: buildBloc,
     act: (bloc) => bloc.add(const TransactionsDateRangePicked()),
     verify: (_) {
@@ -182,12 +200,11 @@ void main() {
 
   blocTest<TransactionsBloc, TransactionsState>(
     'fetches a new range when start and end change even if duration matches',
-    seed:
-        () => TransactionsState(
-          selectedWallet: totalWallet,
-          wallets: const [totalWallet, cashWallet],
-          selectedDateRange: DateTimeRange(start: DateTime(2026), end: DateTime(2026, 1, 10)),
-        ),
+    seed: () => TransactionsState(
+      selectedWallet: totalWallet,
+      wallets: const [totalWallet, cashWallet],
+      selectedDateRange: DateTimeRange(start: DateTime(2026), end: DateTime(2026, 1, 10)),
+    ),
     build: buildBloc,
     act: (bloc) => bloc.add(const TransactionsDateRangePicked()),
     verify: (_) {
@@ -208,6 +225,32 @@ void main() {
     act: (bloc) => bloc.add(const TransactionsViewInitialized()),
     verify: (_) {
       verifyNever(() => getTransactionsUseCase.execute(any()));
+    },
+  );
+
+  blocTest<TransactionsBloc, TransactionsState>(
+    'finishes refresh after an unchanged empty result returns',
+    seed: () => TransactionsState(selectedDate: selectedMonth, selectedWallet: totalWallet),
+    build: buildBloc,
+    act: (bloc) async {
+      final response = Completer<GetTransactionsOutput>();
+      when(() => getTransactionsUseCase.execute(any())).thenAnswer((_) => response.future);
+
+      var completed = false;
+      final refresh = bloc.refreshTransactions().then((_) => completed = true);
+      await Future<void>.delayed(Duration.zero);
+      expect(completed, isFalse);
+      response.complete(const GetTransactionsOutput());
+      await refresh;
+      expect(completed, isTrue);
+    },
+    expect: () => const <TransactionsState>[],
+    verify: (_) {
+      verify(
+        () => getTransactionsUseCase.execute(
+          const GetTransactionsInput(targetMonth: 1, targetYear: 2026),
+        ),
+      ).called(1);
     },
   );
 }

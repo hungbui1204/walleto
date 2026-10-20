@@ -4,6 +4,12 @@ sealed class AppEvent extends BaseBlocEvent {
   const AppEvent();
 }
 
+class WalletsRefreshRequested extends AppEvent {
+  const WalletsRefreshRequested(this.completer);
+
+  final Completer<void> completer;
+}
+
 class UserSessionCleared extends AppEvent {
   const UserSessionCleared(this.completer);
 

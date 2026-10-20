@@ -22,7 +22,7 @@ class AppBlocObserver extends BlocObserver {
   void onChange(BlocBase<dynamic> bloc, Change<dynamic> change) {
     super.onChange(bloc, change);
     if (logOnChange) {
-      Log.d('onChange $change', name: bloc.runtimeType.toString());
+      Log.d('onChange ${change.currentState.runtimeType}', name: bloc.runtimeType.toString());
     }
   }
 
@@ -46,7 +46,7 @@ class AppBlocObserver extends BlocObserver {
   void onError(BlocBase<dynamic> bloc, Object error, StackTrace stackTrace) {
     super.onError(bloc, error, stackTrace);
     if (logOnError) {
-      Log.d('onError $error', name: bloc.runtimeType.toString());
+      Log.d('onError ${error.runtimeType}', name: bloc.runtimeType.toString());
     }
   }
 
@@ -62,7 +62,11 @@ class AppBlocObserver extends BlocObserver {
   void onTransition(Bloc<dynamic, dynamic> bloc, Transition<dynamic, dynamic> transition) {
     super.onTransition(bloc, transition);
     if (logOnTransition) {
-      Log.d('onTransition $transition', name: bloc.runtimeType.toString());
+      Log.d(
+        'onTransition ${LogRedactor.forEvent(transition.event)}: '
+        '${transition.currentState.runtimeType}',
+        name: bloc.runtimeType.toString(),
+      );
     }
   }
 }

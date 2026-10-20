@@ -27,11 +27,7 @@ class _WalletsViewState extends BasePageState<WalletsView, WalletsBloc> {
       body: NoirScaffoldBody(
         child: RefreshIndicator(
           color: primaryColor,
-          onRefresh: () async {
-            final next = appBloc.stream.first;
-            appBloc.add(const DataFetched(walletsFetched: true));
-            await next;
-          },
+          onRefresh: appBloc.refreshWallets,
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
             child: Padding(
